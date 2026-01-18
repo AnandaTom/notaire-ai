@@ -1,0 +1,507 @@
+{
+  "acte": {
+    "numero_repertoire": "100546101",
+    "reference_interne": "CDI/ALG/",
+    "date": {
+      "jour": 4,
+      "mois": 8,
+      "annee": 2025
+    },
+    "notaire": {
+      "civilite": "Maître",
+      "nom": "DIAZ",
+      "prenom": "Charlotte",
+      "societe": "SAS DES CEDRES",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "departement": "Rhône",
+      "code_postal": "69160",
+      "adresse": "93 avenue du 11 Novembre 1918",
+      "crpcen": "69182"
+    },
+    "notaire_beneficiaire": {
+      "civilite": "Maître",
+      "nom": "DUPONT",
+      "prenom": "Jean",
+      "ville": "LYON"
+    }
+  },
+
+  "promettants": [
+    {
+      "civilite": "Madame",
+      "nom": "MARTIN",
+      "prenoms": "Claire Emilie",
+      "profession": "Professeur",
+      "adresse": "170 rue Joliot Curie",
+      "code_postal": "69160",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "date_naissance": "1970-05-22",
+      "lieu_naissance": "LYON 6ème",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      },
+      "coordonnees": {
+        "telephone": "06 12 34 56 78",
+        "courriel": "claire.martin@email.fr"
+      }
+    },
+    {
+      "civilite": "Monsieur",
+      "nom": "MARTIN",
+      "prenoms": "Philippe André",
+      "profession": "Architecte",
+      "adresse": "170 rue Joliot Curie",
+      "code_postal": "69160",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "date_naissance": "1968-11-03",
+      "lieu_naissance": "VILLEURBANNE",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      },
+      "coordonnees": {
+        "telephone": "06 98 76 54 32",
+        "courriel": "philippe.martin@email.fr"
+      }
+    }
+  ],
+
+  "beneficiaires": [
+    {
+      "civilite": "Monsieur",
+      "nom": "DUBOIS",
+      "prenoms": "Antoine Marc",
+      "profession": "Consultant",
+      "adresse": "45 avenue Jean Jaurès",
+      "code_postal": "69007",
+      "ville": "LYON",
+      "date_naissance": "1985-03-18",
+      "lieu_naissance": "GRENOBLE",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "pacse",
+        "pacs": {
+          "date": "2018-09-15",
+          "lieu_enregistrement": "Mairie de LYON 7ème",
+          "regime": "separation_biens",
+          "regime_libelle": "la séparation de biens"
+        },
+        "conjoint": {
+          "civilite": "Madame",
+          "prenoms": "Laura Marie",
+          "nom": "PETIT"
+        }
+      },
+      "coordonnees": {
+        "telephone": "06 11 22 33 44",
+        "courriel": "antoine.dubois@email.fr"
+      }
+    },
+    {
+      "civilite": "Madame",
+      "nom": "PETIT",
+      "prenoms": "Laura Marie",
+      "profession": "Avocate",
+      "adresse": "45 avenue Jean Jaurès",
+      "code_postal": "69007",
+      "ville": "LYON",
+      "date_naissance": "1987-07-25",
+      "lieu_naissance": "LYON 3ème",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "pacse",
+        "pacs": {
+          "date": "2018-09-15",
+          "lieu_enregistrement": "Mairie de LYON 7ème",
+          "regime": "separation_biens",
+          "regime_libelle": "la séparation de biens"
+        },
+        "conjoint": {
+          "civilite": "Monsieur",
+          "prenoms": "Antoine Marc",
+          "nom": "DUBOIS"
+        }
+      },
+      "coordonnees": {
+        "telephone": "06 55 66 77 88",
+        "courriel": "laura.petit@email.fr"
+      }
+    }
+  ],
+
+  "quotites_a_determiner": true,
+
+  "bien": {
+    "adresse": {
+      "numero": "170",
+      "voie": "Rue Joliot Curie",
+      "code_postal": "69160",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "departement": "RHÔNE"
+    },
+    "nom_residence": "RESIDENCE JOLIOT CURIE",
+    "description_ensemble": "Cet immeuble dénommé \"RESIDENCE JOLIOT CURIE\" est composé d'un seul bâtiment, exposé Nord-Sud, divisé en deux travées légèrement décalées d'est en ouest, et desservi par deux entrées et par deux escaliers dénommés \"Entrée et Escalier A\" au sud, et \"Entrée et Escalier B\" au nord.",
+    "cadastre": [
+      {
+        "section": "AH",
+        "numero": "211",
+        "lieudit": "170 RUE JOLIOT CURIE",
+        "surface": "00 ha 28 a 21 ca"
+      }
+    ],
+    "lots": [
+      {
+        "numero": 14,
+        "type": "appartement",
+        "type_appartement": "T3",
+        "description": "une salle de séjour avec coin repas, deux chambres avec petits balcons, cuisine avec loggia, séchoir, WC, salle de bains, hall, dégagement, placard et penderie",
+        "etage": "troisième étage",
+        "escalier": "A",
+        "orientation": "côté Nord",
+        "tantiemes": {
+          "valeur": 44,
+          "base": 1000,
+          "base_unite": "millièmes",
+          "type": "parties communes générales"
+        }
+      },
+      {
+        "numero": 29,
+        "type": "cave",
+        "description": "une cave portant le numéro 9",
+        "etage": "sous-sol",
+        "escalier": "A",
+        "numero_cave": "9",
+        "tantiemes": {
+          "valeur": 1,
+          "base": 1000,
+          "base_unite": "millième",
+          "type": "parties communes générales"
+        }
+      },
+      {
+        "numero": 48,
+        "type": "parking",
+        "description": "un emplacement de parking privé",
+        "numero_parking": "8",
+        "tantiemes": {
+          "valeur": 1,
+          "base": 1000,
+          "base_unite": "millième",
+          "type": "parties communes générales"
+        }
+      }
+    ],
+    "lots_irregularites": {
+      "parking": {
+        "numero_officiel": "8",
+        "numero_utilise": "9",
+        "explication": "l'emplacement de stationnement numéroté 8 n'est pas celui utilisé par le PROMETTANT"
+      },
+      "cave": {
+        "numero_officiel": "9",
+        "numero_utilise": "10",
+        "explication": "les caves ayant été redistribuées il y a plusieurs années"
+      }
+    },
+    "superficie_carrez": {
+      "superficie_m2": 67.76,
+      "lot_concerne": "quatorze (14)",
+      "date_mesurage": "2025-02-12",
+      "diagnostiqueur": "ACHIN DIAG EXPERT - 147 Chemin de la crouze-Le Haut Marjon - 69510 Soucieu en Jarrest"
+    },
+    "usage_actuel": "d'habitation",
+    "usage_futur": "residence_principale",
+    "chauffage": {
+      "type": "chaudière",
+      "energie": "gaz",
+      "collectif": true,
+      "entretien": "le syndic"
+    },
+    "equipements": {
+      "detecteur_fumee": true,
+      "cheminee_foyer_ouvert": false,
+      "cheminee_foyer_ferme": false,
+      "chaudiere_individuelle": false,
+      "chaudiere_collective": true,
+      "cuve_fioul": false,
+      "cuve_gaz": false,
+      "pompe_chaleur": false,
+      "climatisation": false,
+      "panneaux_photovoltaiques": false,
+      "recuperation_eaux_pluie": false,
+      "puits_forage": false,
+      "wc_broyeur": false,
+      "videosurveillance": false,
+      "alarme": false,
+      "fibre": true,
+      "recharge_vehicule_electrique": false,
+      "coffre_fort_mural": false,
+      "piscine": false,
+      "loggia_fermee": false
+    }
+  },
+
+  "copropriete": {
+    "reglement": {
+      "notaire_origine": "Maître MARMEY, notaire à MEYZIEU",
+      "date_origine": "18 septembre 1969",
+      "publication": "LYON 5, le 11 octobre 1969 volume 4892 numéro 5",
+      "modificatifs": [
+        {
+          "notaire": "Maître DOUCET-BON, notaire à LYON",
+          "date": "2 novembre 2009",
+          "publication": "LYON 5 le 14 décembre 2009, volume 2009P, numéro 6060"
+        }
+      ]
+    },
+    "syndic": {
+      "nom": "FONCIA SAINT-LOUIS",
+      "adresse": "264 Rue Garibaldi",
+      "ville": "LYON 3ÈME ARRONDISSEMENT",
+      "code_postal": "69003"
+    },
+    "immatriculation": "AD9-775-875",
+    "fonds_travaux": {
+      "existe": true,
+      "montant_quote_part": 1200,
+      "derniere_cotisation": 250
+    },
+    "emprunt_collectif": {
+      "existe": false
+    },
+    "diagnostic_technique_global": false,
+    "plan_pluriannuel_travaux": false,
+    "fiche_synthetique": {
+      "existe": true,
+      "date": "10 juin 2022"
+    },
+    "derniere_ag": "6 février 2025"
+  },
+
+  "meubles": {
+    "inclus": true,
+    "liste": [
+      "Four",
+      "Lave-vaisselle",
+      "Hotte",
+      "Plaque de cuisson",
+      "Meubles hauts et bas de cuisine"
+    ],
+    "valeur": null
+  },
+
+  "prix": {
+    "montant": 245000,
+    "devise": "EUR"
+  },
+
+  "delais": {
+    "expiration_promesse": {
+      "date": "2025-11-04",
+      "heure": "seize heures"
+    },
+    "delai_depot_garantie_jours": 15,
+    "delai_provision_frais_jours": 15
+  },
+
+  "indemnite_immobilisation": {
+    "montant": 24500,
+    "pourcentage": 10,
+    "depot_garantie": 24500,
+    "surplus": null
+  },
+
+  "clause_penale": {
+    "pourcentage": 10
+  },
+
+  "negociation": {
+    "existe": true,
+    "agent": {
+      "nom": "AGENCE IMMOBILIERE LYONNAISE",
+      "mandat_numero": "266",
+      "mandat_date": "23 mai 2025",
+      "mandant": "le PROMETTANT"
+    },
+    "honoraires": 8000,
+    "a_charge_de": "le PROMETTANT",
+    "inclus_dans_prix": true
+  },
+
+  "financement": {
+    "mode": "mixte",
+    "fonds_personnels": 45000,
+    "fonds_empruntes": 249797
+  },
+
+  "condition_suspensive_pret": {
+    "existe": true,
+    "montant_maximal": 249797,
+    "duree_maximale_annees": 25,
+    "taux_maximal": 3.4,
+    "date_limite": "2025-10-06",
+    "nombre_refus_requis": 2
+  },
+
+  "origine_propriete": [
+    {
+      "lots_concernes": ["14", "29"],
+      "origine_immediate": {
+        "type": "acquisition",
+        "notaire": "Maître MARTIN, notaire à TASSIN",
+        "date": "7 juin 2021",
+        "publication": {
+          "service": "LYON 5",
+          "date": "22 juin 2021",
+          "volume": "2021P",
+          "numero": "4488"
+        }
+      }
+    },
+    {
+      "lots_concernes": ["48"],
+      "origine_immediate": {
+        "type": "acquisition",
+        "notaire": "Maître DUPONT, notaire à LYON",
+        "date": "28 juillet 2025",
+        "publication": {
+          "service": "LYON 1",
+          "date": "18 août 2025",
+          "volume": "2025P",
+          "numero": "20788"
+        }
+      }
+    }
+  ],
+
+  "travaux_recents": {
+    "existe": true,
+    "liste": [
+      {
+        "description": "Rénovation de la salle de bains et pose de carrelage dans l'ensemble de l'appartement (sauf la salle de bains et les chambres)",
+        "entreprise": "AB Carrelage",
+        "adresse_entreprise": "22 rue clos Suiphon - 69003 LYON",
+        "date_facture": "11 juin 2021",
+        "assurance_decennale": false
+      },
+      {
+        "description": "Pose de la cuisine",
+        "entreprise": "CUISINELLA CRAPONNE",
+        "adresse_entreprise": "15 Avenue Edouard Millaud - 69290 CRAPONNE",
+        "date_facture": "26 août 2021",
+        "assurance_decennale": false
+      },
+      {
+        "description": "Pose d'un volet roulant et d'une porte blindée",
+        "entreprise": "K PAR K",
+        "adresse_entreprise": "chemin de la mouche - 69230 SAINT GENIS LAVAL",
+        "date_facture": "19 juillet 2024",
+        "assurance_decennale": true
+      },
+      {
+        "description": "Réfection de l'électricité",
+        "entreprise": "ADI BRUNO ELEC",
+        "adresse_entreprise": "36 rue Louise Michel - 69200 VENISSIEUX",
+        "date_facture": "21 juillet 2021",
+        "assurance_decennale": false
+      }
+    ],
+    "assurance_dommages_ouvrage": false
+  },
+
+  "diagnostics": {
+    "diagnostiqueur": {
+      "nom": "ACHIN DIAG EXPERT",
+      "adresse": "147 Chemin de la crouze-Le Haut Marjon - 69510 Soucieu en Jarrest"
+    },
+    "plomb": {
+      "requis": false
+    },
+    "amiante_parties_privatives": {
+      "requis": true,
+      "date": "29 mars 2015",
+      "diagnostiqueur": "ARLIANE LYON NORD - 203 montée de Choulans - 69005 LYON",
+      "resultat": "Cet état ne révèle pas la présence d'amiante dans les matériaux et produits des listes A ou B"
+    },
+    "amiante_parties_communes": {
+      "date": "15 mars 2016",
+      "diagnostiqueur": "AC ENVIRONNEMENT - 64 rue Clément Ader - 42153 RIORGES",
+      "resultat": "Dans le cadre de la mission décrite en tête de rapport, il a été repéré des matériaux et produits contenant de l'amiante"
+    },
+    "termites": {
+      "zone_concernee": false
+    },
+    "merules": {
+      "zone_concernee": false
+    },
+    "gaz": {
+      "requis": false
+    },
+    "electricite": {
+      "requis": true,
+      "date": "22 mai 2025",
+      "diagnostiqueur": "ACHIN DIAG EXPERT - 147 Chemin de la crouze-Le Haut Marjon - 69510 Soucieu en Jarrest",
+      "resultat": "L'installation intérieure d'électricité comporte une ou des anomalies"
+    },
+    "dpe": {
+      "date": "23 mai 2025",
+      "diagnostiqueur": "ACHIN DIAG EXPERT - 147 chemin de la Crouze- le haut Marjon - 69510 Soucieu en Jarrest",
+      "numero_ademe": "2569E1706974R",
+      "consommation_energie": 174,
+      "classe_energie": "D",
+      "emission_ges": 25,
+      "classe_ges": "C"
+    },
+    "etat_risques": {
+      "date": "22 mai 2025",
+      "sinistres_indemnises": false
+    },
+    "radon": {
+      "zone": 1,
+      "zone_libelle": "faible"
+    }
+  },
+
+  "urbanisme": {
+    "note_urbanisme": {
+      "date": "3 avril 2025",
+      "droit_preemption": "Droit de préemption urbain simple",
+      "observations": [
+        "Que le terrain est situé dans le champ d'application territorial du Droit de préemption urbain simple.",
+        "Que le BIEN est situé dans un périmètre d'étude de la ligne de Tramway Expresse de l'Ouest Lyonnais.",
+        "Que le BIEN est situé dans un périmètre de classement des infrastructures de transports terrestres bruyantes."
+      ]
+    },
+    "note_voirie": {
+      "date": "3 avril 2025",
+      "resultat": "Il résulte de cette note que « l'emprise foncière n'est concernée par aucun emplacement réserve de voirie ou emplacement réservé aux cheminements piétons ou cyclistes »."
+    },
+    "certificat_non_peril": {
+      "date": "3 avril 2025",
+      "resultat": "aucune procédure de péril et de sécurité relevant des pouvoirs de police spéciale du Président de la Métropole de Lyon n'a été ouverte depuis le 1er janvier 2015"
+    }
+  },
+
+  "fiscalite": {
+    "plus_value": {
+      "exoneration": true,
+      "motif_exoneration": "residence_principale"
+    },
+    "primo_accedant": true
+  },
+
+  "faculte_substitution": false,
+
+  "provision_frais": 15000,
+
+  "publication": {
+    "demandee": false,
+    "service_publicite_fonciere": "LYON 1"
+  }
+}

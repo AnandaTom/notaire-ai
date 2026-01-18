@@ -1,0 +1,732 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Catalogue des Sections - Actes Notariaux",
+  "description": "Catalogue de toutes les sections utilisables dans les actes notariaux de vente et promesse",
+  "metadata": {
+    "version": "1.0.0",
+    "date_creation": "2025-01-17",
+    "types_actes": ["vente_lots_copropriete", "promesse_vente_lots_copropriete"]
+  },
+  "sections": {
+    "entete": {
+      "id": "entete",
+      "nom": "En-tête de l'acte",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 1,
+      "description": "Date, numéro répertoire, identification notaire",
+      "variables_requises": ["acte.date", "acte.notaire", "acte.numero_repertoire"]
+    },
+
+    "identification_parties": {
+      "id": "identification_parties",
+      "nom": "Identification des parties",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 2,
+      "description": "Identité complète vendeur(s) et acquéreur(s)/bénéficiaire(s)",
+      "sous_sections": [
+        "identification_vendeur",
+        "identification_acquereur"
+      ],
+      "variables_requises": ["vendeurs", "acquereurs"]
+    },
+
+    "declarations_capacite": {
+      "id": "declarations_capacite",
+      "nom": "Déclarations sur la capacité",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 3,
+      "description": "Capacité juridique, absence de tutelle/curatelle",
+      "variables_requises": []
+    },
+
+    "terminologie": {
+      "id": "terminologie",
+      "nom": "Terminologie",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 4,
+      "description": "Définition des termes VENDEUR, ACQUEREUR, BIEN, ENSEMBLE IMMOBILIER",
+      "variables_requises": []
+    },
+
+    "designation_bien": {
+      "id": "designation_bien",
+      "nom": "Désignation du bien",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 5,
+      "description": "Adresse, description, désignation cadastrale",
+      "sous_sections": [
+        "designation_ensemble_immobilier",
+        "designation_cadastrale",
+        "lots_copropriete"
+      ],
+      "variables_requises": ["bien.adresse", "bien.cadastre", "bien.lots"]
+    },
+
+    "lots_copropriete": {
+      "id": "lots_copropriete",
+      "nom": "Lots de copropriété",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 6,
+      "description": "Numéros de lots, description, tantièmes",
+      "dependances": ["designation_bien"],
+      "variables_requises": ["bien.lots"]
+    },
+
+    "reglement_copropriete": {
+      "id": "reglement_copropriete",
+      "nom": "État descriptif de division et règlement de copropriété",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 7,
+      "description": "Références du règlement de copropriété et modificatifs",
+      "variables_requises": ["copropriete.reglement"]
+    },
+
+    "meubles_mobilier": {
+      "id": "meubles_mobilier",
+      "nom": "Meubles et objets mobiliers",
+      "categorie": "conditionnelle",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 8,
+      "condition": "meubles.inclus == true",
+      "description": "Liste des meubles inclus dans la vente",
+      "variables_requises": ["meubles.liste", "meubles.valeur"]
+    },
+
+    "usage_bien": {
+      "id": "usage_bien",
+      "nom": "Usage du bien",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 9,
+      "description": "Usage actuel et futur du bien",
+      "variables_requises": ["bien.usage_actuel", "bien.usage_futur"]
+    },
+
+    "equipements": {
+      "id": "equipements",
+      "nom": "Équipements du bien",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 10,
+      "description": "Déclarations sur les équipements (détecteur fumée, chauffage, etc.)",
+      "variables_requises": ["equipements"]
+    },
+
+    "prix_modalites": {
+      "id": "prix_modalites",
+      "nom": "Prix et modalités de paiement",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 11,
+      "description": "Prix de vente, conditions de paiement",
+      "sous_sections": ["prix", "paiement"],
+      "variables_requises": ["prix.montant"]
+    },
+
+    "financement": {
+      "id": "financement",
+      "nom": "Financement de l'opération",
+      "categorie": "conditionnelle",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 12,
+      "condition": "paiement.prets.length > 0",
+      "description": "Détail des prêts et apports personnels",
+      "variables_requises": ["paiement.prets", "financement"]
+    },
+
+    "condition_suspensive_pret": {
+      "id": "condition_suspensive_pret",
+      "nom": "Condition suspensive d'obtention de prêt",
+      "categorie": "conditionnelle",
+      "applicable_a": ["promesse"],
+      "ordre": 13,
+      "condition": "paiement.prets.length > 0",
+      "description": "Clause suspensive liée à l'obtention du prêt",
+      "variables_requises": ["paiement.prets"],
+      "clause_standard": true
+    },
+
+    "hypotheque_legale_preteur": {
+      "id": "hypotheque_legale_preteur",
+      "nom": "Hypothèque légale spéciale du prêteur de deniers",
+      "categorie": "conditionnelle",
+      "applicable_a": ["vente"],
+      "ordre": 14,
+      "condition": "paiement.prets.length > 0 && paiement.prets[0].type_garantie == 'hypotheque_legale_preteur'",
+      "description": "Constitution de l'hypothèque légale du prêteur",
+      "variables_requises": ["paiement.prets"]
+    },
+
+    "effets_relatifs": {
+      "id": "effets_relatifs",
+      "nom": "Effets relatifs - Origine de propriété",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 15,
+      "description": "Origine de propriété immédiate et antérieure",
+      "variables_requises": ["origine_propriete"]
+    },
+
+    "garanties": {
+      "id": "garanties",
+      "nom": "Garanties",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 16,
+      "description": "Garantie d'éviction, jouissance paisible, situation hypothécaire",
+      "sous_sections": [
+        "garantie_eviction",
+        "garantie_jouissance",
+        "garantie_hypothecaire"
+      ],
+      "variables_requises": ["garanties_hypothecaires"]
+    },
+
+    "servitudes": {
+      "id": "servitudes",
+      "nom": "Servitudes",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 17,
+      "description": "Servitudes actives et passives",
+      "variables_requises": []
+    },
+
+    "etat_bien": {
+      "id": "etat_bien",
+      "nom": "État du bien",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 18,
+      "description": "Occupation, location, baux en cours",
+      "variables_requises": []
+    },
+
+    "impots_taxes": {
+      "id": "impots_taxes",
+      "nom": "Impôts et taxes",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 19,
+      "description": "Taxe foncière, contributions, répartition",
+      "variables_requises": ["fiscalite.centre_impots_vendeur"]
+    },
+
+    "urbanisme": {
+      "id": "urbanisme",
+      "nom": "Urbanisme",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 20,
+      "description": "Note de renseignements d'urbanisme, droit de préemption",
+      "sous_sections": [
+        "note_urbanisme",
+        "droit_preemption",
+        "aucune_construction_recente"
+      ],
+      "variables_requises": ["urbanisme"]
+    },
+
+    "travaux_vendeur": {
+      "id": "travaux_vendeur",
+      "nom": "Travaux réalisés par le vendeur",
+      "categorie": "conditionnelle",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 21,
+      "condition": "travaux.travaux_realises.length > 0",
+      "description": "Travaux effectués depuis moins de 10 ans",
+      "variables_requises": ["travaux"]
+    },
+
+    "assurance_dommages_ouvrage": {
+      "id": "assurance_dommages_ouvrage",
+      "nom": "Assurance dommages ouvrage",
+      "categorie": "conditionnelle",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 22,
+      "condition": "travaux.travaux_realises.length > 0",
+      "description": "Existence ou absence d'assurance dommages ouvrage",
+      "dependances": ["travaux_vendeur"],
+      "variables_requises": ["travaux.assurance_dommages_ouvrage"]
+    },
+
+    "diagnostics_techniques": {
+      "id": "diagnostics_techniques",
+      "nom": "Diagnostics techniques",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 23,
+      "description": "Plomb, amiante, termites, gaz, électricité, DPE",
+      "sous_sections": [
+        "diagnostic_plomb",
+        "diagnostic_amiante",
+        "diagnostic_termites",
+        "diagnostic_merules",
+        "diagnostic_gaz",
+        "diagnostic_electricite",
+        "diagnostic_dpe",
+        "carnet_information_logement",
+        "audit_energetique",
+        "zone_bruit",
+        "radon"
+      ],
+      "variables_requises": ["diagnostics"]
+    },
+
+    "diagnostics_environnementaux": {
+      "id": "diagnostics_environnementaux",
+      "nom": "Diagnostics environnementaux",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 24,
+      "description": "Assainissement, état des risques",
+      "sous_sections": [
+        "assainissement",
+        "etat_risques"
+      ],
+      "variables_requises": ["diagnostics.etat_risques"]
+    },
+
+    "situation_environnementale": {
+      "id": "situation_environnementale",
+      "nom": "Situation environnementale",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 25,
+      "description": "Consultation bases BASIAS, BASOL, Géorisques",
+      "variables_requises": []
+    },
+
+    "reglementations_copropriete": {
+      "id": "reglementations_copropriete",
+      "nom": "Réglementations spécifiques à la copropriété",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 26,
+      "description": "Certificat article 20 II, immatriculation, carnet entretien",
+      "sous_sections": [
+        "certificat_article_20",
+        "immatriculation_syndicat",
+        "carnet_entretien",
+        "diagnostic_technique_global",
+        "plan_pluriannuel_travaux",
+        "fiche_synthetique",
+        "emprunt_collectif",
+        "fonds_travaux",
+        "garantie_superficie"
+      ],
+      "variables_requises": ["copropriete"]
+    },
+
+    "statut_copropriete": {
+      "id": "statut_copropriete",
+      "nom": "Statut de la copropriété",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 27,
+      "description": "Règlement, syndic, état daté, répartition charges",
+      "sous_sections": [
+        "reglement_copropriete_engagement",
+        "syndic_immeuble",
+        "etat_date",
+        "repartition_charges",
+        "convention_charges_travaux",
+        "convention_procedures",
+        "travaux_urgents",
+        "reglement_definitif_charges"
+      ],
+      "variables_requises": ["copropriete.syndic"]
+    },
+
+    "delai_promesse": {
+      "id": "delai_promesse",
+      "nom": "Délai de la promesse",
+      "categorie": "obligatoire",
+      "applicable_a": ["promesse"],
+      "ordre": 28,
+      "description": "Durée de validité de la promesse",
+      "variables_requises": ["promesse.date_limite"]
+    },
+
+    "realisation_promesse": {
+      "id": "realisation_promesse",
+      "nom": "Réalisation de la promesse",
+      "categorie": "obligatoire",
+      "applicable_a": ["promesse"],
+      "ordre": 29,
+      "description": "Conditions de levée d'option et réitération",
+      "variables_requises": []
+    },
+
+    "indemnite_immobilisation": {
+      "id": "indemnite_immobilisation",
+      "nom": "Indemnité d'immobilisation",
+      "categorie": "obligatoire",
+      "applicable_a": ["promesse"],
+      "ordre": 30,
+      "description": "Montant et conditions de l'indemnité",
+      "variables_requises": ["promesse.indemnite_immobilisation"]
+    },
+
+    "conditions_suspensives": {
+      "id": "conditions_suspensives",
+      "nom": "Conditions suspensives",
+      "categorie": "obligatoire",
+      "applicable_a": ["promesse"],
+      "ordre": 31,
+      "description": "Liste des conditions suspensives",
+      "sous_sections": [
+        "condition_urbanisme",
+        "condition_droit_preemption",
+        "condition_pret",
+        "condition_hypotheque"
+      ],
+      "variables_requises": []
+    },
+
+    "clause_penale": {
+      "id": "clause_penale",
+      "nom": "Clause pénale",
+      "categorie": "optionnelle",
+      "applicable_a": ["promesse"],
+      "ordre": 32,
+      "description": "Clause pénale en cas de non-exécution",
+      "variables_requises": []
+    },
+
+    "propriete_jouissance": {
+      "id": "propriete_jouissance",
+      "nom": "Propriété et jouissance",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente"],
+      "ordre": 33,
+      "description": "Date de transfert de propriété et d'entrée en jouissance",
+      "variables_requises": ["jouissance"]
+    },
+
+    "plus_values": {
+      "id": "plus_values",
+      "nom": "Plus-values",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 34,
+      "description": "Régime fiscal des plus-values",
+      "variables_requises": ["fiscalite.plus_value"]
+    },
+
+    "negociation": {
+      "id": "negociation",
+      "nom": "Négociation",
+      "categorie": "conditionnelle",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 35,
+      "condition": "negociation.agent != null",
+      "description": "Agent immobilier, mandat, honoraires",
+      "variables_requises": ["negociation"]
+    },
+
+    "avant_contrat_reference": {
+      "id": "avant_contrat_reference",
+      "nom": "Conventions antérieures",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente"],
+      "ordre": 36,
+      "description": "Référence à l'avant-contrat",
+      "variables_requises": ["avant_contrat"]
+    },
+
+    "faculte_retractation": {
+      "id": "faculte_retractation",
+      "nom": "Faculté de rétractation",
+      "categorie": "obligatoire",
+      "applicable_a": ["promesse"],
+      "ordre": 37,
+      "description": "Délai de rétractation SRU",
+      "variables_requises": []
+    },
+
+    "dispositions_transitoires": {
+      "id": "dispositions_transitoires",
+      "nom": "Dispositions transitoires",
+      "categorie": "obligatoire",
+      "applicable_a": ["promesse"],
+      "ordre": 38,
+      "description": "Obligations de garde, sinistre, reprise engagement",
+      "sous_sections": [
+        "obligation_garde",
+        "elements_equipement",
+        "entretien_reparation",
+        "sinistre_promesse",
+        "conventions_particulieres",
+        "reprise_engagement_ayants_droit",
+        "condition_survie"
+      ],
+      "variables_requises": []
+    },
+
+    "modalites_delivrance_copie": {
+      "id": "modalites_delivrance_copie",
+      "nom": "Modalités de délivrance de la copie authentique",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente"],
+      "ordre": 39,
+      "description": "Remise de copie authentique",
+      "variables_requises": []
+    },
+
+    "devoir_information": {
+      "id": "devoir_information",
+      "nom": "Devoir d'information réciproque",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 40,
+      "description": "Obligation d'information art. 1112-1 Code civil",
+      "variables_requises": []
+    },
+
+    "renonciation_imprevision": {
+      "id": "renonciation_imprevision",
+      "nom": "Renonciation à l'imprévision",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 41,
+      "description": "Renonciation à l'article 1195 Code civil",
+      "variables_requises": []
+    },
+
+    "mediation": {
+      "id": "mediation",
+      "nom": "Médiation",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 42,
+      "description": "Information sur la médiation notariale",
+      "variables_requises": []
+    },
+
+    "election_domicile": {
+      "id": "election_domicile",
+      "nom": "Élection de domicile",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 43,
+      "description": "Domicile élu pour l'exécution des présentes",
+      "variables_requises": []
+    },
+
+    "pouvoirs_publicite_fonciere": {
+      "id": "pouvoirs_publicite_fonciere",
+      "nom": "Pouvoirs - Publicité foncière",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 44,
+      "description": "Pouvoirs pour formalités de publication",
+      "variables_requises": []
+    },
+
+    "affirmation_sincerite": {
+      "id": "affirmation_sincerite",
+      "nom": "Affirmation de sincérité",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 45,
+      "description": "Déclaration sur l'intégralité du prix",
+      "variables_requises": []
+    },
+
+    "rgpd": {
+      "id": "rgpd",
+      "nom": "Protection des données personnelles",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 46,
+      "description": "Mention RGPD",
+      "variables_requises": []
+    },
+
+    "certification_identite": {
+      "id": "certification_identite",
+      "nom": "Certification d'identité",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 47,
+      "description": "Certification par le notaire",
+      "variables_requises": []
+    },
+
+    "formalisme_annexes": {
+      "id": "formalisme_annexes",
+      "nom": "Formalisme lié aux annexes",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 48,
+      "description": "Valeur des annexes",
+      "variables_requises": []
+    },
+
+    "signature": {
+      "id": "signature",
+      "nom": "Dont acte et signatures",
+      "categorie": "obligatoire",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 49,
+      "description": "Formule de clôture et signatures",
+      "variables_requises": []
+    }
+  },
+
+  "annexes": {
+    "liste_standard": [
+      {
+        "numero": 1,
+        "titre": "Copies des pièces d'identité",
+        "obligatoire": true
+      },
+      {
+        "numero": 2,
+        "titre": "Pièces relatives à la capacité",
+        "obligatoire": false,
+        "condition": "personnes_protegees"
+      },
+      {
+        "numero": 3,
+        "titre": "Avis de situation au répertoire SIRENE",
+        "obligatoire": true
+      },
+      {
+        "numero": 4,
+        "titre": "Offre de prêt acceptée",
+        "obligatoire": false,
+        "condition": "paiement.prets.length > 0"
+      },
+      {
+        "numero": 5,
+        "titre": "Note de renseignements d'urbanisme",
+        "obligatoire": true
+      },
+      {
+        "numero": 6,
+        "titre": "Procès-verbal de bornage",
+        "obligatoire": false,
+        "condition": "bien.type == 'terrain'"
+      },
+      {
+        "numero": 7,
+        "titre": "Courriels de demande d'attestation décennale",
+        "obligatoire": false,
+        "condition": "travaux.travaux_realises.length > 0"
+      },
+      {
+        "numero": 8,
+        "titre": "Factures et décennales",
+        "obligatoire": false,
+        "condition": "travaux.travaux_realises.length > 0"
+      },
+      {
+        "numero": 9,
+        "titre": "Diagnostic amiante parties privatives",
+        "obligatoire": true
+      },
+      {
+        "numero": 10,
+        "titre": "Diagnostic amiante parties communes",
+        "obligatoire": true
+      },
+      {
+        "numero": 11,
+        "titre": "Diagnostic électricité",
+        "obligatoire": true
+      },
+      {
+        "numero": 12,
+        "titre": "Diagnostic de performance énergétique",
+        "obligatoire": true
+      },
+      {
+        "numero": 13,
+        "titre": "État des risques",
+        "obligatoire": true
+      },
+      {
+        "numero": 14,
+        "titre": "Données environnementales",
+        "obligatoire": true
+      },
+      {
+        "numero": 15,
+        "titre": "Certificat article 20 II",
+        "obligatoire": true
+      },
+      {
+        "numero": 16,
+        "titre": "Attestation d'immatriculation",
+        "obligatoire": true
+      },
+      {
+        "numero": 17,
+        "titre": "Fiche synthétique",
+        "obligatoire": true
+      },
+      {
+        "numero": 18,
+        "titre": "Certificat de superficie",
+        "obligatoire": true
+      },
+      {
+        "numero": 19,
+        "titre": "État daté",
+        "obligatoire": true
+      },
+      {
+        "numero": 20,
+        "titre": "Procès-verbaux des assemblées générales",
+        "obligatoire": true
+      }
+    ]
+  },
+
+  "regles_dependances": [
+    {
+      "si": "type_acte == 'promesse'",
+      "alors": ["delai_promesse", "realisation_promesse", "indemnite_immobilisation", "conditions_suspensives", "faculte_retractation", "dispositions_transitoires"],
+      "action": "inclure"
+    },
+    {
+      "si": "type_acte == 'vente'",
+      "alors": ["propriete_jouissance", "modalites_delivrance_copie", "avant_contrat_reference", "hypotheque_legale_preteur"],
+      "action": "inclure"
+    },
+    {
+      "si": "paiement.prets.length > 0",
+      "alors": ["financement", "condition_suspensive_pret"],
+      "action": "inclure"
+    },
+    {
+      "si": "meubles.inclus == true",
+      "alors": ["meubles_mobilier"],
+      "action": "inclure"
+    },
+    {
+      "si": "travaux.travaux_realises.length > 0",
+      "alors": ["travaux_vendeur", "assurance_dommages_ouvrage"],
+      "action": "inclure"
+    },
+    {
+      "si": "copropriete.emprunt_collectif.existe == true",
+      "alors": ["emprunt_collectif"],
+      "action": "inclure"
+    },
+    {
+      "si": "negociation.agent != null",
+      "alors": ["negociation"],
+      "action": "inclure"
+    }
+  ]
+}

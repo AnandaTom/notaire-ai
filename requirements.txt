@@ -1,0 +1,24 @@
+# Requirements pour l'Agent de Creation d'Actes Notariaux
+# =========================================================
+
+# Moteur de templates
+jinja2>=3.1.0
+
+# Conversion Markdown
+markdown>=3.5.0
+
+# Validation de schemas JSON
+jsonschema>=4.20.0
+
+# Export PDF (choisir l'une des deux options)
+# Option 1: WeasyPrint (recommande, necessite GTK sur Windows)
+weasyprint>=60.0
+
+# Option 2: pdfkit (alternative, necessite wkhtmltopdf)
+# pdfkit>=1.0.0
+
+# Export DOCX (Word)
+python-docx>=1.1.0
+
+# Utilitaires
+python-dateutil>=2.8.0

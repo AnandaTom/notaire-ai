@@ -1,0 +1,414 @@
+{
+  "acte": {
+    "numero_repertoire": "100546103",
+    "reference_interne": "CDI/ALG/",
+    "date": {
+      "jour": 20,
+      "mois": 11,
+      "annee": 2025
+    },
+    "notaire": {
+      "civilite": "Maître",
+      "nom": "DIAZ",
+      "prenom": "Charlotte",
+      "societe": "des CEDRES",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "departement": "Rhône",
+      "code_postal": "69160",
+      "adresse": "93 avenue du 11 Novembre 1918",
+      "crpcen": "69182"
+    },
+    "notaire_assistant": {
+      "civilite": "Maître",
+      "nom": "MARTIN",
+      "prenom": "Pierre",
+      "ville": "LYON"
+    }
+  },
+
+  "vendeurs": [
+    {
+      "civilite": "Madame",
+      "nom": "DURAND",
+      "prenoms": "Marie Jeanne",
+      "profession": "Retraitée",
+      "adresse": "170 rue Joliot Curie",
+      "code_postal": "69160",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "date_naissance": "1965-03-15",
+      "lieu_naissance": "LYON 3ème",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      }
+    },
+    {
+      "civilite": "Monsieur",
+      "nom": "DURAND",
+      "prenoms": "Pierre Jean",
+      "profession": "Cadre",
+      "adresse": "170 rue Joliot Curie",
+      "code_postal": "69160",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "date_naissance": "1963-07-22",
+      "lieu_naissance": "VILLEURBANNE",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      }
+    }
+  ],
+
+  "acquereurs": [
+    {
+      "civilite": "Monsieur",
+      "nom": "MARTIN",
+      "prenoms": "Jean Philippe",
+      "profession": "Ingénieur",
+      "adresse": "25 rue de la République",
+      "code_postal": "69002",
+      "ville": "LYON",
+      "date_naissance": "1990-05-10",
+      "lieu_naissance": "SAINT-ETIENNE",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "pacse",
+        "pacs": {
+          "date": "2020-06-15",
+          "lieu_enregistrement": "Mairie de LYON 2ème",
+          "regime": "separation_biens",
+          "regime_libelle": "la séparation de biens"
+        },
+        "conjoint": {
+          "civilite": "Madame",
+          "prenoms": "Sophie Anne",
+          "nom": "BERNARD"
+        }
+      }
+    },
+    {
+      "civilite": "Madame",
+      "nom": "BERNARD",
+      "prenoms": "Sophie Anne",
+      "profession": "Médecin",
+      "adresse": "25 rue de la République",
+      "code_postal": "69002",
+      "ville": "LYON",
+      "date_naissance": "1992-09-03",
+      "lieu_naissance": "LYON 6ème",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "pacse",
+        "pacs": {
+          "date": "2020-06-15",
+          "lieu_enregistrement": "Mairie de LYON 2ème",
+          "regime": "separation_biens",
+          "regime_libelle": "la séparation de biens"
+        },
+        "conjoint": {
+          "civilite": "Monsieur",
+          "prenoms": "Jean Philippe",
+          "nom": "MARTIN"
+        }
+      }
+    }
+  ],
+
+  "quotites_vendues": [
+    {
+      "personne_index": 0,
+      "quotite": "la moitié",
+      "pourcentage": 50,
+      "type_propriete": "pleine_propriete"
+    },
+    {
+      "personne_index": 1,
+      "quotite": "la moitié",
+      "pourcentage": 50,
+      "type_propriete": "pleine_propriete"
+    }
+  ],
+
+  "quotites_acquises": [
+    {
+      "personne_index": 0,
+      "quotite": "la moitié",
+      "pourcentage": 50,
+      "type_propriete": "pleine_propriete"
+    },
+    {
+      "personne_index": 1,
+      "quotite": "la moitié",
+      "pourcentage": 50,
+      "type_propriete": "pleine_propriete"
+    }
+  ],
+
+  "bien": {
+    "adresse": {
+      "numero": "170",
+      "voie": "Rue Joliot Curie",
+      "code_postal": "69160",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "departement": "RHÔNE"
+    },
+    "nom_residence": "RESIDENCE JOLIOT CURIE",
+    "description_ensemble": "Cet immeuble dénommé \"RESIDENCE JOLIOT CURIE\" est composé d'un seul bâtiment, exposé Nord-Sud, divisé en deux travées légèrement décalées d'est en ouest, et desservi par deux entrées et par deux escaliers dénommés \"Entrée et Escalier A\" au sud, et \"Entrée et Escalier B\" au nord.",
+    "cadastre": [
+      {
+        "section": "AH",
+        "numero": "211",
+        "lieudit": "170 RUE JOLIOT CURIE",
+        "surface": "00 ha 28 a 21 ca"
+      }
+    ],
+    "lots": [
+      {
+        "numero": 14,
+        "type": "appartement",
+        "type_appartement": "T3",
+        "description": "une salle de séjour avec coin repas, deux chambres avec petits balcons, cuisine avec loggia, séchoir, WC, salle de bains, hall, dégagement, placard et penderie",
+        "etage": "troisième étage",
+        "escalier": "A",
+        "orientation": "côté Nord",
+        "tantiemes": {
+          "valeur": 44,
+          "base": 1000,
+          "base_unite": "èmes",
+          "type": "parties communes générales"
+        }
+      },
+      {
+        "numero": 29,
+        "type": "cave",
+        "description": "une cave portant le numéro 9",
+        "etage": "sous-sol",
+        "escalier": "A",
+        "numero_cave": "9",
+        "tantiemes": {
+          "valeur": 1,
+          "base": 1000,
+          "base_unite": "ème",
+          "type": "parties communes générales"
+        }
+      },
+      {
+        "numero": 48,
+        "type": "parking",
+        "description": "un emplacement de parking privé",
+        "numero_parking": "8",
+        "tantiemes": {
+          "valeur": 1,
+          "base": 1000,
+          "base_unite": "ème",
+          "type": "parties communes générales"
+        }
+      }
+    ],
+    "superficie_carrez": {
+      "superficie_m2": 67.76,
+      "lot_concerne": "quatorze (14)",
+      "date_mesurage": "2025-02-12",
+      "diagnostiqueur": "ACHIN DIAG EXPERT"
+    },
+    "usage_actuel": "habitation",
+    "usage_futur": "inchange"
+  },
+
+  "copropriete": {
+    "reglement": {
+      "notaire_origine": "Maître MARMEY, notaire à MEYZIEU",
+      "date_origine": "18 septembre 1969",
+      "publication": "LYON 5, le 11 octobre 1969 volume 4892 numéro 5",
+      "modificatifs": [
+        {
+          "notaire": "Maître DOUCET-BON, notaire à LYON",
+          "date": "2 novembre 2009",
+          "publication": "LYON 5 le 14 décembre 2009, volume 2009P, numéro 6060"
+        }
+      ]
+    },
+    "syndic": {
+      "nom": "FONCIA SAINT-LOUIS",
+      "adresse": "264 Rue Garibaldi",
+      "ville": "LYON 3ÈME ARRONDISSEMENT",
+      "code_postal": "69003"
+    },
+    "immatriculation": "AD9-775-875",
+    "fonds_travaux": {
+      "existe": true,
+      "montant_quote_part": 1500,
+      "derniere_cotisation": 300
+    },
+    "emprunt_collectif": {
+      "existe": true,
+      "solde": 9956.86,
+      "date_solde": "2025-11-21"
+    }
+  },
+
+  "meubles": {
+    "inclus": true,
+    "liste": [
+      "Four",
+      "Lave-vaisselle",
+      "Hotte",
+      "Plaque de cuisson",
+      "Meubles hauts et bas de cuisine"
+    ],
+    "valeur": null
+  },
+
+  "prix": {
+    "montant": 245000,
+    "devise": "EUR"
+  },
+
+  "paiement": {
+    "mode": "mixte",
+    "fonds_personnels": 36,
+    "prets": [
+      {
+        "etablissement": {
+          "nom": "CAISSE REGIONALE DE CREDIT AGRICOLE MUTUEL LOIRE HAUTE-LOIRE",
+          "forme_juridique": "Société Coopérative à capital variable",
+          "siege": "SAINT-ETIENNE (42000), 94 rue Bergson",
+          "siren": "380386854",
+          "rcs": "SAINT-ETIENNE"
+        },
+        "reference": "TOUT HABITAT FACILIMMO n° 00003784487",
+        "montant": 220564,
+        "duree_mois": 300,
+        "taux": 3.09,
+        "date_premiere_echeance": "15 décembre 2025",
+        "date_derniere_echeance": "15 novembre 2053",
+        "date_peremption_inscription": "15 novembre 2054",
+        "type_garantie": "hypotheque_legale_preteur",
+        "acte_pret": {
+          "notaire": "Maître Claude-Henri GOYET, notaire à LA TALAUDIERE",
+          "date": "13 novembre 2025"
+        }
+      },
+      {
+        "etablissement": {
+          "nom": "CAISSE REGIONALE DE CREDIT AGRICOLE MUTUEL LOIRE HAUTE-LOIRE",
+          "forme_juridique": "Société Coopérative à capital variable",
+          "siege": "SAINT-ETIENNE (42000), 94 rue Bergson",
+          "siren": "380386854",
+          "rcs": "SAINT-ETIENNE"
+        },
+        "reference": "TOUT HABITAT FACILIMMO n° 00003784488",
+        "montant": 24400,
+        "duree_mois": 300,
+        "taux": 1.99,
+        "date_premiere_echeance": "15 décembre 2025",
+        "date_derniere_echeance": "15 novembre 2053",
+        "date_peremption_inscription": "15 novembre 2054",
+        "type_garantie": "hypotheque_legale_preteur",
+        "acte_pret": {
+          "notaire": "Maître Claude-Henri GOYET, notaire à LA TALAUDIERE",
+          "date": "13 novembre 2025"
+        }
+      }
+    ]
+  },
+
+  "origine_propriete": [
+    {
+      "lots_concernes": ["48"],
+      "origine_immediate": {
+        "type": "acquisition",
+        "notaire": "Maître DUPONT, notaire à LYON",
+        "date": "28 juillet 2025",
+        "publication": {
+          "service": "LYON 1",
+          "date": "18 août 2025",
+          "volume": "2025P",
+          "numero": "20788"
+        }
+      }
+    },
+    {
+      "lots_concernes": ["14", "29"],
+      "origine_immediate": {
+        "type": "acquisition",
+        "notaire": "Maître MARTIN, notaire à TASSIN",
+        "date": "7 juin 2021",
+        "publication": {
+          "service": "LYON 5",
+          "date": "22 juin 2021",
+          "volume": "2021P",
+          "numero": "4488"
+        }
+      }
+    }
+  ],
+
+  "jouissance": {
+    "date_propriete": "ce jour",
+    "date_jouissance": "14 novembre 2025",
+    "jouissance_anticipee": true,
+    "convention_occupation": {
+      "existe": true,
+      "date": "13 novembre 2025"
+    }
+  },
+
+  "fiscalite": {
+    "plus_value": {
+      "exoneration": true,
+      "motif_exoneration": "residence_principale"
+    },
+    "droits_mutation": {
+      "assiette": 245000,
+      "taux_departemental": 4.50,
+      "taux_communal": 1.20,
+      "primo_accedant": true,
+      "total": 14226
+    },
+    "centre_impots_vendeur": {
+      "nom": "CALUIRE",
+      "adresse": "1 rue CLAUDE BAUDRAND BOITE POSTALE 236 - 69732 CALUIRE"
+    }
+  },
+
+  "diagnostics": {
+    "diagnostiqueur": {
+      "nom": "ACHIN DIAG EXPERT",
+      "adresse": "147 Chemin de la crouze-Le Haut Marjon - 69510 Soucieu en Jarrest"
+    },
+    "dpe": {
+      "date": "23 mai 2025",
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
+      "numero_ademe": "2569E1706974R",
+      "consommation_energie": 174,
+      "classe_energie": "D",
+      "emission_ges": 25,
+      "classe_ges": "C"
+    },
+    "electricite": {
+      "requis": true,
+      "date": "22 mai 2025",
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
+      "resultat": "L'installation intérieure d'électricité comporte une ou des anomalies"
+    },
+    "etat_risques": {
+      "requis": true,
+      "date": "22 mai 2025"
+    }
+  },
+
+  "publication": {
+    "service_publicite_fonciere": "LYON 1"
+  },
+
+  "avant_contrat": {
+    "type": "promesse_unilaterale",
+    "date": "15 octobre 2025",
+    "notaire": "Maître Charlotte DIAZ"
+  }
+}

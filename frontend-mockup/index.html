@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Notarial | Maître Charlotte Diaz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ivory: #fdfcfa;
+            --cream: #f9f7f4;
+            --sand: #f3efe9;
+            --champagne: #e8e2d9;
+            --gold: #c4a35a;
+            --gold-light: #d4bc7c;
+            --gold-dark: #9a7d3a;
+            --charcoal: #2c2c2c;
+            --graphite: #4a4a4a;
+            --slate: #7a7a7a;
+            --navy: #1e3a5f;
+            --navy-light: #2d4a6f;
+            --shadow-soft: 0 2px 20px rgba(0, 0, 0, 0.04);
+            --shadow-medium: 0 4px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(145deg, var(--cream) 0%, var(--sand) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            height: 92vh;
+            max-height: 850px;
+            background: var(--ivory);
+            border-radius: 20px;
+            box-shadow: var(--shadow-medium), 0 0 0 1px rgba(196, 163, 90, 0.08);
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            overflow: hidden;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            background: var(--navy);
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .sidebar-header {
+            padding: 28px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(145deg, var(--gold) 0%, var(--gold-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(196, 163, 90, 0.3);
+        }
+
+        .logo-icon svg {
+            width: 26px;
+            height: 26px;
+            fill: white;
+        }
+
+        .logo-text h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.01em;
+        }
+
+        .logo-text p {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .notaire-info {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 14px 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .notaire-info p {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .notaire-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            padding: 20px 16px;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 0 8px;
+            margin-bottom: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(196, 163, 90, 0.15);
+            color: var(--gold-light);
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+        }
+
+        .nav-item.active svg {
+            opacity: 1;
+        }
+
+        /* Sidebar Footer - Legal */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            z-index: 1;
+        }
+
+        .legal-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .legal-badge svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--gold);
+        }
+
+        .legal-badge-text {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.4;
+        }
+
+        .legal-badge-text strong {
+            color: rgba(255,255,255,0.8);
+            display: block;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            background: var(--ivory);
+        }
+
+        /* Main Header */
+        .main-header {
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--champagne);
+            background: var(--ivory);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--sand);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: var(--slate);
+        }
+
+        .header-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: #7cb87c;
+            border-radius: 50%;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--cream);
+            border: 1px solid var(--champagne);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: var(--graphite);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .header-btn:hover {
+            border-color: var(--gold);
+            background: var(--sand);
+        }
+
+        .header-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .header-btn.primary {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+        }
+
+        .header-btn.primary:hover {
+            background: var(--gold-dark);
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            background: var(--ivory);
+        }
+
+        .chat-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb {
+            background: var(--champagne);
+            border-radius: 3px;
+        }
+
+        /* Messages */
+        .message {
+            display: flex;
+            gap: 14px;
+            max-width: 85%;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .message.assistant .message-avatar {
+            background: var(--sand);
+            border: 1px solid var(--champagne);
+        }
+
+        .message.assistant .message-avatar svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--gold-dark);
+        }
+
+        .message.user .message-avatar {
+            background: var(--gold);
+            color: white;
+        }
+
+        .message-content {
+            padding: 16px 20px;
+            border-radius: 16px;
+        }
+
+        .message.assistant .message-content {
+            background: var(--cream);
+            border: 1px solid var(--champagne);
+            border-bottom-left-radius: 6px;
+        }
+
+        .message.user .message-content {
+            background: var(--charcoal);
+            border-bottom-right-radius: 6px;
+        }
+
+        .message-content p {
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: var(--graphite);
+        }
+
+        .message.user .message-content p {
+            color: white;
+        }
+
+        .message-content .greeting {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 12px;
+        }
+
+        /* Legal Reference */
+        .legal-ref {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(30, 58, 95, 0.06);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: var(--navy);
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        .legal-ref svg {
+            width: 12px;
+            height: 12px;
+            fill: var(--navy);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .quick-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--ivory);
+            border: 1px solid var(--champagne);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.82rem;
+            color: var(--graphite);
+        }
+
+        .quick-action:hover {
+            border-color: var(--gold);
+            background: var(--sand);
+        }
+
+        .quick-action svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--slate);
+        }
+
+        /* Section Tag */
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--sand);
+            color: var(--gold-dark);
+            border-radius: 6px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border: 1px solid var(--champagne);
+        }
+
+        /* Form Preview */
+        .form-preview {
+            background: var(--sand);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-top: 14px;
+            border: 1px solid var(--champagne);
+        }
+
+        .form-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--champagne);
+        }
+
+        .form-preview h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            color: var(--charcoal);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-preview h4 svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--gold-dark);
+        }
+
+        .progress-indicator {
+            font-size: 0.7rem;
+            color: var(--slate);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .progress-bar {
+            width: 60px;
+            height: 4px;
+            background: var(--champagne);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 25%;
+            height: 100%;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+        .form-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--champagne);
+            font-size: 0.78rem;
+        }
+
+        .form-field:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .form-field .label {
+            color: var(--slate);
+        }
+
+        .form-field .value {
+            color: var(--charcoal);
+            font-weight: 500;
+        }
+
+        .form-field .value.pending {
+            color: var(--gold-dark);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .form-field .value.completed {
+            color: #5a8f5a;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px 28px;
+            background: var(--ivory);
+            border-top: 1px solid var(--champagne);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            padding-right: 90px;
+            border: 1px solid var(--champagne);
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            resize: none;
+            min-height: 52px;
+            max-height: 130px;
+            background: var(--cream);
+            color: var(--charcoal);
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: var(--ivory);
+            box-shadow: 0 0 0 3px rgba(196, 163, 90, 0.08);
+        }
+
+        .input-field::placeholder {
+            color: var(--slate);
+            font-weight: 300;
+        }
+
+        .input-actions {
+            position: absolute;
+            right: 12px;
+            bottom: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .input-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            color: var(--slate);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .input-action-btn:hover {
+            background: var(--sand);
+            color: var(--gold-dark);
+        }
+
+        .input-action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .send-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            background: var(--gold);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(196, 163, 90, 0.25);
+        }
+
+        .send-btn:hover {
+            background: var(--gold-dark);
+            transform: translateY(-1px);
+        }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        /* Format Selector in Chat */
+        .format-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .format-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--ivory);
+            border: 2px solid var(--champagne);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .format-option:hover {
+            border-color: var(--gold-light);
+        }
+
+        .format-option.selected {
+            border-color: var(--gold);
+            background: rgba(196, 163, 90, 0.05);
+        }
+
+        .format-option svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .format-option .format-info h5 {
+            font-size: 0.85rem;
+            color: var(--charcoal);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .format-option .format-info p {
+            font-size: 0.7rem;
+            color: var(--slate);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                height: 100vh;
+                max-height: none;
+                border-radius: 0;
+            }
+
+            .main-header {
+                padding: 16px 20px;
+            }
+
+            .chat-area {
+                padding: 18px;
+            }
+
+            .message {
+                max-width: 92%;
+            }
+
+            .input-area {
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>NotaireAI</h1>
+                        <p>Assistant juridique</p>
+                    </div>
+                </div>
+                <div class="notaire-info">
+                    <p>Connecté en tant que</p>
+                    <h3>Me Charlotte Diaz</h3>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Actions</div>
+                    <div class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        Nouvel acte
+                    </div>
+                    <div class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Mes actes
+                    </div>
+                    <div class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        Modèles
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Références</div>
+                    <div class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Code civil
+                    </div>
+                    <div class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        Clauses types
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="legal-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div class="legal-badge-text">
+                        <strong>Conforme RGPD</strong>
+                        Données chiffrées AES-256
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h2>Création d'acte</h2>
+                    <div class="header-badge">
+                        <span class="dot"></span>
+                        Session active
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        Brouillons
+                    </button>
+                    <button class="header-btn primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Exporter
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <!-- Welcome Message -->
+                <div class="message assistant">
+                    <div class="message-avatar">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="message-content">
+                        <p class="greeting">Bonjour Maître Diaz</p>
+                        <p>Je suis votre assistant pour la rédaction d'actes notariaux. Je vous accompagne dans la création d'actes de vente et de promesses de vente conformes aux dispositions légales en vigueur.</p>
+                        <p style="margin-top: 10px;">Comment puis-je vous assister aujourd'hui ?</p>
+
+                        <div class="quick-actions">
+                            <button class="quick-action">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                                Acte de vente
+                            </button>
+                            <button class="quick-action">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                Promesse de vente
+                            </button>
+                            <button class="quick-action">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                Modifier un acte
+                            </button>
+                        </div>
+
+                        <div class="legal-ref">
+                            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Art. 1582 et s. Code civil - Art. L. 271-1 CCH
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Message -->
+                <div class="message user">
+                    <div class="message-avatar">CD</div>
+                    <div class="message-content">
+                        <p>Je souhaite créer un acte de vente pour un appartement T3 situé à Lyon 6ème.</p>
+                    </div>
+                </div>
+
+                <!-- Assistant Response -->
+                <div class="message assistant">
+                    <div class="message-avatar">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="message-content">
+                        <span class="section-tag">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Identification du vendeur
+                        </span>
+                        <p>Très bien. Je vais préparer un acte de vente de lots de copropriété conformément aux articles 1582 et suivants du Code civil.</p>
+                        <p style="margin-top: 10px;">Commençons par l'identification du <strong>vendeur</strong>. Merci de me communiquer :</p>
+                        <ul style="margin: 10px 0 0 20px; color: var(--graphite); font-size: 0.88rem; line-height: 1.8;">
+                            <li>État civil complet (nom, prénoms, profession)</li>
+                            <li>Adresse de domicile</li>
+                            <li>Date et lieu de naissance</li>
+                            <li>Nationalité</li>
+                        </ul>
+
+                        <div class="form-preview">
+                            <div class="form-preview-header">
+                                <h4>
+                                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                    Données de l'acte
+                                </h4>
+                                <div class="progress-indicator">
+                                    <div class="progress-bar"><div class="progress-bar-fill"></div></div>
+                                    25%
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <span class="label">Type d'acte</span>
+                                <span class="value completed">Vente de lots de copropriété</span>
+                            </div>
+                            <div class="form-field">
+                                <span class="label">Bien</span>
+                                <span class="value completed">Appartement T3 - Lyon 6ème</span>
+                            </div>
+                            <div class="form-field">
+                                <span class="label">Vendeur</span>
+                                <span class="value pending">En attente...</span>
+                            </div>
+                            <div class="form-field">
+                                <span class="label">Acquéreur</span>
+                                <span class="value pending">En attente...</span>
+                            </div>
+                        </div>
+
+                        <div class="legal-ref">
+                            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            Décret n°55-22 du 4 janvier 1955 - Publicité foncière
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Response -->
+                <div class="message user">
+                    <div class="message-avatar">CD</div>
+                    <div class="message-content">
+                        <p>M. Jean-Philippe MARTIN, retraité, domicilié 45 rue de la République, 69002 Lyon. Né le 15 mars 1955 à Saint-Étienne (Loire). Nationalité française.</p>
+                    </div>
+                </div>
+
+                <!-- Assistant - Format Choice -->
+                <div class="message assistant">
+                    <div class="message-avatar">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="message-content">
+                        <span class="section-tag">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                            Configuration
+                        </span>
+                        <p>M. Jean-Philippe MARTIN est bien enregistré. Avant de poursuivre, dans quel <strong>format</strong> souhaitez-vous générer l'acte final ?</p>
+
+                        <div class="format-selector">
+                            <div class="format-option selected">
+                                <svg viewBox="0 0 24 24" fill="#e74c3c"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8" fill="none" stroke="#e74c3c" stroke-width="2"/><text x="12" y="16" text-anchor="middle" fill="white" font-size="6" font-weight="bold">PDF</text></svg>
+                                <div class="format-info">
+                                    <h5>PDF</h5>
+                                    <p>Document figé, signature</p>
+                                </div>
+                            </div>
+                            <div class="format-option">
+                                <svg viewBox="0 0 24 24" fill="#2b579a"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8" fill="none" stroke="#2b579a" stroke-width="2"/><text x="12" y="16" text-anchor="middle" fill="white" font-size="5" font-weight="bold">DOCX</text></svg>
+                                <div class="format-info">
+                                    <h5>Word (DOCX)</h5>
+                                    <p>Modifiable, annotations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions" style="margin-top: 12px;">
+                            <button class="quick-action">Célibataire</button>
+                            <button class="quick-action">Marié(e)</button>
+                            <button class="quick-action">Pacsé(e)</button>
+                            <button class="quick-action">Divorcé(e)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea class="input-field" placeholder="Rédigez votre message ou dictez les informations..." rows="1"></textarea>
+                        <div class="input-actions">
+                            <button class="input-action-btn" title="Joindre un document">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            </button>
+                            <button class="input-action-btn" title="Commande vocale">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="send-btn" title="Envoyer">
+                        <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Auto-resize textarea
+        const textarea = document.querySelector('.input-field');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 130) + 'px';
+        });
+
+        // Quick action click
+        document.querySelectorAll('.quick-action').forEach(btn => {
+            btn.addEventListener('click', function() {
+                textarea.value = this.textContent.trim();
+                textarea.focus();
+            });
+        });
+
+        // Format selector
+        document.querySelectorAll('.format-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.format-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Send button
+        const sendBtn = document.querySelector('.send-btn');
+        sendBtn.addEventListener('click', function() {
+            if (textarea.value.trim()) {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                    textarea.value = '';
+                    textarea.style.height = 'auto';
+                }, 150);
+            }
+        });
+
+        // Scroll to bottom
+        const chatArea = document.querySelector('.chat-area');
+        chatArea.scrollTop = chatArea.scrollHeight;
+    </script>
+</body>
+</html>
