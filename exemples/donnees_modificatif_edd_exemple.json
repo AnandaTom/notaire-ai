@@ -1,0 +1,150 @@
+{
+  "acte": {
+    "date": "2026-01-21",
+    "reference": "MOD-2026-1602",
+    "type": "modificatif_edd",
+    "notaire": {
+      "nom": "BERNARD",
+      "prenom": "Jacques",
+      "office": "Étude BERNARD",
+      "adresse": "123 rue des Notaires, 69002 Villeurbanne",
+      "crpcen": "6627"
+    }
+  },
+  "syndicat_demandeur": {
+    "denomination": "Syndicat des copropriétaires du 14 boulevard Jean Jaurès, Bron",
+    "immatriculation": "AA2-958-995",
+    "adresse": "14 boulevard Jean Jaurès, 69005 Bron"
+  },
+  "syndic": {
+    "type": "professionnel",
+    "denomination": "FONCIA Lyon",
+    "adresse": "25 rue de la Part-Dieu, 69003 Lyon",
+    "representant": {
+      "civilite": "Madame",
+      "nom": "ROYER",
+      "prenom": "Anne",
+      "qualite": "Directeur d'agence"
+    },
+    "mandat": {
+      "date_debut": "2025-09-07",
+      "date_fin": "2026-12-01"
+    }
+  },
+  "assemblee_generale": {
+    "date": "2026-01-18",
+    "resolution_numero": 13,
+    "objet": "Réunion des lots n°12 et n°13 en un seul lot",
+    "majorite_requise": "article 25",
+    "vote": {
+      "pour": 770,
+      "contre": 112,
+      "abstention": 20
+    },
+    "certificat_non_recours": {
+      "date": "2026-03-24",
+      "delivre_par": "FONCIA Lyon"
+    }
+  },
+  "immeuble": {
+    "adresse": {
+      "numero": "14",
+      "voie": "boulevard Jean Jaurès",
+      "code_postal": "69005",
+      "commune": "Bron",
+      "departement": "Rhône"
+    },
+    "cadastre": [
+      {
+        "section": "AC",
+        "numero": "411",
+        "lieudit": "",
+        "surface": "4056 m²"
+      }
+    ]
+  },
+  "edd_origine": {
+    "date": "1999-09-18",
+    "notaire": "Maître Marie DUPONT, Notaire à Lyon 3ème",
+    "publication_spf": {
+      "service": "SPF de Lyon 1",
+      "date": "2021-05-16",
+      "volume": "2024P07",
+      "numero": "2144"
+    },
+    "nombre_lots_origine": 10
+  },
+  "historique_modificatifs": [
+    {
+      "date": "2012-08-11",
+      "notaire": "Maître Marie DUPONT",
+      "objet": "Division du lot n°3",
+      "publication_spf": {
+        "service": "SPF de Lyon 1",
+        "date": "2025-08-10",
+        "volume": "2020P11",
+        "numero": "3329"
+      }
+    },
+    {
+      "date": "2018-11-05",
+      "notaire": "Maître Sophie DURAND",
+      "objet": "Division du lot n°3",
+      "publication_spf": {
+        "service": "SPF de Lyon 3",
+        "date": "2023-11-16",
+        "volume": "2023P10",
+        "numero": "8813"
+      }
+    }
+  ],
+  "etat_actuel": {
+    "nombre_lots": 12,
+    "total_tantiemes": 1000
+  },
+  "modifications": [
+    {
+      "type": "suppression_lot",
+      "lot_numero": 5,
+      "description": "Suppression du lot n°5"
+    },
+    {
+      "type": "suppression_lot",
+      "lot_numero": 6,
+      "description": "Suppression du lot n°6"
+    },
+    {
+      "type": "creation_lot",
+      "lot_numero": 13,
+      "description": "Appartement résultant de la réunion des lots n°5 et n°6",
+      "tantiemes": 210
+    }
+  ],
+  "annexes": [
+    {
+      "numero": 1,
+      "titre": "Pouvoir du syndic",
+      "description": "Délégation de l'assemblée générale"
+    },
+    {
+      "numero": 2,
+      "titre": "Procès-verbal de l'assemblée générale",
+      "description": "AG du 18/01/2026"
+    },
+    {
+      "numero": 3,
+      "titre": "Certificat de non-recours",
+      "description": "Attestant l'absence de contestation"
+    },
+    {
+      "numero": 4,
+      "titre": "Plan cadastral",
+      "description": "Extrait cadastral"
+    },
+    {
+      "numero": 5,
+      "titre": "Projet modificatif EDD",
+      "description": "Établi par le géomètre-expert"
+    }
+  ]
+}

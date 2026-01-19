@@ -1,0 +1,318 @@
+{
+  "acte": {
+    "date": "2026-01-24",
+    "reference": "EDD-2026-2084",
+    "type": "edd_reglement_initial",
+    "notaire": {
+      "nom": "DURAND",
+      "prenom": "Sophie",
+      "office": "Office Notarial du Parc",
+      "adresse": "123 rue des Notaires, 69002 Lyon 6ème",
+      "crpcen": "6155"
+    }
+  },
+  "requerant": {
+    "type": "personne_physique",
+    "personne_physique": {
+      "civilite": "Monsieur",
+      "prenom": "Alain",
+      "nom": "LAURENT",
+      "date_naissance": "1995-07-07",
+      "lieu_naissance": "Caluire-et-Cuire (Rhône)",
+      "nationalite": "française",
+      "profession": "Médecin",
+      "adresse": "36 chemin Jean Jaurès, 69002 Meyzieu",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "veuf"
+      }
+    }
+  },
+  "immeuble": {
+    "adresse": {
+      "numero": "109",
+      "voie": "rue Victor Hugo",
+      "code_postal": "69004",
+      "commune": "Villeurbanne",
+      "departement": "Rhône"
+    },
+    "cadastre": [
+      {
+        "section": "AD",
+        "numero": "256",
+        "lieudit": "",
+        "surface": "3341 m²"
+      }
+    ],
+    "description_generale": "Un ensemble immobilier comprenant 1 bâtiment à usage d'habitation et éventuellement de commerce",
+    "batiments": [
+      {
+        "nom": "Bâtiment unique",
+        "usage": "Habitation",
+        "niveaux": [
+          {
+            "niveau": "Sous-sol",
+            "description": "Caves et parkings"
+          },
+          {
+            "niveau": "Rez-de-chaussée",
+            "description": "Hall d'entrée, local poubelles, locaux commerciaux"
+          },
+          {
+            "niveau": "1er étage",
+            "description": "Appartements"
+          },
+          {
+            "niveau": "2ème étage",
+            "description": "Appartements"
+          },
+          {
+            "niveau": "3ème étage",
+            "description": "Appartements"
+          },
+          {
+            "niveau": "4ème étage",
+            "description": "Appartements"
+          },
+          {
+            "niveau": "5ème étage",
+            "description": "Appartements"
+          },
+          {
+            "niveau": "6ème étage",
+            "description": "Appartements"
+          }
+        ]
+      }
+    ],
+    "annee_construction": 2014
+  },
+  "origine_propriete": {
+    "immediate": {
+      "mode_acquisition": "donation",
+      "date": "2015-05-29",
+      "notaire": "Maître Sophie DURAND, Notaire à Lyon 6ème",
+      "publication_spf": {
+        "service": "SPF de Lyon 4",
+        "date": "2023-02-17",
+        "volume": "2022P11",
+        "numero": "4598"
+      }
+    }
+  },
+  "lots": [
+    {
+      "numero": 1,
+      "etage": "rez-de-chaussée",
+      "designation": "Local commercial",
+      "description_detaillee": "Un local commercial au rez-de-chaussée, à usage de activité",
+      "superficie_carrez": 80.6,
+      "tantiemes_generaux": 111,
+      "usage": "commercial"
+    },
+    {
+      "numero": 2,
+      "etage": "premier étage",
+      "designation": "Studio",
+      "description_detaillee": "Un studio de 1 pièce au premier étage, comprenant: entrée, séjour avec coin cuisine, salle d'eau avec WC, sur jardin",
+      "superficie_carrez": 30.24,
+      "tantiemes_generaux": 30,
+      "usage": "habitation"
+    },
+    {
+      "numero": 3,
+      "etage": "cinquième étage",
+      "designation": "Appartement",
+      "description_detaillee": "Un appartement de 4 pièces au cinquième étage, comprenant: entrée, séjour, 3 chambres, cuisine, salle de bains, WC, sur jardin",
+      "superficie_carrez": 61.62,
+      "tantiemes_generaux": 174,
+      "usage": "habitation"
+    },
+    {
+      "numero": 4,
+      "etage": "rez-de-chaussée",
+      "designation": "Studio",
+      "description_detaillee": "Un studio de 1 pièce au rez-de-chaussée, comprenant: entrée, séjour avec coin cuisine, salle d'eau avec WC, côté parc",
+      "superficie_carrez": 15.39,
+      "tantiemes_generaux": 157,
+      "usage": "habitation"
+    },
+    {
+      "numero": 5,
+      "etage": "quatrième étage",
+      "designation": "Studio",
+      "description_detaillee": "Un studio de 1 pièce au quatrième étage, comprenant: entrée, séjour avec coin cuisine, salle d'eau avec WC, côté rue",
+      "superficie_carrez": 23.92,
+      "tantiemes_generaux": 110,
+      "usage": "habitation"
+    },
+    {
+      "numero": 6,
+      "etage": "troisième étage",
+      "designation": "Appartement",
+      "description_detaillee": "Un appartement de 1 pièce au troisième étage, comprenant: entrée, séjour avec coin cuisine, salle d'eau avec WC, sur jardin",
+      "superficie_carrez": 91.32,
+      "tantiemes_generaux": 122,
+      "usage": "habitation"
+    },
+    {
+      "numero": 7,
+      "etage": "quatrième étage",
+      "designation": "Studio",
+      "description_detaillee": "Un studio de 1 pièce au quatrième étage, comprenant: entrée, séjour avec coin cuisine, salle d'eau avec WC, côté rue",
+      "superficie_carrez": 19.18,
+      "tantiemes_generaux": 64,
+      "usage": "habitation"
+    },
+    {
+      "numero": 8,
+      "etage": "rez-de-chaussée",
+      "designation": "Studio",
+      "description_detaillee": "Un studio de 1 pièce au rez-de-chaussée, comprenant: entrée, séjour avec coin cuisine, salle d'eau avec WC, côté rue",
+      "superficie_carrez": 21.52,
+      "tantiemes_generaux": 98,
+      "usage": "habitation"
+    },
+    {
+      "numero": 9,
+      "etage": "rez-de-chaussée",
+      "designation": "Local commercial",
+      "description_detaillee": "Un local commercial au rez-de-chaussée, à usage de commerce",
+      "superficie_carrez": 122.48,
+      "tantiemes_generaux": 61,
+      "usage": "commercial"
+    },
+    {
+      "numero": 10,
+      "etage": "sous-sol",
+      "designation": "Box fermé",
+      "description_detaillee": "Un box fermé numéroté 10",
+      "superficie_carrez": 14.14,
+      "tantiemes_generaux": 34,
+      "usage": "stationnement"
+    },
+    {
+      "numero": 11,
+      "etage": "sous-sol",
+      "designation": "Box fermé",
+      "description_detaillee": "Un box fermé numéroté 11",
+      "superficie_carrez": 12.57,
+      "tantiemes_generaux": 32,
+      "usage": "stationnement"
+    },
+    {
+      "numero": 12,
+      "etage": "sous-sol",
+      "designation": "Cave",
+      "description_detaillee": "Une cave au sous-sol, numérotée 12",
+      "superficie_carrez": 9.41,
+      "tantiemes_generaux": 7,
+      "usage": "cave"
+    }
+  ],
+  "parties_communes": {
+    "generales": [
+      "Le sol",
+      "Les cours et jardins",
+      "Le gros œuvre des bâtiments (fondations, murs porteurs, toiture)",
+      "Les façades et revêtements extérieurs",
+      "Les halls d'entrée et circulations communes",
+      "Les escaliers et leurs cages",
+      "Les canalisations communes",
+      "Les locaux communs (local poubelles, local vélos)"
+    ],
+    "speciales": [],
+    "jouissance_privative": []
+  },
+  "parties_privatives": {
+    "elements": [
+      "Les locaux privatifs et leurs aménagements intérieurs",
+      "Les revêtements intérieurs (sols, murs, plafonds)",
+      "Les portes palières et fenêtres",
+      "Les équipements sanitaires privatifs",
+      "Les installations électriques privatives"
+    ]
+  },
+  "charges": {
+    "cles_repartition": [
+      {
+        "nom": "Charges générales",
+        "base_repartition": "tantiemes_generaux",
+        "total_tantiemes": 1000
+      }
+    ],
+    "total_tantiemes": 1000
+  },
+  "syndic": {
+    "type": "provisoire_requerant",
+    "designation": {
+      "nom": "Citya Immobilier",
+      "adresse": "5 rue Édouard Herriot, 69001 Lyon"
+    },
+    "duree_mandat": "jusqu'à la première assemblée générale"
+  },
+  "conseil_syndical": {
+    "composition": "Trois membres titulaires et un suppléant",
+    "membres_nombre": 3
+  },
+  "diagnostics": {
+    "dtg": {
+      "date": "2026-01-18",
+      "diagnostiqueur": "Cabinet Gallet Henry et Fils",
+      "conclusions": "L'immeuble est en bon état général. Travaux de ravalement à prévoir dans les 5 ans."
+    },
+    "dtg_requis": true,
+    "dpe": {
+      "date": "2025-11-01",
+      "classe_energie": "A",
+      "classe_ges": "B"
+    }
+  },
+  "urbanisme": {
+    "plu_applicable": true,
+    "zone_plu": "UC",
+    "droit_preemption": {
+      "applicable": false,
+      "type": "dpu_simple",
+      "beneficiaire": "Villeurbanne"
+    }
+  },
+  "geomètre": {
+    "nom": "GEOMETRA",
+    "societe": "GEOMETRA Lyon",
+    "adresse": "15 rue de la Géométrie, 69002 Lyon",
+    "date_edd": "2026-01-18"
+  },
+  "annexes": [
+    {
+      "numero": 1,
+      "titre": "État descriptif de division",
+      "description": "Établi par le géomètre-expert"
+    },
+    {
+      "numero": 2,
+      "titre": "Certificats de superficie loi Carrez",
+      "description": "Pour chaque lot"
+    },
+    {
+      "numero": 3,
+      "titre": "Plans d'accès",
+      "description": "Plan de situation"
+    },
+    {
+      "numero": 4,
+      "titre": "Plans des niveaux",
+      "description": "Plans de chaque niveau"
+    },
+    {
+      "numero": 5,
+      "titre": "Plan cadastral",
+      "description": "Extrait cadastral"
+    },
+    {
+      "numero": 6,
+      "titre": "Diagnostic Technique Global",
+      "description": "DTG de l'immeuble"
+    }
+  ]
+}

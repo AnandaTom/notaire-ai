@@ -390,12 +390,223 @@
           "date_ajout": "2025-01-19"
         }
       ]
+    },
+
+    "reglement_copropriete": {
+      "description": "Clauses spécifiques au règlement de copropriété et EDD",
+      "clauses": [
+        {
+          "id": "parties_communes_generales",
+          "nom": "Définition des parties communes générales",
+          "type_acte": ["reglement_copropriete", "modificatif_edd"],
+          "obligatoire": true,
+          "texte": "Sont parties communes générales :\n\n- Le sol de la parcelle cadastrée {{ immeuble.cadastre[0].section }} n° {{ immeuble.cadastre[0].numero }}\n- Les cours, parcs et jardins\n- Les voies d'accès et passages communs\n- Le gros œuvre des bâtiments (fondations, murs porteurs, planchers structurels, toiture)\n- Les façades et leurs revêtements\n- Les halls d'entrée, vestibules et circulations communes\n- Les escaliers et leurs cages\n- Les locaux communs (local poubelles, local vélos, chaufferie)\n- Les canalisations principales (eau, gaz, électricité, chauffage)\n- Les antennes collectives et leurs câblages\n- Tous éléments d'équipement commun",
+          "variables_requises": ["immeuble.cadastre"],
+          "source": "Trame reglement copropriete EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "parties_communes_speciales",
+          "nom": "Parties communes spéciales par bâtiment",
+          "type_acte": ["reglement_copropriete", "modificatif_edd"],
+          "obligatoire": false,
+          "condition_application": "immeuble.batiments | length > 1",
+          "texte": "{% for batiment in immeuble.batiments %}\nLes parties communes spéciales « {{ batiment.nom }} » comprennent :\n- Les fondations et gros œuvre propres au {{ batiment.nom }}\n- Les éléments de clos et couvert (toiture, façades)\n- Le hall d'entrée et les circulations du {{ batiment.nom }}\n- Les escaliers et leur cage\n- Les conduites générales desservant exclusivement le {{ batiment.nom }}\n- L'éclairage des parties communes du {{ batiment.nom }}\n\nSeuls les copropriétaires des lots situés dans le {{ batiment.nom }} participent aux charges afférentes à ces parties communes spéciales.\n{% endfor %}",
+          "variables_requises": ["immeuble.batiments"],
+          "source": "Trame reglement copropriete EDD - multi-bâtiments",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "parties_privatives",
+          "nom": "Définition des parties privatives",
+          "type_acte": ["reglement_copropriete"],
+          "obligatoire": true,
+          "texte": "Sont parties privatives :\n\n- Les locaux privatifs tels que définis dans l'état descriptif de division\n- Les cloisons intérieures non porteuses\n- Les revêtements intérieurs (sols, murs, plafonds)\n- Les menuiseries intérieures\n- Les portes palières avec leurs serrures et fermetures\n- Les fenêtres avec leurs dispositifs de fermeture\n- Les volets, persiennes et stores\n- Les équipements sanitaires privatifs\n- Les installations électriques et de chauffage privatives à partir du compteur individuel\n- Les cheminées et conduits privatifs\n\nChaque copropriétaire dispose de la pleine propriété de ses parties privatives.",
+          "variables_requises": [],
+          "source": "Trame reglement copropriete EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "syndic_cooperatif",
+          "nom": "Fonctionnement en syndic coopératif",
+          "type_acte": ["reglement_copropriete"],
+          "obligatoire": false,
+          "condition_application": "syndic.type == 'cooperatif'",
+          "texte": "Conformément aux dispositions de l'article 17-1 de la loi du 10 juillet 1965, le syndicat des copropriétaires pourra décider de fonctionner sous forme coopérative.\n\nDans ce cas :\n- Le président du conseil syndical exerce les fonctions de syndic\n- Le conseil syndical peut déléguer à son président certaines de ses attributions\n- Un ou plusieurs copropriétaires peuvent être désignés pour assister le président\n- Les fonctions de syndic sont exercées à titre bénévole\n- Un compte bancaire séparé au nom du syndicat doit être ouvert\n\nLe syndic coopératif est soumis aux mêmes obligations que le syndic professionnel concernant la gestion comptable et la conservation des documents.",
+          "variables_requises": [],
+          "source": "Ajout - syndic coopératif",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "fonds_travaux",
+          "nom": "Fonds de travaux obligatoire",
+          "type_acte": ["reglement_copropriete", "modificatif_edd"],
+          "obligatoire": true,
+          "texte": "Conformément à l'article 14-2 de la loi du 10 juillet 1965, le syndicat des copropriétaires constitue un fonds de travaux.\n\nCe fonds est destiné à faire face aux dépenses de travaux décidés par l'assemblée générale.\n\nLa cotisation annuelle est fixée à un montant minimum de {{ fonds_travaux.pourcentage_minimum | default(5) }}% du budget prévisionnel.\n\nLes sommes versées au fonds de travaux sont attachées aux lots et ne sont pas restituables en cas de vente.\n\nCe fonds fait l'objet d'un compte bancaire séparé, rémunéré au profit du syndicat.",
+          "variables_requises": [],
+          "source": "Loi ALUR - fonds de travaux",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "jouissance_privative",
+          "nom": "Parties communes à jouissance privative",
+          "type_acte": ["reglement_copropriete", "modificatif_edd"],
+          "obligatoire": false,
+          "condition_application": "parties_communes.jouissance_privative | length > 0",
+          "texte": "{% for jp in parties_communes.jouissance_privative %}\nLe lot n° {{ jp.lot_beneficiaire }} bénéficie d'un droit de jouissance exclusif sur {{ jp.designation }}, partie commune de l'immeuble.\n\nCe droit de jouissance est perpétuel et ne peut être retiré au bénéficiaire sans son accord.\n\nLe bénéficiaire a la charge exclusive de l'entretien courant de cette partie commune à jouissance privative.\n\nLes grosses réparations et la reconstruction demeurent à la charge de la copropriété.\n{% endfor %}",
+          "variables_requises": ["parties_communes.jouissance_privative"],
+          "source": "Trame reglement copropriete EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "destination_immeuble",
+          "nom": "Destination de l'immeuble",
+          "type_acte": ["reglement_copropriete"],
+          "obligatoire": true,
+          "texte": "L'immeuble est destiné principalement à l'habitation.\n\n{% if destination.commerce_autorise %}\nToutefois, les lots situés au rez-de-chaussée peuvent être affectés à usage commercial, à l'exclusion de toute activité pouvant nuire à la tranquillité des occupants ou à la bonne tenue de l'immeuble.\n\nSont notamment interdits : les activités bruyantes, les commerces alimentaires de restauration rapide, les établissements recevant du public après 22h.\n{% endif %}\n\nToute modification de la destination d'un lot devra être préalablement autorisée par l'assemblée générale des copropriétaires statuant à la majorité de l'article {{ destination.majorite_modification | default('26') }} de la loi du 10 juillet 1965.",
+          "variables_requises": [],
+          "source": "Trame reglement copropriete EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "animaux_domestiques",
+          "nom": "Réglementation des animaux domestiques",
+          "type_acte": ["reglement_copropriete"],
+          "obligatoire": false,
+          "texte": "Les copropriétaires et occupants peuvent détenir des animaux domestiques dans les conditions suivantes :\n\n- Les animaux doivent être tenus en laisse dans les parties communes\n- Ils ne doivent causer aucune nuisance sonore ou olfactive\n- Leurs propriétaires sont responsables de tous dégâts qu'ils pourraient occasionner\n- Les déjections doivent être immédiatement nettoyées par leurs propriétaires\n\nL'assemblée générale pourra, en cas de nuisances avérées, demander à un copropriétaire de se séparer de son animal par décision prise à la majorité de l'article 26.\n\nLes animaux dangereux de catégorie 1 et 2 sont interdits dans l'immeuble.",
+          "variables_requises": [],
+          "source": "Ajout - clause animaux",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "stationnement_parties_communes",
+          "nom": "Réglementation du stationnement",
+          "type_acte": ["reglement_copropriete"],
+          "obligatoire": false,
+          "texte": "Le stationnement de véhicules dans les parties communes (cour, voies d'accès) est strictement interdit, sauf :\n- Pour les opérations de chargement/déchargement limitées à 15 minutes\n- Pour les interventions de professionnels dûment autorisées par le syndic\n- Pour les véhicules de secours\n\nTout véhicule stationné en infraction pourra être enlevé aux frais de son propriétaire après mise en demeure restée sans effet pendant 48 heures.\n\nLes deux-roues doivent être remisés dans le local prévu à cet effet.",
+          "variables_requises": [],
+          "source": "Ajout - stationnement",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "modificatif_edd": {
+      "description": "Clauses spécifiques aux modificatifs de l'EDD",
+      "clauses": [
+        {
+          "id": "autorisation_ag",
+          "nom": "Autorisation de l'assemblée générale",
+          "type_acte": ["modificatif_edd"],
+          "obligatoire": true,
+          "texte": "L'assemblée générale des copropriétaires de l'immeuble susvisé, réunie le {{ assemblee_generale.date | format_date }}, a adopté la résolution n° {{ assemblee_generale.resolution_numero }} ainsi libellée :\n\n« {{ assemblee_generale.objet }} »\n\nCette résolution a été adoptée à la majorité de l'{{ assemblee_generale.majorite_requise }} de la loi du 10 juillet 1965, avec :\n- Voix POUR : {{ assemblee_generale.vote.pour }} tantièmes\n- Voix CONTRE : {{ assemblee_generale.vote.contre }} tantièmes\n- ABSTENTIONS : {{ assemblee_generale.vote.abstention }} tantièmes\n\nCette résolution étant devenue définitive, le syndic est habilité à faire procéder à la publication du présent acte modificatif.",
+          "variables_requises": ["assemblee_generale.date", "assemblee_generale.resolution_numero", "assemblee_generale.objet", "assemblee_generale.majorite_requise", "assemblee_generale.vote"],
+          "source": "Trame modificatif EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "certificat_non_recours",
+          "nom": "Certificat de non-recours",
+          "type_acte": ["modificatif_edd"],
+          "obligatoire": true,
+          "texte": "Le syndic certifie que la résolution précitée n'a fait l'objet d'aucune contestation dans le délai de deux mois prévu par l'article 42 de la loi du 10 juillet 1965.\n\nCertificat de non-recours délivré le {{ assemblee_generale.certificat_non_recours.date | format_date }} par {{ assemblee_generale.certificat_non_recours.delivre_par }}.\n\nEn conséquence, cette résolution est devenue définitive et peut recevoir exécution.",
+          "variables_requises": ["assemblee_generale.certificat_non_recours.date", "assemblee_generale.certificat_non_recours.delivre_par"],
+          "source": "Trame modificatif EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "historique_modificatifs",
+          "nom": "Historique des modificatifs antérieurs",
+          "type_acte": ["modificatif_edd"],
+          "obligatoire": true,
+          "texte": "Le règlement de copropriété et l'état descriptif de division ont été établis par acte reçu le {{ edd_origine.date | format_date }} par {{ edd_origine.notaire }}, publié au service de publicité foncière de {{ edd_origine.publication_spf.service }} le {{ edd_origine.publication_spf.date | format_date }}, volume {{ edd_origine.publication_spf.volume }}, numéro {{ edd_origine.publication_spf.numero }}.\n\n{% if historique_modificatifs | length > 0 %}\nIls ont été modifiés par :\n{% for modif in historique_modificatifs %}\n- Acte reçu le {{ modif.date | format_date }} par {{ modif.notaire }}, publié le {{ modif.publication_spf.date | format_date }}, volume {{ modif.publication_spf.volume }}, n° {{ modif.publication_spf.numero }}, ayant pour objet : {{ modif.objet }}.\n{% endfor %}\n{% endif %}",
+          "variables_requises": ["edd_origine", "historique_modificatifs"],
+          "source": "Trame modificatif EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "division_lot",
+          "nom": "Division d'un lot en plusieurs",
+          "type_acte": ["modificatif_edd"],
+          "obligatoire": false,
+          "condition_application": "modifications[0].type == 'division_lot'",
+          "texte": "{% for modif in modifications if modif.type == 'suppression_lot' %}\nLe lot n° {{ modif.lot_numero }} ({{ modif.description }}) est supprimé de l'état descriptif de division.\n{% endfor %}\n\nEn remplacement, il est créé les lots suivants :\n\n{% for modif in modifications if modif.type == 'creation_lot' %}\n**Lot n° {{ modif.lot_numero }}** : {{ modif.description }}\nTantièmes de copropriété : {{ modif.tantiemes }}/1000\n\n{% endfor %}\n\nLa somme des tantièmes des nouveaux lots est égale aux tantièmes du lot supprimé.",
+          "variables_requises": ["modifications"],
+          "source": "Trame modificatif EDD",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "reunion_lots",
+          "nom": "Réunion de plusieurs lots en un seul",
+          "type_acte": ["modificatif_edd"],
+          "obligatoire": false,
+          "condition_application": "modifications[0].type == 'reunion_lots'",
+          "texte": "Les lots n° {% for modif in modifications if modif.type == 'suppression_lot' %}{{ modif.lot_numero }}{% if not loop.last %}, {% endif %}{% endfor %} sont supprimés de l'état descriptif de division.\n\nEn remplacement, il est créé :\n\n{% for modif in modifications if modif.type == 'creation_lot' %}\n**Lot n° {{ modif.lot_numero }}** : {{ modif.description }}\nTantièmes de copropriété : {{ modif.tantiemes }}/1000\n\n{% endfor %}\n\nLes tantièmes du nouveau lot correspondent à la somme des tantièmes des lots réunis.",
+          "variables_requises": ["modifications"],
+          "source": "Trame modificatif EDD",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "fiscalite_copropriete": {
+      "description": "Clauses fiscales spécifiques à la copropriété",
+      "clauses": [
+        {
+          "id": "tva_marge",
+          "nom": "Application de la TVA sur marge",
+          "type_acte": ["vente"],
+          "obligatoire": false,
+          "condition_application": "fiscalite.tva_marge == true",
+          "texte": "Le VENDEUR déclare que le présent bien a été acquis sans TVA déductible ou avec une TVA non récupérable.\n\nEn application de l'article 268 du Code général des impôts, la TVA sera calculée sur la marge, c'est-à-dire sur la différence entre le prix de vente et le prix d'acquisition, après abattement.\n\nLe VENDEUR certifie être en mesure de justifier du prix d'acquisition auprès de l'administration fiscale.",
+          "variables_requises": [],
+          "source": "Ajout - TVA marge",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "droits_mutation_neuf",
+          "nom": "Droits de mutation réduits - Immeuble neuf",
+          "type_acte": ["vente"],
+          "obligatoire": false,
+          "condition_application": "fiscalite.immeuble_neuf == true",
+          "texte": "Le présent bien constitue un immeuble neuf au sens fiscal (achèvement depuis moins de 5 ans).\n\nLa vente est soumise à la TVA immobilière au taux de {{ fiscalite.taux_tva | default(20) }}%.\n\nLes droits de mutation sont réduits au taux de 0,715% (au lieu de 5,80% pour l'ancien).\n\nLe VENDEUR certifie que le bien n'a jamais été habité ou utilisé depuis son achèvement.",
+          "variables_requises": [],
+          "source": "Ajout - droits mutation neuf",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "servitudes_copropriete": {
+      "description": "Servitudes spécifiques en copropriété",
+      "clauses": [
+        {
+          "id": "cour_commune",
+          "nom": "Servitude de cour commune",
+          "type_acte": ["reglement_copropriete", "vente"],
+          "obligatoire": false,
+          "texte": "Une servitude de cour commune a été établie au profit de l'immeuble voisin situé {{ servitude.fonds_beneficiaire_adresse }}.\n\nCette servitude interdit toute construction à moins de {{ servitude.distance_minimum | default(3) }} mètres de la limite séparative.\n\nElle a été constituée par acte reçu le {{ servitude.date_constitution }} et publiée au service de publicité foncière.\n\nLe bénéficiaire de cette servitude participe aux charges d'entretien de la cour dans la proportion définie à l'acte constitutif.",
+          "variables_requises": ["servitude.fonds_beneficiaire_adresse"],
+          "source": "Ajout - cour commune",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "surplomb",
+          "nom": "Droit de surplomb",
+          "type_acte": ["reglement_copropriete", "modificatif_edd"],
+          "obligatoire": false,
+          "texte": "En application de l'article 675 du Code civil modifié par la loi du 9 avril 2024, le syndicat des copropriétaires pourra, après délibération de l'assemblée générale, autoriser un propriétaire voisin à réaliser une isolation thermique par l'extérieur empiétant sur le fonds du syndicat.\n\nCette autorisation sera accordée moyennant le versement d'une indemnité juste et préalable dont le montant sera fixé par l'assemblée générale ou, à défaut d'accord, par le tribunal judiciaire.",
+          "variables_requises": [],
+          "source": "Loi 2024 - droit de surplomb ITE",
+          "date_ajout": "2025-01-19"
+        }
+      ]
     }
   },
 
   "meta": {
     "instructions_enrichissement": "Ce catalogue doit être enrichi automatiquement à chaque nouvelle clause rencontrée. Lors de l'ajout d'une clause : 1) Vérifier qu'elle n'existe pas déjà, 2) La catégoriser correctement, 3) Extraire les variables Jinja2, 4) Documenter la source et la date.",
     "format_id": "categorie_description_courte (ex: cs_pret_standard)",
-    "types_actes_valides": ["promesse_vente", "compromis", "vente", "donation", "succession", "bail"]
+    "types_actes_valides": ["promesse_vente", "compromis", "vente", "donation", "succession", "bail", "reglement_copropriete", "modificatif_edd"]
   }
 }

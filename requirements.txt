@@ -22,3 +22,18 @@ python-docx>=1.1.0
 
 # Utilitaires
 python-dateutil>=2.8.0
+
+# Interface CLI interactive
+questionary>=2.0.0
+rich>=13.0.0
+
+# Generation de donnees de test
+faker>=22.0.0
+
+# Base de donnees Supabase (optionnel)
+supabase>=2.0.0
+python-dotenv>=1.0.0
+
+# Tests
+pytest>=7.4.0
+pytest-cov>=4.1.0
