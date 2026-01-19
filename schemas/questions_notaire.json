@@ -1,0 +1,733 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Questions pour la collecte d'informations - Acte de vente de lots de copropriété",
+  "description": "Schéma structuré des questions à poser au notaire pour remplir toutes les variables de l'acte",
+  "version": "1.0.0",
+  "sections": {
+    "1_acte": {
+      "titre": "Informations sur l'acte",
+      "ordre": 1,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "acte_date",
+          "question": "Quelle est la date prévue de signature de l'acte ?",
+          "type": "date",
+          "format": "DD/MM/YYYY",
+          "obligatoire": true,
+          "variables_associees": ["PYANNEE"]
+        },
+        {
+          "id": "acte_reference",
+          "question": "Quel est le numéro de répertoire / référence interne ?",
+          "type": "texte",
+          "exemple": "2025/001234",
+          "obligatoire": true,
+          "variables_associees": ["PYARECC"]
+        },
+        {
+          "id": "notaire_assistant",
+          "question": "Y a-t-il un notaire assistant l'acquéreur ? Si oui, son nom et lieu d'exercice.",
+          "type": "texte",
+          "obligatoire": false,
+          "variables_associees": ["PYPART4"]
+        }
+      ]
+    },
+    "2_vendeurs": {
+      "titre": "Identification du VENDEUR",
+      "ordre": 2,
+      "obligatoire": true,
+      "repetable": true,
+      "questions": [
+        {
+          "id": "vendeur_civilite",
+          "question": "Civilité du vendeur ?",
+          "type": "choix",
+          "options": ["Monsieur", "Madame"],
+          "obligatoire": true,
+          "variables_associees": ["CompPPFSCENCO", "CompPPHSCENCO"]
+        },
+        {
+          "id": "vendeur_prenoms",
+          "question": "Tous les prénoms du vendeur (dans l'ordre de l'état civil) ?",
+          "type": "texte",
+          "exemple": "Jean Pierre Marie",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_nom",
+          "question": "Nom de famille du vendeur ?",
+          "type": "texte",
+          "exemple": "DUPONT",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_nom_naissance",
+          "question": "Nom de naissance (si différent) ?",
+          "type": "texte",
+          "obligatoire": false
+        },
+        {
+          "id": "vendeur_profession",
+          "question": "Profession du vendeur ?",
+          "type": "texte",
+          "exemple": "Cadre commercial",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_adresse_numero",
+          "question": "Numéro et voie de l'adresse du vendeur ?",
+          "type": "texte",
+          "exemple": "12 rue de la Paix",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_adresse_cp",
+          "question": "Code postal du vendeur ?",
+          "type": "texte",
+          "pattern": "^[0-9]{5}$",
+          "exemple": "69001",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_adresse_ville",
+          "question": "Ville du vendeur ?",
+          "type": "texte",
+          "exemple": "LYON",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_date_naissance",
+          "question": "Date de naissance du vendeur ?",
+          "type": "date",
+          "format": "DD/MM/YYYY",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_lieu_naissance",
+          "question": "Lieu de naissance (ville et département/pays) ?",
+          "type": "texte",
+          "exemple": "LYON (Rhône)",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_nationalite",
+          "question": "Nationalité du vendeur ?",
+          "type": "texte",
+          "defaut": "française",
+          "obligatoire": true
+        },
+        {
+          "id": "vendeur_situation_matrimoniale",
+          "question": "Situation matrimoniale du vendeur ?",
+          "type": "choix",
+          "options": ["Célibataire", "Marié(e)", "Pacsé(e)", "Divorcé(e)", "Veuf/Veuve"],
+          "obligatoire": true,
+          "variables_associees": ["celibatairec"]
+        }
+      ],
+      "sous_questions": {
+        "si_marie": {
+          "condition": "vendeur_situation_matrimoniale == 'Marié(e)'",
+          "questions": [
+            {
+              "id": "vendeur_regime_matrimonial",
+              "question": "Quel est le régime matrimonial ?",
+              "type": "choix",
+              "options": [
+                "Communauté légale (sans contrat)",
+                "Communauté réduite aux acquêts (contrat)",
+                "Séparation de biens",
+                "Communauté universelle",
+                "Participation aux acquêts"
+              ],
+              "obligatoire": true
+            },
+            {
+              "id": "vendeur_contrat_mariage",
+              "question": "Y a-t-il eu un contrat de mariage ?",
+              "type": "booleen",
+              "obligatoire": true
+            },
+            {
+              "id": "vendeur_contrat_mariage_notaire",
+              "question": "Si contrat de mariage : Quel notaire l'a reçu ?",
+              "type": "texte",
+              "obligatoire": false,
+              "condition": "vendeur_contrat_mariage == true"
+            },
+            {
+              "id": "vendeur_contrat_mariage_date",
+              "question": "Date du contrat de mariage ?",
+              "type": "date",
+              "obligatoire": false,
+              "condition": "vendeur_contrat_mariage == true"
+            },
+            {
+              "id": "vendeur_contrat_mariage_lieu",
+              "question": "Lieu de réception du contrat de mariage ?",
+              "type": "texte",
+              "obligatoire": false,
+              "condition": "vendeur_contrat_mariage == true"
+            },
+            {
+              "id": "vendeur_conjoint_intervient",
+              "question": "Le conjoint intervient-il à l'acte ?",
+              "type": "booleen",
+              "obligatoire": true,
+              "note": "Obligatoire si le bien est un bien commun"
+            }
+          ]
+        },
+        "si_pacse": {
+          "condition": "vendeur_situation_matrimoniale == 'Pacsé(e)'",
+          "questions": [
+            {
+              "id": "vendeur_pacs_date",
+              "question": "Date du PACS ?",
+              "type": "date",
+              "obligatoire": true
+            },
+            {
+              "id": "vendeur_pacs_lieu",
+              "question": "Lieu d'enregistrement du PACS (mairie ou notaire) ?",
+              "type": "texte",
+              "obligatoire": true
+            },
+            {
+              "id": "vendeur_pacs_regime",
+              "question": "Régime du PACS ?",
+              "type": "choix",
+              "options": ["Séparation de biens", "Indivision"],
+              "obligatoire": true
+            }
+          ]
+        },
+        "si_divorce": {
+          "condition": "vendeur_situation_matrimoniale == 'Divorcé(e)'",
+          "questions": [
+            {
+              "id": "vendeur_divorce_tribunal",
+              "question": "Quel tribunal a prononcé le divorce ?",
+              "type": "texte",
+              "obligatoire": true
+            },
+            {
+              "id": "vendeur_divorce_date",
+              "question": "Date du jugement de divorce ?",
+              "type": "date",
+              "obligatoire": true
+            }
+          ]
+        },
+        "si_veuf": {
+          "condition": "vendeur_situation_matrimoniale == 'Veuf/Veuve'",
+          "questions": [
+            {
+              "id": "vendeur_conjoint_decede_nom",
+              "question": "Nom du conjoint décédé ?",
+              "type": "texte",
+              "obligatoire": true
+            }
+          ]
+        }
+      }
+    },
+    "3_acquereurs": {
+      "titre": "Identification de l'ACQUÉREUR",
+      "ordre": 3,
+      "obligatoire": true,
+      "repetable": true,
+      "note": "Mêmes questions que pour le vendeur + questions spécifiques",
+      "questions_supplementaires": [
+        {
+          "id": "acquereur_primo_accedant",
+          "question": "L'acquéreur est-il primo-accédant ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "note": "Impact sur les frais de notaire et éligibilité PTZ"
+        }
+      ]
+    },
+    "4_quotites": {
+      "titre": "Quotités de propriété",
+      "ordre": 4,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "quotites_vendues",
+          "question": "Comment se répartissent les quotités vendues entre les vendeurs ?",
+          "type": "tableau",
+          "colonnes": ["Vendeur", "Type de propriété", "Quotité"],
+          "exemple": [
+            ["Madame X", "Pleine propriété indivise", "1/2"],
+            ["Monsieur Y", "Pleine propriété indivise", "1/2"]
+          ],
+          "obligatoire": true,
+          "variables_associees": ["QTVENDU", "QTVEND4"]
+        },
+        {
+          "id": "quotites_acquises",
+          "question": "Comment se répartissent les quotités acquises entre les acquéreurs ?",
+          "type": "tableau",
+          "colonnes": ["Acquéreur", "Type de propriété", "Quotité"],
+          "obligatoire": true,
+          "variables_associees": ["PXQUOTT", "PWQUOTI5"]
+        }
+      ]
+    },
+    "5_bien": {
+      "titre": "Désignation du bien",
+      "ordre": 5,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "bien_adresse_numero",
+          "question": "Numéro et voie de l'adresse du bien ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variables_associees": ["PYADRPE", "PSADRPE"]
+        },
+        {
+          "id": "bien_adresse_cp",
+          "question": "Code postal du bien ?",
+          "type": "texte",
+          "pattern": "^[0-9]{5}$",
+          "obligatoire": true
+        },
+        {
+          "id": "bien_adresse_ville",
+          "question": "Ville du bien ?",
+          "type": "texte",
+          "obligatoire": true
+        },
+        {
+          "id": "bien_nom_residence",
+          "question": "Nom de la résidence/copropriété (si applicable) ?",
+          "type": "texte",
+          "obligatoire": false
+        },
+        {
+          "id": "bien_cadastre_section",
+          "question": "Section cadastrale ?",
+          "type": "texte",
+          "exemple": "AH",
+          "obligatoire": true,
+          "variables_associees": ["PKNCADSIND02"]
+        },
+        {
+          "id": "bien_cadastre_numero",
+          "question": "Numéro de parcelle cadastrale ?",
+          "type": "texte",
+          "exemple": "211",
+          "obligatoire": true
+        },
+        {
+          "id": "bien_cadastre_lieudit",
+          "question": "Lieudit cadastral ?",
+          "type": "texte",
+          "obligatoire": true
+        },
+        {
+          "id": "bien_cadastre_surface",
+          "question": "Surface cadastrale (format: 00 ha 28 a 21 ca) ?",
+          "type": "texte",
+          "exemple": "00 ha 28 a 21 ca",
+          "obligatoire": true
+        }
+      ]
+    },
+    "6_lots": {
+      "titre": "Lots de copropriété",
+      "ordre": 6,
+      "obligatoire": true,
+      "repetable": true,
+      "questions": [
+        {
+          "id": "lot_numero",
+          "question": "Numéro du lot ?",
+          "type": "nombre",
+          "exemple": 14,
+          "obligatoire": true,
+          "variables_associees": ["PXLOTC10"]
+        },
+        {
+          "id": "lot_type",
+          "question": "Type du lot ?",
+          "type": "choix",
+          "options": ["Appartement", "Cave", "Parking", "Box", "Grenier", "Local commercial", "Autre"],
+          "obligatoire": true
+        },
+        {
+          "id": "lot_description",
+          "question": "Description détaillée du lot ?",
+          "type": "texte_long",
+          "exemple": "Un appartement de type T3 comprenant: entrée, séjour, cuisine, deux chambres, salle de bains, WC",
+          "obligatoire": true
+        },
+        {
+          "id": "lot_etage",
+          "question": "Étage ?",
+          "type": "texte",
+          "exemple": "2ème étage",
+          "obligatoire": true
+        },
+        {
+          "id": "lot_escalier",
+          "question": "Escalier/Bâtiment (si applicable) ?",
+          "type": "texte",
+          "obligatoire": false
+        },
+        {
+          "id": "lot_tantiemes_generaux",
+          "question": "Tantièmes des parties communes générales ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variables_associees": ["PXLOTC14"]
+        },
+        {
+          "id": "lot_tantiemes_total",
+          "question": "Total des tantièmes de la copropriété ?",
+          "type": "nombre",
+          "exemple": 10000,
+          "obligatoire": true
+        },
+        {
+          "id": "lot_superficie_carrez",
+          "question": "Superficie loi Carrez (en m²) ?",
+          "type": "nombre_decimal",
+          "exemple": 68.45,
+          "obligatoire": true,
+          "note": "Obligatoire pour les lots > 8m²",
+          "variables_associees": ["CARPN7", "CARPN9", "CARPN10", "CARPN11"]
+        }
+      ]
+    },
+    "7_prix": {
+      "titre": "Prix et paiement",
+      "ordre": 7,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "prix_total",
+          "question": "Prix de vente total (en euros) ?",
+          "type": "nombre",
+          "exemple": 285000,
+          "obligatoire": true,
+          "variables_associees": ["PRIX", "PRIXTTC"]
+        },
+        {
+          "id": "prix_mobilier",
+          "question": "Montant attribué au mobilier inclus (si applicable) ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variables_associees": ["MOBILIV"]
+        },
+        {
+          "id": "paiement_mode",
+          "question": "Mode de paiement ?",
+          "type": "choix",
+          "options": ["Comptant intégral", "Avec prêt(s)", "Mixte (comptant + prêt)"],
+          "obligatoire": true,
+          "variables_associees": ["PMODE", "PFINPDC"]
+        },
+        {
+          "id": "paiement_comptant_montant",
+          "question": "Montant payé comptant (si applicable) ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "condition": "paiement_mode != 'Avec prêt(s)'",
+          "variables_associees": ["PCPTANT"]
+        }
+      ]
+    },
+    "8_prets": {
+      "titre": "Prêts bancaires",
+      "ordre": 8,
+      "obligatoire": false,
+      "condition": "paiement_mode != 'Comptant intégral'",
+      "repetable": true,
+      "questions": [
+        {
+          "id": "pret_banque",
+          "question": "Nom de la banque prêteuse ?",
+          "type": "texte",
+          "exemple": "Crédit Agricole",
+          "obligatoire": true,
+          "variables_associees": ["PPRETB"]
+        },
+        {
+          "id": "pret_montant",
+          "question": "Montant du prêt (en euros) ?",
+          "type": "nombre",
+          "exemple": 200000,
+          "obligatoire": true,
+          "variables_associees": ["PPRETM"]
+        },
+        {
+          "id": "pret_duree",
+          "question": "Durée du prêt (en mois) ?",
+          "type": "nombre",
+          "exemple": 240,
+          "obligatoire": true,
+          "variables_associees": ["PPRETD"]
+        },
+        {
+          "id": "pret_taux",
+          "question": "Taux d'intérêt nominal (en %) ?",
+          "type": "nombre_decimal",
+          "exemple": 3.5,
+          "obligatoire": true,
+          "variables_associees": ["PPRETT"]
+        },
+        {
+          "id": "pret_type",
+          "question": "Type de prêt ?",
+          "type": "choix",
+          "options": ["Prêt immobilier classique", "PTZ", "Prêt Action Logement", "Prêt relais", "Autre"],
+          "obligatoire": true
+        }
+      ]
+    },
+    "9_copropriete": {
+      "titre": "Informations sur la copropriété",
+      "ordre": 9,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "syndic_nom",
+          "question": "Nom du syndic de copropriété ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variables_associees": ["PSYNDIC"]
+        },
+        {
+          "id": "syndic_adresse",
+          "question": "Adresse du syndic ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variables_associees": ["PSYNADR"]
+        },
+        {
+          "id": "copro_immatriculation",
+          "question": "Numéro d'immatriculation de la copropriété ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variables_associees": ["PIMMATR"]
+        },
+        {
+          "id": "copro_fonds_travaux",
+          "question": "Montant de la quote-part du fonds de travaux ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variables_associees": ["PFONDTR"]
+        },
+        {
+          "id": "copro_emprunt_collectif",
+          "question": "Y a-t-il un emprunt collectif en cours ?",
+          "type": "booleen",
+          "obligatoire": true
+        },
+        {
+          "id": "copro_emprunt_solde",
+          "question": "Si oui, montant du solde restant dû ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "condition": "copro_emprunt_collectif == true",
+          "variables_associees": ["PEMPRCO"]
+        }
+      ]
+    },
+    "10_origine_propriete": {
+      "titre": "Origine de propriété",
+      "ordre": 10,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "origine_type",
+          "question": "Comment le vendeur a-t-il acquis le bien ?",
+          "type": "choix",
+          "options": ["Acquisition", "Succession", "Donation", "Licitation", "Partage", "Adjudication"],
+          "obligatoire": true,
+          "variables_associees": ["PYORIV1"]
+        },
+        {
+          "id": "origine_date",
+          "question": "Date de l'acte d'acquisition précédent ?",
+          "type": "date",
+          "obligatoire": true
+        },
+        {
+          "id": "origine_notaire",
+          "question": "Notaire ayant reçu l'acte précédent ?",
+          "type": "texte",
+          "obligatoire": true
+        },
+        {
+          "id": "origine_lieu",
+          "question": "Lieu de réception de l'acte précédent ?",
+          "type": "texte",
+          "obligatoire": true
+        },
+        {
+          "id": "origine_publication",
+          "question": "Références de publication (SPF, volume, numéro) ?",
+          "type": "texte",
+          "obligatoire": true
+        }
+      ]
+    },
+    "11_etat_descriptif": {
+      "titre": "État descriptif de division",
+      "ordre": 11,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "edd_date",
+          "question": "Date de l'état descriptif de division ?",
+          "type": "date",
+          "obligatoire": true,
+          "variables_associees": ["PAEDD22", "PYEDD11"]
+        },
+        {
+          "id": "edd_notaire",
+          "question": "Notaire l'ayant reçu ?",
+          "type": "texte",
+          "obligatoire": true
+        },
+        {
+          "id": "edd_modificatif",
+          "question": "Y a-t-il eu des modificatifs ?",
+          "type": "booleen",
+          "obligatoire": true
+        },
+        {
+          "id": "edd_modificatif_details",
+          "question": "Si oui, détails des modificatifs (date, notaire, objet) ?",
+          "type": "texte_long",
+          "obligatoire": false,
+          "condition": "edd_modificatif == true",
+          "variables_associees": ["PYEDD14", "PYMODR1"]
+        }
+      ]
+    },
+    "12_sections_optionnelles": {
+      "titre": "Sections optionnelles",
+      "ordre": 12,
+      "obligatoire": false,
+      "questions": [
+        {
+          "id": "mobilier_inclus",
+          "question": "Des meubles sont-ils inclus dans la vente ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variables_associees": ["MOBILIV", "EQUIP1"]
+        },
+        {
+          "id": "mobilier_liste",
+          "question": "Si oui, liste et valeur des meubles ?",
+          "type": "tableau",
+          "colonnes": ["Désignation", "Valeur"],
+          "obligatoire": false,
+          "condition": "mobilier_inclus == true"
+        },
+        {
+          "id": "travaux_recents",
+          "question": "Le vendeur a-t-il réalisé des travaux depuis moins de 10 ans ?",
+          "type": "booleen",
+          "obligatoire": true
+        },
+        {
+          "id": "travaux_liste",
+          "question": "Si oui, liste des travaux avec factures ?",
+          "type": "texte_long",
+          "obligatoire": false,
+          "condition": "travaux_recents == true"
+        },
+        {
+          "id": "agent_immobilier",
+          "question": "Un agent immobilier est-il intervenu ?",
+          "type": "booleen",
+          "obligatoire": true
+        },
+        {
+          "id": "agent_nom",
+          "question": "Nom de l'agence ?",
+          "type": "texte",
+          "obligatoire": false,
+          "condition": "agent_immobilier == true"
+        },
+        {
+          "id": "agent_honoraires",
+          "question": "Montant des honoraires ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "condition": "agent_immobilier == true"
+        },
+        {
+          "id": "agent_charge_de",
+          "question": "À la charge de qui ?",
+          "type": "choix",
+          "options": ["Vendeur", "Acquéreur"],
+          "obligatoire": false,
+          "condition": "agent_immobilier == true"
+        }
+      ]
+    },
+    "13_usage": {
+      "titre": "Usage du bien",
+      "ordre": 13,
+      "obligatoire": true,
+      "questions": [
+        {
+          "id": "usage_actuel",
+          "question": "Usage actuel du bien ?",
+          "type": "choix",
+          "options": ["Habitation", "Commercial", "Mixte", "Professionnel"],
+          "obligatoire": true,
+          "variables_associees": ["PUSAGE00", "PUSAGE01"]
+        },
+        {
+          "id": "usage_futur",
+          "question": "L'acquéreur compte-t-il conserver cet usage ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variables_associees": ["PUSAGE10"]
+        },
+        {
+          "id": "usage_futur_nouveau",
+          "question": "Si non, quel nouvel usage ?",
+          "type": "choix",
+          "options": ["Habitation", "Commercial", "Mixte", "Professionnel"],
+          "obligatoire": false,
+          "condition": "usage_futur == false"
+        }
+      ]
+    }
+  },
+  "validation": {
+    "regles": [
+      {
+        "id": "quotites_vendeurs_100",
+        "description": "La somme des quotités vendues doit égaler 100%",
+        "champs": ["quotites_vendues"]
+      },
+      {
+        "id": "quotites_acquereurs_100",
+        "description": "La somme des quotités acquises doit égaler 100%",
+        "champs": ["quotites_acquises"]
+      },
+      {
+        "id": "prets_vs_prix",
+        "description": "Le total des prêts ne doit pas dépasser le prix + frais",
+        "champs": ["prix_total", "prets"]
+      },
+      {
+        "id": "carrez_obligatoire",
+        "description": "La superficie Carrez est obligatoire pour les lots > 8m²",
+        "champs": ["lot_superficie_carrez"]
+      }
+    ]
+  }
+}

@@ -9,6 +9,10 @@ Version corrigee avec: tableaux, espacement reduit, pagination simple, hyphenati
 
 Usage:
     python exporter_docx.py --input <acte.md> --output <acte.docx>
+    python exporter_docx.py --input <acte.md> --output <acte.docx> --zones-grisees
+
+Options:
+    --zones-grisees : Conserver les zones grisees sur les variables remplies
 
 Base sur l'analyse des originaux RTF:
 - Police: Times New Roman 11pt
@@ -29,6 +33,32 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+
+
+# =============================================================================
+# CONFIGURATION GLOBALE
+# =============================================================================
+
+# Option pour conserver les zones grisees sur les variables remplies
+ZONES_GRISEES_ACTIVES = False
+
+# Marqueurs pour identifier les variables remplies (inseres par assembler_acte.py)
+# Format: <<<VAR_START>>>valeur<<<VAR_END>>>
+MARQUEUR_VAR_START = "<<<VAR_START>>>"
+MARQUEUR_VAR_END = "<<<VAR_END>>>"
+
+
+def appliquer_fond_gris(run):
+    """
+    Applique un fond grise (shading) a un run Word.
+    Couleur: gris clair (#D9D9D9) - identique aux zones grisees des trames originales.
+    """
+    rPr = run._element.get_or_add_rPr()
+    shd = OxmlElement('w:shd')
+    shd.set(qn('w:val'), 'clear')
+    shd.set(qn('w:color'), 'auto')
+    shd.set(qn('w:fill'), 'D9D9D9')  # Gris clair
+    rPr.append(shd)
 
 
 # =============================================================================
@@ -933,39 +963,143 @@ class NotarialHTMLParser(HTMLParser):
 # =============================================================================
 
 def configurer_styles(doc: Document):
-    """Configure les styles du document selon les standards notariaux."""
+    """
+    Configure les styles du document EXACTEMENT comme l'original DOCX.
+    Basé sur l'analyse de docs_originels/Trame vente lots de copropriété.docx:
+
+    - Normal: 11pt, justified, first line indent 1.251cm
+    - Heading 1: bold, ALL CAPS, underline, CENTERED, space after 12pt
+    - Heading 2: bold, small caps, underline, CENTERED, space after 12pt
+    - Heading 3: bold, underline, CENTERED, space after 12pt
+    - Heading 4: bold only, space BEFORE 6pt (not after)
+    - Heading 5: bold, underline
+    """
+    # Style Normal - base pour tous les autres
     style_normal = doc.styles['Normal']
     style_normal.font.name = 'Times New Roman'
     style_normal.font.size = Pt(11)
     style_normal.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     style_normal.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
-    style_normal.paragraph_format.space_after = Pt(8)  # Ajuste pour 48 pages
+    style_normal.paragraph_format.space_after = Pt(0)  # Original: null (pas d'espace)
     style_normal.paragraph_format.space_before = Pt(0)
-    style_normal.paragraph_format.first_line_indent = Mm(12)
+    style_normal.paragraph_format.first_line_indent = Mm(12.51)  # Original: 1.251cm
 
-    # Forcer Times New Roman
+    # Forcer Times New Roman partout
     rPr = style_normal._element.get_or_add_rPr()
     rFonts = rPr.get_or_add_rFonts()
     rFonts.set(qn('w:ascii'), 'Times New Roman')
     rFonts.set(qn('w:hAnsi'), 'Times New Roman')
     rFonts.set(qn('w:cs'), 'Times New Roman')
 
+    # Heading 1: bold, ALL CAPS, underline, CENTERED, space after 12pt
+    style_h1 = doc.styles['Heading 1']
+    style_h1.font.name = 'Times New Roman'
+    style_h1.font.size = Pt(11)
+    style_h1.font.bold = True
+    style_h1.font.all_caps = True
+    style_h1.font.underline = True
+    style_h1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    style_h1.paragraph_format.space_before = Pt(0)
+    style_h1.paragraph_format.space_after = Pt(12)  # Original: 12pt
+    style_h1.paragraph_format.first_line_indent = Pt(0)
+    style_h1.paragraph_format.keep_with_next = True
+    style_h1.paragraph_format.keep_together = True
+
+    # Heading 2: bold, small caps, underline, CENTERED, space after 12pt
+    style_h2 = doc.styles['Heading 2']
+    style_h2.font.name = 'Times New Roman'
+    style_h2.font.size = Pt(11)
+    style_h2.font.bold = True
+    style_h2.font.small_caps = True
+    style_h2.font.underline = True
+    style_h2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER  # CENTERED!
+    style_h2.paragraph_format.space_before = Pt(0)
+    style_h2.paragraph_format.space_after = Pt(12)  # Original: 12pt
+    style_h2.paragraph_format.first_line_indent = Pt(0)
+    style_h2.paragraph_format.keep_with_next = True
+    style_h2.paragraph_format.keep_together = True
+
+    # Heading 3: bold, underline, CENTERED, space after 12pt
+    style_h3 = doc.styles['Heading 3']
+    style_h3.font.name = 'Times New Roman'
+    style_h3.font.size = Pt(11)
+    style_h3.font.bold = True
+    style_h3.font.underline = True
+    style_h3.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER  # CENTERED!
+    style_h3.paragraph_format.space_before = Pt(0)
+    style_h3.paragraph_format.space_after = Pt(12)  # Original: 12pt
+    style_h3.paragraph_format.first_line_indent = Pt(0)
+    style_h3.paragraph_format.keep_with_next = True
+    style_h3.paragraph_format.keep_together = True
+
+    # Heading 4: bold only, space BEFORE 6pt (NOT after)
+    style_h4 = doc.styles['Heading 4']
+    style_h4.font.name = 'Times New Roman'
+    style_h4.font.size = Pt(11)
+    style_h4.font.bold = True
+    style_h4.font.italic = False
+    style_h4.font.underline = False
+    style_h4.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY  # Hérite de Normal
+    style_h4.paragraph_format.space_before = Pt(6)  # Original: 6pt AVANT
+    style_h4.paragraph_format.space_after = Pt(0)   # Pas d'espace après
+    style_h4.paragraph_format.first_line_indent = Pt(0)
+    style_h4.paragraph_format.keep_with_next = True
+    style_h4.paragraph_format.keep_together = True
+
+    # Heading 5: bold, underline (utilisé rarement)
+    style_h5 = doc.styles['Heading 5']
+    style_h5.font.name = 'Times New Roman'
+    style_h5.font.size = Pt(11)
+    style_h5.font.bold = True
+    style_h5.font.underline = True
+    style_h5.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    style_h5.paragraph_format.first_line_indent = Pt(0)
+
+    # ===== STYLES PERSONNALISES =====
+    # Ces styles sont définis dans l'original et utilisés fréquemment
+
+    # Quote (Citation): italique - 40 occurrences dans l'original
+    try:
+        style_quote = doc.styles['Quote']
+        style_quote.font.name = 'Times New Roman'
+        style_quote.font.size = Pt(11)
+        style_quote.font.italic = True
+        style_quote.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        style_quote.paragraph_format.first_line_indent = Mm(12.51)
+    except KeyError:
+        pass  # Style n'existe pas dans ce template
+
+    # Title: 12pt, bold, underline
+    style_title = doc.styles['Title']
+    style_title.font.name = 'Times New Roman'
+    style_title.font.size = Pt(12)
+    style_title.font.bold = True
+    style_title.font.underline = True
+
 
 def configurer_marges(doc: Document):
-    """Configure les marges du document style Minute notarial avec marges miroir."""
+    """
+    Configure les marges du document EXACTEMENT comme l'original DOCX.
+    Basé sur l'analyse: G=6.0cm D=1.5cm H=2.5cm B=2.5cm
+    PAS de marges miroir (original: miroir=false)
+    """
     for section in doc.sections:
-        section.left_margin = Mm(60)
-        section.right_margin = Mm(15)
-        section.top_margin = Mm(25)
-        section.bottom_margin = Mm(25)
-        section.page_width = Mm(210)
-        section.page_height = Mm(297)
-        section.gutter = Mm(0)
+        section.left_margin = Mm(60)   # 6.0 cm
+        section.right_margin = Mm(15)  # 1.5 cm
+        section.top_margin = Mm(25)    # 2.5 cm
+        section.bottom_margin = Mm(25) # 2.5 cm
+        section.page_width = Mm(210)   # A4
+        section.page_height = Mm(297)  # A4
+        section.gutter = Mm(0)         # Pas de reliure
 
-        # Marges miroir
-        sectPr = section._sectPr
-        mirror = OxmlElement('w:mirrorMargins')
-        sectPr.append(mirror)
+        # Distance en-tête/pied de page (original: 1.27cm)
+        section.header_distance = Mm(12.7)
+        section.footer_distance = Mm(12.7)
+
+        # En-tête différent sur première page (original: true)
+        section.different_first_page_header_footer = True
+
+        # PAS de marges miroir - supprimé car original n'en a pas
 
 
 def configurer_compatibilite(doc: Document):
@@ -1014,18 +1148,41 @@ def ajouter_pagination(doc: Document):
 # =============================================================================
 
 def traiter_formatage_markdown(texte: str):
-    """Parse le formatage Markdown et retourne une liste de tuples (texte, format)."""
+    """
+    Parse le formatage Markdown et retourne une liste de tuples (texte, format).
+    Gere aussi les marqueurs de variables pour les zones grisees.
+    Format: {'bold': bool, 'italic': bool, 'underline': bool, 'zone_grisee': bool}
+    """
     segments = []
     i = 0
     current_text = ""
     bold = False
     italic = False
     underline = False
+    zone_grisee = False
 
     while i < len(texte):
+        # Detecter debut de zone variable (marqueur)
+        if texte[i:i+len(MARQUEUR_VAR_START)] == MARQUEUR_VAR_START:
+            if current_text:
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
+                current_text = ""
+            zone_grisee = True
+            i += len(MARQUEUR_VAR_START)
+            continue
+
+        # Detecter fin de zone variable (marqueur)
+        if texte[i:i+len(MARQUEUR_VAR_END)] == MARQUEUR_VAR_END:
+            if current_text:
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
+                current_text = ""
+            zone_grisee = False
+            i += len(MARQUEUR_VAR_END)
+            continue
+
         if texte[i:i+3] == '***':
             if current_text:
-                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline}))
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
                 current_text = ""
             bold = not bold
             italic = not italic
@@ -1034,7 +1191,7 @@ def traiter_formatage_markdown(texte: str):
 
         if texte[i:i+2] == '**':
             if current_text:
-                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline}))
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
                 current_text = ""
             bold = not bold
             i += 2
@@ -1042,7 +1199,7 @@ def traiter_formatage_markdown(texte: str):
 
         if texte[i] == '*' and (i+1 >= len(texte) or texte[i+1] != '*'):
             if current_text:
-                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline}))
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
                 current_text = ""
             italic = not italic
             i += 1
@@ -1050,7 +1207,7 @@ def traiter_formatage_markdown(texte: str):
 
         if texte[i:i+2] == '__':
             if current_text:
-                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline}))
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
                 current_text = ""
             underline = not underline
             i += 2
@@ -1060,13 +1217,16 @@ def traiter_formatage_markdown(texte: str):
         i += 1
 
     if current_text:
-        segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline}))
+        segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
 
     return segments
 
 
 def ajouter_texte_formate(paragraph, texte: str):
-    """Ajoute du texte avec formatage Markdown a un paragraphe."""
+    """
+    Ajoute du texte avec formatage Markdown a un paragraphe.
+    Applique un fond gris aux variables si ZONES_GRISEES_ACTIVES est True.
+    """
     segments = traiter_formatage_markdown(texte)
     for text, fmt in segments:
         if text:
@@ -1078,6 +1238,9 @@ def ajouter_texte_formate(paragraph, texte: str):
                 run.italic = fmt['italic']
                 run.underline = fmt['underline']
                 appliquer_police(run)
+                # Appliquer fond gris si c'est une zone variable et l'option est activee
+                if ZONES_GRISEES_ACTIVES and fmt.get('zone_grisee', False):
+                    appliquer_fond_gris(run)
 
 
 def appliquer_police(run):
@@ -1227,7 +1390,14 @@ def convertir_contenu_vers_docx(contenu: str, doc: Document):
 
 
 def traiter_ligne_markdown(ligne: str, doc: Document):
-    """Traite une ligne de Markdown et l'ajoute au document."""
+    """
+    Traite une ligne de Markdown et l'ajoute au document.
+    Applique les styles selon l'analyse du RTF original:
+    - Heading 1 (titres majeurs): bold, ALL CAPS, underline, centered
+    - Heading 2 (sous-sections): bold, small caps, underline
+    - Heading 3 (sous-sous-sections): bold, underline
+    - Heading 4 (petits titres): bold only
+    """
 
     # Ignorer separateurs
     if ligne in ['---', '***', '___']:
@@ -1237,23 +1407,16 @@ def traiter_ligne_markdown(ligne: str, doc: Document):
     ligne = ligne.replace('\\-', '-')
     ligne = ligne.replace('\\*', '*')
 
-    # Titres markdown avec #
+    # Titres markdown avec # → utiliser styles Heading
     niveau, texte = detecter_titre_markdown(ligne)
     if niveau > 0:
-        para = doc.add_paragraph()
-        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        para.paragraph_format.first_line_indent = Pt(0)
         if niveau == 1:
-            para.paragraph_format.space_before = Pt(12)
-            para.paragraph_format.space_after = Pt(6)
-            run = para.add_run(texte)
-            run.bold = True
-            run.underline = True
+            para = doc.add_paragraph(style='Heading 1')
+        elif niveau == 2:
+            para = doc.add_paragraph(style='Heading 2')
         else:
-            para.paragraph_format.space_before = Pt(6)
-            para.paragraph_format.space_after = Pt(3)
-            run = para.add_run(texte)
-            run.bold = True
+            para = doc.add_paragraph(style='Heading 3')
+        run = para.add_run(texte)
         appliquer_police(run)
         return
 
@@ -1278,34 +1441,27 @@ def traiter_ligne_markdown(ligne: str, doc: Document):
     # Les titres doivent etre relativement courts (moins de 80 caracteres)
     # sauf s'ils sont explicitement marques en bold avec **
     if est_titre_notarial(texte_clean) and (est_entoure_bold or len(texte_clean) < 80):
-        para = doc.add_paragraph()
-        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        para.paragraph_format.space_before = Pt(12)
-        para.paragraph_format.space_after = Pt(6)
-        para.paragraph_format.first_line_indent = Pt(0)
+        # Titre principal → Heading 1 (bold, ALL CAPS, underline, centered)
+        para = doc.add_paragraph(style='Heading 1')
         run = para.add_run(texte_clean)
-        run.bold = True
         appliquer_police(run)
         return
 
     # Sous-titres notariaux - detecter avec ou sans ** marqueurs
     # Verifier que c'est une ligne courte et autonome (pas une phrase complete)
     if est_sous_titre_notarial(texte_clean) and (est_entoure_bold or len(texte_clean) < 50):
-        para = doc.add_paragraph()
-        para.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        para.paragraph_format.space_before = Pt(6)
-        para.paragraph_format.space_after = Pt(3)
-        para.paragraph_format.first_line_indent = Pt(0)
+        # Sous-titre → Heading 2 (bold, small caps, underline)
+        para = doc.add_paragraph(style='Heading 2')
         run = para.add_run(texte_clean)
-        run.bold = True
         appliquer_police(run)
         return
 
-    # Paragraphe normal - espacement original 12pt
+    # Paragraphe normal - EXACTEMENT comme l'original
     para = doc.add_paragraph()
     para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    para.paragraph_format.space_after = Pt(8)  # Ajuste pour 48 pages
-    para.paragraph_format.first_line_indent = Mm(12.5)  # Original RTF = 12.5mm
+    para.paragraph_format.space_after = Pt(0)  # Original: pas d'espace après
+    para.paragraph_format.space_before = Pt(0)
+    para.paragraph_format.first_line_indent = Mm(12.51)  # Original: 1.251cm
     ajouter_texte_formate(para, ligne)
 
 
@@ -1313,8 +1469,17 @@ def traiter_ligne_markdown(ligne: str, doc: Document):
 # EXPORT PRINCIPAL
 # =============================================================================
 
-def exporter_docx(chemin_entree: Path, chemin_sortie: Path) -> bool:
-    """Exporte un fichier HTML/Markdown vers DOCX."""
+def exporter_docx(chemin_entree: Path, chemin_sortie: Path, zones_grisees: bool = False) -> bool:
+    """
+    Exporte un fichier HTML/Markdown vers DOCX.
+
+    Args:
+        chemin_entree: Fichier source (Markdown/HTML)
+        chemin_sortie: Fichier DOCX de sortie
+        zones_grisees: Si True, conserve les zones grisees sur les variables remplies
+    """
+    global ZONES_GRISEES_ACTIVES
+    ZONES_GRISEES_ACTIVES = zones_grisees
 
     with open(chemin_entree, 'r', encoding='utf-8') as f:
         contenu = f.read()
@@ -1336,6 +1501,8 @@ def main():
     parser = argparse.ArgumentParser(description='Exporter un acte HTML/Markdown vers DOCX')
     parser.add_argument('--input', '-i', type=Path, required=True, help='Fichier source')
     parser.add_argument('--output', '-o', type=Path, required=True, help='Fichier DOCX de sortie')
+    parser.add_argument('--zones-grisees', '-z', action='store_true',
+                        help='Conserver les zones grisees sur les variables remplies')
 
     args = parser.parse_args()
 
@@ -1344,9 +1511,10 @@ def main():
         return 1
 
     try:
-        if exporter_docx(args.input, args.output):
+        if exporter_docx(args.input, args.output, zones_grisees=args.zones_grisees):
             taille = args.output.stat().st_size / 1024
-            print(f'[OK] DOCX genere: {args.output} ({taille:.1f} Ko)')
+            option_gris = " (avec zones grisees)" if args.zones_grisees else ""
+            print(f'[OK] DOCX genere: {args.output} ({taille:.1f} Ko){option_gris}')
             return 0
     except Exception as e:
         print(f'[ERREUR] {e}')

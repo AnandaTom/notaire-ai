@@ -1,0 +1,466 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Variables pour Modificatif EDD et Règlement de Copropriété",
+  "description": "Schéma des données nécessaires à la génération d'un acte modificatif de l'EDD/RC",
+  "type": "object",
+  "required": ["acte", "syndicat", "immeuble", "edd_origine", "modifications"],
+  "properties": {
+    "acte": {
+      "type": "object",
+      "description": "Informations générales sur l'acte modificatif",
+      "required": ["date", "notaire", "type_modification"],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date de l'acte"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Numéro de référence interne"
+        },
+        "type_modification": {
+          "type": "string",
+          "enum": [
+            "creation_lots",
+            "suppression_lots",
+            "reunion_lots",
+            "division_lots",
+            "modification_tantiemes",
+            "creation_parties_communes_speciales",
+            "modification_reglement",
+            "mise_conformite_loi",
+            "autre"
+          ],
+          "description": "Type principal de modification"
+        },
+        "notaire": {
+          "type": "object",
+          "required": ["nom", "office", "adresse"],
+          "properties": {
+            "nom": { "type": "string" },
+            "prenom": { "type": "string" },
+            "office": { "type": "string" },
+            "adresse": { "type": "string" },
+            "crpcen": { "type": "string" }
+          }
+        }
+      }
+    },
+    "syndicat": {
+      "type": "object",
+      "description": "Syndicat des copropriétaires requérant",
+      "required": ["denomination", "immatriculation"],
+      "properties": {
+        "denomination": {
+          "type": "string",
+          "description": "Nom du syndicat (ex: SDC 20/22 GRANDE RUE)"
+        },
+        "immatriculation": {
+          "type": "string",
+          "description": "Numéro d'immatriculation au registre des copropriétés"
+        },
+        "adresse_immeuble": {
+          "type": "string"
+        },
+        "syndic": {
+          "type": "object",
+          "required": ["type", "denomination"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["professionnel", "benevole", "cooperatif"]
+            },
+            "denomination": { "type": "string" },
+            "adresse": { "type": "string" },
+            "representant": {
+              "type": "object",
+              "properties": {
+                "nom": { "type": "string" },
+                "prenom": { "type": "string" },
+                "qualite": { "type": "string" }
+              }
+            },
+            "delegation_pouvoir": {
+              "type": "object",
+              "properties": {
+                "delegataire": { "type": "string" },
+                "date": { "type": "string", "format": "date" }
+              }
+            },
+            "designation_ag": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string", "format": "date" },
+                "duree_mandat": { "type": "string" },
+                "date_debut": { "type": "string", "format": "date" },
+                "date_fin": { "type": "string", "format": "date" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "assemblee_generale": {
+      "type": "object",
+      "description": "AG ayant autorisé la modification",
+      "required": ["date", "majorite"],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "majorite": {
+          "type": "string",
+          "enum": ["article_24", "article_25", "article_26", "unanimite"],
+          "description": "Majorité requise pour la décision"
+        },
+        "resolution_numero": {
+          "type": "integer"
+        },
+        "texte_resolution": {
+          "type": "string"
+        },
+        "resultat_vote": {
+          "type": "object",
+          "properties": {
+            "pour_nombre": { "type": "integer" },
+            "pour_tantiemes": { "type": "integer" },
+            "total_tantiemes": { "type": "integer" }
+          }
+        },
+        "certificat_non_recours": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string", "format": "date" },
+            "delivre_par": { "type": "string" }
+          }
+        }
+      }
+    },
+    "immeuble": {
+      "type": "object",
+      "description": "Description de l'immeuble concerné",
+      "required": ["adresse", "cadastre"],
+      "properties": {
+        "adresse": {
+          "type": "object",
+          "required": ["numero", "voie", "code_postal", "commune"],
+          "properties": {
+            "numero": { "type": "string" },
+            "voie": { "type": "string" },
+            "code_postal": { "type": "string" },
+            "commune": { "type": "string" },
+            "departement": { "type": "string" }
+          }
+        },
+        "cadastre": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section": { "type": "string" },
+              "numero": { "type": "string" },
+              "lieudit": { "type": "string" },
+              "surface": { "type": "string" }
+            }
+          }
+        },
+        "batiments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nom": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "edd_origine": {
+      "type": "object",
+      "description": "Référence à l'EDD/RC d'origine",
+      "required": ["date_origine"],
+      "properties": {
+        "date_origine": {
+          "type": "string",
+          "format": "date"
+        },
+        "notaire_origine": {
+          "type": "string"
+        },
+        "lieu_origine": {
+          "type": "string"
+        },
+        "publication_spf": {
+          "type": "object",
+          "properties": {
+            "service": { "type": "string" },
+            "date": { "type": "string", "format": "date" },
+            "volume": { "type": "string" },
+            "numero": { "type": "string" }
+          }
+        },
+        "nombre_lots_initial": {
+          "type": "integer"
+        },
+        "historique_modificatifs": {
+          "type": "array",
+          "description": "Liste des modificatifs antérieurs",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "format": "date" },
+              "notaire": { "type": "string" },
+              "objet": { "type": "string" },
+              "publication_spf": {
+                "type": "object",
+                "properties": {
+                  "date": { "type": "string", "format": "date" },
+                  "volume": { "type": "string" },
+                  "numero": { "type": "string" }
+                }
+              },
+              "attestation_rectificative": {
+                "type": "object",
+                "properties": {
+                  "date": { "type": "string", "format": "date" },
+                  "publication": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "etat_actuel": {
+      "type": "object",
+      "description": "État actuel de la copropriété avant modification",
+      "properties": {
+        "nombre_lots": {
+          "type": "integer"
+        },
+        "lots_existants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "numero": { "type": "integer" },
+              "etage": { "type": "string" },
+              "designation": { "type": "string" },
+              "tantiemes_generaux": {
+                "type": "object",
+                "properties": {
+                  "numerateur": { "type": "integer" },
+                  "denominateur": { "type": "integer" }
+                }
+              },
+              "supprime": { "type": "boolean", "default": false }
+            }
+          }
+        },
+        "total_tantiemes": {
+          "type": "integer"
+        }
+      }
+    },
+    "modifications": {
+      "type": "object",
+      "description": "Détail des modifications apportées",
+      "properties": {
+        "creation_lots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "numero": { "type": "integer" },
+              "batiment": { "type": "string" },
+              "etage": { "type": "string" },
+              "designation": { "type": "string" },
+              "tantiemes_generaux": { "type": "integer" },
+              "tantiemes_speciaux": {
+                "type": "object",
+                "additionalProperties": { "type": "integer" }
+              },
+              "origine": {
+                "type": "string",
+                "enum": ["division_lot", "prelevement_parties_communes", "nouveau"]
+              },
+              "lot_origine": { "type": "integer" }
+            }
+          }
+        },
+        "suppression_lots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "numero": { "type": "integer" },
+              "motif": {
+                "type": "string",
+                "enum": ["reunion", "reintegration_parties_communes", "autre"]
+              }
+            }
+          }
+        },
+        "reunion_lots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "lots_reunis": {
+                "type": "array",
+                "items": { "type": "integer" }
+              },
+              "nouveau_lot": { "type": "integer" }
+            }
+          }
+        },
+        "division_lots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "lot_divise": { "type": "integer" },
+              "nouveaux_lots": {
+                "type": "array",
+                "items": { "type": "integer" }
+              }
+            }
+          }
+        },
+        "parties_communes_speciales": {
+          "type": "object",
+          "description": "Création ou modification de PCS",
+          "properties": {
+            "creation": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "nom": { "type": "string" },
+                  "description": { "type": "string" },
+                  "lots_concernes": {
+                    "type": "array",
+                    "items": { "type": "integer" }
+                  },
+                  "elements_inclus": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modification_reglement": {
+          "type": "object",
+          "properties": {
+            "clauses_ajoutees": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "titre": { "type": "string" },
+                  "texte": { "type": "string" }
+                }
+              }
+            },
+            "clauses_modifiees": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "clause_origine": { "type": "string" },
+                  "nouveau_texte": { "type": "string" }
+                }
+              }
+            },
+            "clauses_supprimees": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "nouvel_etat": {
+      "type": "object",
+      "description": "État de la copropriété après modification",
+      "properties": {
+        "nombre_lots": {
+          "type": "integer"
+        },
+        "tableau_recapitulatif": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "numero_lot": { "type": "integer" },
+              "batiment": { "type": "string" },
+              "etage": { "type": "string" },
+              "designation": { "type": "string" },
+              "tantiemes_generaux": { "type": "string" },
+              "tantiemes_pcs_batiment_a": { "type": "string" },
+              "tantiemes_pcs_batiment_b": { "type": "string" },
+              "tantiemes_pcs_batiment_c": { "type": "string" }
+            }
+          }
+        },
+        "methode_calcul_tantiemes": {
+          "type": "string",
+          "description": "Explication de la méthode de calcul"
+        }
+      }
+    },
+    "geometre": {
+      "type": "object",
+      "description": "Géomètre-expert ayant établi le projet de modificatif",
+      "properties": {
+        "nom": { "type": "string" },
+        "societe": { "type": "string" },
+        "adresse": { "type": "string" },
+        "date_projet": { "type": "string", "format": "date" }
+      }
+    },
+    "observations": {
+      "type": "object",
+      "description": "Observations et précisions diverses",
+      "properties": {
+        "mise_conformite_loi_elan": {
+          "type": "boolean",
+          "description": "Le RC nécessite-t-il une mise en conformité ?"
+        },
+        "points_attention": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "publicite_fonciere": {
+      "type": "object",
+      "properties": {
+        "service": {
+          "type": "string"
+        },
+        "contribution_securite_immobiliere": {
+          "type": "number",
+          "description": "Montant en euros"
+        }
+      }
+    },
+    "annexes": {
+      "type": "array",
+      "description": "Liste des annexes jointes à l'acte",
+      "items": {
+        "type": "object",
+        "properties": {
+          "numero": { "type": "integer" },
+          "titre": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

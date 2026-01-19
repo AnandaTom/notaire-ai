@@ -1,0 +1,495 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Variables pour État Descriptif de Division et Règlement de Copropriété",
+  "description": "Schéma des données nécessaires à la génération d'un EDD et règlement de copropriété",
+  "type": "object",
+  "required": ["acte", "requerant", "immeuble", "lots", "parties_communes", "parties_privatives", "charges"],
+  "properties": {
+    "acte": {
+      "type": "object",
+      "description": "Informations générales sur l'acte",
+      "required": ["date", "notaire", "type"],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date de l'acte"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Numéro de référence interne"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["edd_reglement_initial", "edd_seul", "reglement_seul"],
+          "description": "Type d'acte"
+        },
+        "notaire": {
+          "type": "object",
+          "required": ["nom", "office", "adresse"],
+          "properties": {
+            "nom": { "type": "string" },
+            "prenom": { "type": "string" },
+            "office": { "type": "string" },
+            "adresse": { "type": "string" },
+            "crpcen": { "type": "string" }
+          }
+        }
+      }
+    },
+    "requerant": {
+      "type": "object",
+      "description": "Personne qui requiert l'établissement de l'EDD/RC",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["personne_physique", "personne_morale", "indivision"],
+          "description": "Type de requérant"
+        },
+        "personne_physique": {
+          "type": "object",
+          "properties": {
+            "civilite": { "type": "string", "enum": ["Monsieur", "Madame"] },
+            "nom": { "type": "string" },
+            "prenom": { "type": "string" },
+            "nom_naissance": { "type": "string" },
+            "date_naissance": { "type": "string", "format": "date" },
+            "lieu_naissance": { "type": "string" },
+            "nationalite": { "type": "string" },
+            "profession": { "type": "string" },
+            "adresse": { "type": "string" },
+            "situation_matrimoniale": {
+              "type": "object",
+              "properties": {
+                "statut": {
+                  "type": "string",
+                  "enum": ["celibataire", "marie", "pacse", "divorce", "veuf"]
+                },
+                "regime_matrimonial": { "type": "string" },
+                "contrat_mariage": {
+                  "type": "object",
+                  "properties": {
+                    "date": { "type": "string", "format": "date" },
+                    "notaire": { "type": "string" },
+                    "lieu": { "type": "string" }
+                  }
+                },
+                "conjoint": {
+                  "type": "object",
+                  "properties": {
+                    "nom": { "type": "string" },
+                    "prenom": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "resident_fiscal": { "type": "boolean" }
+          }
+        },
+        "personne_morale": {
+          "type": "object",
+          "properties": {
+            "denomination": { "type": "string" },
+            "forme_juridique": { "type": "string" },
+            "siege_social": { "type": "string" },
+            "rcs": { "type": "string" },
+            "capital": { "type": "number" },
+            "representant": {
+              "type": "object",
+              "properties": {
+                "nom": { "type": "string" },
+                "prenom": { "type": "string" },
+                "qualite": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "immeuble": {
+      "type": "object",
+      "description": "Description de l'ensemble immobilier",
+      "required": ["adresse", "cadastre"],
+      "properties": {
+        "adresse": {
+          "type": "object",
+          "required": ["numero", "voie", "code_postal", "commune"],
+          "properties": {
+            "numero": { "type": "string" },
+            "voie": { "type": "string" },
+            "complement": { "type": "string" },
+            "code_postal": { "type": "string" },
+            "commune": { "type": "string" },
+            "departement": { "type": "string" }
+          }
+        },
+        "cadastre": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["section", "numero", "surface"],
+            "properties": {
+              "section": { "type": "string" },
+              "numero": { "type": "string" },
+              "lieudit": { "type": "string" },
+              "surface": { "type": "string" }
+            }
+          }
+        },
+        "description_generale": {
+          "type": "string",
+          "description": "Description textuelle de l'ensemble immobilier"
+        },
+        "batiments": {
+          "type": "array",
+          "description": "Liste des bâtiments composant l'ensemble",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nom": { "type": "string", "description": "Ex: Bâtiment A, B, C..." },
+              "usage": { "type": "string" },
+              "niveaux": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "niveau": { "type": "string", "description": "Ex: RDC, 1er étage, sous-sol..." },
+                    "description": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "annee_construction": { "type": "integer" },
+        "permis_construire": {
+          "type": "object",
+          "properties": {
+            "numero": { "type": "string" },
+            "date": { "type": "string", "format": "date" },
+            "conformite": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "origine_propriete": {
+      "type": "object",
+      "description": "Chaîne de propriété",
+      "properties": {
+        "immediate": {
+          "type": "object",
+          "properties": {
+            "mode_acquisition": {
+              "type": "string",
+              "enum": ["achat", "donation", "succession", "echange", "apport", "autre"]
+            },
+            "date": { "type": "string", "format": "date" },
+            "notaire": { "type": "string" },
+            "publication_spf": {
+              "type": "object",
+              "properties": {
+                "service": { "type": "string" },
+                "date": { "type": "string", "format": "date" },
+                "volume": { "type": "string" },
+                "numero": { "type": "string" }
+              }
+            },
+            "vendeurs_donateurs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "nom": { "type": "string" },
+                  "prenom": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "anterieure": {
+          "type": "string",
+          "description": "Texte de l'origine de propriété antérieure"
+        }
+      }
+    },
+    "lots": {
+      "type": "array",
+      "description": "Liste des lots de copropriété",
+      "items": {
+        "type": "object",
+        "required": ["numero", "designation", "tantiemes_generaux"],
+        "properties": {
+          "numero": { "type": "integer" },
+          "batiment": { "type": "string" },
+          "etage": { "type": "string" },
+          "designation": { "type": "string", "description": "Ex: Appartement, Local commercial, Cave, Parking..." },
+          "description_detaillee": { "type": "string" },
+          "superficie_carrez": { "type": "number" },
+          "tantiemes_generaux": { "type": "integer" },
+          "tantiemes_speciaux": {
+            "type": "object",
+            "additionalProperties": { "type": "integer" },
+            "description": "Tantièmes par clé de répartition spéciale"
+          },
+          "usage": {
+            "type": "string",
+            "enum": ["habitation", "commercial", "mixte", "professionnel", "stationnement", "cave", "grenier"]
+          },
+          "occupation_actuelle": {
+            "type": "object",
+            "properties": {
+              "statut": {
+                "type": "string",
+                "enum": ["libre", "occupe_proprietaire", "loue_nu", "loue_meuble"]
+              },
+              "locataire": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "parties_communes": {
+      "type": "object",
+      "description": "Définition des parties communes",
+      "properties": {
+        "generales": {
+          "type": "array",
+          "description": "Liste des parties communes générales",
+          "items": { "type": "string" }
+        },
+        "speciales": {
+          "type": "array",
+          "description": "Parties communes spéciales par bâtiment ou groupe de lots",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nom": { "type": "string" },
+              "description": { "type": "string" },
+              "lots_concernes": {
+                "type": "array",
+                "items": { "type": "integer" }
+              }
+            }
+          }
+        },
+        "jouissance_privative": {
+          "type": "array",
+          "description": "Parties communes à jouissance privative",
+          "items": {
+            "type": "object",
+            "properties": {
+              "designation": { "type": "string" },
+              "lot_beneficiaire": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "parties_privatives": {
+      "type": "object",
+      "description": "Définition des parties privatives",
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "charges": {
+      "type": "object",
+      "description": "Répartition des charges",
+      "properties": {
+        "cles_repartition": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nom": { "type": "string", "description": "Ex: Charges générales, Ascenseur, Chauffage..." },
+              "base_repartition": {
+                "type": "string",
+                "enum": ["tantiemes_generaux", "tantiemes_speciaux", "utilite"]
+              },
+              "total_tantiemes": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "syndic": {
+      "type": "object",
+      "description": "Organisation de la gestion (syndic provisoire ou désigné)",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["provisoire_requerant", "professionnel", "benevole", "cooperatif"]
+        },
+        "designation": {
+          "type": "object",
+          "properties": {
+            "nom": { "type": "string" },
+            "adresse": { "type": "string" },
+            "carte_professionnelle": { "type": "string" }
+          }
+        },
+        "duree_mandat": { "type": "string" }
+      }
+    },
+    "conseil_syndical": {
+      "type": "object",
+      "properties": {
+        "composition": { "type": "string" },
+        "membres_nombre": { "type": "integer" }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "description": "Diagnostics techniques",
+      "properties": {
+        "dtg": {
+          "type": "object",
+          "description": "Diagnostic Technique Global (obligatoire si immeuble > 10 ans)",
+          "properties": {
+            "date": { "type": "string", "format": "date" },
+            "diagnostiqueur": { "type": "string" },
+            "conclusions": { "type": "string" }
+          }
+        },
+        "dpe": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string", "format": "date" },
+            "classe_energie": { "type": "string" },
+            "classe_ges": { "type": "string" }
+          }
+        },
+        "amiante": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string", "format": "date" },
+            "presence": { "type": "boolean" },
+            "diagnostiqueur": { "type": "string" }
+          }
+        },
+        "plomb": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string", "format": "date" },
+            "presence": { "type": "boolean" }
+          }
+        },
+        "termites": {
+          "type": "object",
+          "properties": {
+            "zone_contaminee": { "type": "boolean" }
+          }
+        },
+        "merules": {
+          "type": "object",
+          "properties": {
+            "zone_risque": { "type": "boolean" }
+          }
+        },
+        "radon": {
+          "type": "object",
+          "properties": {
+            "zone": { "type": "integer", "minimum": 1, "maximum": 3 }
+          }
+        }
+      }
+    },
+    "urbanisme": {
+      "type": "object",
+      "properties": {
+        "certificat_urbanisme": {
+          "type": "object",
+          "properties": {
+            "numero": { "type": "string" },
+            "date": { "type": "string", "format": "date" },
+            "zone": { "type": "string" }
+          }
+        },
+        "plu_applicable": { "type": "boolean" },
+        "zone_plu": { "type": "string" },
+        "droit_preemption": {
+          "type": "object",
+          "properties": {
+            "applicable": { "type": "boolean" },
+            "type": { "type": "string", "enum": ["dpu_simple", "dpu_renforce", "zad"] },
+            "beneficiaire": { "type": "string" }
+          }
+        },
+        "ppri": {
+          "type": "object",
+          "properties": {
+            "applicable": { "type": "boolean" },
+            "zone": { "type": "string" }
+          }
+        }
+      }
+    },
+    "servitudes": {
+      "type": "array",
+      "description": "Servitudes grevant l'immeuble",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "description": { "type": "string" },
+          "beneficiaire": { "type": "string" },
+          "origine": { "type": "string" }
+        }
+      }
+    },
+    "assurances": {
+      "type": "object",
+      "properties": {
+        "dommages_ouvrage": {
+          "type": "object",
+          "properties": {
+            "applicable": { "type": "boolean" },
+            "assureur": { "type": "string" },
+            "numero_police": { "type": "string" }
+          }
+        },
+        "responsabilite_civile": {
+          "type": "object",
+          "properties": {
+            "assureur": { "type": "string" },
+            "numero_police": { "type": "string" }
+          }
+        }
+      }
+    },
+    "immatriculation_syndicat": {
+      "type": "object",
+      "description": "Immatriculation au registre national des copropriétés",
+      "properties": {
+        "numero": { "type": "string" },
+        "date": { "type": "string", "format": "date" }
+      }
+    },
+    "annexes": {
+      "type": "array",
+      "description": "Liste des annexes jointes à l'acte",
+      "items": {
+        "type": "object",
+        "properties": {
+          "numero": { "type": "integer" },
+          "titre": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "geomètre": {
+      "type": "object",
+      "description": "Géomètre-expert ayant établi l'EDD",
+      "properties": {
+        "nom": { "type": "string" },
+        "societe": { "type": "string" },
+        "adresse": { "type": "string" },
+        "date_edd": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

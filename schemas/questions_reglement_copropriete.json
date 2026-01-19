@@ -1,0 +1,717 @@
+{
+  "meta": {
+    "titre": "Questions pour EDD et Règlement de Copropriété",
+    "description": "Questionnaire complet pour la collecte des informations nécessaires à l'établissement d'un état descriptif de division et règlement de copropriété",
+    "version": "1.0",
+    "date_creation": "2025-01-19",
+    "enrichissement": "Ajouter les nouvelles questions découvertes lors des échanges avec les notaires"
+  },
+  "sections": [
+    {
+      "id": "identification_acte",
+      "titre": "1. Identification de l'acte",
+      "questions": [
+        {
+          "id": "type_acte",
+          "question": "Quel type d'acte souhaitez-vous établir ?",
+          "type": "choix_unique",
+          "options": [
+            "État descriptif de division ET règlement de copropriété (acte complet)",
+            "État descriptif de division seul",
+            "Règlement de copropriété seul (EDD existant)"
+          ],
+          "obligatoire": true,
+          "variable": "acte.type"
+        },
+        {
+          "id": "date_acte",
+          "question": "Quelle est la date prévue pour l'acte ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "acte.date"
+        }
+      ]
+    },
+    {
+      "id": "requerant",
+      "titre": "2. Identification du requérant",
+      "questions": [
+        {
+          "id": "type_requerant",
+          "question": "Le requérant est-il une personne physique ou morale ?",
+          "type": "choix_unique",
+          "options": ["Personne physique", "Personne morale", "Indivision"],
+          "obligatoire": true,
+          "variable": "requerant.type"
+        },
+        {
+          "id": "requerant_civilite",
+          "question": "Civilité du requérant ?",
+          "type": "choix_unique",
+          "options": ["Monsieur", "Madame"],
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.civilite",
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_nom",
+          "question": "Nom de famille (et nom de naissance si différent) ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.nom",
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_prenom",
+          "question": "Prénom(s) ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.prenom",
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_naissance",
+          "question": "Date et lieu de naissance ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "date_naissance",
+              "question": "Date de naissance",
+              "type": "date",
+              "variable": "requerant.personne_physique.date_naissance"
+            },
+            {
+              "id": "lieu_naissance",
+              "question": "Lieu de naissance (ville et code postal)",
+              "type": "texte",
+              "variable": "requerant.personne_physique.lieu_naissance"
+            }
+          ],
+          "obligatoire": true,
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_profession",
+          "question": "Profession ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.profession",
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_adresse",
+          "question": "Adresse complète de domicile ?",
+          "type": "texte_long",
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.adresse",
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_nationalite",
+          "question": "Nationalité ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.nationalite",
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_resident",
+          "question": "Est-il résident fiscal français ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.resident_fiscal",
+          "condition_affichage": "requerant.type == 'personne_physique'"
+        },
+        {
+          "id": "requerant_situation_matrimoniale",
+          "question": "Quelle est la situation matrimoniale ?",
+          "type": "choix_unique",
+          "options": ["Célibataire", "Marié(e)", "Pacsé(e)", "Divorcé(e)", "Veuf(ve)"],
+          "obligatoire": true,
+          "variable": "requerant.personne_physique.situation_matrimoniale.statut",
+          "condition_affichage": "requerant.type == 'personne_physique'",
+          "sous_questions": {
+            "si_marie": [
+              {
+                "id": "regime_matrimonial",
+                "question": "Quel est le régime matrimonial ?",
+                "type": "choix_unique",
+                "options": [
+                  "Communauté légale réduite aux acquêts",
+                  "Séparation de biens",
+                  "Communauté universelle",
+                  "Participation aux acquêts",
+                  "Régime étranger"
+                ],
+                "variable": "requerant.personne_physique.situation_matrimoniale.regime_matrimonial"
+              },
+              {
+                "id": "contrat_mariage",
+                "question": "Y a-t-il eu un contrat de mariage ?",
+                "type": "booleen",
+                "variable": "requerant.personne_physique.situation_matrimoniale.contrat_mariage"
+              }
+            ]
+          }
+        },
+        {
+          "id": "pm_denomination",
+          "question": "Dénomination sociale de la société ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "requerant.personne_morale.denomination",
+          "condition_affichage": "requerant.type == 'personne_morale'"
+        },
+        {
+          "id": "pm_forme",
+          "question": "Forme juridique (SCI, SARL, SAS, etc.) ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "requerant.personne_morale.forme_juridique",
+          "condition_affichage": "requerant.type == 'personne_morale'"
+        },
+        {
+          "id": "pm_siege",
+          "question": "Adresse du siège social ?",
+          "type": "texte_long",
+          "obligatoire": true,
+          "variable": "requerant.personne_morale.siege_social",
+          "condition_affichage": "requerant.type == 'personne_morale'"
+        },
+        {
+          "id": "pm_rcs",
+          "question": "Numéro RCS et ville d'immatriculation ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "requerant.personne_morale.rcs",
+          "condition_affichage": "requerant.type == 'personne_morale'"
+        }
+      ]
+    },
+    {
+      "id": "immeuble",
+      "titre": "3. Description de l'immeuble",
+      "questions": [
+        {
+          "id": "immeuble_adresse",
+          "question": "Quelle est l'adresse complète de l'immeuble ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "numero",
+              "question": "Numéro de voie",
+              "type": "texte",
+              "variable": "immeuble.adresse.numero"
+            },
+            {
+              "id": "voie",
+              "question": "Nom de la voie",
+              "type": "texte",
+              "variable": "immeuble.adresse.voie"
+            },
+            {
+              "id": "code_postal",
+              "question": "Code postal",
+              "type": "texte",
+              "variable": "immeuble.adresse.code_postal"
+            },
+            {
+              "id": "commune",
+              "question": "Commune",
+              "type": "texte",
+              "variable": "immeuble.adresse.commune"
+            }
+          ],
+          "obligatoire": true
+        },
+        {
+          "id": "cadastre",
+          "question": "Quelles sont les références cadastrales ?",
+          "type": "tableau",
+          "colonnes": ["Section", "Numéro", "Lieudit", "Surface"],
+          "obligatoire": true,
+          "variable": "immeuble.cadastre"
+        },
+        {
+          "id": "description_generale",
+          "question": "Décrivez l'ensemble immobilier (nombre de bâtiments, composition générale) :",
+          "type": "texte_long",
+          "obligatoire": true,
+          "variable": "immeuble.description_generale"
+        },
+        {
+          "id": "batiments",
+          "question": "Détaillez chaque bâtiment de l'ensemble :",
+          "type": "repetition",
+          "sous_questions": [
+            {
+              "id": "batiment_nom",
+              "question": "Nom du bâtiment (ex: Bâtiment A)",
+              "type": "texte",
+              "variable": "immeuble.batiments[].nom"
+            },
+            {
+              "id": "batiment_usage",
+              "question": "Usage principal",
+              "type": "choix_unique",
+              "options": ["Habitation", "Commercial", "Mixte", "Professionnel"],
+              "variable": "immeuble.batiments[].usage"
+            },
+            {
+              "id": "batiment_niveaux",
+              "question": "Description par niveau (sous-sol, RDC, étages...)",
+              "type": "texte_long",
+              "variable": "immeuble.batiments[].description_niveaux"
+            }
+          ],
+          "obligatoire": true
+        },
+        {
+          "id": "annee_construction",
+          "question": "Quelle est l'année de construction (approximative si inconnue) ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "immeuble.annee_construction"
+        }
+      ]
+    },
+    {
+      "id": "origine_propriete",
+      "titre": "4. Origine de propriété",
+      "questions": [
+        {
+          "id": "mode_acquisition",
+          "question": "Comment le requérant a-t-il acquis l'immeuble ?",
+          "type": "choix_unique",
+          "options": ["Achat", "Donation", "Succession", "Échange", "Apport en société", "Autre"],
+          "obligatoire": true,
+          "variable": "origine_propriete.immediate.mode_acquisition"
+        },
+        {
+          "id": "date_acquisition",
+          "question": "Date de l'acquisition ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "origine_propriete.immediate.date"
+        },
+        {
+          "id": "notaire_acquisition",
+          "question": "Nom du notaire ayant reçu l'acte d'acquisition ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "origine_propriete.immediate.notaire"
+        },
+        {
+          "id": "publication_spf",
+          "question": "Références de publication au service de publicité foncière ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "service",
+              "question": "Service (ex: LYON 5)",
+              "type": "texte",
+              "variable": "origine_propriete.immediate.publication_spf.service"
+            },
+            {
+              "id": "date_pub",
+              "question": "Date de publication",
+              "type": "date",
+              "variable": "origine_propriete.immediate.publication_spf.date"
+            },
+            {
+              "id": "volume",
+              "question": "Volume",
+              "type": "texte",
+              "variable": "origine_propriete.immediate.publication_spf.volume"
+            },
+            {
+              "id": "numero",
+              "question": "Numéro",
+              "type": "texte",
+              "variable": "origine_propriete.immediate.publication_spf.numero"
+            }
+          ],
+          "obligatoire": true
+        }
+      ]
+    },
+    {
+      "id": "lots",
+      "titre": "5. Description des lots",
+      "questions": [
+        {
+          "id": "nombre_lots",
+          "question": "Combien de lots la copropriété comportera-t-elle ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "lots_count"
+        },
+        {
+          "id": "lots_detail",
+          "question": "Décrivez chaque lot :",
+          "type": "repetition",
+          "sous_questions": [
+            {
+              "id": "lot_numero",
+              "question": "Numéro du lot",
+              "type": "nombre",
+              "variable": "lots[].numero"
+            },
+            {
+              "id": "lot_batiment",
+              "question": "Bâtiment",
+              "type": "texte",
+              "variable": "lots[].batiment"
+            },
+            {
+              "id": "lot_etage",
+              "question": "Étage",
+              "type": "texte",
+              "variable": "lots[].etage"
+            },
+            {
+              "id": "lot_designation",
+              "question": "Désignation (appartement, local commercial, cave...)",
+              "type": "texte",
+              "variable": "lots[].designation"
+            },
+            {
+              "id": "lot_description",
+              "question": "Description détaillée",
+              "type": "texte_long",
+              "variable": "lots[].description_detaillee"
+            },
+            {
+              "id": "lot_superficie",
+              "question": "Superficie loi Carrez (en m²)",
+              "type": "nombre_decimal",
+              "variable": "lots[].superficie_carrez",
+              "note": "Obligatoire pour les lots > 8m²"
+            },
+            {
+              "id": "lot_tantiemes",
+              "question": "Tantièmes de copropriété (charges générales)",
+              "type": "nombre",
+              "variable": "lots[].tantiemes_generaux"
+            },
+            {
+              "id": "lot_usage",
+              "question": "Usage",
+              "type": "choix_unique",
+              "options": ["Habitation", "Commercial", "Mixte", "Professionnel", "Stationnement", "Cave/Grenier"],
+              "variable": "lots[].usage"
+            },
+            {
+              "id": "lot_occupation",
+              "question": "Occupation actuelle",
+              "type": "choix_unique",
+              "options": ["Libre", "Occupé par le propriétaire", "Loué nu", "Loué meublé"],
+              "variable": "lots[].occupation_actuelle.statut"
+            }
+          ],
+          "obligatoire": true
+        },
+        {
+          "id": "total_tantiemes",
+          "question": "Base totale des tantièmes (généralement 1000 ou 10000) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "charges.total_tantiemes",
+          "note": "La somme des tantièmes de tous les lots doit égaler ce total"
+        }
+      ]
+    },
+    {
+      "id": "parties_communes",
+      "titre": "6. Parties communes",
+      "questions": [
+        {
+          "id": "pc_generales",
+          "question": "Quels éléments constituent les parties communes générales ?",
+          "type": "choix_multiple",
+          "options": [
+            "Le sol",
+            "Les cours, parcs et jardins",
+            "Les voies d'accès",
+            "Le gros œuvre (fondations, murs porteurs, toiture)",
+            "Les éléments d'équipement communs (canalisations, chauffage collectif...)",
+            "Les halls d'entrée et circulations",
+            "Les locaux communs (local poubelles, vélos...)",
+            "Autre (préciser)"
+          ],
+          "obligatoire": true,
+          "variable": "parties_communes.generales"
+        },
+        {
+          "id": "pc_speciales",
+          "question": "Y a-t-il des parties communes spéciales (par bâtiment, escalier...) ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "parties_communes.speciales_existe",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "pc_speciales_detail",
+                "question": "Décrivez chaque partie commune spéciale",
+                "type": "repetition",
+                "sous_questions": [
+                  {
+                    "id": "pcs_nom",
+                    "question": "Nom (ex: PCS Bâtiment A)",
+                    "type": "texte",
+                    "variable": "parties_communes.speciales[].nom"
+                  },
+                  {
+                    "id": "pcs_description",
+                    "question": "Éléments inclus",
+                    "type": "texte_long",
+                    "variable": "parties_communes.speciales[].description"
+                  },
+                  {
+                    "id": "pcs_lots",
+                    "question": "Lots concernés (numéros séparés par virgule)",
+                    "type": "texte",
+                    "variable": "parties_communes.speciales[].lots_concernes"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "jouissance_privative",
+          "question": "Y a-t-il des parties communes à jouissance privative (terrasse, jardin...) ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "parties_communes.jouissance_privative_existe"
+        }
+      ]
+    },
+    {
+      "id": "charges",
+      "titre": "7. Charges et répartition",
+      "questions": [
+        {
+          "id": "cles_repartition",
+          "question": "Quelles clés de répartition des charges prévoyez-vous ?",
+          "type": "choix_multiple",
+          "options": [
+            "Charges générales (tantièmes de copropriété)",
+            "Charges d'ascenseur (si applicable)",
+            "Charges de chauffage collectif (si applicable)",
+            "Charges par bâtiment (si PCS)",
+            "Charges d'eau froide",
+            "Autre (préciser)"
+          ],
+          "obligatoire": true,
+          "variable": "charges.cles_repartition"
+        }
+      ]
+    },
+    {
+      "id": "syndic",
+      "titre": "8. Organisation - Syndic",
+      "questions": [
+        {
+          "id": "syndic_type",
+          "question": "Quel type de syndic est prévu initialement ?",
+          "type": "choix_unique",
+          "options": [
+            "Syndic provisoire (le requérant)",
+            "Syndic professionnel désigné",
+            "Syndic bénévole (copropriétaire)",
+            "Syndic coopératif"
+          ],
+          "obligatoire": true,
+          "variable": "syndic.type"
+        },
+        {
+          "id": "syndic_pro",
+          "question": "Si syndic professionnel, quelles sont ses coordonnées ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "syndic_nom",
+              "question": "Nom/Dénomination",
+              "type": "texte",
+              "variable": "syndic.designation.nom"
+            },
+            {
+              "id": "syndic_adresse",
+              "question": "Adresse",
+              "type": "texte",
+              "variable": "syndic.designation.adresse"
+            }
+          ],
+          "condition_affichage": "syndic.type == 'professionnel'"
+        }
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "titre": "9. Diagnostics techniques",
+      "questions": [
+        {
+          "id": "dtg_requis",
+          "question": "L'immeuble a-t-il plus de 10 ans ? (DTG obligatoire)",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "diagnostics.dtg_requis",
+          "note": "Le Diagnostic Technique Global est obligatoire pour la mise en copropriété d'un immeuble de plus de 10 ans"
+        },
+        {
+          "id": "dtg_info",
+          "question": "Informations sur le DTG :",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "dtg_date",
+              "question": "Date du diagnostic",
+              "type": "date",
+              "variable": "diagnostics.dtg.date"
+            },
+            {
+              "id": "dtg_diagnostiqueur",
+              "question": "Diagnostiqueur",
+              "type": "texte",
+              "variable": "diagnostics.dtg.diagnostiqueur"
+            }
+          ],
+          "condition_affichage": "diagnostics.dtg_requis == true"
+        },
+        {
+          "id": "mesurage_carrez",
+          "question": "Qui a réalisé les mesurages loi Carrez ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "carrez_geometre",
+              "question": "Nom du géomètre-expert",
+              "type": "texte",
+              "variable": "geomètre.nom"
+            },
+            {
+              "id": "carrez_societe",
+              "question": "Société",
+              "type": "texte",
+              "variable": "geomètre.societe"
+            },
+            {
+              "id": "carrez_date",
+              "question": "Date des mesurages",
+              "type": "date",
+              "variable": "geomètre.date_edd"
+            }
+          ],
+          "obligatoire": true
+        }
+      ]
+    },
+    {
+      "id": "urbanisme",
+      "titre": "10. Urbanisme",
+      "questions": [
+        {
+          "id": "cu_info",
+          "question": "Disposez-vous d'un certificat d'urbanisme ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "urbanisme.certificat_urbanisme_existe",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "cu_numero",
+                "question": "Numéro du CU",
+                "type": "texte",
+                "variable": "urbanisme.certificat_urbanisme.numero"
+              },
+              {
+                "id": "cu_date",
+                "question": "Date de délivrance",
+                "type": "date",
+                "variable": "urbanisme.certificat_urbanisme.date"
+              },
+              {
+                "id": "cu_zone",
+                "question": "Zone PLU",
+                "type": "texte",
+                "variable": "urbanisme.zone_plu"
+              }
+            ]
+          }
+        },
+        {
+          "id": "dpu",
+          "question": "L'immeuble est-il soumis au droit de préemption urbain ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "urbanisme.droit_preemption.applicable"
+        }
+      ]
+    },
+    {
+      "id": "servitudes",
+      "titre": "11. Servitudes",
+      "questions": [
+        {
+          "id": "servitudes_existe",
+          "question": "L'immeuble est-il grevé de servitudes ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "servitudes_existe",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "servitudes_detail",
+                "question": "Décrivez chaque servitude",
+                "type": "repetition",
+                "sous_questions": [
+                  {
+                    "id": "servitude_type",
+                    "question": "Type de servitude",
+                    "type": "choix_unique",
+                    "options": ["Passage", "Vue", "Écoulement des eaux", "Réseaux (EDF, GDF...)", "Autre"],
+                    "variable": "servitudes[].type"
+                  },
+                  {
+                    "id": "servitude_description",
+                    "question": "Description",
+                    "type": "texte_long",
+                    "variable": "servitudes[].description"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "annexes",
+      "titre": "12. Documents annexes",
+      "questions": [
+        {
+          "id": "annexes_liste",
+          "question": "Quels documents seront annexés à l'acte ?",
+          "type": "choix_multiple",
+          "options": [
+            "État descriptif de division (géomètre)",
+            "Certificats de superficie loi Carrez",
+            "Diagnostic Technique Global",
+            "Plans d'accès",
+            "Plans des niveaux",
+            "Certificat d'urbanisme",
+            "Note de renseignements d'urbanisme",
+            "Arrêté d'alignement",
+            "Plan cadastral",
+            "État hypothécaire",
+            "Diagnostics amiante/plomb",
+            "État des risques"
+          ],
+          "obligatoire": true,
+          "variable": "annexes"
+        }
+      ]
+    }
+  ]
+}

@@ -361,16 +361,36 @@ Dans ces cas, informer le notaire :
 
 ---
 
+## Formatage DOCX - Rappel CRITIQUE
+
+Lors de la régénération, le formatage DOCX est **automatiquement identique** à la trame originale :
+
+| Paramètre | Valeur |
+|-----------|--------|
+| Police | Times New Roman 11pt |
+| Marges | G=60mm, D=15mm, H/B=25mm |
+| Retrait 1ère ligne | 12.51mm |
+
+**Ne jamais modifier ces valeurs** - elles sont codées en dur dans `exporter_docx.py`.
+
+---
+
 ## Mises à jour de cette directive
 
 | Date | Modification | Auteur |
 |------|--------------|--------|
 | 2025-01-17 | Création initiale | Agent |
+| 2025-01-19 | Ajout rappel formatage DOCX, liens vers nouvelles directives | Agent |
 
 ---
 
 ## Voir aussi
 
 - [directives/creer_acte.md](creer_acte.md) - Création d'un nouvel acte
+- [directives/collecte_informations.md](collecte_informations.md) - Guide de collecte des informations
+- [directives/formatage_docx.md](formatage_docx.md) - Spécifications formatage DOCX
+- [directives/pipeline_generation.md](pipeline_generation.md) - Pipeline rapide
+- [directives/validation_donnees.md](validation_donnees.md) - Règles de validation
 - [schemas/variables_vente.json](../schemas/variables_vente.json) - Schéma des variables
+- [schemas/questions_notaire.json](../schemas/questions_notaire.json) - Questions à poser
 - [execution/valider_acte.py](../execution/valider_acte.py) - Script de validation

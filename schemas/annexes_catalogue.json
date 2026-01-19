@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "titre": "Catalogue des Annexes Notariales",
+  "description": "Base de données évolutive des types d'annexes pour actes notariaux",
+  "version": "1.0.0",
+  "derniere_mise_a_jour": "2025-01-19",
+  "statistiques": {
+    "total_annexes": 28,
+    "categories": 6
+  },
+  "categories": {
+    "plans_cadastre": {
+      "description": "Plans et documents cadastraux",
+      "annexes": [
+        {
+          "id": "plan_cadastral",
+          "nom": "Plan cadastral",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "description": "Extrait de plan cadastral de la commune",
+          "source_obtention": "cadastre.gouv.fr"
+        },
+        {
+          "id": "plan_geoportail",
+          "nom": "Plan Géoportail vue aérienne",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "description": "Vue aérienne avec délimitation du bien",
+          "source_obtention": "geoportail.gouv.fr"
+        },
+        {
+          "id": "plan_lots",
+          "nom": "Plans des lots",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete",
+          "description": "Plan de l'étage, plan de masse pour parking/cave"
+        },
+        {
+          "id": "plan_masse",
+          "nom": "Plan de masse",
+          "obligatoire": false,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "bien.lots.parking ou bien.lots.cave",
+          "description": "Emplacement des stationnements et caves"
+        }
+      ]
+    },
+
+    "diagnostics_techniques": {
+      "description": "Dossier de diagnostics techniques (DDT)",
+      "annexes": [
+        {
+          "id": "diagnostic_carrez",
+          "nom": "Diagnostic Carrez (mesurage)",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "lot.type in ['appartement', 'local_commercial', 'bureau'] and lot.superficie > 8",
+          "validite": "illimitée sauf travaux",
+          "description": "Attestation de superficie loi Carrez"
+        },
+        {
+          "id": "diagnostic_dpe",
+          "nom": "Diagnostic de Performance Énergétique (DPE)",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "validite": "10 ans",
+          "description": "Classes énergie et GES du bien"
+        },
+        {
+          "id": "diagnostic_amiante_pp",
+          "nom": "Diagnostic amiante parties privatives",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "immeuble.date_construction < 1997-01-01",
+          "validite": "illimitée si négatif, 3 ans si positif",
+          "description": "État d'amiante des parties privatives"
+        },
+        {
+          "id": "diagnostic_amiante_pc",
+          "nom": "Diagnostic amiante parties communes",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete and immeuble.date_construction < 1997-01-01",
+          "validite": "illimitée si négatif",
+          "description": "Dossier technique amiante parties communes"
+        },
+        {
+          "id": "diagnostic_plomb",
+          "nom": "Constat de Risque d'Exposition au Plomb (CREP)",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "immeuble.date_construction < 1949-01-01",
+          "validite": "1 an si positif, illimité si négatif",
+          "description": "Présence de plomb dans les peintures"
+        },
+        {
+          "id": "diagnostic_electricite",
+          "nom": "État de l'installation intérieure d'électricité",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "installation_electrique.age > 15",
+          "validite": "3 ans",
+          "description": "Conformité de l'installation électrique"
+        },
+        {
+          "id": "diagnostic_gaz",
+          "nom": "État de l'installation intérieure de gaz",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "installation_gaz.existe and installation_gaz.age > 15",
+          "validite": "3 ans",
+          "description": "Conformité de l'installation gaz"
+        },
+        {
+          "id": "diagnostic_termites",
+          "nom": "État relatif à la présence de termites",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "bien.zone_termites == true",
+          "validite": "6 mois",
+          "description": "Présence d'insectes xylophages"
+        },
+        {
+          "id": "etat_risques",
+          "nom": "État des Risques et Pollutions (ERP)",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "validite": "6 mois",
+          "description": "Risques naturels, miniers, technologiques, sismiques, radon",
+          "source_obtention": "georisques.gouv.fr"
+        },
+        {
+          "id": "audit_energetique",
+          "nom": "Audit énergétique",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "diagnostics.dpe.classe_energie in ['F', 'G'] and not copropriete",
+          "validite": "5 ans",
+          "description": "Audit pour passoires thermiques (hors copropriété)"
+        },
+        {
+          "id": "carnet_info_logement",
+          "nom": "Carnet d'information du logement",
+          "obligatoire": true,
+          "type_acte": ["vente"],
+          "condition": "logement_neuf or travaux_renovation_energetique",
+          "description": "Informations sur les travaux et équipements"
+        }
+      ]
+    },
+
+    "copropriete": {
+      "description": "Documents relatifs à la copropriété",
+      "annexes": [
+        {
+          "id": "reglement_copropriete",
+          "nom": "Règlement de copropriété",
+          "obligatoire": false,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete",
+          "description": "Document constitutif + modificatifs",
+          "note": "Souvent volumineux, transmis par voie dématérialisée"
+        },
+        {
+          "id": "etat_descriptif_division",
+          "nom": "État descriptif de division",
+          "obligatoire": false,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete",
+          "description": "Liste des lots avec tantièmes"
+        },
+        {
+          "id": "pv_ag_3ans",
+          "nom": "PV des AG des 3 dernières années",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete",
+          "description": "Procès-verbaux d'assemblées générales"
+        },
+        {
+          "id": "fiche_synthetique",
+          "nom": "Fiche synthétique de la copropriété",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete",
+          "description": "Résumé des données financières et techniques"
+        },
+        {
+          "id": "carnet_entretien",
+          "nom": "Carnet d'entretien de l'immeuble",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete",
+          "description": "Historique des travaux et contrats"
+        },
+        {
+          "id": "pre_etat_date",
+          "nom": "Pré-état daté",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis"],
+          "condition": "copropriete",
+          "description": "Situation financière du vendeur vis-à-vis du syndic"
+        },
+        {
+          "id": "etat_date",
+          "nom": "État daté",
+          "obligatoire": true,
+          "type_acte": ["vente"],
+          "condition": "copropriete",
+          "description": "Situation financière définitive pour l'acte"
+        },
+        {
+          "id": "attestation_immatriculation",
+          "nom": "Attestation d'immatriculation copropriété",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete",
+          "description": "Preuve d'immatriculation au registre national"
+        },
+        {
+          "id": "dtg",
+          "nom": "Diagnostic Technique Global (DTG)",
+          "obligatoire": false,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete and copropriete.dtg.existe",
+          "description": "Analyse de l'état de l'immeuble"
+        },
+        {
+          "id": "ppt",
+          "nom": "Plan Pluriannuel de Travaux (PPT)",
+          "obligatoire": false,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "copropriete and copropriete.ppt.existe",
+          "description": "Programme de travaux sur 10 ans"
+        }
+      ]
+    },
+
+    "urbanisme": {
+      "description": "Documents d'urbanisme",
+      "annexes": [
+        {
+          "id": "note_urbanisme",
+          "nom": "Note de renseignements d'urbanisme",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "validite": "3 mois recommandé",
+          "description": "Informations PLU, servitudes, projets"
+        },
+        {
+          "id": "note_voirie",
+          "nom": "Note de voirie",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "description": "Situation vis-à-vis de la voirie"
+        },
+        {
+          "id": "certificat_non_peril",
+          "nom": "Certificat de non-péril",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "description": "Absence d'arrêté de péril"
+        }
+      ]
+    },
+
+    "travaux": {
+      "description": "Documents relatifs aux travaux",
+      "annexes": [
+        {
+          "id": "factures_travaux",
+          "nom": "Factures de travaux",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "travaux.travaux_realises",
+          "description": "Factures des travaux réalisés < 10 ans"
+        },
+        {
+          "id": "attestation_decennale",
+          "nom": "Attestation d'assurance décennale",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "travaux.travaux_realises and travaux.date < 10 ans",
+          "description": "Garantie décennale des entreprises"
+        },
+        {
+          "id": "permis_construire",
+          "nom": "Permis de construire",
+          "obligatoire": false,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "travaux.permis_requis",
+          "description": "PC ou déclaration préalable + conformité"
+        }
+      ]
+    },
+
+    "environnement": {
+      "description": "Documents environnementaux",
+      "annexes": [
+        {
+          "id": "donnees_environnementales",
+          "nom": "Données environnementales",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "description": "Consultations BASIAS, BASOL, Géorisques, ICPE",
+          "source_obtention": "georisques.gouv.fr, installationsclassees.developpement-durable.gouv.fr"
+        },
+        {
+          "id": "diagnostic_assainissement",
+          "nom": "Diagnostic assainissement",
+          "obligatoire": true,
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "condition": "assainissement.type == 'individuel'",
+          "validite": "3 ans",
+          "description": "Contrôle de l'installation d'assainissement non collectif"
+        }
+      ]
+    }
+  },
+
+  "meta": {
+    "instructions_enrichissement": "Ajouter tout nouveau type d'annexe rencontré avec : id unique, nom, conditions d'obligation, types d'actes concernés, et validité si applicable.",
+    "types_actes_valides": ["promesse_vente", "compromis", "vente", "donation", "succession", "bail"]
+  }
+}

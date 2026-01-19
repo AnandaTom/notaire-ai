@@ -1,0 +1,401 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "titre": "Catalogue des Clauses Notariales",
+  "description": "Base de données évolutive des clauses réutilisables pour actes notariaux. Ce catalogue s'enrichit automatiquement à chaque nouvelle clause rencontrée.",
+  "version": "1.0.0",
+  "derniere_mise_a_jour": "2025-01-19",
+  "statistiques": {
+    "total_clauses": 45,
+    "categories": 12
+  },
+  "categories": {
+    "conditions_suspensives": {
+      "description": "Conditions dont la réalisation conditionne la vente",
+      "clauses": [
+        {
+          "id": "cs_pret_standard",
+          "nom": "Condition suspensive de prêt - Standard",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": false,
+          "texte": "La présente promesse est consentie sous la condition suspensive de l'obtention par le BENEFICIAIRE d'un ou plusieurs prêts d'un montant maximum de {{ pret.montant | montant_en_lettres }} ({{ pret.montant | format_nombre }} EUR), remboursable sur une durée minimale de {{ pret.duree_mois }} mois, au taux nominal maximum de {{ pret.taux_maximum }}% l'an, hors assurance.\n\nLe BENEFICIAIRE s'engage à déposer au moins {{ pret.nombre_demandes | default(2) }} demandes de prêt dans les {{ pret.delai_depot_jours | default(15) }} jours suivant la signature des présentes.\n\nLa condition suspensive sera réalisée en cas d'obtention par le BENEFICIAIRE d'une ou plusieurs offres écrites de prêt aux conditions sus-indiquées au plus tard le {{ pret.date_limite_obtention | format_date }}.",
+          "variables_requises": ["pret.montant", "pret.duree_mois", "pret.taux_maximum", "pret.date_limite_obtention"],
+          "source": "Trame promesse unilatérale de vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "cs_pret_ptz",
+          "nom": "Condition suspensive de prêt avec PTZ",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": false,
+          "texte": "La présente promesse est consentie sous la condition suspensive de l'obtention par le BENEFICIAIRE :\n- D'un prêt principal d'un montant maximum de {{ pret_principal.montant | montant_en_lettres }} ({{ pret_principal.montant | format_nombre }} EUR),\n- D'un prêt à taux zéro (PTZ) d'un montant maximum de {{ ptz.montant | montant_en_lettres }} ({{ ptz.montant | format_nombre }} EUR).\n\nLa condition suspensive sera réalisée en cas d'obtention de ces prêts au plus tard le {{ pret.date_limite_obtention | format_date }}.",
+          "variables_requises": ["pret_principal.montant", "ptz.montant", "pret.date_limite_obtention"],
+          "source": "Ajout notaire - dossier primo-accédant",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "cs_preemption_urbain",
+          "nom": "Réserve du droit de préemption urbain",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "condition_application": "bien.zone_dpu == true",
+          "texte": "Les présentes sont consenties sous réserve de l'exercice éventuel par la commune de {{ bien.adresse.ville }} ou son délégataire de son droit de préemption urbain.\n\nLa déclaration d'intention d'aliéner sera adressée au titulaire du droit de préemption dans les plus brefs délais.\n\nA défaut de réponse dans le délai légal de deux mois, le titulaire du droit de préemption sera réputé avoir renoncé à l'exercice de son droit.",
+          "variables_requises": ["bien.adresse.ville"],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "cs_preemption_locataire",
+          "nom": "Réserve du droit de préemption du locataire",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": true,
+          "condition_application": "bien.loue == true",
+          "texte": "Le PROMETTANT déclare que le bien est actuellement donné en location à {{ locataire.nom }}.\n\nConformément aux dispositions de l'article 15-II de la loi du 6 juillet 1989, le locataire bénéficie d'un droit de préemption.\n\nLe PROMETTANT s'engage à notifier au locataire son intention de vendre dans les formes légales. Les présentes sont consenties sous réserve de la non-exercice de ce droit par le locataire dans le délai légal.",
+          "variables_requises": ["locataire.nom"],
+          "source": "Ajout - bien loué",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "cs_vente_bien_acquereur",
+          "nom": "Condition suspensive de vente d'un bien par l'acquéreur",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": false,
+          "texte": "Les présentes sont consenties sous la condition suspensive de la vente par le BENEFICIAIRE du bien lui appartenant situé {{ bien_a_vendre.adresse }}.\n\nCette condition sera réputée réalisée par la signature de l'acte authentique de vente dudit bien au plus tard le {{ condition.date_limite | format_date }}.\n\nA défaut de réalisation de cette condition dans le délai imparti, les présentes seront caduques de plein droit.",
+          "variables_requises": ["bien_a_vendre.adresse", "condition.date_limite"],
+          "source": "Ajout notaire - vente en cascade",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "cs_permis_construire",
+          "nom": "Condition suspensive d'obtention de permis de construire",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": false,
+          "texte": "Les présentes sont consenties sous la condition suspensive de l'obtention par le BENEFICIAIRE d'un permis de construire pour la réalisation de {{ projet.description }}.\n\nLa demande de permis de construire devra être déposée dans les {{ projet.delai_depot_jours | default(30) }} jours suivant la signature des présentes.\n\nLa condition sera réputée réalisée par l'obtention d'un permis de construire définitif (c'est-à-dire purgé de tout recours) au plus tard le {{ projet.date_limite | format_date }}.",
+          "variables_requises": ["projet.description", "projet.date_limite"],
+          "source": "Ajout - terrain à bâtir",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "garanties": {
+      "description": "Clauses de garantie du vendeur/promettant",
+      "clauses": [
+        {
+          "id": "garantie_eviction",
+          "nom": "Garantie contre l'éviction",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Le PROMETTANT s'oblige à garantir le BENEFICIAIRE contre tous troubles, évictions ou prétentions quelconques.\n\nIl déclare à cet effet :\n- qu'il n'existe à ce jour aucune action ou litige en cours pouvant porter atteinte au droit de propriété,\n- que le bien n'est grevé d'aucune servitude autre que celles pouvant résulter de la situation naturelle des lieux, de la loi ou de l'urbanisme,\n- qu'il n'a consenti aucun droit pouvant porter atteinte à la propriété ou à la jouissance paisible du bien.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "garantie_jouissance",
+          "nom": "Garantie de jouissance paisible",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Le PROMETTANT garantit que le bien sera libre de toute location ou occupation le jour de l'entrée en jouissance.\n\nIl déclare :\n- qu'il n'a pas délivré de congé à un ancien locataire lui permettant d'exercer un droit de préemption,\n- que le bien n'est pas grevé d'un bail commercial, rural ou professionnel,\n- qu'aucun occupant sans titre ne demeure dans les lieux.",
+          "variables_requises": [],
+          "source": "Trame promesse unilatérale de vente",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "garantie_hypothecaire",
+          "nom": "Garantie hypothécaire",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Le PROMETTANT déclare que le bien n'est grevé d'aucune inscription hypothécaire, privilège ou autre charge.\n\n{% if hypotheques_existantes %}\nToutefois, il existe actuellement les inscriptions suivantes :\n{% for hypo in hypotheques_existantes %}\n- {{ hypo.type }} au profit de {{ hypo.beneficiaire }}, inscrite le {{ hypo.date_inscription }}, pour un montant de {{ hypo.montant | format_nombre }} EUR.\n{% endfor %}\n\nLe PROMETTANT s'engage à faire radier ces inscriptions au plus tard le jour de la réitération authentique des présentes, les fonds nécessaires étant prélevés sur le prix de vente.\n{% endif %}",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "garantie_vices_caches_exclusion",
+          "nom": "Exclusion de garantie des vices cachés",
+          "type_acte": ["vente"],
+          "obligatoire": false,
+          "condition_application": "vendeur.non_professionnel == true",
+          "texte": "Le BENEFICIAIRE prendra le bien dans l'état où il se trouvera le jour de l'entrée en jouissance, sans recours contre le PROMETTANT pour quelque cause que ce soit, notamment en raison :\n- des vices apparents,\n- des vices cachés.\n\nCette exonération de garantie ne s'applique pas si le PROMETTANT a la qualité de vendeur professionnel ou s'il avait connaissance des vices.",
+          "variables_requises": [],
+          "source": "Clause standard vente particulier à particulier",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "servitudes": {
+      "description": "Clauses relatives aux servitudes",
+      "clauses": [
+        {
+          "id": "servitudes_declaration",
+          "nom": "Déclaration sur les servitudes",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Le PROMETTANT déclare :\n- qu'il n'a créé ni laissé acquérir aucune servitude sur le bien,\n- qu'à sa connaissance, il n'existe pas de servitude autre que celles pouvant résulter de la situation naturelle des lieux, de la loi ou de l'urbanisme,\n- qu'il n'a reçu aucune notification d'un projet d'établissement de servitude.\n\nLe BENEFICIAIRE déclare faire son affaire personnelle des servitudes passives, apparentes ou occultes, continues ou discontinues, pouvant grever le bien, sauf à s'en prévaloir si elles n'ont pas été déclarées et constituent une éviction.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "servitude_passage",
+          "nom": "Servitude de passage existante",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": false,
+          "condition_application": "servitudes.passage == true",
+          "texte": "Le PROMETTANT déclare que le bien est grevé d'une servitude de passage au profit du fonds appartenant à {{ servitude.beneficiaire }} situé {{ servitude.fonds_dominant_adresse }}.\n\nCette servitude a été établie par {{ servitude.origine }} et publiée au service de la publicité foncière de {{ servitude.publication.service }} le {{ servitude.publication.date }}.\n\nLe BENEFICIAIRE déclare avoir parfaite connaissance de cette servitude et l'accepter.",
+          "variables_requises": ["servitude.beneficiaire", "servitude.fonds_dominant_adresse", "servitude.origine"],
+          "source": "Ajout - bien avec servitude",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "fiscalite": {
+      "description": "Clauses fiscales",
+      "clauses": [
+        {
+          "id": "plus_value_exoneration_rp",
+          "nom": "Exonération plus-value - Résidence principale",
+          "type_acte": ["vente"],
+          "obligatoire": true,
+          "condition_application": "fiscalite.plus_value.motif_exoneration == 'residence_principale'",
+          "texte": "Le VENDEUR déclare que le bien constitue sa résidence principale au sens des dispositions de l'article 150 U-II-1° du Code général des impôts.\n\nEn conséquence, la plus-value réalisée à l'occasion de la présente vente bénéficie de l'exonération totale prévue par ce texte.\n\nLe VENDEUR s'engage à fournir tout justificatif utile à l'administration fiscale en cas de contrôle.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "plus_value_imposition",
+          "nom": "Plus-value imposable",
+          "type_acte": ["vente"],
+          "obligatoire": true,
+          "condition_application": "fiscalite.plus_value.exoneration == false",
+          "texte": "Le VENDEUR reconnaît être informé que la plus-value réalisée à l'occasion de la présente vente est susceptible d'être soumise à l'impôt sur le revenu et aux prélèvements sociaux.\n\nLe notaire soussigné procédera au calcul de cette plus-value et effectuera les déclarations et le versement de l'impôt correspondant, par prélèvement sur le prix de vente.\n\nLe VENDEUR autorise expressément ce prélèvement.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "regime_fiscal_pinel",
+          "nom": "Déclaration régime Pinel",
+          "type_acte": ["promesse_vente", "vente"],
+          "obligatoire": true,
+          "condition_application": "fiscalite.regime_fiscal == 'pinel'",
+          "texte": "Le PROMETTANT déclare avoir souscrit au dispositif fiscal prévu par l'article 199 novovicies du Code général des impôts (dispositif « Pinel »).\n\nIl s'est engagé à louer le bien pendant une durée de {{ pinel.duree_engagement }} ans à compter du {{ pinel.date_debut }}.\n\nLe PROMETTANT déclare que cet engagement de location prendra fin le {{ pinel.date_fin }} et que la présente vente n'interviendra qu'après cette date.\n\n{% if pinel.reprise_avantage_fiscal %}\nLe PROMETTANT est informé qu'une cession avant le terme de l'engagement entraînerait la reprise de l'avantage fiscal.\n{% endif %}",
+          "variables_requises": ["pinel.duree_engagement", "pinel.date_debut", "pinel.date_fin"],
+          "source": "Ajout - bien sous régime Pinel",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "copropriete": {
+      "description": "Clauses spécifiques à la copropriété",
+      "clauses": [
+        {
+          "id": "convention_charges",
+          "nom": "Convention sur les charges de copropriété",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Les parties conviennent de la répartition suivante des charges de copropriété :\n\n**Charges courantes (budget prévisionnel) :**\nLe BENEFICIAIRE remboursera au PROMETTANT, le jour de la signature de l'acte authentique de vente, le prorata des charges du trimestre en cours.\n\n**Charges hors budget (travaux votés) :**\n- Les travaux votés avant la signature des présentes restent à la charge du PROMETTANT, même si les appels de fonds sont postérieurs.\n- Les travaux votés après la signature des présentes sont à la charge du BENEFICIAIRE.\n\n**Avances et fonds de travaux :**\nLes avances et le fonds de travaux restent acquis au syndicat des copropriétaires. Le BENEFICIAIRE ne pourra en réclamer le remboursement au PROMETTANT.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "convention_travaux",
+          "nom": "Convention sur les travaux votés",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Les parties conviennent de la répartition suivante des travaux votés en assemblée générale :\n\n**Principe :** Les travaux votés restent à la charge du copropriétaire qui avait cette qualité au jour du vote.\n\n**Application :**\n- Travaux votés avant le {{ acte.date | format_date }} : à la charge du PROMETTANT\n- Travaux votés à compter du {{ acte.date | format_date }} : à la charge du BENEFICIAIRE\n\nCette convention est inopposable au syndicat des copropriétaires qui pourra réclamer les fonds au copropriétaire inscrit au moment de l'appel.",
+          "variables_requises": ["acte.date"],
+          "source": "Trame promesse unilatérale de vente",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "emprunt_collectif",
+          "nom": "Emprunt collectif - Information",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "condition_application": "copropriete.emprunt_collectif.existe == true",
+          "texte": "Le PROMETTANT informe le BENEFICIAIRE qu'un emprunt collectif a été souscrit par le syndicat des copropriétaires.\n\n**Caractéristiques de l'emprunt :**\n- Établissement prêteur : {{ emprunt.etablissement }}\n- Montant total : {{ emprunt.montant_total | format_nombre }} EUR\n- Quote-part du lot : {{ emprunt.quote_part | format_nombre }} EUR\n- Solde restant dû (quote-part) : {{ emprunt.solde_quote_part | format_nombre }} EUR\n- Échéance finale : {{ emprunt.date_fin }}\n\nConformément à l'article 26-6 de la loi du 10 juillet 1965, le BENEFICIAIRE sera tenu de rembourser les annuités restant dues à compter de la vente.",
+          "variables_requises": ["emprunt.etablissement", "emprunt.montant_total", "emprunt.quote_part", "emprunt.solde_quote_part"],
+          "source": "Ajout - copropriété avec emprunt collectif",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "indemnite_immobilisation": {
+      "description": "Clauses relatives à l'indemnité d'immobilisation (promesse unilatérale)",
+      "clauses": [
+        {
+          "id": "indemnite_standard",
+          "nom": "Indemnité d'immobilisation - Standard (10%)",
+          "type_acte": ["promesse_vente"],
+          "obligatoire": true,
+          "texte": "En considération de la promesse formelle conférée au BENEFICIAIRE par le PROMETTANT, les parties conviennent de fixer le montant de l'indemnité d'immobilisation à la somme forfaitaire de {{ indemnite.montant | montant_en_lettres }} ({{ indemnite.montant | format_nombre }} EUR), représentant {{ indemnite.pourcentage }}% du prix de vente.\n\nCette indemnité sera versée par {{ indemnite.mode_paiement }} dans les {{ indemnite.delai_versement }} jours suivant l'expiration du délai de rétractation, entre les mains de {{ indemnite.sequestre }}.\n\n**Sort de l'indemnité :**\n- En cas de réalisation de la vente : elle s'imputera sur le prix.\n- En cas de non-réalisation du fait du BENEFICIAIRE (hors conditions suspensives) : elle restera acquise au PROMETTANT à titre d'indemnité forfaitaire.\n- En cas de non-réalisation du fait du PROMETTANT ou de réalisation d'une condition suspensive : elle sera restituée au BENEFICIAIRE.",
+          "variables_requises": ["indemnite.montant", "indemnite.pourcentage", "indemnite.mode_paiement", "indemnite.delai_versement", "indemnite.sequestre"],
+          "source": "Trame promesse unilatérale de vente",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "indemnite_5_pourcent",
+          "nom": "Indemnité d'immobilisation - 5%",
+          "type_acte": ["promesse_vente"],
+          "obligatoire": false,
+          "texte": "En considération de la promesse formelle conférée au BENEFICIAIRE, les parties conviennent exceptionnellement de fixer le montant de l'indemnité d'immobilisation à la somme de {{ indemnite.montant | montant_en_lettres }} ({{ indemnite.montant | format_nombre }} EUR), représentant 5% du prix de vente.\n\nLe PROMETTANT accepte ce montant réduit compte tenu de {{ indemnite.motif_reduction }}.\n\nLes autres dispositions relatives à l'indemnité restent inchangées.",
+          "variables_requises": ["indemnite.montant", "indemnite.motif_reduction"],
+          "source": "Ajout - cas particulier",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "delais_retractation": {
+      "description": "Clauses relatives au délai de rétractation",
+      "clauses": [
+        {
+          "id": "delai_retractation_standard",
+          "nom": "Délai de rétractation SRU - Standard",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": true,
+          "texte": "Conformément aux dispositions de l'article L 271-1 du Code de la construction et de l'habitation, le BENEFICIAIRE bénéficie d'un délai de rétractation de DIX (10) JOURS à compter du lendemain de la première présentation de la lettre lui notifiant les présentes.\n\nPendant ce délai, le BENEFICIAIRE peut se rétracter par lettre recommandée avec demande d'avis de réception ou par tout autre moyen présentant des garanties équivalentes.\n\nEn cas de rétractation, toute somme versée sera restituée dans un délai de vingt et un jours à compter du lendemain de la rétractation.",
+          "variables_requises": [],
+          "source": "Trame promesse unilatérale de vente",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "execution_forcee": {
+      "description": "Clauses d'exécution forcée",
+      "clauses": [
+        {
+          "id": "execution_forcee_1221",
+          "nom": "Soumission à l'exécution forcée (art. 1221 C. civ.)",
+          "type_acte": ["promesse_vente"],
+          "obligatoire": false,
+          "texte": "En tant que de besoin, le PROMETTANT se soumet à l'exécution en nature prévue par l'article 1221 du Code civil si le BENEFICIAIRE venait à la demander.\n\nLe tout sauf si ce mode d'exécution est soit devenu impossible soit d'une disproportion manifeste entre son coût pour le débiteur de bonne foi et son intérêt pour le créancier.\n\nEn conséquence, le BENEFICIAIRE pourra, en cas de défaillance du PROMETTANT, demander en justice que la vente soit déclarée parfaite.",
+          "variables_requises": [],
+          "source": "Trame promesse unilatérale de vente",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "substitution": {
+      "description": "Clauses de substitution",
+      "clauses": [
+        {
+          "id": "substitution_autorisee",
+          "nom": "Faculté de substitution autorisée",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": false,
+          "texte": "Le BENEFICIAIRE aura la faculté de se substituer toute personne physique ou morale de son choix pour la réalisation des présentes.\n\nCette substitution devra être notifiée au PROMETTANT et au notaire au plus tard {{ substitution.delai_notification | default('quinze jours') }} avant la date de réalisation.\n\nLe BENEFICIAIRE restera garant solidaire de l'exécution de toutes les obligations mises à la charge du substituant aux présentes.",
+          "variables_requises": [],
+          "source": "Ajout - investisseur",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "substitution_sci",
+          "nom": "Faculté de substitution par une SCI à constituer",
+          "type_acte": ["promesse_vente", "compromis"],
+          "obligatoire": false,
+          "texte": "Le BENEFICIAIRE aura la faculté de se substituer une société civile immobilière à constituer dont il sera associé.\n\nCette société devra être constituée et immatriculée au Registre du Commerce et des Sociétés au plus tard {{ substitution.date_limite | format_date }}.\n\nLes statuts de cette société devront être communiqués au notaire préalablement à la réitération.\n\nLe BENEFICIAIRE initial restera garant solidaire de toutes les obligations du substituant.",
+          "variables_requises": ["substitution.date_limite"],
+          "source": "Ajout - constitution SCI",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "urbanisme": {
+      "description": "Clauses urbanistiques",
+      "clauses": [
+        {
+          "id": "declaration_urbanisme_standard",
+          "nom": "Déclarations urbanistiques standard",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Le PROMETTANT déclare qu'à sa connaissance :\n- Le bien n'a fait l'objet d'aucune procédure de péril, d'insalubrité ou de mise en demeure au titre de la sécurité des équipements communs,\n- Le bien n'est pas situé dans le périmètre d'une opération d'aménagement,\n- Il n'existe pas de projet d'expropriation ou d'alignement,\n- Le bien n'est pas situé dans un secteur sauvegardé ou de protection.\n\n{% if urbanisme.note_urbanisme.date %}\nUne note d'urbanisme a été délivrée le {{ urbanisme.note_urbanisme.date | format_date }} et demeure annexée.\n{% endif %}",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "diagnostics": {
+      "description": "Clauses relatives aux diagnostics",
+      "clauses": [
+        {
+          "id": "dpe_passoire",
+          "nom": "Information DPE classe F ou G",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "condition_application": "diagnostics.dpe.classe_energie in ['F', 'G']",
+          "texte": "Le BENEFICIAIRE est informé que le bien présente une classe de performance énergétique {{ diagnostics.dpe.classe_energie }}.\n\nConformément à la loi Climat et Résilience du 22 août 2021, les logements classés G ne pourront plus être proposés à la location à compter du 1er janvier 2025, les logements classés F à compter du 1er janvier 2028, et les logements classés E à compter du 1er janvier 2034.\n\nLe BENEFICIAIRE déclare avoir été informé de cette situation et des travaux de rénovation énergétique qui pourraient s'avérer nécessaires.",
+          "variables_requises": ["diagnostics.dpe.classe_energie"],
+          "source": "Ajout - Loi Climat",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "amiante_travaux",
+          "nom": "Amiante - Travaux recommandés",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "condition_application": "diagnostics.amiante.travaux_recommandes == true",
+          "texte": "Le diagnostic amiante annexé aux présentes révèle la présence de matériaux contenant de l'amiante, pour lesquels des travaux de confinement ou de retrait sont recommandés.\n\nLe BENEFICIAIRE déclare avoir pris connaissance de cette situation et l'accepter, renonçant à tout recours contre le PROMETTANT à ce titre.\n\nLe BENEFICIAIRE est informé qu'en sa qualité de futur propriétaire, il sera tenu de faire réaliser les travaux préconisés dans les délais indiqués au rapport.",
+          "variables_requises": [],
+          "source": "Ajout - bien amianté",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    },
+
+    "divers": {
+      "description": "Clauses diverses",
+      "clauses": [
+        {
+          "id": "election_domicile",
+          "nom": "Élection de domicile",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Pour l'exécution des présentes, les parties font élection de domicile :\n- Le PROMETTANT, en sa demeure sus-indiquée,\n- Le BENEFICIAIRE, en sa demeure sus-indiquée.\n\nToute notification relative aux présentes sera valablement faite à ces adresses, jusqu'à notification d'un changement d'adresse par lettre recommandée avec avis de réception.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "frais_acte",
+          "nom": "Frais d'acte",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "texte": "Tous les frais, droits et honoraires des présentes et de leurs suites seront supportés par le BENEFICIAIRE, ainsi qu'il est d'usage.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        },
+        {
+          "id": "solidarite",
+          "nom": "Solidarité entre co-acquéreurs",
+          "type_acte": ["promesse_vente", "compromis", "vente"],
+          "obligatoire": true,
+          "condition_application": "beneficiaires | length > 1",
+          "texte": "Les BENEFICIAIRES seront tenus solidairement et indivisiblement de l'exécution de toutes les obligations mises à leur charge aux présentes, tant envers le PROMETTANT qu'envers le notaire et les tiers.\n\nCette solidarité s'applique notamment au paiement du prix, des frais, et de toute indemnité qui pourrait être due.",
+          "variables_requises": [],
+          "source": "Trame vente lots de copropriété",
+          "date_ajout": "2025-01-19"
+        }
+      ]
+    }
+  },
+
+  "meta": {
+    "instructions_enrichissement": "Ce catalogue doit être enrichi automatiquement à chaque nouvelle clause rencontrée. Lors de l'ajout d'une clause : 1) Vérifier qu'elle n'existe pas déjà, 2) La catégoriser correctement, 3) Extraire les variables Jinja2, 4) Documenter la source et la date.",
+    "format_id": "categorie_description_courte (ex: cs_pret_standard)",
+    "types_actes_valides": ["promesse_vente", "compromis", "vente", "donation", "succession", "bail"]
+  }
+}

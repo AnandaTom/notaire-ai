@@ -1,0 +1,680 @@
+{
+  "meta": {
+    "titre": "Questions pour Modificatif EDD et Règlement de Copropriété",
+    "description": "Questionnaire pour la collecte des informations nécessaires à l'établissement d'un acte modificatif",
+    "version": "1.0",
+    "date_creation": "2025-01-19",
+    "enrichissement": "Ajouter les nouvelles questions découvertes lors des échanges avec les notaires"
+  },
+  "sections": [
+    {
+      "id": "type_modification",
+      "titre": "1. Nature de la modification",
+      "questions": [
+        {
+          "id": "type_modif",
+          "question": "Quel type de modification souhaitez-vous apporter ?",
+          "type": "choix_multiple",
+          "options": [
+            "Création de nouveaux lots",
+            "Suppression de lots",
+            "Réunion de lots",
+            "Division d'un lot",
+            "Modification des tantièmes",
+            "Création de parties communes spéciales",
+            "Modification du règlement de copropriété",
+            "Mise en conformité avec la loi (ELAN, etc.)",
+            "Autre"
+          ],
+          "obligatoire": true,
+          "variable": "acte.type_modification"
+        },
+        {
+          "id": "date_acte",
+          "question": "Quelle est la date prévue pour l'acte ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "acte.date"
+        }
+      ]
+    },
+    {
+      "id": "syndicat",
+      "titre": "2. Syndicat des copropriétaires",
+      "questions": [
+        {
+          "id": "syndicat_nom",
+          "question": "Quelle est la dénomination du syndicat des copropriétaires ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "syndicat.denomination",
+          "exemple": "SDC 20/22 GRANDE RUE DE LA CROIX"
+        },
+        {
+          "id": "syndicat_immat",
+          "question": "Quel est le numéro d'immatriculation au registre national des copropriétés ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "syndicat.immatriculation",
+          "exemple": "AA5-357-991"
+        },
+        {
+          "id": "syndic_type",
+          "question": "Le syndic est-il professionnel ou bénévole ?",
+          "type": "choix_unique",
+          "options": ["Professionnel", "Bénévole", "Coopératif"],
+          "obligatoire": true,
+          "variable": "syndicat.syndic.type"
+        },
+        {
+          "id": "syndic_nom",
+          "question": "Nom/Dénomination du syndic ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "syndicat.syndic.denomination"
+        },
+        {
+          "id": "syndic_adresse",
+          "question": "Adresse du syndic ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "syndicat.syndic.adresse"
+        },
+        {
+          "id": "syndic_representant",
+          "question": "Qui représente le syndic à l'acte ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "rep_nom",
+              "question": "Nom",
+              "type": "texte",
+              "variable": "syndicat.syndic.representant.nom"
+            },
+            {
+              "id": "rep_prenom",
+              "question": "Prénom",
+              "type": "texte",
+              "variable": "syndicat.syndic.representant.prenom"
+            },
+            {
+              "id": "rep_qualite",
+              "question": "Qualité (directeur, gérant...)",
+              "type": "texte",
+              "variable": "syndicat.syndic.representant.qualite"
+            }
+          ],
+          "obligatoire": true
+        },
+        {
+          "id": "delegation_pouvoir",
+          "question": "Y a-t-il une délégation de pouvoirs ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "syndicat.syndic.delegation_pouvoir_existe",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "del_delegataire",
+                "question": "Nom du délégataire",
+                "type": "texte",
+                "variable": "syndicat.syndic.delegation_pouvoir.delegataire"
+              },
+              {
+                "id": "del_date",
+                "question": "Date de la délégation",
+                "type": "date",
+                "variable": "syndicat.syndic.delegation_pouvoir.date"
+              }
+            ]
+          }
+        },
+        {
+          "id": "syndic_designation_ag",
+          "question": "Informations sur la désignation du syndic :",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "ag_date",
+              "question": "Date de l'AG de désignation",
+              "type": "date",
+              "variable": "syndicat.syndic.designation_ag.date"
+            },
+            {
+              "id": "mandat_duree",
+              "question": "Durée du mandat",
+              "type": "texte",
+              "variable": "syndicat.syndic.duree_mandat"
+            },
+            {
+              "id": "mandat_debut",
+              "question": "Date de début du mandat",
+              "type": "date",
+              "variable": "syndicat.syndic.designation_ag.date_debut"
+            },
+            {
+              "id": "mandat_fin",
+              "question": "Date de fin du mandat",
+              "type": "date",
+              "variable": "syndicat.syndic.designation_ag.date_fin"
+            }
+          ],
+          "obligatoire": true
+        }
+      ]
+    },
+    {
+      "id": "assemblee_generale",
+      "titre": "3. Assemblée générale autorisant la modification",
+      "questions": [
+        {
+          "id": "ag_date",
+          "question": "Date de l'assemblée générale ayant autorisé la modification ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "assemblee_generale.date"
+        },
+        {
+          "id": "ag_majorite",
+          "question": "Quelle majorité a été requise ?",
+          "type": "choix_unique",
+          "options": [
+            "Article 24 (majorité simple des présents)",
+            "Article 25 (majorité de tous les copropriétaires)",
+            "Article 26 (double majorité)",
+            "Unanimité"
+          ],
+          "obligatoire": true,
+          "variable": "assemblee_generale.majorite",
+          "note": "Art. 26 pour création de parties communes spéciales, modification de répartition des charges..."
+        },
+        {
+          "id": "ag_resolution",
+          "question": "Numéro de la résolution ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "assemblee_generale.resolution_numero"
+        },
+        {
+          "id": "ag_texte",
+          "question": "Texte de la résolution adoptée ?",
+          "type": "texte_long",
+          "obligatoire": true,
+          "variable": "assemblee_generale.texte_resolution"
+        },
+        {
+          "id": "ag_vote",
+          "question": "Résultat du vote :",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "vote_pour_nb",
+              "question": "Nombre de copropriétaires pour",
+              "type": "nombre",
+              "variable": "assemblee_generale.resultat_vote.pour_nombre"
+            },
+            {
+              "id": "vote_pour_tant",
+              "question": "Tantièmes pour",
+              "type": "nombre",
+              "variable": "assemblee_generale.resultat_vote.pour_tantiemes"
+            },
+            {
+              "id": "vote_total",
+              "question": "Total tantièmes représentés",
+              "type": "nombre",
+              "variable": "assemblee_generale.resultat_vote.total_tantiemes"
+            }
+          ],
+          "obligatoire": true
+        },
+        {
+          "id": "certificat_non_recours",
+          "question": "Disposez-vous d'un certificat de non-recours ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "assemblee_generale.certificat_non_recours_existe",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "cnr_date",
+                "question": "Date du certificat",
+                "type": "date",
+                "variable": "assemblee_generale.certificat_non_recours.date"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "immeuble",
+      "titre": "4. Identification de l'immeuble",
+      "questions": [
+        {
+          "id": "adresse",
+          "question": "Adresse complète de l'immeuble ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "numero",
+              "question": "Numéro",
+              "type": "texte",
+              "variable": "immeuble.adresse.numero"
+            },
+            {
+              "id": "voie",
+              "question": "Voie",
+              "type": "texte",
+              "variable": "immeuble.adresse.voie"
+            },
+            {
+              "id": "cp",
+              "question": "Code postal",
+              "type": "texte",
+              "variable": "immeuble.adresse.code_postal"
+            },
+            {
+              "id": "commune",
+              "question": "Commune",
+              "type": "texte",
+              "variable": "immeuble.adresse.commune"
+            }
+          ],
+          "obligatoire": true
+        },
+        {
+          "id": "cadastre",
+          "question": "Références cadastrales ?",
+          "type": "tableau",
+          "colonnes": ["Section", "Numéro", "Lieudit", "Surface"],
+          "obligatoire": true,
+          "variable": "immeuble.cadastre"
+        },
+        {
+          "id": "batiments",
+          "question": "Description des bâtiments composant l'ensemble ?",
+          "type": "texte_long",
+          "obligatoire": true,
+          "variable": "immeuble.description_batiments"
+        }
+      ]
+    },
+    {
+      "id": "edd_origine",
+      "titre": "5. EDD/RC d'origine et modificatifs antérieurs",
+      "questions": [
+        {
+          "id": "origine_date",
+          "question": "Date de l'EDD/RC d'origine ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "edd_origine.date_origine"
+        },
+        {
+          "id": "origine_notaire",
+          "question": "Notaire ayant reçu l'acte d'origine ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "edd_origine.notaire_origine"
+        },
+        {
+          "id": "origine_lieu",
+          "question": "Lieu (ville) ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "edd_origine.lieu_origine"
+        },
+        {
+          "id": "origine_publication",
+          "question": "Références de publication ?",
+          "type": "groupe",
+          "sous_questions": [
+            {
+              "id": "pub_service",
+              "question": "Service de publicité foncière",
+              "type": "texte",
+              "variable": "edd_origine.publication_spf.service"
+            },
+            {
+              "id": "pub_date",
+              "question": "Date",
+              "type": "date",
+              "variable": "edd_origine.publication_spf.date"
+            },
+            {
+              "id": "pub_volume",
+              "question": "Volume",
+              "type": "texte",
+              "variable": "edd_origine.publication_spf.volume"
+            },
+            {
+              "id": "pub_numero",
+              "question": "Numéro",
+              "type": "texte",
+              "variable": "edd_origine.publication_spf.numero"
+            }
+          ],
+          "obligatoire": true
+        },
+        {
+          "id": "lots_initial",
+          "question": "Nombre de lots à l'origine ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "edd_origine.nombre_lots_initial"
+        },
+        {
+          "id": "modificatifs_anterieurs",
+          "question": "Y a-t-il eu des modificatifs antérieurs ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "edd_origine.modificatifs_existent",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "modif_detail",
+                "question": "Listez chaque modificatif antérieur",
+                "type": "repetition",
+                "sous_questions": [
+                  {
+                    "id": "modif_date",
+                    "question": "Date",
+                    "type": "date",
+                    "variable": "edd_origine.historique_modificatifs[].date"
+                  },
+                  {
+                    "id": "modif_notaire",
+                    "question": "Notaire",
+                    "type": "texte",
+                    "variable": "edd_origine.historique_modificatifs[].notaire"
+                  },
+                  {
+                    "id": "modif_objet",
+                    "question": "Objet de la modification",
+                    "type": "texte",
+                    "variable": "edd_origine.historique_modificatifs[].objet"
+                  },
+                  {
+                    "id": "modif_pub",
+                    "question": "Publication SPF (date, volume, numéro)",
+                    "type": "texte",
+                    "variable": "edd_origine.historique_modificatifs[].publication"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "etat_actuel",
+      "titre": "6. État actuel de la copropriété",
+      "questions": [
+        {
+          "id": "nb_lots_actuel",
+          "question": "Nombre de lots actuellement ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "etat_actuel.nombre_lots"
+        },
+        {
+          "id": "tableau_lots",
+          "question": "Tableau récapitulatif des lots actuels ?",
+          "type": "tableau",
+          "colonnes": ["N° lot", "Étage", "Désignation", "Tantièmes généraux"],
+          "obligatoire": true,
+          "variable": "etat_actuel.lots_existants",
+          "note": "Indiquez TOUS les lots, y compris ceux supprimés (indiquez 'supprimé')"
+        },
+        {
+          "id": "total_tantiemes",
+          "question": "Base totale des tantièmes ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "etat_actuel.total_tantiemes"
+        }
+      ]
+    },
+    {
+      "id": "modifications_detail",
+      "titre": "7. Détail des modifications",
+      "description": "Cette section s'adapte au type de modification sélectionné",
+      "questions": [
+        {
+          "id": "creation_lots",
+          "question": "Lots à créer :",
+          "type": "repetition",
+          "condition_affichage": "acte.type_modification contient 'creation_lots'",
+          "sous_questions": [
+            {
+              "id": "new_lot_numero",
+              "question": "Numéro du nouveau lot",
+              "type": "nombre",
+              "variable": "modifications.creation_lots[].numero"
+            },
+            {
+              "id": "new_lot_batiment",
+              "question": "Bâtiment",
+              "type": "texte",
+              "variable": "modifications.creation_lots[].batiment"
+            },
+            {
+              "id": "new_lot_etage",
+              "question": "Étage",
+              "type": "texte",
+              "variable": "modifications.creation_lots[].etage"
+            },
+            {
+              "id": "new_lot_designation",
+              "question": "Désignation",
+              "type": "texte",
+              "variable": "modifications.creation_lots[].designation"
+            },
+            {
+              "id": "new_lot_tantiemes",
+              "question": "Tantièmes généraux",
+              "type": "nombre",
+              "variable": "modifications.creation_lots[].tantiemes_generaux"
+            },
+            {
+              "id": "new_lot_origine",
+              "question": "Origine du lot",
+              "type": "choix_unique",
+              "options": ["Division d'un lot existant", "Prélèvement sur parties communes", "Nouveau (construction)"],
+              "variable": "modifications.creation_lots[].origine"
+            }
+          ]
+        },
+        {
+          "id": "reunion_lots",
+          "question": "Réunion de lots :",
+          "type": "repetition",
+          "condition_affichage": "acte.type_modification contient 'reunion_lots'",
+          "sous_questions": [
+            {
+              "id": "reunion_lots_reunis",
+              "question": "Numéros des lots à réunir (séparés par virgule)",
+              "type": "texte",
+              "variable": "modifications.reunion_lots[].lots_reunis"
+            },
+            {
+              "id": "reunion_nouveau_lot",
+              "question": "Numéro du nouveau lot créé",
+              "type": "nombre",
+              "variable": "modifications.reunion_lots[].nouveau_lot"
+            }
+          ]
+        },
+        {
+          "id": "pcs_creation",
+          "question": "Parties communes spéciales à créer :",
+          "type": "repetition",
+          "condition_affichage": "acte.type_modification contient 'creation_parties_communes_speciales'",
+          "sous_questions": [
+            {
+              "id": "pcs_nom",
+              "question": "Nom de la PCS (ex: Bâtiment A)",
+              "type": "texte",
+              "variable": "modifications.parties_communes_speciales.creation[].nom"
+            },
+            {
+              "id": "pcs_elements",
+              "question": "Éléments inclus dans cette PCS",
+              "type": "texte_long",
+              "variable": "modifications.parties_communes_speciales.creation[].elements_inclus"
+            },
+            {
+              "id": "pcs_lots",
+              "question": "Lots concernés (numéros séparés par virgule)",
+              "type": "texte",
+              "variable": "modifications.parties_communes_speciales.creation[].lots_concernes"
+            }
+          ]
+        },
+        {
+          "id": "modification_rc",
+          "question": "Clauses du règlement à ajouter ou modifier :",
+          "type": "repetition",
+          "condition_affichage": "acte.type_modification contient 'modification_reglement'",
+          "sous_questions": [
+            {
+              "id": "clause_titre",
+              "question": "Titre de la clause",
+              "type": "texte",
+              "variable": "modifications.modification_reglement.clauses_ajoutees[].titre"
+            },
+            {
+              "id": "clause_texte",
+              "question": "Texte complet de la clause",
+              "type": "texte_long",
+              "variable": "modifications.modification_reglement.clauses_ajoutees[].texte"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nouvel_etat",
+      "titre": "8. Nouvel état après modification",
+      "questions": [
+        {
+          "id": "nouveau_nb_lots",
+          "question": "Nombre total de lots après modification ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "nouvel_etat.nombre_lots"
+        },
+        {
+          "id": "nouveau_tableau",
+          "question": "Nouveau tableau récapitulatif complet :",
+          "type": "tableau",
+          "colonnes": ["N° lot", "Bât.", "Étage", "Désignation", "Tantièmes généraux", "Tantièmes PCS Bât.A", "Tantièmes PCS Bât.B", "Tantièmes PCS Bât.C"],
+          "obligatoire": true,
+          "variable": "nouvel_etat.tableau_recapitulatif",
+          "note": "Ce tableau figurera dans l'acte"
+        },
+        {
+          "id": "methode_calcul",
+          "question": "Méthode de calcul des tantièmes (si modifiée) ?",
+          "type": "texte_long",
+          "obligatoire": false,
+          "variable": "nouvel_etat.methode_calcul_tantiemes"
+        }
+      ]
+    },
+    {
+      "id": "geometre",
+      "titre": "9. Géomètre-expert",
+      "questions": [
+        {
+          "id": "geometre_nom",
+          "question": "Nom du géomètre-expert ayant établi le projet ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "geometre.nom"
+        },
+        {
+          "id": "geometre_societe",
+          "question": "Société ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "geometre.societe"
+        },
+        {
+          "id": "geometre_adresse",
+          "question": "Adresse ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "geometre.adresse"
+        },
+        {
+          "id": "geometre_date",
+          "question": "Date du projet de modificatif ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "geometre.date_projet"
+        }
+      ]
+    },
+    {
+      "id": "observations",
+      "titre": "10. Observations",
+      "questions": [
+        {
+          "id": "mise_conformite",
+          "question": "Le règlement de copropriété nécessite-t-il une mise en conformité avec la loi ELAN ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "observations.mise_conformite_loi_elan",
+          "note": "Délai de 3 ans à compter de la loi pour mise en conformité art. 6-4"
+        },
+        {
+          "id": "points_attention",
+          "question": "Y a-t-il des points d'attention particuliers à signaler ?",
+          "type": "texte_long",
+          "obligatoire": false,
+          "variable": "observations.points_attention",
+          "exemple": "Calcul des tantièmes non conforme à l'origine, extension de lot non régularisée..."
+        }
+      ]
+    },
+    {
+      "id": "formalites",
+      "titre": "11. Formalités",
+      "questions": [
+        {
+          "id": "spf",
+          "question": "Service de publicité foncière compétent ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "publicite_fonciere.service",
+          "exemple": "LYON 1"
+        }
+      ]
+    },
+    {
+      "id": "annexes",
+      "titre": "12. Annexes",
+      "questions": [
+        {
+          "id": "annexes_liste",
+          "question": "Quels documents seront annexés ?",
+          "type": "choix_multiple",
+          "options": [
+            "Pouvoir du syndic / Délégation",
+            "PV de l'assemblée générale autorisant la modification",
+            "Certificat de non-recours",
+            "Plan cadastral",
+            "Projet de modificatif EDD (géomètre)",
+            "Attestation de mise à jour immatriculation",
+            "Contrat de syndic"
+          ],
+          "obligatoire": true,
+          "variable": "annexes"
+        }
+      ]
+    }
+  ]
+}

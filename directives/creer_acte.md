@@ -116,16 +116,29 @@ python execution/valider_acte.py --donnees .tmp/donnees_collectees.json --schema
 
 ### Étape 5 : Génération de l'acte
 
+**Question préalable au notaire :**
+> Souhaitez-vous conserver les zones grisées sur les variables remplies dans le document final ?
+> - **Oui** : Les zones de saisie resteront visibles (utile pour relecture)
+> - **Non** : Les variables seront intégrées sans mise en forme spéciale
+
 **Script à exécuter :**
 ```bash
+# Sans zones grisées (par défaut)
 python execution/assembler_acte.py \
     --template vente_lots_copropriete.md \
     --donnees .tmp/donnees_collectees.json \
     --output .tmp/actes_generes/
+
+# Avec zones grisées (si demandé par le notaire)
+python execution/assembler_acte.py \
+    --template vente_lots_copropriete.md \
+    --donnees .tmp/donnees_collectees.json \
+    --output .tmp/actes_generes/ \
+    --zones-grisees
 ```
 
 **Sortie :**
-- `acte.md` : Acte au format Markdown
+- `acte.md` : Acte au format Markdown (avec marqueurs si zones grisées demandées)
 - `donnees.json` : Données utilisées (pour traçabilité)
 - `metadata.json` : Métadonnées (date, version)
 
@@ -158,11 +171,21 @@ python execution/exporter_pdf.py \
 
 **Format DOCX :**
 ```bash
+# Sans zones grisées
 python execution/exporter_docx.py \
     --input .tmp/actes_generes/{id}/acte.md \
     --output .tmp/actes_generes/{id}/acte.docx \
     --brouillon
+
+# Avec zones grisées (si le fichier contient les marqueurs)
+python execution/exporter_docx.py \
+    --input .tmp/actes_generes/{id}/acte.md \
+    --output .tmp/actes_generes/{id}/acte.docx \
+    --brouillon \
+    --zones-grisees
 ```
+
+**Note :** L'option `--zones-grisees` doit être utilisée à la fois dans `assembler_acte.py` (pour insérer les marqueurs) ET dans `exporter_docx.py` (pour appliquer le fond gris).
 
 **Présentation au notaire :**
 > Voici le projet d'acte généré au format {FORMAT}.
@@ -212,9 +235,16 @@ python execution/exporter_pdf.py \
 
 **Format DOCX :**
 ```bash
+# Sans zones grisées
 python execution/exporter_docx.py \
     --input .tmp/actes_generes/{id}/acte.md \
     --output .tmp/actes_generes/{id}/acte_final.docx
+
+# Avec zones grisées
+python execution/exporter_docx.py \
+    --input .tmp/actes_generes/{id}/acte.md \
+    --output .tmp/actes_generes/{id}/acte_final.docx \
+    --zones-grisees
 ```
 
 **Note :** Si le notaire le souhaite, les deux formats peuvent être générés simultanément.
@@ -302,17 +332,112 @@ Cela peut s'expliquer par l'inclusion des frais de notaire et frais de prêt. So
 
 ---
 
+## Spécifications de formatage DOCX (CRITIQUE)
+
+Le formatage DOCX doit être **100% fidèle** à la trame originale. Les paramètres suivants sont extraits de l'analyse de `docs_originels/Trame vente lots de copropriété.docx` et **ne doivent jamais être modifiés**.
+
+### Police et taille
+- **Police**: Times New Roman 11pt (partout, sans exception)
+- **Interligne**: Simple
+
+### Marges (A4)
+| Marge | Valeur |
+|-------|--------|
+| Gauche | 60mm (6.0cm) |
+| Droite | 15mm (1.5cm) |
+| Haut | 25mm (2.5cm) |
+| Bas | 25mm (2.5cm) |
+| Marges miroir | **NON** |
+
+### Retrait première ligne
+- **Retrait**: 12.51mm (1.251cm) - appliqué à tous les paragraphes normaux
+
+### Styles de titres (Headings)
+
+| Style | Formatage | Alignement | Espacement |
+|-------|-----------|------------|------------|
+| Heading 1 | Bold, ALL CAPS, underline | Centré | 12pt après |
+| Heading 2 | Bold, small caps, underline | Centré | 12pt après |
+| Heading 3 | Bold, underline | Centré | 12pt après |
+| Heading 4 | Bold only | Justifié | 6pt **avant** |
+
+### Alignement texte
+- **Paragraphes normaux**: Justifié
+- **Titres (H1-H3)**: Centré
+- **Listes à puces**: Justifié avec retrait 6mm
+
+### Pagination
+- Numéro de page en haut à droite (Times New Roman 9pt)
+- En-tête différent sur première page
+
+---
+
+## Spécifications techniques du pipeline
+
+### Étape 1: Assemblage (Markdown)
+```bash
+python execution/assembler_acte.py \
+    --template vente_lots_copropriete.md \
+    --donnees .tmp/donnees_client.json \
+    --output .tmp/actes_generes/
+```
+
+**Fonctionnalités auto-générées:**
+- Montants en lettres (filtres Jinja2)
+- Dates en lettres
+- Numéros de lots en lettres
+- Tantièmes en lettres
+
+### Étape 2: Export DOCX
+```bash
+python execution/exporter_docx.py \
+    --input .tmp/actes_generes/{id}/acte.md \
+    --output .tmp/actes_generes/{id}/acte.docx
+```
+
+**Détection automatique de 20+ types de tableaux:**
+- Désignation cadastrale
+- Répartition des charges
+- État hypothécaire
+- Frais d'acte / émoluments
+- Diagnostics immobiliers
+- Financement / prêts
+- Lots de copropriété
+- Et plus...
+
+### Étape 3 (optionnel): Export PDF
+```bash
+python execution/exporter_pdf.py \
+    --input .tmp/actes_generes/{id}/acte.md \
+    --output .tmp/actes_generes/{id}/acte.pdf
+```
+
+---
+
+## Points critiques pour la fidélité
+
+1. **NE JAMAIS modifier les valeurs de formatage** - Elles proviennent de l'analyse du document original
+2. **Utiliser le template Markdown avec balises HTML** pour le formatage spécifique (div class="personne", etc.)
+3. **Tableaux**: Utiliser le format Markdown standard (`| Col1 | Col2 |`) - la détection est automatique
+4. **Soulignement**: Utiliser `__texte__` en Markdown (pas de balises `<u>`)
+5. **Gras**: Utiliser `**texte**` en Markdown
+
+---
+
 ## Mises à jour de cette directive
 
 | Date | Modification | Auteur |
 |------|--------------|--------|
 | 2025-01-17 | Création initiale | Agent |
+| 2025-01-19 | Ajout spécifications formatage DOCX fidèle à l'original | Agent |
+| 2025-01-19 | Documentation pipeline complet et points critiques | Agent |
 
 ---
 
 ## Voir aussi
 
 - [directives/modifier_acte.md](modifier_acte.md) - Modification d'un acte existant
+- [directives/formatage_docx.md](formatage_docx.md) - Spécifications détaillées du formatage DOCX
 - [directives/ajouter_template.md](ajouter_template.md) - Ajout d'un nouveau type d'acte
 - [schemas/variables_vente.json](../schemas/variables_vente.json) - Schéma des variables
 - [schemas/sections_catalogue.json](../schemas/sections_catalogue.json) - Catalogue des sections

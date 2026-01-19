@@ -1,0 +1,1006 @@
+{
+  "titre": "Questions pour Promesse Unilatérale de Vente - Lots de Copropriété",
+  "description": "Questions structurées à poser au notaire pour collecter les informations nécessaires à la rédaction d'une promesse unilatérale de vente de lots de copropriété",
+  "sections": {
+    "1_acte": {
+      "titre": "Informations sur l'acte",
+      "questions": [
+        {
+          "id": "acte_date",
+          "question": "Date prévue de signature de la promesse ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "acte.date"
+        },
+        {
+          "id": "acte_reference",
+          "question": "Référence interne du dossier ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "acte.reference_interne"
+        },
+        {
+          "id": "notaire_assistant",
+          "question": "Y a-t-il un notaire assistant le bénéficiaire ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "notaire_beneficiaire_nom",
+                "question": "Nom du notaire assistant ?",
+                "type": "texte",
+                "variable": "acte.notaire_assistant.nom"
+              },
+              {
+                "id": "notaire_beneficiaire_ville",
+                "question": "Ville du notaire assistant ?",
+                "type": "texte",
+                "variable": "acte.notaire_assistant.ville"
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    "2_promettant": {
+      "titre": "Identification du PROMETTANT (vendeur)",
+      "questions": [
+        {
+          "id": "promettant_nombre",
+          "question": "Combien de promettants (vendeurs) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "minimum": 1
+        },
+        {
+          "id": "promettant_civilite",
+          "question": "Civilité du promettant ?",
+          "type": "choix",
+          "options": ["Monsieur", "Madame"],
+          "obligatoire": true,
+          "variable": "promettant[].civilite",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_nom",
+          "question": "Nom de famille du promettant ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "promettant[].nom",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_prenoms",
+          "question": "Tous les prénoms du promettant ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "promettant[].prenoms",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_profession",
+          "question": "Profession du promettant ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "promettant[].profession",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_adresse",
+          "question": "Adresse complète du promettant ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "promettant[].adresse",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_naissance_date",
+          "question": "Date de naissance du promettant ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "promettant[].date_naissance",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_naissance_lieu",
+          "question": "Lieu de naissance du promettant (ville + département/pays) ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "promettant[].lieu_naissance",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_nationalite",
+          "question": "Nationalité du promettant ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "promettant[].nationalite",
+          "defaut": "française",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_situation_matrimoniale",
+          "question": "Situation matrimoniale du promettant ?",
+          "type": "choix",
+          "options": ["Célibataire", "Marié(e)", "Pacsé(e)", "Divorcé(e)", "Veuf/Veuve", "Séparé(e)"],
+          "obligatoire": true,
+          "variable": "promettant[].situation_matrimoniale.statut",
+          "repeter": "par_promettant",
+          "sous_questions": {
+            "si_marie": [
+              {
+                "id": "promettant_regime",
+                "question": "Régime matrimonial ?",
+                "type": "choix",
+                "options": ["Communauté légale", "Communauté universelle", "Séparation de biens", "Participation aux acquêts"],
+                "variable": "promettant[].situation_matrimoniale.regime_matrimonial"
+              },
+              {
+                "id": "promettant_contrat_mariage",
+                "question": "Y a-t-il un contrat de mariage ?",
+                "type": "booleen",
+                "sous_questions": {
+                  "si_oui": [
+                    {
+                      "id": "promettant_contrat_notaire",
+                      "question": "Notaire ayant reçu le contrat ?",
+                      "variable": "promettant[].situation_matrimoniale.contrat_mariage.notaire"
+                    },
+                    {
+                      "id": "promettant_contrat_date",
+                      "question": "Date du contrat de mariage ?",
+                      "variable": "promettant[].situation_matrimoniale.contrat_mariage.date"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "promettant_conjoint_intervient",
+                "question": "Le conjoint intervient-il à l'acte ?",
+                "type": "booleen",
+                "note": "Obligatoire si bien commun"
+              }
+            ],
+            "si_pacse": [
+              {
+                "id": "promettant_pacs_date",
+                "question": "Date du PACS ?",
+                "variable": "promettant[].situation_matrimoniale.pacs.date"
+              },
+              {
+                "id": "promettant_pacs_regime",
+                "question": "Régime du PACS ?",
+                "type": "choix",
+                "options": ["Séparation de biens", "Indivision"],
+                "variable": "promettant[].situation_matrimoniale.pacs.regime"
+              }
+            ]
+          }
+        },
+        {
+          "id": "promettant_coordonnees",
+          "question": "Coordonnées du promettant (téléphone, email) ?",
+          "type": "contact",
+          "obligatoire": false,
+          "variable": "promettant[].coordonnees",
+          "repeter": "par_promettant"
+        },
+        {
+          "id": "promettant_presence",
+          "question": "Le promettant sera-t-il présent ou représenté ?",
+          "type": "choix",
+          "options": ["Présent", "Représenté"],
+          "obligatoire": true,
+          "variable": "promettant[].presence",
+          "repeter": "par_promettant"
+        }
+      ]
+    },
+
+    "3_beneficiaire": {
+      "titre": "Identification du BENEFICIAIRE (futur acquéreur)",
+      "questions": [
+        {
+          "id": "beneficiaire_nombre",
+          "question": "Combien de bénéficiaires (futurs acquéreurs) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "minimum": 1
+        },
+        {
+          "id": "beneficiaire_civilite",
+          "question": "Civilité du bénéficiaire ?",
+          "type": "choix",
+          "options": ["Monsieur", "Madame"],
+          "obligatoire": true,
+          "variable": "beneficiaire[].civilite",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_nom",
+          "question": "Nom de famille du bénéficiaire ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "beneficiaire[].nom",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_prenoms",
+          "question": "Tous les prénoms du bénéficiaire ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "beneficiaire[].prenoms",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_profession",
+          "question": "Profession du bénéficiaire ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "beneficiaire[].profession",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_adresse",
+          "question": "Adresse complète du bénéficiaire ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "beneficiaire[].adresse",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_naissance_date",
+          "question": "Date de naissance du bénéficiaire ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "beneficiaire[].date_naissance",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_naissance_lieu",
+          "question": "Lieu de naissance du bénéficiaire ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "beneficiaire[].lieu_naissance",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_nationalite",
+          "question": "Nationalité du bénéficiaire ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "beneficiaire[].nationalite",
+          "defaut": "française",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_situation_matrimoniale",
+          "question": "Situation matrimoniale du bénéficiaire ?",
+          "type": "choix",
+          "options": ["Célibataire", "Marié(e)", "Pacsé(e)", "Divorcé(e)", "Veuf/Veuve"],
+          "obligatoire": true,
+          "variable": "beneficiaire[].situation_matrimoniale.statut",
+          "repeter": "par_beneficiaire"
+        },
+        {
+          "id": "beneficiaire_coordonnees",
+          "question": "Coordonnées du bénéficiaire (téléphone, email) ?",
+          "type": "contact",
+          "obligatoire": false,
+          "variable": "beneficiaire[].coordonnees",
+          "repeter": "par_beneficiaire"
+        }
+      ]
+    },
+
+    "4_quotites": {
+      "titre": "Quotités acquises",
+      "questions": [
+        {
+          "id": "quotites_determinees",
+          "question": "Les quotités d'acquisition sont-elles déjà déterminées ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "note": "Si non, elles seront déterminées lors de la réitération",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "quotite_detail",
+                "question": "Quelle quotité pour chaque bénéficiaire ? (ex: 50% chacun, 1/3 + 2/3)",
+                "type": "texte",
+                "variable": "quotites_acquises.repartition"
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    "5_bien": {
+      "titre": "Désignation du bien",
+      "questions": [
+        {
+          "id": "bien_adresse_numero",
+          "question": "Numéro de la voie ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.adresse.numero"
+        },
+        {
+          "id": "bien_adresse_voie",
+          "question": "Nom de la voie (rue, avenue, etc.) ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.adresse.voie"
+        },
+        {
+          "id": "bien_adresse_code_postal",
+          "question": "Code postal ?",
+          "type": "texte",
+          "obligatoire": true,
+          "pattern": "^[0-9]{5}$",
+          "variable": "bien.adresse.code_postal"
+        },
+        {
+          "id": "bien_adresse_ville",
+          "question": "Ville ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.adresse.ville"
+        },
+        {
+          "id": "bien_adresse_departement",
+          "question": "Département ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.adresse.departement"
+        },
+        {
+          "id": "bien_cadastre_section",
+          "question": "Section cadastrale ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.cadastre[].section"
+        },
+        {
+          "id": "bien_cadastre_numero",
+          "question": "Numéro de parcelle cadastrale ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.cadastre[].numero"
+        }
+      ]
+    },
+
+    "6_lots": {
+      "titre": "Lots de copropriété",
+      "questions": [
+        {
+          "id": "lots_nombre",
+          "question": "Combien de lots sont concernés par cette promesse ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "minimum": 1
+        },
+        {
+          "id": "lot_numero",
+          "question": "Numéro du lot ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "bien.lots[].numero",
+          "repeter": "par_lot"
+        },
+        {
+          "id": "lot_type",
+          "question": "Type de lot ?",
+          "type": "choix",
+          "options": ["Appartement", "Cave", "Parking", "Garage", "Local commercial", "Bureau", "Autre"],
+          "obligatoire": true,
+          "variable": "bien.lots[].type",
+          "repeter": "par_lot"
+        },
+        {
+          "id": "lot_description",
+          "question": "Description du lot ?",
+          "type": "texte_long",
+          "obligatoire": true,
+          "variable": "bien.lots[].description",
+          "repeter": "par_lot",
+          "exemple": "Appartement de type F3, situé au 2ème étage, comprenant: entrée, séjour, cuisine, 2 chambres, salle de bains, WC"
+        },
+        {
+          "id": "lot_tantiemes",
+          "question": "Tantièmes du lot (valeur / base) ?",
+          "type": "tantiemes",
+          "obligatoire": true,
+          "variable": "bien.lots[].tantiemes",
+          "repeter": "par_lot",
+          "exemple": "35 / 1000"
+        },
+        {
+          "id": "lot_carrez",
+          "question": "Superficie Carrez du lot (en m²) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "note": "Obligatoire pour lots > 8m² (appartements, bureaux, locaux commerciaux)",
+          "variable": "bien.lots[].superficie_carrez",
+          "repeter": "par_lot"
+        }
+      ]
+    },
+
+    "7_carrez": {
+      "titre": "Superficie Carrez",
+      "questions": [
+        {
+          "id": "carrez_superficie_totale",
+          "question": "Superficie Carrez totale (en m²) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "bien.superficie_carrez.superficie_m2"
+        },
+        {
+          "id": "carrez_date",
+          "question": "Date du mesurage Carrez ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "bien.superficie_carrez.date_mesurage"
+        },
+        {
+          "id": "carrez_diagnostiqueur",
+          "question": "Nom du diagnostiqueur ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.superficie_carrez.diagnostiqueur"
+        },
+        {
+          "id": "carrez_adresse_diagnostiqueur",
+          "question": "Adresse du diagnostiqueur ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "bien.superficie_carrez.adresse_diagnostiqueur"
+        }
+      ]
+    },
+
+    "8_copropriete": {
+      "titre": "Copropriété",
+      "questions": [
+        {
+          "id": "edd_notaire",
+          "question": "Notaire ayant reçu l'état descriptif de division ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "copropriete.reglement.notaire_origine"
+        },
+        {
+          "id": "edd_ville_notaire",
+          "question": "Ville du notaire ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "copropriete.reglement.ville_notaire"
+        },
+        {
+          "id": "edd_date",
+          "question": "Date de l'état descriptif de division ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "copropriete.reglement.date_origine"
+        },
+        {
+          "id": "edd_publication",
+          "question": "Références de publication (SPF, date, volume, numéro) ?",
+          "type": "publication",
+          "obligatoire": true,
+          "variable": "copropriete.reglement.publication"
+        },
+        {
+          "id": "edd_modificatifs",
+          "question": "Y a-t-il des modificatifs au règlement ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "modificatif_details",
+                "question": "Détails des modificatifs (notaire, date, publication) ?",
+                "type": "array",
+                "variable": "copropriete.reglement.modificatifs"
+              }
+            ]
+          }
+        },
+        {
+          "id": "syndic_nom",
+          "question": "Nom du syndic de copropriété ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "copropriete.syndic.nom"
+        },
+        {
+          "id": "immatriculation",
+          "question": "Numéro d'immatriculation de la copropriété ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "copropriete.immatriculation"
+        },
+        {
+          "id": "dtg_existe",
+          "question": "Existe-t-il un diagnostic technique global ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "copropriete.diagnostic_technique_global.existe"
+        },
+        {
+          "id": "ppt_existe",
+          "question": "Existe-t-il un plan pluriannuel de travaux ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "copropriete.plan_pluriannuel_travaux.existe"
+        },
+        {
+          "id": "fiche_synthetique_date",
+          "question": "Date d'établissement de la fiche synthétique ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "copropriete.fiche_synthetique.date_etablissement"
+        },
+        {
+          "id": "emprunt_collectif",
+          "question": "Existe-t-il un emprunt collectif en cours ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "copropriete.emprunt_collectif.existe"
+        }
+      ]
+    },
+
+    "9_prix": {
+      "titre": "Prix et conditions financières",
+      "questions": [
+        {
+          "id": "prix_montant",
+          "question": "Prix de vente en euros ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "prix.montant"
+        },
+        {
+          "id": "prix_comptant",
+          "question": "Le prix sera-t-il payé comptant le jour de la réitération ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "defaut": true,
+          "variable": "prix.paiement_comptant"
+        }
+      ]
+    },
+
+    "10_negociation": {
+      "titre": "Négociation immobilière",
+      "questions": [
+        {
+          "id": "avec_agent",
+          "question": "La vente fait-elle intervenir un agent immobilier ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "negociation.avec_agent",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "agent_nom",
+                "question": "Nom de l'agence/agent ?",
+                "type": "texte",
+                "variable": "negociation.agent.nom"
+              },
+              {
+                "id": "agent_mandat",
+                "question": "Numéro du mandat ?",
+                "type": "texte",
+                "variable": "negociation.agent.numero_mandat"
+              },
+              {
+                "id": "agent_date_mandat",
+                "question": "Date du mandat ?",
+                "type": "date",
+                "variable": "negociation.agent.date_mandat"
+              },
+              {
+                "id": "honoraires_montant",
+                "question": "Montant des honoraires TTC ?",
+                "type": "nombre",
+                "variable": "negociation.honoraires.montant_ttc"
+              },
+              {
+                "id": "honoraires_charge",
+                "question": "Honoraires à la charge de qui ?",
+                "type": "choix",
+                "options": ["Promettant (vendeur)", "Bénéficiaire (acquéreur)", "Partagé"],
+                "variable": "negociation.honoraires.a_charge_de"
+              },
+              {
+                "id": "honoraires_inclus",
+                "question": "Honoraires inclus dans le prix annoncé ?",
+                "type": "booleen",
+                "variable": "negociation.honoraires.inclus_dans_prix"
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    "11_indemnite_immobilisation": {
+      "titre": "Indemnité d'immobilisation",
+      "note": "Spécifique à la promesse unilatérale de vente",
+      "questions": [
+        {
+          "id": "indemnite_montant",
+          "question": "Montant de l'indemnité d'immobilisation ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "indemnite_immobilisation.montant",
+          "note": "Généralement 10% du prix"
+        },
+        {
+          "id": "indemnite_pourcentage",
+          "question": "Pourcentage du prix représenté par l'indemnité ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "indemnite_immobilisation.pourcentage_prix",
+          "defaut": 10
+        },
+        {
+          "id": "indemnite_versement",
+          "question": "Comment sera versée l'indemnité ?",
+          "type": "choix",
+          "options": ["Chèque séquestre chez le notaire", "Virement séquestre chez le notaire", "Garantie bancaire"],
+          "obligatoire": true,
+          "variable": "indemnite_immobilisation.modalite_paiement"
+        },
+        {
+          "id": "indemnite_delai_versement",
+          "question": "Délai pour verser l'indemnité (en jours) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "indemnite_immobilisation.delai_versement.jours",
+          "note": "À compter de l'expiration du délai de rétractation"
+        }
+      ]
+    },
+
+    "12_delais": {
+      "titre": "Délais de réalisation",
+      "questions": [
+        {
+          "id": "date_realisation",
+          "question": "Date limite de réalisation (réitération authentique) ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "delais.date_realisation"
+        },
+        {
+          "id": "delai_retractation",
+          "question": "Durée du délai de rétractation (en jours) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "defaut": 10,
+          "variable": "delais.delai_retractation.duree_jours"
+        }
+      ]
+    },
+
+    "13_conditions_suspensives": {
+      "titre": "Conditions suspensives",
+      "questions": [
+        {
+          "id": "cs_pret",
+          "question": "Y a-t-il une condition suspensive d'obtention de prêt ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "conditions_suspensives.pret.applicable",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "pret_montant",
+                "question": "Montant maximum du prêt sollicité ?",
+                "type": "nombre",
+                "variable": "conditions_suspensives.pret.montant_maximum"
+              },
+              {
+                "id": "pret_taux",
+                "question": "Taux maximum accepté (en %) ?",
+                "type": "nombre",
+                "variable": "conditions_suspensives.pret.taux_maximum"
+              },
+              {
+                "id": "pret_duree",
+                "question": "Durée minimum du prêt (en mois) ?",
+                "type": "nombre",
+                "variable": "conditions_suspensives.pret.duree_minimum_mois"
+              },
+              {
+                "id": "pret_date_limite",
+                "question": "Date limite d'obtention du prêt ?",
+                "type": "date",
+                "variable": "conditions_suspensives.pret.date_limite_obtention"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cs_preemption",
+          "question": "Y a-t-il un droit de préemption applicable ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "conditions_suspensives.droit_preemption.applicable",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "preemption_types",
+                "question": "Quels types de droits de préemption ?",
+                "type": "choix_multiple",
+                "options": ["Urbain", "SAFER", "Locataire", "Commune"],
+                "variable": "conditions_suspensives.droit_preemption.types"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cs_autres",
+          "question": "Y a-t-il d'autres conditions suspensives ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "cs_autres_details",
+                "question": "Description des autres conditions suspensives ?",
+                "type": "texte_long",
+                "variable": "conditions_suspensives.autres"
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    "14_financement": {
+      "titre": "Financement prévisionnel",
+      "questions": [
+        {
+          "id": "financement_apport",
+          "question": "Montant de l'apport personnel du bénéficiaire ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "financement.apport_personnel"
+        },
+        {
+          "id": "financement_pret",
+          "question": "Montant du prêt sollicité ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "financement.pret_sollicite"
+        }
+      ]
+    },
+
+    "15_usage": {
+      "titre": "Usage du bien",
+      "questions": [
+        {
+          "id": "usage_actuel",
+          "question": "Usage actuel du bien ?",
+          "type": "choix",
+          "options": ["Habitation", "Commercial", "Mixte", "Professionnel"],
+          "obligatoire": true,
+          "variable": "bien.usage_actuel"
+        },
+        {
+          "id": "usage_destination",
+          "question": "Destination envisagée par le bénéficiaire ?",
+          "type": "choix",
+          "options": ["Résidence principale", "Résidence secondaire", "Investissement locatif", "Professionnel"],
+          "obligatoire": true,
+          "variable": "bien.usage_destination"
+        }
+      ]
+    },
+
+    "16_origine_propriete": {
+      "titre": "Origine de propriété",
+      "questions": [
+        {
+          "id": "origine_type",
+          "question": "Type d'acquisition par le promettant ?",
+          "type": "choix",
+          "options": ["Acquisition", "Succession", "Donation", "Licitation", "Partage", "Adjudication"],
+          "obligatoire": true,
+          "variable": "origine_propriete[].type"
+        },
+        {
+          "id": "origine_notaire",
+          "question": "Notaire de l'acte d'origine ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "origine_propriete[].notaire"
+        },
+        {
+          "id": "origine_date",
+          "question": "Date de l'acte d'origine ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "origine_propriete[].date"
+        },
+        {
+          "id": "origine_publication",
+          "question": "Références de publication (SPF, date, volume, numéro) ?",
+          "type": "publication",
+          "obligatoire": true,
+          "variable": "origine_propriete[].publication"
+        }
+      ]
+    },
+
+    "17_diagnostics": {
+      "titre": "Diagnostics techniques",
+      "questions": [
+        {
+          "id": "diagnostiqueur_nom",
+          "question": "Nom du cabinet de diagnostic principal ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "diagnostics.diagnostiqueur.nom"
+        },
+        {
+          "id": "diagnostiqueur_adresse",
+          "question": "Adresse du diagnostiqueur ?",
+          "type": "texte",
+          "obligatoire": true,
+          "variable": "diagnostics.diagnostiqueur.adresse"
+        },
+        {
+          "id": "dpe_classe_energie",
+          "question": "Classe énergie du DPE (A à G) ?",
+          "type": "choix",
+          "options": ["A", "B", "C", "D", "E", "F", "G"],
+          "obligatoire": true,
+          "variable": "diagnostics.dpe.classe_energie"
+        },
+        {
+          "id": "dpe_classe_ges",
+          "question": "Classe GES du DPE (A à G) ?",
+          "type": "choix",
+          "options": ["A", "B", "C", "D", "E", "F", "G"],
+          "obligatoire": true,
+          "variable": "diagnostics.dpe.classe_ges"
+        },
+        {
+          "id": "dpe_date",
+          "question": "Date du DPE ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "diagnostics.dpe.date"
+        },
+        {
+          "id": "etat_risques_date",
+          "question": "Date de l'état des risques ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "diagnostics.etat_risques.date"
+        },
+        {
+          "id": "radon_zone",
+          "question": "Zone radon (1, 2 ou 3) ?",
+          "type": "choix",
+          "options": ["1 (faible)", "2 (moyen)", "3 (élevé)"],
+          "obligatoire": true,
+          "variable": "diagnostics.radon.zone"
+        }
+      ]
+    },
+
+    "18_travaux": {
+      "titre": "Travaux réalisés",
+      "questions": [
+        {
+          "id": "travaux_realises",
+          "question": "Des travaux ont-ils été réalisés par le promettant ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "travaux_details",
+                "question": "Description des travaux, entreprise, date facture ?",
+                "type": "array",
+                "variable": "travaux.travaux_realises"
+              },
+              {
+                "id": "travaux_decennale",
+                "question": "Attestation décennale fournie ?",
+                "type": "booleen",
+                "variable": "travaux.garantie_decennale_applicable"
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    "19_urbanisme": {
+      "titre": "Urbanisme",
+      "questions": [
+        {
+          "id": "note_urbanisme_date",
+          "question": "Date de la note d'urbanisme ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "urbanisme.note_urbanisme.date"
+        },
+        {
+          "id": "note_voirie_date",
+          "question": "Date de la note de voirie ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "urbanisme.note_voirie.date"
+        },
+        {
+          "id": "certificat_non_peril",
+          "question": "Date du certificat de non-péril ?",
+          "type": "date",
+          "obligatoire": true,
+          "variable": "urbanisme.certificat_non_peril.date"
+        }
+      ]
+    },
+
+    "20_clauses_optionnelles": {
+      "titre": "Clauses optionnelles",
+      "questions": [
+        {
+          "id": "execution_forcee",
+          "question": "Inclure la clause d'exécution forcée (art. 1221 Code civil) ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "defaut": true,
+          "variable": "clauses_optionnelles.execution_forcee"
+        },
+        {
+          "id": "substitution",
+          "question": "Autoriser la substitution du bénéficiaire ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "defaut": false,
+          "variable": "clauses_optionnelles.substitution_autorisee"
+        }
+      ]
+    },
+
+    "21_annexes": {
+      "titre": "Annexes à joindre",
+      "note": "Liste standard des annexes pour une promesse de vente",
+      "annexes_standards": [
+        "Plans cadastral et géoportail",
+        "Plans des lots et plan de masse",
+        "Diagnostic Carrez",
+        "Note d'urbanisme",
+        "Note de voirie",
+        "Certificat de non-péril",
+        "Factures travaux et attestation décennale",
+        "Diagnostic amiante parties privatives",
+        "Diagnostic amiante parties communes",
+        "État de l'installation intérieure d'électricité",
+        "Diagnostic de performances énergétiques",
+        "État des risques",
+        "Données environnementales",
+        "Attestation de mise à jour annuelle copropriété",
+        "Carnet d'entretien",
+        "Fiche synthétique",
+        "Procès-verbaux AG trois dernières années"
+      ]
+    }
+  }
+}

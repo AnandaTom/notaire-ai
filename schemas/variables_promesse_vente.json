@@ -1,0 +1,788 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Variables Promesse Unilatérale de Vente - Lots de Copropriété",
+  "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente de lots de copropriété",
+  "type": "object",
+  "required": ["acte", "promettant", "beneficiaire", "bien", "prix", "indemnite_immobilisation", "delais"],
+  "properties": {
+    "acte": {
+      "type": "object",
+      "description": "Informations générales sur l'acte",
+      "required": ["date", "notaire"],
+      "properties": {
+        "numero_repertoire": {
+          "type": "string",
+          "description": "Numéro de répertoire"
+        },
+        "reference_interne": {
+          "type": "string",
+          "description": "Référence interne du dossier"
+        },
+        "date": {
+          "type": "object",
+          "required": ["jour", "mois", "annee"],
+          "properties": {
+            "jour": { "type": "integer", "minimum": 1, "maximum": 31 },
+            "mois": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "annee": { "type": "integer", "minimum": 2020 },
+            "en_lettres": { "type": "string", "description": "Date en toutes lettres (auto-générée)" }
+          }
+        },
+        "notaire": {
+          "type": "object",
+          "required": ["nom", "prenom", "ville", "adresse", "crpcen"],
+          "properties": {
+            "civilite": { "type": "string", "enum": ["Maître", "Maîtresse"] },
+            "nom": { "type": "string" },
+            "prenom": { "type": "string" },
+            "societe": { "type": "string", "description": "Nom de la SAS/SCP" },
+            "ville": { "type": "string" },
+            "departement": { "type": "string" },
+            "code_postal": { "type": "string", "pattern": "^[0-9]{5}$" },
+            "adresse": { "type": "string" },
+            "crpcen": { "type": "string", "description": "Numéro CRPCEN" }
+          }
+        },
+        "notaire_assistant": {
+          "type": "object",
+          "description": "Notaire assistant le bénéficiaire (optionnel)",
+          "properties": {
+            "civilite": { "type": "string" },
+            "nom": { "type": "string" },
+            "prenom": { "type": "string" },
+            "ville": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "promettant": {
+      "type": "array",
+      "description": "Liste des promettants (vendeurs)",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/personne_physique"
+      }
+    },
+
+    "beneficiaire": {
+      "type": "array",
+      "description": "Liste des bénéficiaires (futurs acquéreurs)",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/personne_physique"
+      }
+    },
+
+    "quotites_acquises": {
+      "type": "object",
+      "description": "Répartition des quotités acquises",
+      "properties": {
+        "a_determiner": {
+          "type": "boolean",
+          "description": "Si true, quotités à déterminer lors de la réitération"
+        },
+        "repartition": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "personne_index": { "type": "integer" },
+              "quotite": { "type": "string" },
+              "pourcentage": { "type": "number" },
+              "type_propriete": { "type": "string", "enum": ["pleine_propriete", "nue_propriete", "usufruit", "indivision"] }
+            }
+          }
+        }
+      }
+    },
+
+    "bien": {
+      "type": "object",
+      "description": "Désignation du bien immobilier",
+      "required": ["adresse", "cadastre", "lots"],
+      "properties": {
+        "adresse": {
+          "type": "object",
+          "required": ["numero", "voie", "code_postal", "ville"],
+          "properties": {
+            "numero": { "type": "string" },
+            "voie": { "type": "string" },
+            "code_postal": { "type": "string" },
+            "ville": { "type": "string" },
+            "departement": { "type": "string" }
+          }
+        },
+        "nom_residence": {
+          "type": "string"
+        },
+        "cadastre": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["section", "numero"],
+            "properties": {
+              "section": { "type": "string" },
+              "numero": { "type": "string" },
+              "lieudit": { "type": "string" },
+              "surface": { "type": "string" }
+            }
+          }
+        },
+        "lots": {
+          "type": "array",
+          "description": "Lots de copropriété concernés par la promesse",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/lot_copropriete"
+          }
+        },
+        "superficie_carrez": {
+          "type": "object",
+          "properties": {
+            "superficie_m2": { "type": "number" },
+            "date_mesurage": { "type": "string" },
+            "diagnostiqueur": { "type": "string" },
+            "adresse_diagnostiqueur": { "type": "string" }
+          }
+        },
+        "usage_actuel": {
+          "type": "string",
+          "enum": ["habitation", "commercial", "mixte", "professionnel"]
+        },
+        "usage_destination": {
+          "type": "string",
+          "enum": ["residence_principale", "residence_secondaire", "investissement_locatif", "professionnel"]
+        },
+        "tel_quel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Bien vendu tel que, sans garantie particulière"
+        }
+      }
+    },
+
+    "copropriete": {
+      "type": "object",
+      "description": "Informations sur la copropriété",
+      "properties": {
+        "reglement": {
+          "type": "object",
+          "properties": {
+            "notaire_origine": { "type": "string" },
+            "ville_notaire": { "type": "string" },
+            "date_origine": { "type": "string" },
+            "publication": {
+              "type": "object",
+              "properties": {
+                "service": { "type": "string" },
+                "date": { "type": "string" },
+                "volume": { "type": "string" },
+                "numero": { "type": "string" }
+              }
+            },
+            "modificatifs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "notaire": { "type": "string" },
+                  "ville_notaire": { "type": "string" },
+                  "date": { "type": "string" },
+                  "publication": {
+                    "type": "object",
+                    "properties": {
+                      "service": { "type": "string" },
+                      "date": { "type": "string" },
+                      "volume": { "type": "string" },
+                      "numero": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "syndic": {
+          "type": "object",
+          "properties": {
+            "nom": { "type": "string" },
+            "adresse": { "type": "string" },
+            "ville": { "type": "string" },
+            "code_postal": { "type": "string" }
+          }
+        },
+        "immatriculation": {
+          "type": "string",
+          "description": "Numéro d'immatriculation au registre national"
+        },
+        "diagnostic_technique_global": {
+          "type": "object",
+          "properties": {
+            "existe": { "type": "boolean" },
+            "date": { "type": "string" }
+          }
+        },
+        "plan_pluriannuel_travaux": {
+          "type": "object",
+          "properties": {
+            "existe": { "type": "boolean" },
+            "date_adoption": { "type": "string" }
+          }
+        },
+        "fiche_synthetique": {
+          "type": "object",
+          "properties": {
+            "date_etablissement": { "type": "string" }
+          }
+        },
+        "carnet_entretien": {
+          "type": "object",
+          "properties": {
+            "existe": { "type": "boolean" }
+          }
+        },
+        "fonds_travaux": {
+          "type": "object",
+          "properties": {
+            "existe": { "type": "boolean" },
+            "montant_quote_part": { "type": "number" }
+          }
+        },
+        "emprunt_collectif": {
+          "type": "object",
+          "properties": {
+            "existe": { "type": "boolean" },
+            "solde": { "type": "number" }
+          }
+        }
+      }
+    },
+
+    "meubles": {
+      "type": "object",
+      "description": "Meubles et objets mobiliers",
+      "properties": {
+        "inclus": { "type": "boolean", "default": false },
+        "absence_mobilier": { "type": "boolean", "default": true },
+        "liste": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "prix": {
+      "type": "object",
+      "description": "Prix et conditions financières",
+      "required": ["montant"],
+      "properties": {
+        "montant": { "type": "number" },
+        "montant_lettres": { "type": "string" },
+        "devise": { "type": "string", "default": "EUR" },
+        "paiement_comptant": { "type": "boolean", "default": true },
+        "modalites_paiement": { "type": "string" }
+      }
+    },
+
+    "negociation": {
+      "type": "object",
+      "description": "Négociation immobilière",
+      "properties": {
+        "avec_agent": { "type": "boolean" },
+        "agent": {
+          "type": "object",
+          "properties": {
+            "nom": { "type": "string" },
+            "numero_mandat": { "type": "string" },
+            "date_mandat": { "type": "string" }
+          }
+        },
+        "honoraires": {
+          "type": "object",
+          "properties": {
+            "montant_ttc": { "type": "number" },
+            "a_charge_de": { "type": "string", "enum": ["promettant", "beneficiaire", "partage"] },
+            "inclus_dans_prix": { "type": "boolean" },
+            "date_paiement": { "type": "string", "description": "Généralement jour de la réitération" }
+          }
+        }
+      }
+    },
+
+    "financement": {
+      "type": "object",
+      "description": "Coût de l'opération et financement prévisionnel",
+      "properties": {
+        "prix": { "type": "number" },
+        "frais_vente_estimes": { "type": "number" },
+        "frais_pret_estimes": { "type": "number" },
+        "cout_total": { "type": "number" },
+        "apport_personnel": { "type": "number" },
+        "pret_sollicite": { "type": "number" }
+      }
+    },
+
+    "indemnite_immobilisation": {
+      "type": "object",
+      "description": "Indemnité d'immobilisation (spécifique promesse unilatérale)",
+      "required": ["montant"],
+      "properties": {
+        "montant": { "type": "number" },
+        "montant_lettres": { "type": "string" },
+        "pourcentage_prix": { "type": "number", "description": "Généralement 10%" },
+        "modalite_paiement": {
+          "type": "string",
+          "enum": ["cheque_sequestre", "virement_sequestre", "garantie_bancaire"]
+        },
+        "sequestre": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["notaire", "agent_immobilier", "avocat"] },
+            "nom": { "type": "string" }
+          }
+        },
+        "delai_versement": {
+          "type": "object",
+          "properties": {
+            "jours": { "type": "integer" },
+            "a_compter_de": { "type": "string", "enum": ["signature", "expiration_delai_retractation"] }
+          }
+        }
+      }
+    },
+
+    "delais": {
+      "type": "object",
+      "description": "Délais importants de la promesse",
+      "required": ["date_realisation"],
+      "properties": {
+        "date_realisation": {
+          "type": "string",
+          "description": "Date limite pour la réitération authentique"
+        },
+        "date_limite_levee_option": {
+          "type": "string",
+          "description": "Date limite pour le bénéficiaire pour lever l'option"
+        },
+        "delai_retractation": {
+          "type": "object",
+          "properties": {
+            "duree_jours": { "type": "integer", "default": 10 },
+            "date_expiration": { "type": "string" }
+          }
+        },
+        "date_obtention_pret": {
+          "type": "string",
+          "description": "Date limite pour obtenir le prêt (condition suspensive)"
+        }
+      }
+    },
+
+    "conditions_suspensives": {
+      "type": "object",
+      "description": "Conditions suspensives de la promesse",
+      "properties": {
+        "pret": {
+          "type": "object",
+          "properties": {
+            "applicable": { "type": "boolean" },
+            "montant_maximum": { "type": "number" },
+            "taux_maximum": { "type": "number" },
+            "duree_minimum_mois": { "type": "integer" },
+            "date_limite_obtention": { "type": "string" },
+            "nombre_demandes_minimum": { "type": "integer", "default": 2 }
+          }
+        },
+        "droit_preemption": {
+          "type": "object",
+          "properties": {
+            "applicable": { "type": "boolean" },
+            "types": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["urbain", "safer", "locataire", "commune"]
+              }
+            }
+          }
+        },
+        "autres": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "date_limite": { "type": "string" },
+              "beneficiaire_condition": { "type": "string", "enum": ["promettant", "beneficiaire", "les_deux"] }
+            }
+          }
+        }
+      }
+    },
+
+    "declarations_promettant": {
+      "type": "object",
+      "description": "Déclarations et garanties du promettant",
+      "properties": {
+        "garantie_eviction": { "type": "boolean", "default": true },
+        "garantie_jouissance": { "type": "boolean", "default": true },
+        "absence_location": { "type": "boolean" },
+        "absence_congé_donne": { "type": "boolean" },
+        "garantie_hypothecaire": {
+          "type": "object",
+          "properties": {
+            "inscriptions_existantes": { "type": "boolean" },
+            "engagement_radiation": { "type": "boolean" }
+          }
+        },
+        "servitudes": {
+          "type": "object",
+          "properties": {
+            "connues": { "type": "array", "items": { "type": "string" } },
+            "pas_de_servitude_connue": { "type": "boolean" }
+          }
+        },
+        "impots_taxes": {
+          "type": "object",
+          "properties": {
+            "regime_fiscal_location": { "type": "string", "enum": ["aucun", "pinel", "denormandie", "malraux", "autre"] },
+            "anah_convention": { "type": "boolean" }
+          }
+        },
+        "contrats": {
+          "type": "object",
+          "properties": {
+            "contrat_affichage": { "type": "boolean" },
+            "contrat_distribution": { "type": "boolean" }
+          }
+        }
+      }
+    },
+
+    "jouissance": {
+      "type": "object",
+      "description": "Propriété et jouissance",
+      "properties": {
+        "date_propriete": { "type": "string", "description": "Jour de la réitération authentique" },
+        "date_jouissance": { "type": "string", "description": "Même jour ou autre" },
+        "libre_de_location": { "type": "boolean" }
+      }
+    },
+
+    "diagnostics": {
+      "type": "object",
+      "description": "Dossier de diagnostics techniques",
+      "properties": {
+        "diagnostiqueur": {
+          "type": "object",
+          "properties": {
+            "nom": { "type": "string" },
+            "adresse": { "type": "string" }
+          }
+        },
+        "plomb": { "$ref": "#/$defs/diagnostic" },
+        "amiante_parties_privatives": { "$ref": "#/$defs/diagnostic" },
+        "amiante_parties_communes": { "$ref": "#/$defs/diagnostic" },
+        "termites": { "$ref": "#/$defs/diagnostic" },
+        "merules": {
+          "type": "object",
+          "properties": {
+            "zone_risque": { "type": "boolean" }
+          }
+        },
+        "gaz": { "$ref": "#/$defs/diagnostic" },
+        "electricite": { "$ref": "#/$defs/diagnostic" },
+        "dpe": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string" },
+            "diagnostiqueur": { "type": "string" },
+            "adresse_diagnostiqueur": { "type": "string" },
+            "numero_ademe": { "type": "string" },
+            "consommation_energie": { "type": "number" },
+            "classe_energie": { "type": "string", "enum": ["A", "B", "C", "D", "E", "F", "G"] },
+            "emission_ges": { "type": "number" },
+            "classe_ges": { "type": "string", "enum": ["A", "B", "C", "D", "E", "F", "G"] }
+          }
+        },
+        "carnet_information_logement": {
+          "type": "object",
+          "properties": {
+            "existe": { "type": "boolean" },
+            "transmission_prevue": { "type": "boolean", "default": true }
+          }
+        },
+        "audit_energetique": {
+          "type": "object",
+          "properties": {
+            "requis": { "type": "boolean" },
+            "date": { "type": "string" }
+          }
+        },
+        "zone_bruit_aeroport": {
+          "type": "object",
+          "properties": {
+            "dans_zone": { "type": "boolean" },
+            "date_etat": { "type": "string" }
+          }
+        },
+        "radon": {
+          "type": "object",
+          "properties": {
+            "zone": { "type": "integer", "enum": [1, 2, 3] }
+          }
+        },
+        "etat_risques": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string" }
+          }
+        },
+        "assainissement": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["collectif", "individuel"] },
+            "controle_effectue": { "type": "boolean" },
+            "date_controle": { "type": "string" },
+            "conforme": { "type": "boolean" }
+          }
+        }
+      }
+    },
+
+    "urbanisme": {
+      "type": "object",
+      "description": "Informations urbanistiques",
+      "properties": {
+        "note_urbanisme": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string" }
+          }
+        },
+        "note_voirie": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string" }
+          }
+        },
+        "certificat_non_peril": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "travaux": {
+      "type": "object",
+      "description": "Travaux réalisés dans le bien",
+      "properties": {
+        "travaux_realises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "date_facture": { "type": "string" },
+              "entreprise": { "type": "string" },
+              "adresse_entreprise": { "type": "string" },
+              "declaration_prealable_requise": { "type": "boolean" },
+              "decennale_fournie": { "type": "boolean" }
+            }
+          }
+        },
+        "garantie_decennale_applicable": { "type": "boolean" }
+      }
+    },
+
+    "environnement": {
+      "type": "object",
+      "description": "Situation environnementale",
+      "properties": {
+        "sinistres_indemnises": {
+          "type": "object",
+          "properties": {
+            "existence": { "type": "boolean" },
+            "liste": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "bases_consultees": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["BASIAS", "BASOL", "Georisques", "ICPE"]
+          }
+        }
+      }
+    },
+
+    "origine_propriete": {
+      "type": "array",
+      "description": "Chaîne d'origine de propriété",
+      "items": {
+        "type": "object",
+        "properties": {
+          "lots_concernes": { "type": "array", "items": { "type": "integer" } },
+          "type": {
+            "type": "string",
+            "enum": ["acquisition", "succession", "donation", "licitation", "partage", "adjudication"]
+          },
+          "vendeur_precedent": { "type": "string" },
+          "notaire": { "type": "string" },
+          "ville_notaire": { "type": "string" },
+          "date": { "type": "string" },
+          "publication": {
+            "type": "object",
+            "properties": {
+              "service": { "type": "string" },
+              "date": { "type": "string" },
+              "volume": { "type": "string" },
+              "numero": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "annexes": {
+      "type": "array",
+      "description": "Liste des annexes à joindre",
+      "items": {
+        "type": "object",
+        "properties": {
+          "numero": { "type": "integer" },
+          "titre": { "type": "string" },
+          "obligatoire": { "type": "boolean" }
+        }
+      }
+    },
+
+    "clauses_optionnelles": {
+      "type": "object",
+      "description": "Clauses optionnelles à inclure/exclure",
+      "properties": {
+        "execution_forcee": { "type": "boolean", "default": true },
+        "clause_penale": { "type": "boolean" },
+        "substitution_autorisee": { "type": "boolean" }
+      }
+    }
+  },
+
+  "$defs": {
+    "personne_physique": {
+      "type": "object",
+      "required": ["nom", "prenoms", "date_naissance", "lieu_naissance", "adresse"],
+      "properties": {
+        "civilite": { "type": "string", "enum": ["Monsieur", "Madame"] },
+        "nom": { "type": "string" },
+        "nom_naissance": { "type": "string" },
+        "prenoms": { "type": "string" },
+        "profession": { "type": "string" },
+        "adresse": { "type": "string" },
+        "code_postal": { "type": "string" },
+        "ville": { "type": "string" },
+        "date_naissance": { "type": "string", "format": "date" },
+        "lieu_naissance": { "type": "string" },
+        "nationalite": { "type": "string", "default": "française" },
+        "resident_fiscal": { "type": "boolean", "default": true },
+        "situation_matrimoniale": {
+          "type": "object",
+          "properties": {
+            "statut": {
+              "type": "string",
+              "enum": ["celibataire", "marie", "pacse", "divorce", "veuf", "separe"]
+            },
+            "regime_matrimonial": {
+              "type": "string",
+              "enum": ["communaute_legale", "communaute_universelle", "separation_biens", "participation_acquets"]
+            },
+            "contrat_mariage": {
+              "type": "object",
+              "properties": {
+                "notaire": { "type": "string" },
+                "date": { "type": "string" },
+                "lieu": { "type": "string" }
+              }
+            },
+            "pacs": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string" },
+                "lieu_enregistrement": { "type": "string" },
+                "regime": { "type": "string", "enum": ["separation_biens", "indivision"] }
+              }
+            },
+            "conjoint": {
+              "type": "object",
+              "properties": {
+                "nom": { "type": "string" },
+                "prenoms": { "type": "string" }
+              }
+            }
+          }
+        },
+        "coordonnees": {
+          "type": "object",
+          "properties": {
+            "telephone": { "type": "string" },
+            "email": { "type": "string", "format": "email" }
+          }
+        },
+        "presence": {
+          "type": "string",
+          "enum": ["present", "represente"],
+          "default": "present"
+        },
+        "representant": {
+          "type": "object",
+          "properties": {
+            "nom": { "type": "string" },
+            "qualite": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "lot_copropriete": {
+      "type": "object",
+      "required": ["numero", "description", "tantiemes"],
+      "properties": {
+        "numero": { "type": "integer" },
+        "numero_lettres": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["appartement", "cave", "parking", "garage", "local_commercial", "bureau", "autre"]
+        },
+        "description": { "type": "string" },
+        "etage": { "type": "string" },
+        "escalier": { "type": "string" },
+        "tantiemes": {
+          "type": "object",
+          "properties": {
+            "valeur": { "type": "integer" },
+            "base": { "type": "integer", "default": 1000 },
+            "type": { "type": "string", "default": "parties communes générales" }
+          }
+        },
+        "superficie_carrez": { "type": "number" },
+        "observations": { "type": "string" }
+      }
+    },
+
+    "diagnostic": {
+      "type": "object",
+      "properties": {
+        "requis": { "type": "boolean" },
+        "applicable": { "type": "boolean" },
+        "date": { "type": "string" },
+        "diagnostiqueur": { "type": "string" },
+        "adresse_diagnostiqueur": { "type": "string" },
+        "resultat": { "type": "string" },
+        "observations": { "type": "string" }
+      }
+    }
+  }
+}

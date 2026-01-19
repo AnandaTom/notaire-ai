@@ -15,6 +15,10 @@ Fonctionnalités:
 
 Usage:
     python assembler_acte.py --template <template> --donnees <donnees.json> --output <sortie.md>
+    python assembler_acte.py --template <template> --donnees <donnees.json> --output <sortie.md> --zones-grisees
+
+Options:
+    --zones-grisees : Marquer les variables pour affichage avec fond gris dans le DOCX final
 
 Exemple:
     python assembler_acte.py --template ../templates/vente_lots_copropriete.md \\
@@ -30,6 +34,15 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, UndefinedError
+
+
+# ==============================================================================
+# MARQUEURS ZONES GRISEES
+# ==============================================================================
+
+# Ces marqueurs sont reconnus par exporter_docx.py pour appliquer un fond gris
+MARQUEUR_VAR_START = "<<<VAR_START>>>"
+MARQUEUR_VAR_END = "<<<VAR_END>>>"
 
 
 # ==============================================================================
@@ -263,15 +276,51 @@ class AssembleurActe:
     Classe principale pour l'assemblage d'actes notariaux.
     """
 
-    def __init__(self, dossier_templates: Path):
+    def __init__(self, dossier_templates: Path, zones_grisees: bool = False):
         """
         Initialise l'assembleur.
 
         Args:
             dossier_templates: Chemin vers le dossier des templates
+            zones_grisees: Si True, encadre les variables avec des marqueurs pour fond gris
         """
         self.dossier_templates = dossier_templates
+        self.zones_grisees = zones_grisees
         self.env = self._creer_environnement_jinja()
+
+    def _finalize_avec_marqueurs(self, valeur):
+        """
+        Fonction finalize pour Jinja2 qui encadre les valeurs avec les marqueurs de zone grisee.
+
+        Args:
+            valeur: Valeur rendue par Jinja2
+
+        Returns:
+            Valeur encadree avec marqueurs si zones_grisees est actif
+        """
+        if valeur is None:
+            return ''
+        str_valeur = str(valeur)
+        if not str_valeur.strip():
+            return str_valeur
+        # Ne pas encadrer les valeurs qui sont deja des marqueurs ou du Markdown structurel
+        if str_valeur.startswith('<<<') or str_valeur.startswith('#') or str_valeur.startswith('|'):
+            return str_valeur
+        return f"{MARQUEUR_VAR_START}{str_valeur}{MARQUEUR_VAR_END}"
+
+    def _finalize_standard(self, valeur):
+        """
+        Fonction finalize standard (sans marqueurs).
+
+        Args:
+            valeur: Valeur rendue par Jinja2
+
+        Returns:
+            Valeur en string
+        """
+        if valeur is None:
+            return ''
+        return str(valeur)
 
     def _creer_environnement_jinja(self) -> Environment:
         """
@@ -280,6 +329,9 @@ class AssembleurActe:
         Returns:
             Environnement Jinja2 configuré
         """
+        # Choisir la fonction finalize selon l'option zones_grisees
+        finalize_func = self._finalize_avec_marqueurs if self.zones_grisees else self._finalize_standard
+
         env = Environment(
             loader=FileSystemLoader([
                 str(self.dossier_templates),
@@ -288,7 +340,8 @@ class AssembleurActe:
             ]),
             trim_blocks=True,
             lstrip_blocks=True,
-            keep_trailing_newline=True
+            keep_trailing_newline=True,
+            finalize=finalize_func
         )
 
         # Ajouter les filtres personnalisés
@@ -530,20 +583,25 @@ def main():
         default=Path(__file__).parent.parent / 'templates',
         help="Dossier des templates"
     )
+    parser.add_argument(
+        '--zones-grisees', '-z',
+        action='store_true',
+        help="Marquer les variables pour affichage avec fond gris dans le DOCX final"
+    )
 
     args = parser.parse_args()
 
     # Vérifications
     if not args.donnees.exists():
-        print(f"❌ Erreur: Fichier de données non trouvé: {args.donnees}")
+        print(f"[ERREUR] Fichier de donnees non trouve: {args.donnees}")
         return 1
 
     # Charger les données
     with open(args.donnees, 'r', encoding='utf-8') as f:
         donnees = json.load(f)
 
-    # Créer l'assembleur
-    assembleur = AssembleurActe(args.dossier_templates)
+    # Créer l'assembleur avec option zones grisees
+    assembleur = AssembleurActe(args.dossier_templates, zones_grisees=args.zones_grisees)
 
     # Assembler l'acte
     try:
@@ -559,7 +617,8 @@ def main():
     dossier_sortie = args.output or (Path(__file__).parent.parent / '.tmp' / 'actes_generes')
     chemins = assembleur.sauvegarder(acte, donnees, dossier_sortie, args.id)
 
-    print(f"[OK] Acte genere avec succes!")
+    option_gris = " (avec marqueurs zones grisees)" if args.zones_grisees else ""
+    print(f"[OK] Acte genere avec succes!{option_gris}")
     print(f"   - Acte: {chemins['acte']}")
     print(f"   - Donnees: {chemins['donnees']}")
     print(f"   - Metadonnees: {chemins['metadata']}")

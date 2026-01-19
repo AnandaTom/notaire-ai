@@ -8,7 +8,7 @@ You operate within a 3-layer architecture that separates concerns to maximize re
 
 ## Project: NotaireAI - Génération d'actes notariaux
 
-Ce projet permet de générer des actes notariaux (vente, promesse de vente, règlement de copropriété, modificatif EDD) à partir d'un dialogue avec le notaire. Les actes générés sont **100% fidèles** aux trames originales.
+Ce projet permet de générer des actes notariaux (vente, promesse de vente de lots de copropriété) à partir d'un dialogue avec le notaire. Les actes générés sont **100% fidèles** aux trames originales.
 
 ### Workflow principal
 
@@ -23,15 +23,11 @@ Ce projet permet de générer des actes notariaux (vente, promesse de vente, rè
 
 | Directive | Usage |
 |-----------|-------|
-| `directives/creer_acte.md` | Création d'un acte de vente définitif |
-| `directives/creer_promesse_vente.md` | Création d'une promesse unilatérale de vente |
-| `directives/creer_reglement_copropriete.md` | Création d'un EDD et règlement de copropriété |
-| `directives/creer_modificatif_edd.md` | Modification d'un EDD/RC existant |
+| `directives/creer_acte.md` | Création complète d'un acte de A à Z |
 | `directives/modifier_acte.md` | Modification d'un acte existant |
 | `directives/collecte_informations.md` | Guide de collecte des informations |
 | `directives/formatage_docx.md` | Spécifications techniques du formatage |
 | `directives/pipeline_generation.md` | Pipeline rapide en 3 étapes |
-| `directives/apprentissage_continu.md` | Enrichissement continu de la base |
 
 ### Scripts d'exécution
 
@@ -48,25 +44,8 @@ Ce projet permet de générer des actes notariaux (vente, promesse de vente, rè
 | Schéma | Description |
 |--------|-------------|
 | `schemas/variables_vente.json` | Structure des données pour acte de vente |
-| `schemas/variables_promesse_vente.json` | Structure des données pour promesse de vente |
-| `schemas/variables_reglement_copropriete.json` | Structure des données pour EDD/RC |
-| `schemas/variables_modificatif_edd.json` | Structure des données pour modificatif |
-| `schemas/questions_notaire.json` | Questions pour acte de vente (100+ questions) |
-| `schemas/questions_promesse_vente.json` | Questions pour promesse de vente |
-| `schemas/questions_reglement_copropriete.json` | Questions pour EDD/RC |
-| `schemas/questions_modificatif_edd.json` | Questions pour modificatif |
+| `schemas/questions_notaire.json` | Questions à poser au notaire (100+ questions) |
 | `schemas/sections_catalogue.json` | Catalogue des sections optionnelles |
-| `schemas/clauses_catalogue.json` | Catalogue des clauses réutilisables |
-| `schemas/annexes_catalogue.json` | Catalogue des types d'annexes |
-
-### Templates disponibles
-
-| Template | Type d'acte | Bookmarks |
-|----------|-------------|-----------|
-| `templates/vente_lots_copropriete.md` | Acte de vente définitif | 361 |
-| `templates/promesse_vente_lots_copropriete.md` | Promesse unilatérale de vente | 298 |
-| `templates/reglement_copropriete_edd.md` | EDD et règlement de copropriété | 116 |
-| `templates/modificatif_edd.md` | Modificatif EDD/RC | 60 |
 
 ---
 
@@ -260,48 +239,6 @@ Après chaque acte généré :
 
 ---
 
-## Apprentissage Continu - CRITIQUE
-
-### Principe : Enrichir la base à chaque interaction
-
-À chaque échange avec un notaire, **TOUJOURS** vérifier et enrichir :
-
-| Élément nouveau | Action | Fichier cible |
-|-----------------|--------|---------------|
-| Nouvelle clause | Ajouter avec variables Jinja2 | `schemas/clauses_catalogue.json` |
-| Nouvelle question | Ajouter avec conditions | `schemas/questions_*.json` |
-| Nouvelle annexe | Ajouter avec conditions | `schemas/annexes_catalogue.json` |
-| Nouvelle règle de validation | Implémenter + documenter | `execution/valider_acte.py` |
-| Nouveau type d'acte | Créer template + schéma + directive | `templates/`, `schemas/`, `directives/` |
-
-### Catalogues à enrichir
-
-| Catalogue | Contenu | Taille actuelle |
-|-----------|---------|-----------------|
-| `schemas/clauses_catalogue.json` | 45+ clauses réutilisables | 12 catégories |
-| `schemas/annexes_catalogue.json` | 28+ types d'annexes | 6 catégories |
-| `schemas/questions_notaire.json` | 100+ questions vente | 13 sections |
-| `schemas/questions_promesse_vente.json` | Questions promesse | 21 sections |
-
-### Format d'enrichissement
-
-**Nouvelle clause :**
-```json
-{
-  "id": "categorie_description",
-  "nom": "Nom lisible",
-  "type_acte": ["promesse_vente", "vente"],
-  "texte": "Texte avec {{ variables }}",
-  "variables_requises": ["var1", "var2"],
-  "source": "Notaire X - Dossier Y - Date",
-  "date_ajout": "YYYY-MM-DD"
-}
-```
-
-Voir `directives/apprentissage_continu.md` pour le processus complet.
-
----
-
 ## Summary
 
 Tu es l'agent NotaireAI. Tu :
@@ -312,6 +249,5 @@ Tu es l'agent NotaireAI. Tu :
 5. **Génères des actes DOCX 100% fidèles** aux trames originales
 6. **Es flexible** sur les templates, annexes et clauses
 7. **Améliores continuellement** les directives et scripts
-8. **ENRICHIS LA BASE** à chaque nouvelle clause, question ou situation
 
-Be pragmatic. Be reliable. Self-anneal. **Build knowledge.**
+Be pragmatic. Be reliable. Self-anneal.
