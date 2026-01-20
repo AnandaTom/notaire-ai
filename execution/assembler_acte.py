@@ -32,6 +32,7 @@ import uuid
 import os
 from pathlib import Path
 from datetime import datetime
+from copy import deepcopy
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, UndefinedError
 
@@ -229,6 +230,38 @@ def numero_lot_en_lettres(numero: int) -> str:
     return nombre_en_lettres(numero)
 
 
+def mois_en_lettres(mois: int) -> str:
+    """
+    Convertit un numéro de mois en nom de mois.
+
+    Args:
+        mois: Numéro du mois (1-12)
+
+    Returns:
+        Nom du mois (ex: janvier)
+    """
+    mois_noms = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+    if 1 <= mois <= 12:
+        return mois_noms[mois]
+    return str(mois)
+
+
+def jour_en_lettres(jour: int) -> str:
+    """
+    Convertit un numéro de jour en lettres.
+
+    Args:
+        jour: Numéro du jour (1-31)
+
+    Returns:
+        Jour en lettres (ex: quinze, premier pour 1)
+    """
+    if jour == 1:
+        return 'premier'
+    return nombre_en_lettres(jour)
+
+
 def format_date(date_str: str, format: str = "long") -> str:
     """
     Formate une date au format francais lisible.
@@ -352,6 +385,8 @@ class AssembleurActe:
         env.filters['date_en_lettres'] = date_en_lettres
         env.filters['annee_en_lettres'] = annee_en_lettres
         env.filters['numero_lot_en_lettres'] = numero_lot_en_lettres
+        env.filters['mois_en_lettres'] = mois_en_lettres
+        env.filters['jour_en_lettres'] = jour_en_lettres
 
         return env
 
@@ -365,7 +400,37 @@ class AssembleurActe:
         Returns:
             Données enrichies
         """
-        donnees_enrichies = donnees.copy()
+        donnees_enrichies = deepcopy(donnees)
+
+        # Aplatir la structure personne_physique/personne_morale pour vendeurs et acquéreurs
+        for cle in ['vendeurs', 'acquereurs']:
+            if cle in donnees_enrichies:
+                for i, personne in enumerate(donnees_enrichies[cle]):
+                    # Aplatir personne_physique
+                    if 'personne_physique' in personne:
+                        donnees_enrichies[cle][i] = {**personne, **personne['personne_physique']}
+                        del donnees_enrichies[cle][i]['personne_physique']
+
+                    # Aplatir personne_morale
+                    elif 'personne_morale' in personne:
+                        donnees_enrichies[cle][i] = {**personne, **personne['personne_morale']}
+                        del donnees_enrichies[cle][i]['personne_morale']
+
+                # Normaliser après l'aplatissement
+                for i in range(len(donnees_enrichies[cle])):
+                    # Normaliser 'partenaire' en 'conjoint' pour PACS (uniquement personnes physiques)
+                    if 'situation_matrimoniale' in donnees_enrichies[cle][i]:
+                        sitmat = donnees_enrichies[cle][i]['situation_matrimoniale']
+                        if 'partenaire' in sitmat and 'conjoint' not in sitmat:
+                            sitmat['conjoint'] = sitmat['partenaire']
+
+                        # Restructurer les données PACS pour le template
+                        if sitmat.get('statut') == 'pacse' and 'pacs' not in sitmat:
+                            sitmat['pacs'] = {
+                                'date': sitmat.get('date_pacs', ''),
+                                'regime_libelle': sitmat.get('regime_pacs', 'séparation de biens'),
+                                'lieu_enregistrement': sitmat.get('lieu_pacs', 'au greffe du tribunal')
+                            }
 
         # Générer les montants en lettres
         if 'prix' in donnees_enrichies and 'montant' in donnees_enrichies['prix']:

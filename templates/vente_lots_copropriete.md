@@ -40,9 +40,9 @@ Cet acte comprend deux parties pour répondre aux exigences de la publicité fon
 **La première partie dite "partie normalisée"** constitue le document hypothécaire normalisé et contient toutes les énonciations nécessaires tant à la publication au fichier immobilier qu'à la détermination de l'assiette et au contrôle du calcul de tous impôts, droits et taxes.
 **La seconde partie dite "partie développée"** comporte des informations, dispositions et conventions sans incidence sur le fichier immobilier.
 
-## PARTIE NORMALISEE
+# PARTIE NORMALISEE
 
-### IDENTIFICATION DES PARTIES
+# IDENTIFICATION DES PARTIES
 
 #### VENDEUR
 
@@ -102,19 +102,19 @@ De nationalité {{ acquereur.nationalite }}.<br/>
 
 {% endfor %}
 
-#### QUOTITÉS VENDUES
+# QUOTITÉS VENDUES
 
 {% for quotite in quotites_vendues %}
 {{ vendeurs[quotite.personne_index].civilite }} {{ vendeurs[quotite.personne_index].prenoms }} {{ vendeurs[quotite.personne_index].nom }} {{ quotite.type_propriete_libelle }} des **BIENS** objet de la vente à concurrence de **{{ quotite.quotite }}.**
 {% endfor %}
 
-#### QUOTITÉS ACQUISES
+# QUOTITÉS ACQUISES
 
 {% for quotite in quotites_acquises %}
 {{ acquereurs[quotite.personne_index].civilite }} {{ acquereurs[quotite.personne_index].prenoms }} {{ acquereurs[quotite.personne_index].nom }} acquiert {{ quotite.type_propriete_libelle }} des **BIENS** objet de la vente à concurrence de **{{ quotite.quotite }}.**
 {% endfor %}
 
-#### PRÉSENCE - REPRÉSENTATION
+# PRÉSENCE - REPRÉSENTATION
 
 {% for vendeur in vendeurs %}
 \- {{ vendeur.civilite }} {{ vendeur.prenoms }} {{ vendeur.nom }} est {{ "présente" if vendeur.civilite == "Madame" else "présent" }} à l'acte.
@@ -123,7 +123,7 @@ De nationalité {{ acquereur.nationalite }}.<br/>
 \- {{ acquereur.civilite }} {{ acquereur.prenoms }} {{ acquereur.nom }} est {{ "présente" if acquereur.civilite == "Madame" else "présent" }} à l'acte.
 {% endfor %}
 
-#### DÉCLARATIONS DES PARTIES SUR LEUR CAPACITÉ
+# DÉCLARATIONS DES PARTIES SUR LEUR CAPACITÉ
 
 Les parties, et le cas échéant leurs représentants, attestent que rien ne peut limiter leur capacité pour l'exécution des engagements qu'elles prennent aux présentes, et elles déclarent notamment :
 
@@ -143,7 +143,7 @@ Les parties, et le cas échéant leurs représentants, attestent que rien ne peu
 
 * et pour l'acquéreur spécialement qu'il n'est, ni à titre personnel, ni en tant qu'associé ou mandataire social, soumis à l'interdiction d'acquérir prévue par l'article 225-26 du Code pénal.
 
-#### DOCUMENTS RELATIFS À LA CAPACITÉ ET À LA QUALITÉ DES PARTIES
+# DOCUMENTS RELATIFS À LA CAPACITÉ ET À LA QUALITÉ DES PARTIES
 
 Les pièces suivantes ont été produites à l'appui des déclarations des parties sur leur capacité :
 
@@ -178,7 +178,7 @@ Les pièces suivantes ont été produites à l'appui des déclarations des parti
 
 Ces documents ne révèlent aucun empêchement des parties à la signature des présentes.
 
-#### TERMINOLOGIE
+# TERMINOLOGIE
 
 Le vocable employé au présent acte est le suivant :
 
@@ -198,11 +198,11 @@ Le vocable employé au présent acte est le suivant :
 
 **CECI EXPOSE, il est passé à la vente objet des présentes.**
 
-#### NATURE ET QUOTITÉ DES DROITS IMMOBILIERS
+# NATURE ET QUOTITÉ DES DROITS IMMOBILIERS
 
 Le **VENDEUR** vend pour sa totalité en pleine propriété à l'**ACQUEREUR**, qui accepte, le **BIEN** dont la désignation suit.
 
-### IDENTIFICATION DU BIEN
+# IDENTIFICATION DU BIEN
 
 **Désignation**
 
@@ -258,7 +258,7 @@ Demeurent annexées aux présentes :
 
 **Annexe n°2 : Plans des lots et plan de masse**
 
-#### DÉCLARATION DÉSIGNATION – ENVIRONNEMENT DU BIEN - VOISINAGE
+## DÉCLARATION DÉSIGNATION – ENVIRONNEMENT DU BIEN - VOISINAGE
 
 Les parties déclarent que la description du **BIEN** telle qu'elle vient d'être indiquée correspond précisément à celle actuelle.
 Etant ici précisé que la désignation des lieux correspond à la déclaration faite par les parties et n'a, à aucun moment, été vérifiée par le notaire soussigné, qui ne peut être tenu responsable d'une inexactitude dans les caractéristiques et éléments déclarés.
@@ -268,12 +268,12 @@ L'**ACQUEREUR** déclare avoir été informé de la nécessité de s'informer pr
 L'**ACQUEREUR** déclare être informé que les démarches effectuées par le Notaire soussigné ne portent que le **BIEN** objet des présentes et non sur son environnement.
 L'**ACQUEREUR** déclare s'être renseigné préalablement sur la situation et l'environnement de ce **BIEN**.
 
-#### Mention de la superficie de la partie privative – Application
+## Mention de la superficie de la partie privative – Application
 
 La superficie de la partie privative des lots de copropriété soumis aux dispositions de l'article 46 de la loi du 10 juillet 1965, est de **{{ bien.superficie_carrez.superficie_m2 }} M²** pour le lot numéro {{ bien.superficie_carrez.lot_concerne|upper }}.
 Le tout ainsi qu'il est développé ci-après.
 
-#### État descriptif de division – Règlement de copropriété
+## État descriptif de division – Règlement de copropriété
 
 L'ensemble immobilier sus désigné a fait l'objet d'un état descriptif de division et règlement de copropriété établi aux termes d'un acte reçu par {{ copropriete.reglement.notaire_origine }}, le {{ copropriete.reglement.date_origine }} publié au service de la publicité foncière de {{ copropriete.reglement.publication }}.
 
@@ -283,7 +283,7 @@ L'état descriptif de division \- règlement de copropriété a été modifié a
 
 <!-- SECTION: meubles_mobilier | CONDITIONNEL: meubles.inclus == true -->
 {% if meubles.inclus %}
-#### IDENTIFICATION DES MEUBLES
+# IDENTIFICATION DES MEUBLES
 
 Le **VENDEUR** vend à l'**ACQUEREUR**, qui accepte, les meubles ci-après {% if not meubles.valeur %}non valorisés {% endif %}dont la liste, établie contradictoirement entre eux, est la suivante :
 
@@ -292,16 +292,16 @@ Le **VENDEUR** vend à l'**ACQUEREUR**, qui accepte, les meubles ci-après {% if
 {% endfor %}
 {% endif %}
 
-#### EQUIPEMENTS
+## EQUIPEMENTS
 
 Le **VENDEUR** informe l'**ACQUEREUR** de l'existence des équipements, dont la liste figure en partie développée.
 
-#### USAGE DU BIEN
+# USAGE DU BIEN
 
 Le **VENDEUR** déclare que le **BIEN** est actuellement à usage {{ bien.usage_actuel_libelle }}.
 L'**ACQUEREUR** entend {% if bien.usage_futur == "inchange" %}conserver cet usage{% else %}le destiner à un usage {{ bien.usage_futur_libelle }}{% endif %}.
 
-#### EFFETS RELATIFS
+# EFFETS RELATIFS
 
 {% for origine in origine_propriete %}
 **Concernant {{ "le lot numéro" if origine.lots_concernes|length == 1 else "les lots numéros" }} {{ origine.lots_concernes|join(' et ') }}**
@@ -309,13 +309,13 @@ L'**ACQUEREUR** entend {% if bien.usage_futur == "inchange" %}conserver cet usag
 
 {% endfor %}
 
-#### CHARGES ET CONDITIONS LIEES AU CALCUL DE L'IMPOT
+# CHARGES ET CONDITIONS LIEES AU CALCUL DE L'IMPOT
 
 Les charges et conditions ne donnant pas lieu à taxation figurent en partie développée de l'acte.
 
 Les frais de la vente et ceux qui en seront la suite et la conséquence sont à la charge exclusive de l'**ACQUEREUR** qui s'y oblige.
 
-#### PROPRIÉTÉ JOUISSANCE
+# PROPRIÉTÉ JOUISSANCE
 
 L'**ACQUEREUR** est propriétaire du **BIEN** à compter de ce jour.
 {% if jouissance.jouissance_anticipee %}
@@ -326,18 +326,18 @@ L'entrée en jouissance a eu lieu par la prise de possession réelle le {{ jouis
 L'entrée en jouissance aura lieu ce jour par la prise de possession réelle.
 {% endif %}
 
-#### PRIX
+# PRIX
 
 La vente est conclue moyennant le prix de **{{ prix.montant_lettres|upper }} ({{ prix.montant|format_nombre }} {{ prix.devise }})**.
 Le paiement de ce prix a lieu de la manière indiquée ci-après.
 
-#### PAIEMENT DU PRIX
+# PAIEMENT DU PRIX
 
 L'**ACQUEREUR** a payé le prix comptant ce jour ainsi qu'il résulte de la comptabilité de l'office notarial dénommé en tête des présentes au **VENDEUR**, qui le reconnaît et lui en consent quittance sans réserve.
 **DONT QUITTANCE**
 
 {% if paiement.fonds_empruntes > 0 %}
-#### DECLARATION D'ORIGINE DES FONDS
+# DECLARATION D'ORIGINE DES FONDS
 
 L'**ACQUEREUR** déclare que sur la somme ci-dessus payée, celle de **{{ paiement.fonds_empruntes_lettres|upper }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})** provient de fonds empruntés à cet effet suivant acte reçu par {{ paiement.prets[0].acte_pret.notaire }}, le {{ paiement.prets[0].acte_pret.date | format_date }}.
 
@@ -349,7 +349,7 @@ Date de péremption de l'inscription : {{ pret.date_peremption_inscription }}.
 
 {% endfor %}
 
-#### PRÊT ORIGINE DES FONDS - HYPOTHÈQUE LÉGALE SPÉCIALE DU PRÊTEUR DE DENIERS
+# PRÊT ORIGINE DES FONDS - HYPOTHÈQUE LÉGALE SPÉCIALE DU PRÊTEUR DE DENIERS
 
 Aux termes de l'acte susvisé l'**ACQUEREUR** s'est engagé auprès du **PRETEUR** à employer la somme de **{{ paiement.fonds_empruntes_lettres }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})** provenant du prêt au paiement à due concurrence du prix ci-dessus stipulé.
 L'**ACQUEREUR** déclare avoir effectué le paiement ci-dessus à due concurrence de la somme de {{ paiement.fonds_empruntes_lettres }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }}) lui provenant de ce prêt. Il fait cette déclaration pour constater l'origine des fonds conformément à l'engagement qu'il a pris ci-dessus envers le **PRETEUR**.
@@ -358,13 +358,13 @@ L'hypothèque bénéficiant au **PRETEUR** sera conservée par l'inscription qui
 L'inscription sera requise pour une durée qui cessera d'avoir effet faute d'avoir été renouvelée en temps utile, à l'expiration d'un délai d'une année à partir de la date de la dernière échéance de l'obligation garantie.
 {% endif %}
 
-#### FORMALITÉ FUSIONNÉE
+# FORMALITÉ FUSIONNÉE
 
 L'acte sera soumis à la formalité fusionnée, dans le mois de sa date, au service de la publicité foncière de {{ publication.service_publicite_fonciere }}.
 
-### DECLARATIONS FISCALES
+# DECLARATIONS FISCALES
 
-#### Impôt sur la plus-value
+## Impôt sur la plus-value
 
 **L'immeuble est entré dans le patrimoine de {% for v in vendeurs %}{{ v.civilite }} {{ v.prenoms }} {{ v.nom }}{% if not loop.last %} et {% endif %}{% endfor %}**
 
@@ -384,14 +384,14 @@ Précision étant ici faite que la présente vente a pour le vendeur un caractè
 En conséquence, le notaire est dispensé de déposer l'imprimé 2048-IMM-SD.
 {% endif %}
 
-#### Domicile fiscal
+## Domicile fiscal
 
 Pour le contrôle de l'impôt, le **VENDEUR** déclare être effectivement domicilié à l'adresse susvisée, et s'engage à signaler au centre tout changement d'adresse.
 
 **Quant au centre des finances publiques du VENDEUR**
 {% for v in vendeurs %}{{ v.civilite }} {{ v.prenoms }} {{ v.nom }}{% if not loop.last %} et {% endif %}{% endfor %} {{ "dépendent" if vendeurs|length > 1 else "dépend" }} actuellement du centre des finances publiques de {{ fiscalite.centre_impots_vendeur.nom }} \- {{ fiscalite.centre_impots_vendeur.adresse }}.
 
-#### Impôt sur la mutation
+## Impôt sur la mutation
 
 Le **VENDEUR** et l'**ACQUEREUR** indiquent ne pas agir aux présentes en qualité d'assujettis en tant que tels à la taxe sur la valeur ajoutée au sens de l'article 256 du Code général des impôts.
 
@@ -432,9 +432,9 @@ En fonction des dispositions de l'acte à publier au fichier immobilier, la cont
 | ----- | :---: | :---: | :---: |
 | Contribution proportionnelle taux plein  | {{ fiscalite.droits_mutation.assiette|format_nombre }} | 0,10% | {{ (fiscalite.droits_mutation.assiette * 0.001)|format_nombre }} |
 
-## FIN DE PARTIE NORMALISEE
+# FIN DE PARTIE NORMALISEE
 
-## PARTIE DÉVELOPPÉE
+# PARTIE DÉVELOPPÉE
 
 {# ============================================================================
    La suite du template contient la PARTIE DÉVELOPPÉE

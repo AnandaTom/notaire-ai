@@ -842,6 +842,52 @@ Les conclusions sont les suivantes :
 * Numéro d'enregistrement ADEME : {{ diagnostics.dpe.numero_ademe }}
 {% endif %}
 
+{% if diagnostics.carnet_logement %}
+### **Carnet d'information du logement**
+
+Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement a été établi et est communiqué au **BENEFICIAIRE**.
+
+Le **PROMETTANT** s'engage à transmettre au **BENEFICIAIRE** une copie de ce carnet d'information au plus tard à la date de signature de l'acte authentique de vente.
+
+Le nouveau propriétaire est informé qu'il devra mettre à jour ce carnet en cas d'extension du logement, de travaux d'amélioration ou de modification affectant les parties communes ou privatives.
+
+**Annexe n°13 : Carnet d'information du logement**
+{% endif %}
+
+{% if diagnostics.audit_energetique %}
+### **Audit énergétique**
+
+Le **BIEN** objet des présentes relevant de la loi n° 65-557 du 10 juillet 1965 fixant le statut de la copropriété des immeubles bâtis, un audit énergétique <<<VAR_START>>>{% if diagnostics.audit_energetique.existe %}a été réalisé{% else %}n'est pas requis{% endif %}<<<VAR_END>>>.
+
+{% if diagnostics.audit_energetique.existe %}
+**Annexe n°14 : Audit énergétique**
+{% endif %}
+{% endif %}
+
+{% if diagnostics.zone_bruit %}
+### **Zone de bruit - Plan d'exposition au bruit des aérodromes**
+
+{% if diagnostics.zone_bruit.concerne %}
+Le bien est situé <<<VAR_START>>>dans le périmètre d'un plan d'exposition au bruit des aérodromes<<<VAR_END>>>.
+
+**Annexe n°15 : Plan d'exposition au bruit**
+{% else %}
+Le bien **n'est pas** situé dans le périmètre d'un plan d'exposition au bruit des aérodromes.
+{% endif %}
+{% endif %}
+
+{% if diagnostics.elements_equipement %}
+### **Information du bénéficiaire sur les éléments d'équipement**
+
+Le **BENEFICIAIRE** est informé que les désordres affectant les éléments d'équipement qu'ils soient individuels ou communs demeurent soumis aux garanties visées aux articles 1792 et suivants, articles 1646-1 et 1648 al. 1er du Code civil ainsi qu'à l'article L 111-13 du Code de la construction et de l'habitation.
+
+Toutefois, s'agissant des éléments installés en remplacement ou par adjonction à l'existant, cette garantie ne s'applique qu'à ces seuls éléments dont l'installation ou le remplacement sont par ailleurs soumis au régime de garantie décennale de l'article 1792 du Code civil.
+
+La garantie décennale s'applique au professionnel qui a réalisé les travaux d'installation, lequel en garantit le maître d'ouvrage, personne pour le compte de laquelle les travaux sont exécutés (article 1792-1 du Code civil).
+
+Le **PROMETTANT** fournira au **BENEFICIAIRE**, lors de la réitération de la vente, la documentation technique afférente à ces équipements, ainsi que les garanties et assurances y attachées.
+{% endif %}
+
 {% if diagnostics.radon %}
 ### **Radon**
 
@@ -849,6 +895,27 @@ Les conclusions sont les suivantes :
 La commune se trouve **en zone 3 (potentiel significatif)**, l'obligation d'information s'impose.
 {% else %}
 La commune se trouvant **en zone {{ diagnostics.radon.zone }} ({{ diagnostics.radon.zone_libelle }})**, l'obligation d'information n'est pas nécessaire, ainsi qu'il résulte de l'état des risques ci-annexé.
+{% endif %}
+{% endif %}
+
+{% if diagnostics.assainissement %}
+### **Assainissement**
+
+En ce qui concerne l'installation de l'ensemble immobilier dont dépendent les biens objet des présentes :
+
+{% if diagnostics.assainissement.type == "collectif" %}
+Le **PROMETTANT** déclare que l'**ENSEMBLE IMMOBILIER** est raccordé à un réseau d'assainissement collectif.
+
+Aux termes des dispositions des articles L 1331-4 et L 1331-6 de ce Code, les parties sont informées des obligations suivantes :
+
+* Les immeubles non raccordés au réseau public de collecte doivent être dotés d'une installation d'assainissement non collectif dont le propriétaire assure l'entretien régulier et qu'il fait périodiquement contrôler par un service public d'assainissement non collectif.
+* En cas de vente d'un immeuble non raccordé, le propriétaire doit fournir l'attestation de contrôle de l'installation d'assainissement non collectif.
+{% elif diagnostics.assainissement.type == "non_collectif" %}
+Le **PROMETTANT** informe le **BENEFICIAIRE** qu'à sa connaissance les ouvrages permettant l'assainissement des eaux usées domestiques sont conformes à la réglementation.
+
+**Annexe n°16 : Diagnostic assainissement non collectif**
+
+Le **PROMETTANT** informe le **BENEFICIAIRE**, qu'à sa connaissance, les ouvrages permettant l'assainissement des eaux usées du bien objet des présentes sont conformes.
 {% endif %}
 {% endif %}
 
@@ -861,6 +928,29 @@ Un état des risques en date du {{ diagnostics.etat_risques.date }} est annexé.
 
 **{% if diagnostics.etat_risques.sinistres_indemnises %}Existence{% else %}Absence{% endif %} de sinistres avec indemnisation**
 Le **PROMETTANT** déclare qu'à sa connaissance l'immeuble {% if diagnostics.etat_risques.sinistres_indemnises %}a{% else %}n'a pas{% endif %} subi de sinistres ayant donné lieu au versement d'une indemnité en application de l'article L 125-2 ou de l'article L 128-2 du Code des assurances.
+{% endif %}
+
+# **Situation environnementale**
+
+## **Consultation de bases de données environnementales**
+
+Les bases de données suivantes ont été consultées :
+
+* La base de données relative aux anciens sites industriels et activités de service (BASIAS).
+* La base de données relative aux sites et sols pollués ou potentiellement pollués appelant une action des pouvoirs publics, à titre préventif ou curatif (BASOL).
+* La base de données sur les secteurs d'information sur les sols (SIS).
+* Le géoportail de l'urbanisme.
+* Géorisques.
+* ERRIAL (l'état des risques réglementés pour l'information des acquéreurs et des locataires).
+
+{% if situation_environnementale and situation_environnementale.sites_identifies %}
+Les consultations ont révélé <<<VAR_START>>>{{ situation_environnementale.sites_identifies | length }}<<<VAR_END>>> site(s) d'activités recensé(s) :
+
+{% for site in situation_environnementale.sites_identifies %}
+* **Site {{ loop.index }}** : <<<VAR_START>>>{{ site.nom }}<<<VAR_END>>> - Activité: <<<VAR_START>>>{{ site.activite }}<<<VAR_END>>> - État: <<<VAR_START>>>{{ site.etat }}<<<VAR_END>>>
+{% endfor %}
+{% else %}
+Les consultations n'ont révélé aucun site d'activités recensé.
 {% endif %}
 
 # **Règlementations spécifiques à la copropriété**
@@ -935,6 +1025,77 @@ Le **BENEFICIAIRE** supportera les charges de copropriété à compter du jour d
 **Le PROMETTANT conservera à sa charge le paiement des travaux votés par l'assemblée des copropriétaires jusqu'à ce jour, que ces travaux soient exécutés ou non, le BENEFICIAIRE supportant seul le coût des travaux qui seront votés postérieurement à ce jour.**
 
 **Annexe n°18 : Pré état-daté**
+
+### **Répartition des budgets de la copropriété**
+
+Les charges de copropriété se répartissent selon les modalités définies dans le règlement de copropriété et ses annexes.
+
+{% if copropriete.budgets %}
+Les budgets actuels de la copropriété sont les suivants :
+
+* Budget prévisionnel annuel : <<<VAR_START>>>{{ copropriete.budgets.previsionnel | montant_en_lettres }} euros<<<VAR_END>>>
+* Travaux votés non encore appelés : <<<VAR_START>>>{{ copropriete.budgets.travaux_votes | montant_en_lettres }} euros<<<VAR_END>>>
+{% endif %}
+
+### **Convention des parties sur les procédures**
+
+Le **BENEFICIAIRE** sera subrogé dans tous les droits et obligations du **PROMETTANT** découlant des procédures en cours impliquant le syndicat des copropriétaires.
+
+{% if copropriete.procedures_en_cours %}
+Les procédures suivantes sont en cours :
+
+{% for procedure in copropriete.procedures_en_cours %}
+* <<<VAR_START>>>{{ procedure.nature }}<<<VAR_END>>> - Instance: <<<VAR_START>>>{{ procedure.juridiction }}<<<VAR_END>>> - Référence: <<<VAR_START>>>{{ procedure.reference }}<<<VAR_END>>>
+{% endfor %}
+{% else %}
+Aucune procédure en cours n'a été portée à la connaissance du **PROMETTANT**.
+{% endif %}
+
+### **Travaux urgents décidés par le syndic (article 18 de la loi du 10 juillet 1965)**
+
+Au cas où, avant la signature de l'acte de vente, le syndic fait procéder de sa propre initiative à des travaux urgents nécessaires à la sauvegarde de l'immeuble, le coût de ces travaux sera supporté selon la répartition prévue par le règlement de copropriété.
+
+### **Convention de règlement entre les parties**
+
+Le **BENEFICIAIRE** versera au **PROMETTANT**, le jour de la constatation authentique de la vente, outre le prix de vente proprement dit, une somme égale au montant des charges de copropriété et de toutes impositions restant dues au jour de la prise de jouissance au prorata des tantièmes de copropriété afférents au bien vendu.
+
+Par suite, les parties conviennent d'effectuer directement entre elles le remboursement des provisions versées au syndic par le **PROMETTANT** pour l'année en cours.
+
+En outre, dans l'hypothèse où l'état du syndic qui sera annexé à l'acte authentique ferait apparaître une dette du **PROMETTANT** envers la copropriété supérieure au montant de la provision à régulariser, le **BENEFICIAIRE** versera le complément directement au syndic.
+
+### **Information financière sur la copropriété**
+
+Les informations financières suivantes sont annexées :
+
+* Le montant des charges courantes du budget prévisionnel et des charges hors budget prévisionnel payées par le **PROMETTANT** au titre des deux exercices comptables précédant la vente.
+* Les sommes susceptibles d'être dues au syndicat des copropriétaires par l'acquéreur.
+* Les sommes qui resteraient dues par le **PROMETTANT** au syndicat.
+
+{% if copropriete.informations_financieres %}
+**Montants déclarés** :
+
+* Charges année N-1 : <<<VAR_START>>>{{ copropriete.informations_financieres.charges_n_1 | montant_en_lettres }} euros<<<VAR_END>>>
+* Charges année N-2 : <<<VAR_START>>>{{ copropriete.informations_financieres.charges_n_2 | montant_en_lettres }} euros<<<VAR_END>>>
+* Sommes dues par le vendeur : <<<VAR_START>>>{{ copropriete.informations_financieres.sommes_dues | montant_en_lettres }} euros<<<VAR_END>>>
+{% endif %}
+
+### **Décomptes et conventions**
+
+Une copie du pré-état délivré par le syndic est annexée aux présentes.
+
+**Annexe n°19 : Pré état-daté (copie)**
+
+Etant précisé que les sommes indiquées dans ledit document le sont sous réserve de l'apurement des comptes de l'exercice en cours et des régularisations à intervenir ultérieurement.
+
+## **Information du bénéficiaire sur sa situation**
+
+En application de l'article 20 II de la loi n° 65-557 du 10 juillet 1965, le **BENEFICIAIRE** déclare, tenant compte de la situation qui sera la sienne à la réalisation de la vente :
+
+{% if beneficiaire_situation and beneficiaire_situation.deja_proprietaire %}
+* Il est déjà propriétaire de lots dans l'ensemble immobilier dont il s'agit mais est à jour de ses obligations et n'a pas été mis en demeure de payer par le syndic.
+{% else %}
+* Il n'est pas déjà propriétaire d'un lot dans l'ensemble immobilier dont il s'agit.
+{% endif %}
 
 # **FISCALITE**
 
@@ -1058,6 +1219,54 @@ Il est ici précisé au **BENEFICIAIRE** que :
 * Le courrier recommandé de rétraction ou l'acte extrajudiciaire doit être envoyé au plus tard le dernier jour du délai.
 * En vertu de l'article 642 du Code de procédure civile, le délai expirant un samedi, un dimanche, un jour férié ou chômé, est prorogé jusqu'au premier jour ouvrable suivant.
 * En cas de pluralité de bénéficiaires, il est expressément convenu que la rétractation d'un seul d'entre eux emportera automatiquement résolution des présentes.
+
+# **COMMUNICATION DES PIECES ET DOCUMENTS**
+
+Le **BENEFICIAIRE** pourra prendre connaissance de toutes les pièces et documents ci-dessus mentionnés dans le délai de rétractation auprès du notaire rédacteur des présentes.
+
+## **Notification par envoi électronique**
+
+Le **BENEFICIAIRE** donne son accord pour que toute notification lui soit faite par lettre recommandée par voie électronique permettant d'établir de manière certaine la date de réception.
+
+Il bénéficie en contrepartie de la faculté d'effectuer, dans le cadre des présentes, toute notification par lettre recommandée électronique.
+
+Le **BENEFICIAIRE** reconnait et garantit qu'il dispose de la maîtrise exclusive de la boîte aux lettres électronique dont l'adresse est indiquée ci-après et qu'il s'assurera de consulter régulièrement ladite boîte.
+
+Afin de procéder à l'envoi de documents par lettre recommandée électronique, les parties déclarent élire domicile aux adresses électroniques suivantes :
+
+{% for promettant in promettants %}
+* **{{ promettant.civilite }} {{ promettant.nom }}** : <<<VAR_START>>>{{ promettant.coordonnees.courriel }}<<<VAR_END>>>
+{% endfor %}
+
+{% for beneficiaire in beneficiaires %}
+* **{{ beneficiaire.civilite }} {{ beneficiaire.nom }}** : <<<VAR_START>>>{{ beneficiaire.coordonnees.courriel }}<<<VAR_END>>>
+{% endfor %}
+
+# **Envoi electronique**
+
+Chacune des parties donne son accord pour que l'envoi d'une lettre recommandée, lorsque la loi permet une telle modalité d'envoi, soit réalisé par lettre recommandée électronique selon le dispositif légal de l'article L. 100 du Code des postes et des communications électroniques.
+
+Elle reconnait et garantit qu'elle dispose de la maîtrise exclusive de la boîte aux lettres électronique dont l'adresse est indiquée ci-après et qu'elle s'assurera de consulter régulièrement.
+
+Il est précisé que le prestataire chargé de la remise est AR24. Ce prestataire est soumis aux dispositions des articles L. 100 et R. 53-1 à R. 53-3 du Code des postes et des communications électroniques.
+
+Chacune des parties déclare faire élection de domicile électronique à l'adresse déjà mentionnée ci-dessus.
+
+# **ADRESSES electroniqueS**
+
+Afin de procéder à l'envoi de documents par voie électronique, les parties confirment les adresses électroniques suivantes :
+
+{% for promettant in promettants %}
+* **{{ promettant.civilite }} {{ promettant.nom }}** : <<<VAR_START>>>{{ promettant.coordonnees.courriel }}<<<VAR_END>>>
+{% endfor %}
+
+{% for beneficiaire in beneficiaires %}
+* **{{ beneficiaire.civilite }} {{ beneficiaire.nom }}** : <<<VAR_START>>>{{ beneficiaire.coordonnees.courriel }}<<<VAR_END>>>
+{% endfor %}
+
+# **NOTIFICATIONS – POUVOIRS RECIPROQUES**
+
+Les bénéficiaires se donnent pouvoir réciproquement et à l'effet de signer tout avenant ou rectification au présent contrat que les circonstances ultérieures pourraient rendre nécessaire.
 
 # **Médiation**
 

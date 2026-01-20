@@ -368,755 +368,992 @@ Ils ont toutefois la faculté de provoquer le partage au nom de leur débiteur o
 Les notifications prévues par les articles 815-14, 815-15 et 815-16 doivent être adressées à tout nu-propriétaire et à tout usufruitier. Mais un usufruitier ne peut acquérir une part en nue-propriété que si aucun nu-propriétaire ne s'en porte acquéreur; un nu-propriétaire ne peut acquérir une part en usufruit que si aucun usufruitier ne s'en porte acquéreur."*
 {% endif %}
 
-### DISPOSITIONS RELATIVES À L'URBANISME
 
-#### Urbanisme
+# Fixation de la proportion de propriété indivise
 
-**Note d'urbanisme**
-{% if urbanisme and urbanisme.note_urbanisme %}
-La commune a répondu le {{ urbanisme.note_urbanisme.date | format_date }} à une demande de note d'urbanisme. Cette réponse est annexée.
+{% if indivision %}
+{% if indivision.proportion %}
+
+## Proportions entre les acquéreurs
+
+Les acquéreurs déclareront acquérir le bien dans les proportions suivantes :
+
+{% for acquereur in indivision.acquereurs %}
+- <<<VAR_START>>>{{ acquereur.civilite }} {{ acquereur.prenom }} {{ acquereur.nom | upper }}<<<VAR_END>>> : <<<VAR_START>>>{{ acquereur.quotite }}<<<VAR_END>>> %
+{% endfor %}
+
+{% if indivision.justification %}
+Cette répartition est justifiée par les éléments suivants : <<<VAR_START>>>{{ indivision.justification }}<<<VAR_END>>>.
 {% endif %}
 
-L'**ACQUEREUR** s'oblige à faire son affaire personnelle de l'exécution des charges et prescriptions, du respect des servitudes publiques et autres limitations administratives au droit de propriété mentionnées sur cette note.
+## Détermination de la contribution des acquéreurs au financement
 
-**Annexe n°5 : Note d'urbanisme**
+{% if indivision.financement %}
 
-{% if urbanisme and urbanisme.note_urbanisme and urbanisme.note_urbanisme.revelations %}
+### Coût et financement de l'opération
+
+Le coût global de l'opération s'établit comme suit :
+
+| Poste | Montant |
+|-------|---------|
+| Prix d'acquisition | <<<VAR_START>>>{{ prix.total | format_nombre }}<<<VAR_END>>> EUR |
+{% if indivision.financement.frais_notaire %}
+| Frais de notaire et droits | <<<VAR_START>>>{{ indivision.financement.frais_notaire | format_nombre }}<<<VAR_END>>> EUR |
+{% endif %}
+{% if indivision.financement.frais_agence %}
+| Frais d'agence | <<<VAR_START>>>{{ indivision.financement.frais_agence | format_nombre }}<<<VAR_END>>> EUR |
+{% endif %}
+{% if indivision.financement.autres_frais %}
+| Autres frais | <<<VAR_START>>>{{ indivision.financement.autres_frais | format_nombre }}<<<VAR_END>>> EUR |
+{% endif %}
+| **TOTAL** | **<<<VAR_START>>>{{ indivision.financement.cout_total | format_nombre }}<<<VAR_END>>> EUR** |
+
+### Prise en charge du financement de l'opération
+
+Le financement de cette opération sera assuré comme suit :
+
+{% for acquereur in indivision.acquereurs %}
+#### <<<VAR_START>>>{{ acquereur.civilite }} {{ acquereur.prenom }} {{ acquereur.nom | upper }}<<<VAR_END>>>
+
+{% if acquereur.financement.apport_personnel %}
+##### Fonds personnels
+
+Apport personnel : <<<VAR_START>>>{{ acquereur.financement.apport_personnel | format_nombre }}<<<VAR_END>>> EUR
+
+{% if acquereur.financement.origine_fonds %}
+Origine des fonds : <<<VAR_START>>>{{ acquereur.financement.origine_fonds }}<<<VAR_END>>>
+{% endif %}
+{% endif %}
+
+{% if acquereur.financement.emprunt %}
+##### Fonds empruntés
+
+Emprunt bancaire : <<<VAR_START>>>{{ acquereur.financement.emprunt.montant | format_nombre }}<<<VAR_END>>> EUR
+
+{% if acquereur.financement.emprunt.etablissement %}
+Établissement prêteur : <<<VAR_START>>>{{ acquereur.financement.emprunt.etablissement }}<<<VAR_END>>>
+{% endif %}
+
+{% if acquereur.financement.emprunt.duree %}
+Durée : <<<VAR_START>>>{{ acquereur.financement.emprunt.duree }}<<<VAR_END>>> mois
+{% endif %}
+
+{% if acquereur.financement.emprunt.taux %}
+Taux : <<<VAR_START>>>{{ acquereur.financement.emprunt.taux }}<<<VAR_END>>> % l'an
+{% endif %}
+{% endif %}
+
+{% if acquereur.financement.aide %}
+##### Aides
+
+{% if acquereur.financement.aide.ptz %}
+- Prêt à Taux Zéro (PTZ) : <<<VAR_START>>>{{ acquereur.financement.aide.ptz | format_nombre }}<<<VAR_END>>> EUR
+{% endif %}
+
+{% if acquereur.financement.aide.action_logement %}
+- Action Logement : <<<VAR_START>>>{{ acquereur.financement.aide.action_logement | format_nombre }}<<<VAR_END>>> EUR
+{% endif %}
+
+{% if acquereur.financement.aide.autres %}
+{% for aide in acquereur.financement.aide.autres %}
+- {{ aide.type }} : <<<VAR_START>>>{{ aide.montant | format_nombre }}<<<VAR_END>>> EUR
+{% endfor %}
+{% endif %}
+{% endif %}
+
+**Total contribution** : <<<VAR_START>>>{{ acquereur.financement.total | format_nombre }}<<<VAR_END>>> EUR (<<<VAR_START>>>{{ acquereur.financement.pourcentage }}<<<VAR_END>>>%)
+
+{% endfor %}
+
+### Récapitulatif de l'effort respectif de financement
+
+| Acquéreur | Apport personnel | Emprunt | Aides | Total | % |
+|-----------|------------------|---------|-------|-------|---|
+{% for acquereur in indivision.acquereurs %}
+| {{ acquereur.nom }} | {{ acquereur.financement.apport_personnel | format_nombre }} EUR | {{ acquereur.financement.emprunt.montant | default(0) | format_nombre }} EUR | {{ acquereur.financement.aide.total | default(0) | format_nombre }} EUR | **{{ acquereur.financement.total | format_nombre }} EUR** | **{{ acquereur.financement.pourcentage }}%** |
+{% endfor %}
+
+### Prise en charge d'un financement extérieur ultérieur
+
+{% if indivision.financement.ulterieur %}
+En cas de nécessité d'un financement extérieur ultérieur pour l'acquisition de biens complémentaires ou la réalisation de travaux, les acquéreurs s'engagent à le prendre en charge dans les proportions suivantes :
+
+{% for acquereur in indivision.acquereurs %}
+- {{ acquereur.nom }} : <<<VAR_START>>>{{ acquereur.proportion_financement_ulterieur | default(acquereur.quotite) }}<<<VAR_END>>>%
+{% endfor %}
+{% endif %}
+
+### Prise en charge d'un financement personnel ultérieur
+
+{% if indivision.financement.personnel_ulterieur %}
+Les acquéreurs conviennent que tout financement personnel ultérieur effectué par l'un d'eux au profit du bien indivis (travaux d'amélioration, réparations, etc.) devra faire l'objet d'une déclaration écrite aux autres indivisaires et pourra donner lieu à ajustement des droits indivis.
+{% endif %}
+
+### Industrie personnelle
+
+{% if indivision.industrie_personnelle %}
+Les parties conviennent que toute contribution en industrie personnelle (travaux réalisés personnellement par un indivisaire) sera valorisée sur la base du coût des travaux équivalents effectués par un professionnel et pourra donner lieu à ajustement des droits indivis.
+{% endif %}
+
+{% endif %}
+
+{% endif %}
+{% endif %}
+
+# Conditions et déclarations générales
+
+{% if indivision %}
+{% if indivision.conditions_generales %}
+
+## Vie courante
+
+{% if indivision.conditions_generales.vie_courante %}
+Les indivisaires conviennent des règles suivantes concernant la gestion courante du bien :
+
+{% if indivision.conditions_generales.vie_courante.occupation %}
+### Occupation du bien
+
+<<<VAR_START>>>{{ indivision.conditions_generales.vie_courante.occupation.regles }}<<<VAR_END>>>
+
+{% if indivision.conditions_generales.vie_courante.occupation.indemnite %}
+Indemnité d'occupation : <<<VAR_START>>>{{ indivision.conditions_generales.vie_courante.occupation.indemnite | format_nombre }}<<<VAR_END>>> EUR par mois
+{% endif %}
+{% endif %}
+
+{% if indivision.conditions_generales.vie_courante.charges %}
+### Charges courantes
+
+Les charges courantes du bien (copropriété, taxes, assurances, entretien) seront réparties entre les indivisaires proportionnellement à leurs quotes-parts respectives.
+
+{% if indivision.conditions_generales.vie_courante.charges.modalites %}
+Modalités de paiement : <<<VAR_START>>>{{ indivision.conditions_generales.vie_courante.charges.modalites }}<<<VAR_END>>>
+{% endif %}
+{% endif %}
+
+{% if indivision.conditions_generales.vie_courante.decisions %}
+### Décisions courantes
+
+Les décisions concernant la gestion courante du bien (travaux d'entretien, choix des assurances, etc.) seront prises :
+
+{% if indivision.conditions_generales.vie_courante.decisions.regle == 'unanimite' %}
+- À l'unanimité des indivisaires
+{% elif indivision.conditions_generales.vie_courante.decisions.regle == 'majorite' %}
+- À la majorité {% if indivision.conditions_generales.vie_courante.decisions.seuil %}des {{ indivision.conditions_generales.vie_courante.decisions.seuil }}%{% endif %}
+{% elif indivision.conditions_generales.vie_courante.decisions.regle == 'gerant' %}
+- Par le gérant désigné : <<<VAR_START>>>{{ indivision.conditions_generales.vie_courante.decisions.gerant }}<<<VAR_END>>>
+{% endif %}
+{% endif %}
+{% endif %}
+
+## Répartition lors de la revente
+
+{% if indivision.conditions_generales.revente %}
+En cas de revente du bien, le prix de vente, déduction faite des frais de vente et des dettes éventuelles grevant le bien, sera réparti entre les indivisaires {% if indivision.conditions_generales.revente.repartition == 'quotes_parts' %}proportionnellement à leurs quotes-parts respectives{% elif indivision.conditions_generales.revente.repartition == 'contribution' %}en fonction de leur contribution effective au financement{% elif indivision.conditions_generales.revente.repartition == 'conventionnelle' %}selon les modalités conventionnelles suivantes : <<<VAR_START>>>{{ indivision.conditions_generales.revente.modalites }}<<<VAR_END>>>{% endif %}.
+
+{% if indivision.conditions_generales.revente.plus_value %}
+La plus-value éventuelle sera répartie dans les mêmes proportions que le prix de vente.
+{% endif %}
+
+{% if indivision.conditions_generales.revente.droit_preference %}
+En cas de souhait de vente par l'un des indivisaires, les autres indivisaires bénéficieront d'un droit de préférence pour acquérir sa quote-part aux conditions proposées par un tiers.
+
+Délai d'exercice du droit de préférence : <<<VAR_START>>>{{ indivision.conditions_generales.revente.droit_preference.delai | default(30) }}<<<VAR_END>>> jours à compter de la notification.
+{% endif %}
+{% endif %}
+
+## Répartition lors du partage
+
+{% if indivision.conditions_generales.partage %}
+En cas de partage du bien indivis, qu'il soit amiable ou judiciaire, les indivisaires conviennent des règles suivantes :
+
+{% if indivision.conditions_generales.partage.modalites == 'attribution' %}
+### Attribution préférentielle
+
+{% if indivision.conditions_generales.partage.attribution_preferentielle %}
+Un droit d'attribution préférentielle est reconnu à <<<VAR_START>>>{{ indivision.conditions_generales.partage.attribution_preferentielle.beneficiaire }}<<<VAR_END>>>.
+
+{% if indivision.conditions_generales.partage.attribution_preferentielle.conditions %}
+Conditions : <<<VAR_START>>>{{ indivision.conditions_generales.partage.attribution_preferentielle.conditions }}<<<VAR_END>>>
+{% endif %}
+
+{% if indivision.conditions_generales.partage.attribution_preferentielle.soulte %}
+Le bénéficiaire de l'attribution devra verser une soulte calculée sur la base de la valeur du bien au jour du partage.
+{% endif %}
+{% endif %}
+
+{% elif indivision.conditions_generales.partage.modalites == 'licitation' %}
+### Licitation
+
+En l'absence d'accord sur l'attribution du bien, celui-ci sera vendu aux enchères publiques (licitation).
+
+Le prix de vente sera réparti entre les indivisaires proportionnellement à leurs quotes-parts, déduction faite des frais de vente.
+
+{% elif indivision.conditions_generales.partage.modalites == 'rachat' %}
+### Rachat de quote-part
+
+Chaque indivisaire dispose de la faculté de racheter la quote-part des autres indivisaires, à un prix déterminé par expertise.
+
+{% if indivision.conditions_generales.partage.rachat.expert %}
+L'expert sera désigné : <<<VAR_START>>>{{ indivision.conditions_generales.partage.rachat.expert }}<<<VAR_END>>>
+{% endif %}
+{% endif %}
+
+{% if indivision.conditions_generales.partage.frais %}
+Les frais de partage (notaire, expert, géomètre) seront supportés par les indivisaires proportionnellement à leurs quotes-parts.
+{% endif %}
+{% endif %}
+
+{% endif %}
+{% endif %}
+
+# Rappel des textes en matière d'indivision
+
+{% if indivision %}
+{% if indivision.rappel_textes %}
+
+Les parties ont été expressément informées par le notaire soussigné des dispositions légales applicables à l'indivision, et notamment :
+
+## Dispositions générales (articles 815 et suivants du Code civil)
+
+**Article 815** : Nul ne peut être contraint à demeurer dans l'indivision et le partage peut toujours être provoqué, à moins qu'il n'y ait été sursis par jugement ou convention.
+
+**Article 815-3** : Les biens indivis sont affectés par privilège au remboursement des dépenses faites pour les actes de conservation, d'administration ou d'amélioration et au paiement des dettes et charges de l'indivision.
+
+**Article 815-9** : Chaque indivisaire peut user et jouir des biens indivis conformément à leur destination, dans la mesure compatible avec le droit des autres indivisaires et avec l'effet des actes régulièrement passés au cours de l'indivision.
+
+## Gestion de l'indivision (articles 815-10 et suivants)
+
+**Article 815-10** : Les décisions concernant la jouissance, l'administration et la disposition des biens indivis sont prises :
+
+- À l'unanimité pour les actes de disposition
+- À la majorité des deux tiers pour les actes d'administration
+- Sans l'accord des autres indivisaires pour les actes conservatoires
+
+**Article 815-11** : Un mandataire peut être désigné pour administrer les biens indivis, soit à l'unanimité des indivisaires, soit, en cas de mésentente, par autorisation du juge.
+
+## Protection des indivisaires (articles 815-14 et suivants)
+
+**Article 815-14** : Tout indivisaire peut demander au tribunal judiciaire de l'autoriser à passer seul un acte pour lequel le consentement d'un coïndivisaire serait nécessaire, si le refus de ce dernier met en péril l'intérêt commun.
+
+**Article 815-17** : Un indivisaire peut, à tout moment, provoquer le partage, sauf convention contraire ne pouvant excéder cinq ans.
+
+## Convention d'indivision (article 1873-1 et suivants)
+
+Les indivisaires peuvent conclure une convention d'indivision fixant les règles de gestion et de partage du bien indivis pour une durée maximale de cinq ans, renouvelable.
+
+{% if indivision.rappel_textes.convention_souhaitee %}
+Les parties déclarent souhaiter établir une convention d'indivision complémentaire aux présentes, et donnent mandat au notaire soussigné pour la rédiger.
+{% endif %}
+
+## Fiscalité de l'indivision
+
+**Impôts locaux** : Les taxes foncières et d'habitation sont dues par les indivisaires proportionnellement à leurs quotes-parts.
+
+**Revenus fonciers** : En cas de mise en location du bien, les revenus sont répartis entre les indivisaires selon leurs quotes-parts et déclarés individuellement.
+
+**Plus-values immobilières** : En cas de vente, la plus-value est imposée au nom de chaque indivisaire proportionnellement à sa quote-part.
+
+{% if indivision.rappel_textes.fiscalite %}
+{% if indivision.rappel_textes.fiscalite.impots_locaux %}
+### Impôts locaux
+
+Modalités de prise en charge : <<<VAR_START>>>{{ indivision.rappel_textes.fiscalite.impots_locaux.modalites }}<<<VAR_END>>>
+{% endif %}
+
+{% if indivision.rappel_textes.fiscalite.avantage_fiscal %}
+### Avantage fiscal lié à un engagement de location
+
+{% if indivision.rappel_textes.fiscalite.avantage_fiscal.dispositif %}
+Le bien peut bénéficier du dispositif fiscal <<<VAR_START>>>{{ indivision.rappel_textes.fiscalite.avantage_fiscal.dispositif }}<<<VAR_END>>> sous réserve du respect des conditions légales.
+{% endif %}
+{% endif %}
+{% endif %}
+
+Les parties déclarent avoir pris connaissance de ces dispositions et en accepter les conséquences.
+
+{% endif %}
+{% endif %}
+
+# DISPOSITIONS RELATIVES A L'URBANISME
+
+## Urbanisme
+
+{% if urbanisme %}
+
+### Note d'urbanisme
+
+{% if urbanisme.note_urbanisme %}
+La commune a répondu le <<<VAR_START>>>{{ urbanisme.note_urbanisme.date | format_date }}<<<VAR_END>>> à une demande de note d'urbanisme. Cette réponse est annexée.
+
+L'ACQUEREUR s'oblige à faire son affaire personnelle de l'exécution des charges et prescriptions, du respect des servitudes publiques et autres limitations administratives au droit de propriété mentionnées sur cette note.
+
+**Annexe** : Note d'urbanisme
+
+{% if urbanisme.note_urbanisme.informations %}
 La note d'urbanisme révèle :
-{% for revelation in urbanisme.note_urbanisme.revelations %}
-\- {{ revelation }}
+
+{% for info in urbanisme.note_urbanisme.informations %}
+- {{ info }}
 {% endfor %}
 {% endif %}
-
-{% if urbanisme and urbanisme.note_voirie %}
-**Note de voirie**
-Une note de renseignements de voirie annexée a été délivrée par l'autorité compétente le {{ urbanisme.note_voirie.date | format_date }}. Il résulte de cette note que « *{{ urbanisme.note_voirie.resultat }}* ».
-
-**Annexe n°6 : Note de voirie**
 {% endif %}
 
-{% if urbanisme and urbanisme.certificat_non_peril %}
-**Certificat de non-péril**
-Il résulte d'un certificat délivré par l'autorité compétente le {{ urbanisme.certificat_non_peril.date | format_date }}, annexé, que l'immeuble {{ urbanisme.certificat_non_peril.resultat }}.
+### Certificat d'urbanisme
 
-**Annexe n°7 : Certificat de non-péril**
+{% if urbanisme.certificat_urbanisme %}
+Un certificat d'urbanisme a été délivré le <<<VAR_START>>>{{ urbanisme.certificat_urbanisme.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ urbanisme.certificat_urbanisme.autorite }}<<<VAR_END>>>.
+
+**Référence** : <<<VAR_START>>>{{ urbanisme.certificat_urbanisme.numero }}<<<VAR_END>>>
+
+{% if urbanisme.certificat_urbanisme.type == 'information' %}
+Il s'agit d'un certificat d'urbanisme d'information (article L. 410-1 du Code de l'urbanisme).
+{% elif urbanisme.certificat_urbanisme.type == 'operationnel' %}
+Il s'agit d'un certificat d'urbanisme opérationnel (article L. 410-1 du Code de l'urbanisme).
 {% endif %}
 
-### DISPOSITIONS RELATIVES À LA PRÉEMPTION
+**Annexe** : Certificat d'urbanisme
+{% endif %}
 
-#### Droit de préemption urbain
+### Plan local d'urbanisme (PLU)
 
-La vente ne donne pas ouverture au droit de préemption urbain, le **BIEN** constituant un seul local à usage d'habitation avec ses locaux accessoires dans un bâtiment dont le règlement de copropriété a été publié depuis plus de dix ans au fichier immobilier (article L 211-4, a, du Code de l'urbanisme) ou, à défaut de règlement de copropriété, si l'état descriptif de division a été publié depuis plus de dix ans au fichier immobilier.
-En outre, il résulte des documents d'urbanisme obtenus que la commune n'a pas pris de délibération motivée pour déroger à ces dispositions légales.
+{% if urbanisme.plu %}
+Le BIEN est situé sur le territoire de la commune de <<<VAR_START>>>{{ bien.adresse.ville }}<<<VAR_END>>>, soumise au {% if urbanisme.plu.type == 'PLU' %}Plan Local d'Urbanisme{% elif urbanisme.plu.type == 'PLUi' %}Plan Local d'Urbanisme intercommunal{% elif urbanisme.plu.type == 'POS' %}Plan d'Occupation des Sols{% endif %} approuvé le <<<VAR_START>>>{{ urbanisme.plu.date_approbation | format_date }}<<<VAR_END>>>.
 
-### DISPOSITIONS RELATIVES À LA CONSTRUCTION
+{% if urbanisme.plu.zonage %}
+**Zonage** : Le BIEN est situé en zone <<<VAR_START>>>{{ urbanisme.plu.zonage }}<<<VAR_END>>>.
+{% endif %}
 
-#### Existence de travaux
+{% if urbanisme.plu.reglement %}
+Le VENDEUR et l'ACQUEREUR déclarent avoir pris connaissance du règlement d'urbanisme applicable.
+{% endif %}
 
-Le **VENDEUR** déclare être informé des dispositions des articles L 241-1 et L 242-1 du Code des assurances imposant à tout propriétaire de souscrire avant toute ouverture de chantier de construction et/ou travaux de gros oeuvre ou de second oeuvre, une assurance garantissant le paiement des travaux de réparation des dommages relevant de la garantie décennale, ainsi qu'une assurance couvrant sa responsabilité au cas où il interviendrait dans la construction en tant que concepteur, entrepreneur ou maître d'oeuvre.
-
-{% if travaux and travaux.realises %}
-Depuis son acquisition, le **VENDEUR** déclare que les travaux ci-après indiqués ont été effectués :
-{% for travail in travaux.realises %}
-\- **{{ travail.description }}** suivant facture du {{ travail.date_facture | format_date }} de {{ travail.entreprise }}. {{ travail.observations|default('') }}
-{% endfor %}
-
-{% if travaux.annexes %}
-**Annexe n°8 : Courriels de demande d'attestation décennale**
-**Annexe n°9 : Factures et décennales**
+{% if urbanisme.plu.servitudes %}
+Le BIEN est soumis aux servitudes d'utilité publique suivantes : <<<VAR_START>>>{{ urbanisme.plu.servitudes | join(', ') }}<<<VAR_END>>>.
 {% endif %}
 {% endif %}
 
-Les travaux, compte tenu de la description faite par le **VENDEUR**, ne nécessitaient pas de déclaration préalable.
+### Périmètre monument historique
 
-Il est précisé qu'une déclaration préalable de travaux est nécessaire dans les cas suivants :
+{% if urbanisme.monument_historique %}
+{% if urbanisme.monument_historique.perimetre %}
+Le BIEN est situé dans le périmètre de protection d'un monument historique (rayon de <<<VAR_START>>>{{ urbanisme.monument_historique.rayon | default(500) }}<<<VAR_END>>> mètres).
 
-* travaux qui créent entre 5 m² ou 20 m² de surface de plancher ou d'emprise au sol. Le seuil de 20 m² est porté à 40 m² si la construction est située dans une zone urbaine d'une commune couverte par un plan local d'urbanisme (PLU) ou un document assimilé. Toutefois, entre 20 et 40 m² de surface de plancher ou d'emprise au sol, un permis de construire est exigé si, après réalisation, la surface ou l'emprise totale de la construction dépasse 150 m²,
+**Monument concerné** : <<<VAR_START>>>{{ urbanisme.monument_historique.nom }}<<<VAR_END>>>
 
-* travaux ayant pour effet de modifier l'aspect extérieur d'un bâtiment existant, à l'exception des travaux de ravalement,
+Conformément à l'article L. 621-30 du Code du patrimoine, tous travaux susceptibles de modifier l'aspect extérieur de l'immeuble sont soumis à autorisation spéciale de l'Architecte des Bâtiments de France.
 
-* travaux changeant la destination d'un bâtiment (par exemple, transformation d'un local commercial en local d'habitation) même lorsque celle-ci n'implique pas de travaux.
-
-Le **VENDEUR** confirme que les travaux effectués n'entrent pas dans l'un des cas ci-dessus.
-Le **VENDEUR** est averti que celui qui a réalisé un ouvrage est réputé en connaître les vices et doit donc être assimilé à un sachant et cela même s'il n'a pas la qualité de professionnel. Si un dysfonctionnement, inconnu de l'**ACQUEREUR** et préexistant à la vente survient par la suite, le **VENDEUR** est constitué de mauvaise foi. L'**ACQUEREUR** a alors un délai de deux ans pour agir à compter de la découverte du vice.
-L'**ACQUEREUR** est averti de l'importance de se faire fournir par le **VENDEUR** toutes les factures de ces travaux.
-
-#### Rappel des articles 1792 et suivants
-
-**Article 1792**
-*Tout constructeur d'un ouvrage est responsable de plein droit, envers le maître ou l'acquéreur de l'ouvrage, des dommages, même résultant d'un vice du sol, qui compromettent la solidité de l'ouvrage ou qui, l'affectant dans l'un de ses éléments constitutifs ou l'un de ses éléments d'équipement, le rendent impropre à sa destination. Une telle responsabilité n'a point lieu si le constructeur prouve que les dommages proviennent d'une cause étrangère.*
-
-**Article 1792-1**
-*Est réputé constructeur de l'ouvrage :
-1° Tout architecte, entrepreneur, technicien ou autre personne liée au maître de l'ouvrage par un contrat de louage d'ouvrage ;
-2° Toute personne qui vend, après achèvement, un ouvrage qu'elle a construit ou fait construire ;
-3° Toute personne qui, bien qu'agissant en qualité de mandataire du propriétaire de l'ouvrage, accomplit une mission assimilable à celle d'un locateur d'ouvrage.*
-
-**Article 1792-2**
-*La présomption de responsabilité établie par l'article 1792 s'étend également aux dommages qui affectent la solidité des éléments d'équipement d'un ouvrage, mais seulement lorsque ceux-ci font indissociablement corps avec les ouvrages de viabilité, de fondation, d'ossature, de clos ou de couvert. Un élément d'équipement est considéré comme formant indissociablement corps avec l'un des ouvrages de viabilité, de fondation, d'ossature, de clos ou de couvert lorsque sa dépose, son démontage ou son remplacement ne peut s'effectuer sans détérioration ou enlèvement de matière de cet ouvrage.*
-
-**Article 1792-3**
-*Les autres éléments d'équipement de l'ouvrage font l'objet d'une garantie de bon fonctionnement d'une durée minimale de deux ans à compter de sa réception.*
-
-**Article 1792-4-1**
-*Toute personne physique ou morale dont la responsabilité peut être engagée en vertu des articles 1792 à 1792-4 du présent code est déchargée des responsabilités et garanties pesant sur elle, en application des articles 1792 à 1792-2, après dix ans à compter de la réception des travaux ou, en application de l'article 1792-3, à l'expiration du délai visé à cet article.*
-
-{% if travaux and travaux.assurance_do %}
-#### Assurance dommages ouvrage
-
-Le **BIEN** ayant fait l'objet de travaux de rénovation depuis moins de dix ans tels que ceux déclarés par le vendeur, le régime de la responsabilité et d'assurance auquel il se trouve soumis est celui institué par les articles L 241-1 et suivants du Code des assurances.
-
-{% if not travaux.assurance_do.souscrite %}
-**Le VENDEUR déclare qu'aucune police d'assurance dommages ouvrage n'a été souscrite pour la réalisation de ces rénovations.**
-
-L'**ACQUEREUR** a été informé que :
-Les articles L 241-2 et L 242-1 du Code des assurances ont prévu que les constructions soumises au régime de la responsabilité qu'elle organise doivent être protégées par deux régimes d'assurances :
-\- assurance de responsabilité : elle ne paie que dans la mesure où la responsabilité de celui qu'elle garantit est retenue,
-\- assurance de dommages : elle est destinée à fournir les fonds nécessaires pour réparer les dommages aux constructions en dehors de toute recherche de responsabilité. Elle permet au propriétaire de l'immeuble d'éviter de mettre en jeu les responsabilités incombant aux divers intervenants à la construction, avec les risques d'un contentieux long et onéreux.
-
-**VENDEUR** et **ACQUEREUR** reconnaissent avoir reçu du notaire soussigné toutes explications utiles concernant les conséquences pouvant résulter de l'absence de souscription de telles polices d'assurances.
-{% endif %}
-{% endif %}
-
-{% if not travaux or not travaux.realises %}
-#### Absence d'opération de construction ou de rénovation depuis dix ans
-
-Le **VENDEUR** déclare qu'à sa connaissance :
-
-* aucune construction, aucune rénovation et aucuns travaux entrant dans le champ d'application des dispositions des articles L 241-1 et L 242-1 du Code des assurances n'ont été effectués dans les dix dernières années.
-
-* aucun élément constitutif d'ouvrage ou équipement indissociable de l'ouvrage au sens de l'article 1792 du Code civil n'a été réalisé dans ce délai.
-{% endif %}
-
-### DIAGNOSTICS
-
-#### Diagnostics techniques
-
-**Plomb**
-
-L'ENSEMBLE IMMOBILIER a été construit depuis le 1er janvier 1949, en conséquence il n'entre pas dans le champ d'application des dispositions des articles L 1334-5 et suivants du Code de la santé publique relatifs à la lutte contre la présence de plomb.
-
-**Amiante**
-
-L'article L 1334-13 premier alinéa du Code de la santé publique commande au **VENDEUR** de faire établir un état constatant la présence ou l'absence de matériaux ou produits de la construction contenant de l'amiante.
-Cet état s'impose à tous les bâtiments dont le permis de construire a été délivré avant le 1er juillet 1997.
-Il doit être intégré au dossier de diagnostics techniques, annexé à l'avant-contrat, ou à défaut, à l'acte authentique de vente.
-
-Il a pour objet de repérer :
-
-* les matériaux et produits de la liste A (dits matériaux friables tels que les flocages, calorifugeages et faux plafonds),
-
-* et les matériaux et produits de la liste B (dits matériaux non friables y compris les produits situés en extérieur tels que les matériaux de couverture, les bardages, les conduits de fumée etc.) de l'annexe 13-9 du Code de la santé publique.
-
-Des recommandations sont préconisées au propriétaire dans ce rapport en fonction du résultat du repérage et de l'état de conservation des éléments contenant de l'amiante.
-
-{% if diagnostics and diagnostics.amiante_pp %}
-**Pour les parties privatives**
-Un état établi par {{ diagnostics.amiante_pp.diagnostiqueur }} le {{ diagnostics.amiante_pp.date }}, accompagné de la certification de compétence, est annexé.
-**{{ diagnostics.amiante_pp.resultat }}**
-
-**Annexe n°10 : Synthèse et diagnostic amiante parties privatives**
-{% endif %}
-
-{% if diagnostics and diagnostics.amiante_pc %}
-**Pour les parties communes**
-Un diagnostic technique a été établi par {{ diagnostics.amiante_pc.diagnostiqueur }} le {{ diagnostics.amiante_pc.date }}.
-Les conclusions sont les suivantes : ***"{{ diagnostics.amiante_pc.resultat }}"***
-Ce diagnostic porte sur les points visés par le décret n° 2011-629 du 3 juin 2011.
-
-**Annexe n°11 : Diagnostic amiante parties communes**
-{% endif %}
-
-**Termites**
-
-Le **VENDEUR** déclare :
-
-* qu'à sa connaissance le **BIEN** n'est pas infesté par les termites ;
-
-* qu'il n'a lui-même procédé ni fait procéder par une entreprise à un traitement curatif contre les termites ;
-
-* qu'il n'a reçu du maire aucune injonction de rechercher des termites ou de procéder à des travaux préventifs ou d'éradication ;
-
-* que le **BIEN** n'est pas situé dans une zone contaminée par les termites.
-
-**Mérules**
-
-Les parties ont été informées des dégâts pouvant être occasionnés par la présence de mérules dans un bâtiment, la mérule étant un champignon qui se développe dans l'obscurité, en espace non ventilé et en présence de bois humide.
-
-Le **BIEN** ne se trouve pas actuellement dans une zone de présence d'un risque de mérule délimitée par un arrêté préfectoral.
-Le **VENDEUR** déclare ne pas avoir constaté l'existence de zones de condensation interne, de moisissures ou encore de présence d'effritements ou de déformation dans le bois ou l'existence de filaments blancs à l'aspect cotonneux, tous des éléments parmi les plus révélateurs de la potentialité de la présence de ce champignon.
-
-{% if diagnostics and diagnostics.gaz %}
-**Contrôle de l'installation de gaz**
-
-Conformément aux dispositions de l'article L 134-9 du Code de la construction et de l'habitation, la vente d'un bien immobilier à usage d'habitation comportant une installation intérieure de gaz réalisée depuis plus de quinze ans doit être précédée d'un diagnostic de celle-ci.
-
-{% if diagnostics.gaz.existe %}
-Un état de l'installation de gaz a été établi par {{ diagnostics.gaz.diagnostiqueur }} le {{ diagnostics.gaz.date }}.
-Les conclusions sont les suivantes : ***"{{ diagnostics.gaz.resultat }}"***
+L'ACQUEREUR déclare avoir été informé de cette situation et des contraintes qui en découlent.
 {% else %}
-Les parties déclarent que le **BIEN** ne possède pas d'installation intérieure de gaz.
+Le BIEN n'est pas situé dans le périmètre de protection d'un monument historique.
 {% endif %}
 {% endif %}
 
-{% if diagnostics and diagnostics.electricite and diagnostics.electricite.requis %}
-**Contrôle de l'installation intérieure d'électricité**
+### Alignement
 
-Conformément aux dispositions de l'article L 134-7 du Code de la construction et de l'habitation, la vente d'un bien immobilier à usage d'habitation comportant une installation intérieure d'électricité réalisée en tout ou partie depuis plus de quinze ans doit être précédée d'un diagnostic de celle-ci.
+{% if urbanisme.alignement %}
+{% if urbanisme.alignement.plan_alignement %}
+Le BIEN est soumis à un plan d'alignement approuvé le <<<VAR_START>>>{{ urbanisme.alignement.date_approbation | format_date }}<<<VAR_END>>>.
 
-Le **BIEN** dispose d'une installation intérieure électrique au moins pour partie de plus de quinze ans.
-Le **VENDEUR** a fait établir un état de celle-ci par {{ diagnostics.diagnostiqueur.nom }} - {{ diagnostics.diagnostiqueur.adresse }} répondant aux critères de l'article L 271-6 du Code de la construction et de l'habitation, le {{ diagnostics.electricite.date }}, annexé.
-Les conclusions sont les suivantes : ***"{{ diagnostics.electricite.resultat }}"***
-
-**Annexe n°12 : Diagnostic électricité**
-
-Il est rappelé à l'**ACQUEREUR** qu'en cas d'accidents électriques consécutifs aux anomalies pouvant être révélées par l'état annexé, sa responsabilité pourrait être engagée tant civilement que pénalement, de la même façon que la compagnie d'assurances pourrait invoquer le défaut d'aléa afin de refuser de garantir le sinistre électrique. D'une manière générale, le propriétaire au jour du sinistre est seul responsable de l'état du système électrique.
+{% if urbanisme.alignement.reserves %}
+Des réserves d'alignement existent : <<<VAR_START>>>{{ urbanisme.alignement.reserves }}<<<VAR_END>>>.
+{% else %}
+Aucune réserve d'alignement n'affecte le BIEN.
+{% endif %}
+{% else %}
+Le BIEN n'est pas soumis à un plan d'alignement.
+{% endif %}
 {% endif %}
 
-{% if diagnostics and diagnostics.dpe %}
-**Diagnostic de performance énergétique**
+### Note de voirie
 
-Conformément aux dispositions des articles L 126-26 et suivants du Code de la construction et de l'habitation, un diagnostic de performance énergétique doit être établi.
-Ce diagnostic doit notamment permettre d'évaluer :
+{% if urbanisme.note_voirie %}
+Une note de renseignements de voirie a été délivrée par l'autorité compétente le <<<VAR_START>>>{{ urbanisme.note_voirie.date | format_date }}<<<VAR_END>>>.
 
-* Les caractéristiques du logement ainsi que le descriptif des équipements.
-
-* Le descriptif des équipements de chauffage, d'eau chaude sanitaire, de refroidissement, et indication des conditions d'utilisation et de gestion.
-
-* La valeur isolante du **BIEN** immobilier.
-
-* La consommation d'énergie et l'émission de gaz à effet de serre.
-
-Il existe 7 classes d'énergie de "A" (**BIEN** économe) à "G" (**BIEN** énergivore).
-
-Les logements mis en location doivent respecter des critères de décence énergétique répondant à un niveau de performance minimal prévu par l'article 6 de la loi du 6 juillet 1989.
-
-Ainsi, depuis le 1er janvier 2025, la location des logements d'habitation avec un DPE de classe G est interdite. A compter du 1er janvier 2028, cette interdiction s'étendra aux logements de classe F, et à partir du 1er janvier 2034 aux logements de classe E. Aucune révision, majoration ou réévaluation du loyer n'est possible pour les logements d'habitation classés F ou G.
-
-Un diagnostic établi par {{ diagnostics.diagnostiqueur.nom }} - {{ diagnostics.diagnostiqueur.adresse }} le {{ diagnostics.dpe.date }}, est annexé.
-
-Les conclusions sont les suivantes :
-
-* Consommation énergétique : {{ diagnostics.dpe.consommation_energie }} kWhep/m².an
-
-* Émissions de gaz à effet de serre : {{ diagnostics.dpe.emission_ges }} kg éqCO2/m².an
-
-* Numéro ADEME : {{ diagnostics.dpe.numero_ademe }}
-
-**Annexe n°13 : Diagnostic de performance énergétique**
+{% if urbanisme.note_voirie.conclusion %}
+Il résulte de cette note que : "<<<VAR_START>>>{{ urbanisme.note_voirie.conclusion }}<<<VAR_END>>>".
 {% endif %}
 
-**Carnet d'information du logement**
-
-Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, un carnet d'information du logement, s'il est à usage d'habitation, doit être établi par le propriétaire ou le maître de l'ouvrage lors de sa construction ou à l'occasion de la réalisation de travaux de rénovation ayant une incidence significative sur sa performance énergétique, sous réserve que ces constructions ou travaux aient débuté à compter du 1er janvier 2023.
-Le contenu de ce carnet est fixé par les textes susvisés.
-L'**ACQUEREUR** déclare avoir été informé, par le notaire soussigné, de l'obligation d'établir ledit carnet et de le transmettre au nouveau propriétaire lors de toute mutation du logement tel qu'il est au moment de la mutation.
-
-{% if carnet_information_logement and carnet_information_logement.etabli %}
-Le **VENDEUR** déclare que le **BIEN** dont il s'agit entre dans le champ d'application des articles L 126-35-2 et suivants du Code de la construction et de l'habitation, en conséquence, le carnet d'information du logement a été établi conformément aux articles R 126-32 à R 126-34 dudit Code par le **VENDEUR**, **dont la remise sera effectuée sous huit jours aux nouveaux propriétaires.**
+**Annexe** : Note de voirie
 {% endif %}
 
-Le nouveau propriétaire est informé qu'il devra mettre à jour ce carnet en cas d'extension du logement ou de travaux de rénovation ayant une incidence significative sur la performance énergétique celui-ci.
+### Certificat de non-péril
 
-**Audit énergétique**
+{% if urbanisme.certificat_non_peril %}
+Il résulte d'un certificat délivré par l'autorité compétente le <<<VAR_START>>>{{ urbanisme.certificat_non_peril.date | format_date }}<<<VAR_END>>>, annexé, que l'immeuble :
 
-Le **BIEN** objet des présentes relevant de la loi n° 65-557 du 10 juillet 1965 fixant le statut de la copropriété des immeubles bâtis, il n'entre pas dans le champ d'application des dispositions de l'article L 126-28-1 du Code de la construction et de l'habitation, par suite il n'a pas été établi d'audit énergétique.
+"<<<VAR_START>>>{{ urbanisme.certificat_non_peril.contenu }}<<<VAR_END>>>"
 
-**Zone de bruit - Plan d'exposition au bruit des aérodromes**
-
-L'immeuble ne se trouve pas dans une zone de bruit définie par un plan d'exposition au bruit des aérodromes, prévu par l'article L 112-6 du Code de l'urbanisme ainsi qu'il résulte de l'Etat des Nuisances Sonores Aériennes établi le {{ diagnostics.etat_risques.date|default('') }} et intégré à l'état des risques ci-après relaté.
-
-**Radon**
-
-Le radon est un gaz radioactif d'origine naturelle qui représente le tiers de l'exposition moyenne de la population française aux rayonnements ionisants.
-Il est issu de la désintégration de l'uranium et du radium présents dans la croûte terrestre.
-Il est présent partout à la surface de la planète et provient surtout des sous-sols granitiques et volcaniques ainsi que de certains matériaux de construction.
-Le radon peut s'accumuler dans les espaces clos, notamment dans les maisons. Les moyens pour diminuer les concentrations en radon dans les maisons sont simples :
-
-* aérer et ventiler les bâtiments, les sous-sols et les vides sanitaires,
-
-* améliorer l'étanchéité des murs et planchers.
-
-L'activité volumique du radon (ou concentration de radon) à l'intérieur des habitations s'exprime en becquerel par mètre cube (Bq/m3).
-
-L'article L 1333-22 du Code de la santé publique dispose que les propriétaires ou exploitants d'immeubles bâtis situés dans les zones à potentiel radon où l'exposition au radon est susceptible de porter atteinte à la santé sont tenus de mettre en oeuvre les mesures nécessaires pour réduire cette exposition et préserver la santé des personnes.
-Aux termes des dispositions de l'article R 1333-29 de ce Code le territoire national est divisé en trois zones à potentiel radon définies en fonction des flux d'exhalation du radon des sols :
-
-* Zone 1 : zones à potentiel radon faible.
-
-* Zone 2 : zones à potentiel radon faible mais sur lesquelles des facteurs géologiques particuliers peuvent faciliter le transfert du radon vers les bâtiments.
-
-* Zone 3 : zones à potentiel radon significatif.
-
-L'article R 125-23 5° du Code de l'environnement dispose que l'obligation d'information s'impose dans les zones à potentiel radon de niveau 3.
-
-La liste des communes réparties entre ces trois zones est fixée par un arrêté du 27 juin 2018.
-
-La commune se trouvant **en zone 1 (faible),** l'obligation d'information n'est pas nécessaire, ainsi qu'il résulte de l'état des risques ci-annexé.
-
-#### Diagnostics environnementaux
-
-**Assainissement**
-
-**En ce qui concerne l'installation de l'ensemble immobilier dont dépendent les biens objet des présentes :**
-Le **VENDEUR** déclare que l'**ENSEMBLE IMMOBILIER** est raccordé à un réseau d'assainissement collectif des eaux usées domestiques conformément aux dispositions de l'article L 1331-1 du Code de la santé publique.
-Aux termes des dispositions des articles L 1331-4 et L 1331-6 de ce Code, les parties sont informées que l'entretien et le bon fonctionnement des ouvrages permettant d'amener les eaux usées domestiques de l'immeuble à la partie publique sont soumis au contrôle de la commune, qui peut procéder sous astreinte et aux frais du syndicat des copropriétaires, répartis entre les copropriétaires en fonction de leur quote-part, aux travaux indispensables à ces effets.
-Il est, en outre, précisé que le système d'écoulement des eaux pluviales doit être distinct de l'installation d'évacuation des eaux usées, étant spécifié que le régime d'évacuation des eaux pluviales est fixé par le règlement sanitaire départemental.
-L'évacuation des eaux pluviales doit être assurée et maîtrisée en permanence, elles ne doivent pas être versées sur les fonds voisins et la voie publique.
-
-**En ce qui concerne l'installation intérieure des biens vendus :**
-Le **VENDEUR** déclare que le **BIEN** vendu est relié aux canalisations collectives de l'**ENSEMBLE IMMOBILIER** dont il dépend et qu'il ne constate pas de difficultés d'utilisation.
-Il précise, par ailleurs, qu'il n'existe pas d'installation de type "sanibroyeur" ou de toilettes chimiques.
-
-Le **VENDEUR** informe l'**ACQUEREUR** qu'à sa connaissance les ouvrages permettant d'amener les eaux usées domestiques de l'**ENSEMBLE IMMOBILIER** à la partie publique ne présentent pas d'anomalie ni aucune difficulté particulière d'utilisation, et que l'évacuation des eaux pluviales s'effectue sans difficulté et sans nuisance.
-
-{% if diagnostics and diagnostics.etat_risques %}
-**Etat des risques**
-
-Un état des risques en date du {{ diagnostics.etat_risques.date }} est annexé.
-
-**Annexe n°14 : Etat des risques**
-
-**Absence de sinistres avec indemnisation**
-Le **VENDEUR** déclare qu'à sa connaissance l'immeuble n'a pas subi de sinistres ayant donné lieu au versement d'une indemnité en application de l'article L 125-2 ou de l'article L 128-2 du Code des assurances.
+**Annexe** : Certificat de non-péril
 {% endif %}
 
-**SITUATION ENVIRONNEMENTALE**
+{% endif %}
 
-**Consultation de bases de données environnementales**
+# Dispositions relatives à la préemption
 
-Les bases de données suivantes ont été consultées :
+{% if urbanisme.preemption %}
 
-* La base de données relative aux anciens sites industriels et activités de service (BASIAS).
+## Droit de préemption urbain
 
-* La base de données relative aux sites et sols pollués ou potentiellement pollués appelant une action des pouvoirs publics, à titre préventif ou curatif (BASOL).
+{% if urbanisme.preemption.dpu %}
+La commune de <<<VAR_START>>>{{ bien.adresse.ville }}<<<VAR_END>>> a instauré un droit de préemption urbain {% if urbanisme.preemption.dpu.type == 'simple' %}simple{% elif urbanisme.preemption.dpu.type == 'renforce' %}renforcé{% endif %} par délibération du <<<VAR_START>>>{{ urbanisme.preemption.dpu.date_deliberation | format_date }}<<<VAR_END>>>.
 
-* La base de données relative aux risques naturels et technologiques (Géorisques).
+{% if urbanisme.preemption.dpu.zone %}
+Le BIEN est situé dans la zone : <<<VAR_START>>>{{ urbanisme.preemption.dpu.zone }}<<<VAR_END>>>.
+{% endif %}
 
-* La base de données des installations classées soumises à autorisation ou à enregistrement du ministère de l'Environnement, de l'énergie et de la mer.
+Conformément aux dispositions des articles L. 211-1 et suivants du Code de l'urbanisme, la présente vente sera notifiée à la commune qui disposera d'un délai de deux mois pour exercer son droit de préemption.
 
-* La base de données dédiée aux anciens sites miniers d'uranium (Mimausa)
+L'ACQUEREUR est informé que la commune peut se substituer à lui dans les conditions prévues par la loi.
+{% else %}
+Le BIEN n'est pas situé dans une zone de préemption urbaine.
+{% endif %}
 
-* La base de données sur les risques naturels GEODERIS.
+## Autres droits de préemption
 
-* La base de données relative à la localisation des déchets radioactifs produits en France.
+{% if urbanisme.preemption.autres %}
+{% for autre_preemption in urbanisme.preemption.autres %}
+### {{ autre_preemption.type }}
 
-Une copie de ces consultations est annexée.
+{{ autre_preemption.description }}
 
-**Annexe n°15 : Données environnementales**
+{% if autre_preemption.beneficiaire %}
+**Bénéficiaire** : <<<VAR_START>>>{{ autre_preemption.beneficiaire }}<<<VAR_END>>>
+{% endif %}
 
+{% if autre_preemption.delai %}
+**Délai d'exercice** : <<<VAR_START>>>{{ autre_preemption.delai }}<<<VAR_END>>> jours
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% endif %}
+
+# Dispositions relatives à la construction
+
+{% if urbanisme.construction %}
+
+## Autorisations d'urbanisme
+
+{% if urbanisme.construction.permis_construire %}
+### Permis de construire
+
+Un permis de construire a été délivré le <<<VAR_START>>>{{ urbanisme.construction.permis_construire.date | format_date }}<<<VAR_END>>> sous le numéro <<<VAR_START>>>{{ urbanisme.construction.permis_construire.numero }}<<<VAR_END>>>.
+
+{% if urbanisme.construction.permis_construire.objet %}
+**Objet** : <<<VAR_START>>>{{ urbanisme.construction.permis_construire.objet }}<<<VAR_END>>>
+{% endif %}
+
+{% if urbanisme.construction.permis_construire.purge %}
+Ce permis est devenu définitif le <<<VAR_START>>>{{ urbanisme.construction.permis_construire.date_purge | format_date }}<<<VAR_END>>>, aucun recours n'ayant été exercé dans le délai légal.
+{% endif %}
+
+**Annexe** : Permis de construire
+{% endif %}
+
+{% if urbanisme.construction.declaration_prealable %}
+### Déclaration préalable
+
+Une déclaration préalable a été déposée le <<<VAR_START>>>{{ urbanisme.construction.declaration_prealable.date_depot | format_date }}<<<VAR_END>>> sous le numéro <<<VAR_START>>>{{ urbanisme.construction.declaration_prealable.numero }}<<<VAR_END>>>.
+
+{% if urbanisme.construction.declaration_prealable.non_opposition %}
+La commune n'a pas fait opposition dans le délai d'un mois. Les travaux peuvent être entrepris.
+{% endif %}
+
+**Annexe** : Déclaration préalable
+{% endif %}
+
+## Conformité des travaux
+
+{% if urbanisme.construction.conformite %}
+{% if urbanisme.construction.conformite.certificat %}
+Un certificat de conformité a été délivré le <<<VAR_START>>>{{ urbanisme.construction.conformite.date | format_date }}<<<VAR_END>>> attestant de la conformité des travaux réalisés avec l'autorisation délivrée.
+
+**Annexe** : Certificat de conformité
+{% else %}
+Les travaux ont été réalisés conformément aux autorisations délivrées. Un certificat de conformité pourra être demandé si nécessaire.
+{% endif %}
+{% endif %}
+
+## Diagnostics techniques construction
+
+{% if urbanisme.construction.diagnostics %}
+Les diagnostics techniques relatifs à la construction ont été réalisés :
+
+{% for diagnostic in urbanisme.construction.diagnostics %}
+- **{{ diagnostic.type }}** : Réalisé le <<<VAR_START>>>{{ diagnostic.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostic.professionnel }}<<<VAR_END>>>
+{% endfor %}
+{% endif %}
+
+{% endif %}
+
+# DIAGNOSTICS TECHNIQUES
+
+Les diagnostics techniques suivants ont été réalisés conformément aux dispositions légales :
+
+### Plomb
+
+{% if diagnostics.plomb %}
+L'ENSEMBLE IMMOBILIER a été construit {% if diagnostics.plomb.construction_avant_1949 %}avant le 1er janvier 1949{% else %}depuis le 1er janvier 1949{% endif %}.
+
+{% if diagnostics.plomb.construction_avant_1949 %}
+Un constat de risque d'exposition au plomb a été établi le <<<VAR_START>>>{{ diagnostics.plomb.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.plomb.diagnostiqueur.nom }}<<<VAR_END>>>.
+
+Conclusion : <<<VAR_START>>>{{ diagnostics.plomb.conclusion }}<<<VAR_END>>>.
+{% else %}
+En conséquence, le bien n'entre pas dans le champ d'application des dispositions relatives au diagnostic plomb.
+{% endif %}
+{% endif %}
+
+### Amiante
+
+{% if diagnostics.amiante %}
+Un état mentionnant la présence ou l'absence de matériaux ou produits contenant de l'amiante a été établi le <<<VAR_START>>>{{ diagnostics.amiante.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.amiante.diagnostiqueur.nom }}<<<VAR_END>>>.
+
+Conclusion : <<<VAR_START>>>{{ diagnostics.amiante.conclusion }}<<<VAR_END>>>.
+
+{% if diagnostics.amiante.presence %}
+Des matériaux contenant de l'amiante ont été repérés. Le rapport complet est annexé aux présentes.
+{% endif %}
+{% endif %}
+
+### Termites
+
+{% if diagnostics.termites %}
+Un état relatif à la présence de termites a été établi le <<<VAR_START>>>{{ diagnostics.termites.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.termites.diagnostiqueur.nom }}<<<VAR_END>>>.
+
+Conclusion : <<<VAR_START>>>{{ diagnostics.termites.conclusion }}<<<VAR_END>>>.
+{% endif %}
+
+### Mérules
+
+{% if diagnostics.merules %}
+Une information sur la présence d'un risque de mérule a été fournie conformément aux dispositions de l'article L 133-8 du Code de la construction et de l'habitation.
+
+La commune de <<<VAR_START>>>{{ bien.adresse.ville }}<<<VAR_END>>> {% if diagnostics.merules.zone_delimitee %}a fait l'objet d'un arrêté préfectoral délimitant une zone de présence d'un risque de mérule{% else %}n'a pas fait l'objet d'un arrêté préfectoral délimitant une zone de présence d'un risque de mérule{% endif %}.
+{% endif %}
+
+### Contrôle de l'installation de gaz
+
+{% if diagnostics.gaz %}
+Un état de l'installation intérieure de gaz a été établi le <<<VAR_START>>>{{ diagnostics.gaz.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.gaz.diagnostiqueur.nom }}<<<VAR_END>>>.
+
+Conclusion : <<<VAR_START>>>{{ diagnostics.gaz.conclusion }}<<<VAR_END>>>.
+
+{% if diagnostics.gaz.anomalies %}
+Des anomalies ont été relevées. Le rapport complet est annexé aux présentes.
+{% endif %}
+{% endif %}
+
+### Contrôle de l'installation intérieure d'électricité
+
+{% if diagnostics.electricite %}
+Un état de l'installation intérieure d'électricité a été établi le <<<VAR_START>>>{{ diagnostics.electricite.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.electricite.diagnostiqueur.nom }}<<<VAR_END>>>.
+
+Conclusion : <<<VAR_START>>>{{ diagnostics.electricite.conclusion }}<<<VAR_END>>>.
+
+{% if diagnostics.electricite.anomalies %}
+Des anomalies ont été relevées. Le rapport complet est annexé aux présentes.
+{% endif %}
+{% endif %}
+
+### Diagnostic de performance énergétique (DPE)
+
+{% if diagnostics.dpe %}
+Un diagnostic de performance énergétique a été établi le <<<VAR_START>>>{{ diagnostics.dpe.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.dpe.diagnostiqueur.nom }}<<<VAR_END>>>.
+
+**Classe énergie** : <<<VAR_START>>>{{ diagnostics.dpe.classe_energie }}<<<VAR_END>>>
+**Classe GES** : <<<VAR_START>>>{{ diagnostics.dpe.classe_ges }}<<<VAR_END>>>
+
+{% if diagnostics.dpe.classe_energie in ['F', 'G'] %}
+**Information importante** : Le bien présente une classe de performance énergétique {{ diagnostics.dpe.classe_energie }}.
+
+Conformément à la loi Climat et Résilience du 22 août 2021, les logements classés G ne pourront plus être proposés à la location à compter du 1er janvier 2025, les logements classés F à compter du 1er janvier 2028.
+
+L'ACQUEREUR déclare avoir été informé de cette situation et des travaux de rénovation énergétique qui pourraient s'avérer nécessaires.
+{% endif %}
+{% endif %}
+
+### Carnet d'information du logement
+
+{% if diagnostics.carnet_logement %}
+Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement a été établi et est communiqué à l'ACQUEREUR.
+
+Le VENDEUR s'engage à transmettre à l'ACQUEREUR une copie de ce carnet d'information au plus tard à la date de signature de l'acte authentique de vente.
+
+**Annexe : Carnet d'information du logement**
+{% endif %}
+
+### Audit énergétique
+
+{% if diagnostics.audit_energetique %}
+Le BIEN objet des présentes relevant de la loi n° 65-557 du 10 juillet 1965 fixant le statut de la copropriété des immeubles bâtis, un audit énergétique <<<VAR_START>>>{% if diagnostics.audit_energetique.existe %}a été réalisé{% else %}n'est pas requis{% endif %}<<<VAR_END>>>.
+
+{% if diagnostics.audit_energetique.existe %}
+L'audit énergétique a été établi le <<<VAR_START>>>{{ diagnostics.audit_energetique.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.audit_energetique.auditeur.nom }}<<<VAR_END>>>.
+
+**Annexe : Audit énergétique**
+{% endif %}
+{% endif %}
+
+### Assainissement
+
+{% if diagnostics.assainissement %}
+{% if diagnostics.assainissement.type == 'collectif' %}
+Le BIEN est raccordé au réseau public d'assainissement collectif.
+{% else %}
+Le BIEN est équipé d'une installation d'assainissement non collectif.
+
+Un diagnostic de bon fonctionnement et d'entretien de l'installation d'assainissement non collectif a été établi le <<<VAR_START>>>{{ diagnostics.assainissement.diagnostic_date | format_date }}<<<VAR_END>>>.
+
+Conclusion : <<<VAR_START>>>{{ diagnostics.assainissement.conclusion }}<<<VAR_END>>>.
+{% endif %}
+{% endif %}
+
+### État des risques et pollutions
+
+{% if diagnostics.erp %}
+Un état des risques et pollutions a été établi le <<<VAR_START>>>{{ diagnostics.erp.date | format_date }}<<<VAR_END>>>.
+
+La commune de <<<VAR_START>>>{{ bien.adresse.ville }}<<<VAR_END>>> est située dans une zone couverte par <<<VAR_START>>>{% if diagnostics.erp.ppr %}un plan de prévention des risques{% else %}aucun plan de prévention des risques{% endif %}<<<VAR_END>>>.
+
+{% if diagnostics.erp.risques %}
+Les risques identifiés sont les suivants : <<<VAR_START>>>{{ diagnostics.erp.risques | join(', ') }}<<<VAR_END>>>.
+{% endif %}
+
+**Annexe : État des risques et pollutions**
+{% endif %}
+
+### Zone de bruit - Plan d'exposition au bruit des aérodromes
+
+{% if diagnostics.zone_bruit %}
+{% if diagnostics.zone_bruit.concerne %}
+Le BIEN est situé dans le périmètre d'exposition au bruit des aérodromes défini par l'arrêté préfectoral du <<<VAR_START>>>{{ diagnostics.zone_bruit.arrete_date | format_date }}<<<VAR_END>>>.
+
+Zone concernée : <<<VAR_START>>>{{ diagnostics.zone_bruit.zone }}<<<VAR_END>>>.
+{% else %}
+Le BIEN n'est pas situé dans le périmètre d'exposition au bruit des aérodromes.
+{% endif %}
+{% endif %}
+
+### Radon
+
+{% if diagnostics.radon %}
+La commune de <<<VAR_START>>>{{ bien.adresse.ville }}<<<VAR_END>>> est classée en zone <<<VAR_START>>>{{ diagnostics.radon.zone }}<<<VAR_END>>> au regard du potentiel radon.
+
+{% if diagnostics.radon.zone in ['2', '3'] %}
+Information : Les zones 2 et 3 correspondent à des zones où la présence de radon dans les bâtiments peut atteindre des concentrations élevées. Des mesures préventives peuvent être mises en œuvre pour réduire les concentrations en radon.
+{% endif %}
+{% endif %}
 ### REGLEMENTATIONS SPECIFIQUES A LA COPROPRIETE
 
-Un certificat du syndic de la copropriété, délivré en application de l'article 20 II de la loi n° 65-557 du 10 juillet 1965, atteste que l'**ACQUEREUR** et son conjoint, ou partenaire lié à lui par un pacte civil de solidarité, ne sont pas déjà propriétaires d'un lot dans l'ensemble immobilier dont il s'agit.
-Ce certificat est annexé ci-après.
-L'article 20 II précise en tant que de besoin que le terme "acquéreur" s'entend tant de lui-même, s'il s'agit d'une personne physique, que des mandataires sociaux et associés de la société, s'il s'agit d'une personne morale.
-
-**Annexe n°16 : Certificat article 20 II**
-
-#### Immatriculation du syndicat des copropriétaires
-
-L'article L 711-1 du Code de la construction et de l'habitation institue un registre auquel sont immatriculés les syndicats de copropriétaires définis à l'article 14 de la loi n° 65-557 du 10 juillet 1965 fixant le statut de la copropriété des immeubles bâtis, qui administrent des immeubles à destination partielle ou totale d'habitation.
-
-Le syndicat des copropriétaires est immatriculé sous le numéro **{{ copropriete.immatriculation }}**.
-
-**Annexe n°17 : Attestation d'immatriculation**
-
-#### Carnet d'entretien de l'ensemble immobilier
-
-Un carnet d'entretien de l'ensemble immobilier doit être tenu par le syndic.
-
-Ce carnet d'entretien a pour objet de mentionner :
-
-* si des travaux importants ont été réalisés,
-
-* si des contrats d'assurance dommages souscrits par le syndicat des copropriétaires sont en cours,
-
-* s'il existe des contrats d'entretien et de maintenance des équipements communs,
-
-* l'échéancier du programme pluriannuel de travaux décidés par l'assemblée générale s'il en existe un.
-
-L'état délivré par le syndic révèle l'existence du carnet d'entretien.
-
-#### Diagnostic technique global
-
-Le 1er alinéa de l'article L 731-1 du Code de la construction et de l'habitation dispose que :
-*"Afin d'assurer l'information des copropriétaires sur la situation technique générale de l'immeuble et, le cas échéant, aux fins d'élaboration d'un plan pluriannuel de travaux, l'assemblée générale des copropriétaires se prononce sur la question de faire réaliser par un tiers, disposant de compétences précisées par décret, un diagnostic technique global pour tout immeuble à destination partielle ou totale d'habitation relevant du statut de la copropriété."*
-
-L'article L 731-4 du Code de la construction et de l'habitation dispose que :
-*"Toute mise en copropriété d'un immeuble construit depuis plus de dix ans est précédée du diagnostic technique global prévu à l'article L. 731-1."*
-
-Ce dossier doit comporter :
-
-* une analyse de l'état apparent des parties communes et des équipements communs de l'immeuble,
-
-* un état technique de l'immeuble et des équipements communs au regard des obligations légales et réglementaires au titre de la construction,
-
-* une analyse des améliorations possibles de la gestion technique et patrimoniale de l'immeuble,
-
-* un diagnostic de performance énergétique de l'immeuble tel que prévu par les dispositions des articles L 126-28 ou L 126-31 du Code de la construction et de l'habitation.
-
-L'autorité administrative compétente peut à tout moment, pour vérifier l'état de bon usage et de sécurité des parties communes d'un immeuble collectif à usage principal d'habitation soumis au statut de la copropriété présentant des désordres potentiels, demander au syndic de produire ce diagnostic. À défaut de sa production dans un délai d'un mois après notification de la demande, l'autorité administrative compétente mentionnée peut le faire réaliser d'office en lieu et place du syndicat des copropriétaires et à ses frais.
-
-{% if copropriete.diagnostic_technique_global and copropriete.diagnostic_technique_global.etabli %}
-Le vendeur déclare que le diagnostic technique global **a été établi.**
-{% else %}
-Le vendeur déclare que le diagnostic technique global **n'a pas été établi.**
-
-Le notaire précise que l'absence d'un tel diagnostic ne permet pas à l'**ACQUEREUR** d'apprécier valablement l'importance matérielle et financière des dépenses à prévoir dans la copropriété dans les années à venir.
-{% endif %}
-
-#### Plan pluriannuel de travaux
-
-L'article 14-2 de la loi n° 65-557 du 10 juillet 1965 dispose notamment ce qui suit :
-*"I.- A l'expiration d'un délai de quinze ans à compter de la date de réception des travaux de construction de l'immeuble, un projet de plan pluriannuel de travaux est élaboré dans les immeubles à destination partielle ou totale d'habitation soumis à la présente loi. Il est actualisé tous les dix ans."*
-
-{% if copropriete.plan_pluriannuel_travaux and copropriete.plan_pluriannuel_travaux.existe %}
-Le vendeur déclare **qu'il existe** un plan pluriannuel de travaux.
-{% else %}
-Le vendeur déclare **qu'il n'existe pas** de plan pluriannuel de travaux.
-{% endif %}
-
-{% if copropriete.fiche_synthetique %}
-#### Fiche synthétique
-
-La fiche synthétique de la copropriété est prévue par les dispositions de l'article 8-2 de la loi numéro 65-557 du 10 juillet 1965 dont le contenu est fixé par décret numéro 2016-1822 du 21 décembre 2016. Elle est obligatoire pour les immeubles qui sont à usage total ou partiel d'habitation et doit être établie et mise à jour annuellement par le syndic.
-
-La fiche synthétique a été établie le **{{ copropriete.fiche_synthetique.date }}** dont une copie est annexée.
-
-**Annexe n°18 : Fiche synthétique**
-{% endif %}
-
-{% if copropriete.emprunt_collectif and copropriete.emprunt_collectif.existe %}
-#### Emprunt collectif
-
-Les articles 26-4 à 26-14 de la loi numéro 65-557 du 10 juillet 1965 donnent la possibilité aux syndicats de copropriétaires de souscrire un emprunt bancaire en leur nom propre en vue de financer non seulement des travaux sur les parties communes de l'immeuble, mais également des travaux d'intérêt collectif sur les parties privatives, des acquisitions de biens conformes à l'objet du syndicat, ou d'assurer le préfinancement de subventions publiques accordées pour la réalisation des travaux votés.
-
-**L'état délivré par le syndic révèle l'existence d'un tel type d'emprunt souscrit, le solde étant en principal et intérêts à la date du {{ copropriete.emprunt_collectif.date_solde | format_date }} de {{ copropriete.emprunt_collectif.solde | format_nombre }} EUR.**
-
-**Le VENDEUR est informé de l'exigibilité de cet emprunt en cas de mutation. Par suite, il donne son accord au notaire détenteur du prix de vente de régler au syndic, par prélèvement sur ce prix, le montant dû afin que ce dernier l'affecte au remboursement de l'emprunt, de sorte que le syndicat et l'ACQUEREUR ne puissent ni être recherchés ni être inquiétés.**
-{% endif %}
-
-{% if copropriete.fonds_travaux and copropriete.fonds_travaux.existe %}
-#### Fonds de travaux
-
-L'article 14-2-1 de la loi numéro 65-557 du 10 juillet 1965 instaure la création d'un fonds de travaux pour les immeubles soumis au régime de la copropriété et à usage d'habitation en tout ou partie.
-Le syndicat des copropriétaires constitue un fonds de travaux au terme d'une période de dix ans à compter de la date de la réception des travaux de construction de l'immeuble, pour faire face aux dépenses résultant :
-
-* De l'élaboration du projet de plan pluriannuel de travaux mentionné à l'article 14-2 de ladite loi et, le cas échéant, du diagnostic technique global mentionné à l'article L 731-1 du Code de la construction et de l'habitation ;
-
-* De la réalisation des travaux prévus dans le plan pluriannuel de travaux adopté par l'assemblée générale des copropriétaires ;
-
-* Des travaux décidés par le syndic en cas d'urgence, dans les conditions prévues au troisième alinéa du I de l'article 18 de la présente loi ;
-
-* Des travaux nécessaires à la sauvegarde de l'immeuble, à la préservation de la santé et de la sécurité des occupants et à la réalisation d'économies d'énergie, non prévus dans le plan pluriannuel de travaux.
-
-Ce fonds de travaux est alimenté par une cotisation annuelle obligatoire. Chaque copropriétaire contribue au fonds selon les mêmes modalités que celles décidées par l'assemblée générale pour le versement des provisions du budget prévisionnel.
-Ces sommes sont définitivement acquises au syndicat, la cession des lots ne donne donc pas lieu à leur remboursement par le syndicat.
-Lorsque le montant du fonds de travaux sera supérieur à celui du budget prévisionnel le syndic inscrira, à l'ordre du jour de l'assemblée générale, l'élaboration d'un plan pluriannuel de travaux et la suspension des cotisations en fonction des décisions prises par cette assemblée sur le plan de travaux.
-
-L'immeuble entre dans le champ d'application de l'obligation de créer un fonds de travaux.
-{% endif %}
-
-#### Garantie de superficie
-
-Conformément aux dispositions de l'article 46 de la loi du 10 juillet 1965, tout contrat réalisant ou constatant la vente d'un lot ou d'une fraction de lot mentionne la superficie de la partie privative de ce lot ou de cette fraction de lot. La nullité de l'acte peut être invoquée sur le fondement de l'absence de toute mention de superficie.
-Ces dispositions ne sont pas applicables aux caves, garages, emplacements de stationnement ni aux lots ou fractions de lots d'une superficie inférieure à 8 mètres carrés.
-Le **VENDEUR** déclare que la superficie de la partie privative des **BIENS** soumis à la loi ainsi qu'à ses textes subséquents, est de savoir **{{ bien.superficie_carrez.superficie_m2 }} M²** pour le lot numéro {{ bien.superficie_carrez.lot_concerne|upper }}.
-
-{% if bien.superficie_carrez.diagnostiqueur %}
-Ainsi qu'il résulte d'une attestation établie par {{ bien.superficie_carrez.diagnostiqueur }} le {{ bien.superficie_carrez.date_mesurage | format_date }} annexée.
-
-**Annexe n°19 : Certificat de superficie**
-{% endif %}
-
-Les parties ont été informées par le notaire, ce qu'elles reconnaissent, de la possibilité pour l'**ACQUEREUR** d'agir en révision du prix si, pour au moins un des lots, la superficie réelle est inférieure de plus d'un vingtième à celle exprimée aux présentes. En cas de pluralité d'inexactitudes, il y aura pluralité d'actions, chaque action en révision de prix ne concernant que la propre valeur du lot concerné.
-La révision du prix dont il s'agit consistera en une diminution de la valeur du lot concerné proportionnelle à la moindre mesure.
-L'action en diminution, si elle est recevable, devra être intentée par l'**ACQUEREUR** dans un délai d'un an à compter des présentes, et ce à peine de déchéance.
-
-Le **VENDEUR** déclare ne pas avoir réalisé d'aménagements de lots susceptibles d'en modifier la superficie ci-dessus indiquée.
-
-Une attestation mentionnant les dispositions de l'article 46 est remise à l'instant même à l'**ACQUEREUR** et au **VENDEUR** qui le reconnaissent et en donnent décharge.
-
-#### Statut de la copropriété
-
-**Règlement de copropriété**
-
-L'**ACQUEREUR** déclare avoir pris connaissance de l'ensemble des documents relatifs au règlement de copropriété et à l'état descriptif de division.
-Il s'engage à exécuter toutes les charges, clauses et conditions contenues au règlement de copropriété sus-énoncé et dans ses modificatifs éventuels.
-Il atteste être parfaitement informé que les dispositions du règlement de copropriété s'imposent à lui, sauf dans la mesure où des dispositions législatives postérieures à son établissement viendraient à le modifier et ainsi s'imposer à l'ensemble des copropriétaires.
-L'**ACQUEREUR** est subrogé dans tous les droits et obligations résultant pour le **VENDEUR** du règlement de copropriété, de son ou de ses modificatifs et des décisions régulièrement prises par l'assemblée des copropriétaires.
-Il sera tenu de régler tous les appels de fonds qui seront faits par le syndic à compter de ce jour.
-Le notaire avertit les parties que toutes les clauses du règlement de copropriété s'imposent, même celles réputées illicites tant qu'elles n'ont pas été annulées par une décision soit judiciaire soit d'une assemblée générale des copropriétaires dans les conditions de l'article 26b de la loi n°65-557 du 10 juillet 1965. Toutefois, si le règlement contient des clauses obsolètes, c'est-à-dire des clauses qui, lors de son établissement, étaient conformes aux prescriptions légales mais dont le contenu a été modifié ultérieurement par une nouvelle législation, celles-ci ne peuvent plus s'appliquer.
-Un exemplaire du règlement de copropriété a été remis dès avant ce jour à l'**ACQUEREUR** qui le reconnaît.
-
-**Syndic de l'immeuble**
-
-Le syndic actuel de l'immeuble est :
-**{{ copropriete.syndic.nom }}, {{ copropriete.syndic.adresse }}, {{ copropriete.syndic.code_postal }} {{ copropriete.syndic.ville }}**
-
-**Etat contenant diverses informations sur la copropriété**
-
-L'état contenant les informations prévues par l'article 5 du décret du 17 mars 1967 modifié a été délivré par le syndic et demeure annexé.
-
-**Annexe n°20 : Etat daté**
-
-L**'ACQUEREUR** déclare avoir pris parfaite connaissance de cet état tant par la lecture qui lui en a été faite par le notaire soussigné que par les explications qui lui ont été données par ce dernier.
-
-**Absence de convocation à une assemblée générale entre l'avant-contrat et la vente**
-
-Le **VENDEUR** atteste en outre n'avoir reçu depuis la conclusion de l'avant-contrat de convocation pour une assemblée des copropriétaires, ni avoir reçu précédemment à l'avant-contrat de convocation pour une assemblée générale entre celui-ci et ce jour.
-
-**Dispositions légales et réglementaires sur la répartition des charges de copropriété**
-
-Les parties sont informées des dispositions législatives et réglementaires applicables en matière de répartition entre le **VENDEUR** et l'**ACQUÉREUR** des charges de copropriété contenues dans l'article 6-2 du décret du 17 mars 1967 modifié, lequel dispose :
-*"A l'occasion de la mutation à titre onéreux d'un lot :
-1°) Le paiement de la provision exigible du budget prévisionnel, en application du troisième alinéa de l'article 14-1 de la loi du 10 juillet 1965 incombe au vendeur.
-2°) Le paiement des provisions des dépenses non comprises dans le budget prévisionnel incombe à celui, vendeur ou acquéreur, qui est copropriétaire au moment de l'exigibilité.
-3°) Le trop ou moins perçu sur provisions révélé par l'approbation des comptes est porté au crédit ou au débit du compte de celui qui est copropriétaire lors de l'approbation des comptes."*
-
-Etant ici toutefois précisé que le transfert des charges n'est pris en compte par le syndicat des copropriétaires qu'à partir du moment où la vente a été notifiée au syndic (articles 20 de la loi du 10 juillet 1965 et 5 du décret du 17 mars 1967).
-
-Tout aménagement entre les parties des dispositions sus énoncées n'a d'effet qu'entre elles et reste inopposable au syndicat des copropriétaires.
-Par suite les demandes émanant du syndic s'effectuant auprès du copropriétaire en place au moment de celles-ci, il appartiendra donc aux parties d'effectuer directement entre elles les comptes et remboursements nécessaires.
-
-**Convention des parties sur la répartition des charges et travaux**
-
-L'**ACQUEREUR** supporte les charges de copropriété à compter du jour de l'entrée en jouissance soit le {{ jouissance.date_jouissance | format_date }}{% if jouissance.convention_occupation and jouissance.convention_occupation.existe %} compte tenu de la convention d'occupation précaire visée ci-avant{% endif %}.
-L'**ACQUEREUR** supporte le coût des travaux, à compter de ce jour.
-Le **VENDEUR** supporte le coût des travaux de copropriété, exécutés ou non, en cours d'exécution, votés antérieurement à ce jour.
-
-Il est précisé que les compléments de travaux par devis supplémentaires approuvés ou votés après la vente seront donc à la charge de l'ACQUEREUR.
-
-**En outre, les subventions allouées ou versées après réalisation de la vente au titre de travaux réalisés aux frais ou à la charge du VENDEUR devront lui être remboursés par l'ACQUEREUR dans les plus brefs délais, notamment en ce qui concerne les subventions versées au titre des travaux de rénovation énergétique de la copropriété.**
-
-**Convention des parties sur les procédures**
-
-Le **VENDEUR** déclare qu'il n'existe actuellement à sa connaissance aucune procédure en cours.
-L'**ACQUEREUR** sera subrogé dans tous les droits et obligations du **VENDEUR** dans les procédures pouvant être révélées concernant la copropriété, sauf si ces procédures sont le résultat d'une faute du **VENDEUR**. En conséquence, le **VENDEUR** déclare se désister en faveur de l'**ACQUEREUR** du bénéfice de toutes sommes qui pourraient lui être ultérieurement allouées ou remboursées à ce titre, relativement au **BIEN**.
-
-**Travaux urgents décidés par le syndic (article 18 de la loi du 10 juillet 1965)**
-
-Le **VENDEUR** déclare qu'à sa connaissance aucuns travaux nécessaires à la sauvegarde de l'immeuble n'ont été décidés par le syndic depuis la date de signature de l'avant-contrat.
-
-**Règlement définitif des charges**
-
-L'**ACQUEREUR** a versé à l'instant même au **VENDEUR**, la comptabilité de l'Office Notarial, la somme correspondant au prorata des charges du trimestre en cours dont le paiement a déjà été appelé par le syndic et réglé par le **VENDEUR**. Ce paiement est effectué à titre définitif entre les parties, et ce quel que soit le décompte définitif des charges sur l'exercice en cours. Les parties reconnaissent avoir été informées par le rédacteur des présentes que le trop ou le moins perçu sur provisions, révélé par l'approbation des comptes, est porté au crédit ou au débit du compte de celui qui est copropriétaire lors de l'approbation de ces comptes.
-Compte tenu des montants versés lors du dernier exercice, il n'est pas apparu aux parties nécessaire de procéder par versement provisionnel.
-Ce règlement définitif n'est valable que sur les comptes de l'exercice en cours dans la mesure où l'année précédente n'aurait pas été encore clôturée.
-
-**Solde de l'exercice antérieur**
-
-Les comptes de l'exercice précédent ne sont pas précisément connus à ce jour du **VENDEUR**.
-Son solde créditeur ou débiteur non encore imputé sur le compte du copropriétaire fera le bénéfice ou la perte du **VENDEUR** exclusivement, ce dernier s'engageant à rembourser à l'**ACQUEREUR** à première demande de ce dernier, les sommes qui seraient réclamées à ce titre, et l'**ACQUEREUR** s'engageant également à rembourser au **VENDEUR** sans délai, le solde créditeur qui pourrait subsister concernant cet exercice.
-En tout état de cause, l'**ACQUEREUR** s'oblige à adresser, dès sa réception, au **VENDEUR** le relevé de compte de charges où figurera le solde de compte débiteur ou créditeur de l'exercice antérieur.
-Compte tenu des provisions versées pour cet exercice par le **VENDEUR** et des comptes de l'exercice précédent, il n'est pas apparu nécessaire aux parties de séquestrer une somme en garantie du paiement du solde dû par l'une ou l'autre d'entre elles.
-
-{% if copropriete.emprunt_collectif and copropriete.emprunt_collectif.existe %}
-**Règlement effectué par prélèvement sur le prix des travaux votés et non appelés en tout ou partie**
-
-Le **VENDEUR** donne à l'instant même son accord au notaire détenteur du prix de vente pour régler au syndic, en l'acquit de l'**ACQUEREUR**, par prélèvement sur ce prix, la somme de {{ copropriete.emprunt_collectif.solde | format_nombre }} EUR correspondant à sa quote-part dans les travaux votés mais non encore appelés (en tout ou partie), conformément aux indications fournies par le syndic dans l'état susvisé et en application de l'avant-contrat.
-{% endif %}
-
-{% if copropriete.fonds_travaux and copropriete.fonds_travaux.existe %}
-**Fonds de travaux**
-
-L'état révèle l'existence d'une cotisation annuelle à un fonds de travaux.
-Précision étant ici faite qu'il a été voté en assemblée générale des copropriétaires la constitution d'un fonds de travaux.
-Ces sommes sont rattachées aux lots et sont définitivement acquises au syndicat des copropriétaires. Elles ne donnent pas lieu à leur remboursement par le syndicat lors de la cession de lots.
-
-Par suite, les parties conviennent d'effectuer directement entre elles le remboursement des sommes ainsi versées ce jour, l'**ACQUEREUR** devenant alors subrogé dans les droits du **VENDEUR** sur ce fonds.
-{% endif %}
-
-**Absence d'avances**
-
-Le **VENDEUR** déclare n'avoir versé aucune avance, ainsi constaté aux termes de l'état délivré par le syndic.
-
-**Election de domicile pour l'opposition du syndic**
-
-Pour l'opposition éventuelle du syndic, domicile spécial est élu en l'office notarial du notaire rédacteur des présentes, détenteur des fonds.
-
-**Notification de la mutation au syndic – Article 20 loi 10 juillet 1965**
-
-En application de l'article 20 de la loi numéro 65-557 du 10 juillet 1965, un avis de la vente sera adressé sous quinze jours au syndic de copropriété et ce par lettre recommandée avec demande d'avis de réception.
-Avant l'expiration d'un délai de quinze jours à compter de la réception de cet avis, le syndic pourra former, par acte extrajudiciaire, opposition au versement des fonds dans la limite des sommes restant dues par le **VENDEUR**.
-
-Le notaire libèrera le prix de vente disponible dès l'accord entre le syndic et le **VENDEUR** sur les sommes restant dues. A défaut d'accord dans les trois mois de la constitution par le syndic de l'opposition régulière, il versera les sommes retenues au syndicat, sauf contestation judiciaire de cette opposition.
-La notification de transfert sera également adressée par les soins du notaire au syndic de copropriété. A cette occasion, l'**ACQUEREUR** autorise le notaire à communiquer au syndic son adresse électronique ainsi que son numéro de téléphone.
-
-{% if origine_propriete %}
-### ORIGINE DE PROPRIÉTÉ
-
-{% for origine in origine_propriete %}
-**Concernant {{ "le lot numéro" if origine.lots_concernes|length == 1 else "les lots numéros" }} {{ origine.lots_concernes|join(' et ') }}**
-
-**Origine immédiate**
-{% for v in vendeurs %}{{ v.civilite }} {{ v.prenoms }} {{ v.nom }}{% if not loop.last %} et {% endif %}{% endfor %} {{ "est propriétaire indivis" if vendeurs|length == 1 else "sont propriétaires indivis" }} à concurrence de moitié chacun {{ "du lot numéro" if origine.lots_concernes|length == 1 else "des lots numéros" }} {{ origine.lots_concernes|join(' et ') }} susvisés par suite de l'acquisition qu'{{ "il" if vendeurs|length == 1 else "ils" }} en {{ "a" if vendeurs|length == 1 else "ont" }} faite de :
-
-{% if origine.vendeur_precedent %}
-{% for vp in origine.vendeur_precedent %}
-{{ vp.civilite }} {{ vp.prenoms }}{% if vp.nom_naissance %} {{ vp.nom }} née {{ vp.nom_naissance }}{% else %} {{ vp.nom }}{% endif %}, {{ vp.profession }}, demeurant à {{ vp.ville }} ({{ vp.code_postal }}) {{ vp.adresse }}.
-Né{{ "e" if vp.civilite == "Madame" else "" }} à {{ vp.lieu_naissance }}, le {{ vp.date_naissance | format_date }}.
-{% if vp.situation_matrimoniale.statut == "celibataire" %}Célibataire.{% endif %}
-{% if vp.situation_matrimoniale.statut == "divorce" %}Divorcé{{ "e" if vp.civilite == "Madame" else "" }}{% if vp.situation_matrimoniale.divorce.rang %} en {{ vp.situation_matrimoniale.divorce.rang }}{% endif %} de {{ vp.situation_matrimoniale.divorce.ex_conjoint }} suivant jugement rendu par le {{ vp.situation_matrimoniale.divorce.tribunal }} le {{ vp.situation_matrimoniale.divorce.date | format_date }}, et non remarié{{ "e" if vp.civilite == "Madame" else "" }}.{% endif %}
-{% if vp.situation_matrimoniale.statut == "marie" %}Marié{{ "e" if vp.civilite == "Madame" else "" }} à la mairie de {{ vp.situation_matrimoniale.mariage.lieu }} le {{ vp.situation_matrimoniale.mariage.date | format_date }} sous le régime de {{ vp.situation_matrimoniale.mariage.regime_libelle }} aux termes du contrat de mariage reçu par {{ vp.situation_matrimoniale.mariage.contrat_mariage.notaire }}, le {{ vp.situation_matrimoniale.mariage.contrat_mariage.date | format_date }}.
-Ce régime matrimonial n'a pas fait l'objet de modification.{% endif %}
-{% if vp.situation_matrimoniale.statut == "pacse" %}Ayant conclu un pacte civil de solidarité sous le régime de la séparation de biens, suivant contrat reçu par {{ vp.situation_matrimoniale.pacs.notaire }}, le {{ vp.situation_matrimoniale.pacs.date | format_date }}.{% endif %}
-{% if not vp.situation_matrimoniale or vp.situation_matrimoniale.statut in ["celibataire", "divorce"] %}Non lié{{ "e" if vp.civilite == "Madame" else "" }} par un pacte civil de solidarité.{% endif %}
-De nationalité {{ vp.nationalite }}.
-Résident{{ "e" if vp.civilite == "Madame" else "" }} au sens de la réglementation fiscale.
-{% if not loop.last %}
-
-Et {% endif %}
-{% endfor %}
-{% elif origine.origine_immediate.vendeur_precedent %}
-{{ origine.origine_immediate.vendeur_precedent }}
-{% else %}
-*(identité du vendeur précédent à compléter)*
-{% endif %}
-
-Suivant acte reçu par {{ origine.origine_immediate.notaire }}, le {{ origine.origine_immediate.date | format_date }}.
-Le prix a été payé comptant et quittancé audit acte.
-Cet acte a été publié au service de la publicité foncière de {{ origine.origine_immediate.publication.service }}, le {{ origine.origine_immediate.publication.date | format_date }}, volume {{ origine.origine_immediate.publication.volume }}, numéro {{ origine.origine_immediate.publication.numero }}.
-
-{% if origine.etat_publication %}{{ origine.etat_publication }}{% else %}L'état délivré sur cette publication n'a pas été présenté au notaire soussigné.{% endif %}
-
-{% if origine.origine_anterieure %}
-**Origine antérieure**
-
-L'origine antérieure est ci-après relatée telle qu'elle résulte de l'acte de vente susvisé :
-
-{{ origine.origine_anterieure }}
-{% endif %}
-
-{% if origine.origine_anterieure_2 %}
-**ORIGINE DE PROPRIETE ANTERIEURE**
-
-{{ origine.origine_anterieure_2 }}
-{% endif %}
-
-{% if origine.origine_plus_anterieure %}
-**ORIGINE DE PROPRIETE PLUS ANTERIEURE**
-
-L'origine de propriété plus antérieure est ci-après littéralement relatée, telle qu'elle figure dans l'acte de vente susvisé :
-
-{{ origine.origine_plus_anterieure }}
-{% endif %}
-
-{% endfor %}
-{% endif %}
+# NEGOCIATION
 
 {% if negociation %}
-### NÉGOCIATION
+{% if negociation.agent_immobilier %}
+La présente vente a été négociée par <<<VAR_START>>>{{ negociation.agent_immobilier.nom }}<<<VAR_END>>>, {% if negociation.agent_immobilier.statut == 'agent' %}agent immobilier{% elif negociation.agent_immobilier.statut == 'commercial' %}agent commercial{% endif %}, immatriculé au Registre spécial des agents commerciaux du Tribunal de commerce de <<<VAR_START>>>{{ negociation.agent_immobilier.tribunal }}<<<VAR_END>>> sous le numéro <<<VAR_START>>>{{ negociation.agent_immobilier.numero_rsac }}<<<VAR_END>>>.
 
-La vente a été négociée par {{ negociation.agence }} titulaire d'un mandat donné par le VENDEUR sous le numéro {{ negociation.numero_mandat }} en date du {{ negociation.date_mandat | format_date }} non encore expiré, ainsi déclaré.
-En conséquence, **le VENDEUR** qui en a seul la charge aux termes du mandat, doit à l'agence une rémunération de {{ negociation.honoraires|format_nombre }} EUR taxe sur la valeur ajoutée incluse.
-Cette rémunération est réglée par la comptabilité de l'office notarial.
-Etant ici précisé que le montant de la négociation est compris dans le prix indiqué ci-dessous.
+{% if negociation.agent_immobilier.carte_professionnelle %}
+Carte professionnelle n° <<<VAR_START>>>{{ negociation.agent_immobilier.carte_professionnelle }}<<<VAR_END>>> délivrée par la Chambre de Commerce et d'Industrie de <<<VAR_START>>>{{ negociation.agent_immobilier.cci }}<<<VAR_END>>>.
 {% endif %}
 
-### MODALITÉS DE DÉLIVRANCE DE LA COPIE AUTHENTIQUE
+{% if negociation.agent_immobilier.garantie_financiere %}
+Garantie financière souscrite auprès de <<<VAR_START>>>{{ negociation.agent_immobilier.garantie_financiere.organisme }}<<<VAR_END>>> à hauteur de <<<VAR_START>>>{{ negociation.agent_immobilier.garantie_financiere.montant | format_nombre }}<<<VAR_END>>> EUR.
+{% endif %}
 
-Le notaire rédacteur adressera, à l'attention de l'**ACQUEREUR**, une copie authentique, sur support papier ou sur support électronique, des présentes qu'ultérieurement, notamment en cas de demande expresse de ce dernier, de son mandataire, de son notaire, ou de son ayant droit.
-Néanmoins, le notaire lui adressera, immédiatement après la signature des présentes, une copie scannée de l'acte si l'acte a été signé sur support papier, ou une copie de l'acte électronique s'il a été signé sous cette forme.
+{% if negociation.commission %}
+La commission de l'agent, d'un montant de <<<VAR_START>>>{{ negociation.commission.montant | format_nombre }}<<<VAR_END>>> EUR TTC (<<<VAR_START>>>{{ negociation.commission.montant | montant_en_lettres }}<<<VAR_END>>> euros), est à la charge {% if negociation.commission.charge == 'vendeur' %}du VENDEUR{% elif negociation.commission.charge == 'acquereur' %}de l'ACQUEREUR{% elif negociation.commission.charge == 'partagee' %}des parties à parts égales{% endif %} et sera acquittée lors de la signature des présentes.
+{% endif %}
+{% else %}
+La présente vente n'a fait l'objet d'aucune intervention d'un agent immobilier ou d'un courtier. Elle résulte de pourparlers directs entre les parties.
+{% endif %}
+{% endif %}
 
-L'**ACQUEREUR** donne son agrément à ces modalités de délivrance, sans que cet agrément vaille dispense pour le notaire de délivrer ultérieurement la copie authentique.
+# Modalités de délivrance de la copie authentique
 
-### CONCLUSION DU CONTRAT
+Les parties sont informées que la présente vente sera publiée au service de la publicité foncière de <<<VAR_START>>>{{ bien.adresse.departement }}<<<VAR_END>>>.
+
+{% if modalites_delivrance %}
+{% if modalites_delivrance.copie_authentique %}
+La copie authentique de l'acte sera délivrée :
+
+{% if modalites_delivrance.copie_authentique.delai %}
+- Dans un délai de <<<VAR_START>>>{{ modalites_delivrance.copie_authentique.delai }}<<<VAR_END>>> jours suivant la réalisation de la formalité de publicité foncière
+{% endif %}
+
+{% if modalites_delivrance.copie_authentique.mode == 'remise_main_propre' %}
+- Par remise en main propre à l'étude
+{% elif modalites_delivrance.copie_authentique.mode == 'envoi_postal' %}
+- Par envoi postal recommandé avec accusé de réception
+{% elif modalites_delivrance.copie_authentique.mode == 'electronique' %}
+- Par voie électronique sécurisée
+{% endif %}
+
+{% if modalites_delivrance.copie_authentique.frais %}
+Les frais de délivrance de la copie authentique, d'un montant de <<<VAR_START>>>{{ modalites_delivrance.copie_authentique.frais | format_nombre }}<<<VAR_END>>> EUR, sont à la charge de l'ACQUEREUR.
+{% endif %}
+{% endif %}
+{% endif %}
+
+# CONCLUSION DU CONTRAT
 
 Les parties déclarent que les dispositions de ce contrat ont été, en respect des règles impératives de l'article 1104 du Code civil, négociées de bonne foi. Elles affirment qu'il reflète l'équilibre voulu par chacune d'elles.
 
-### DEVOIR D'INFORMATION RECIPROQUE
-
-En application de l'article 1112-1 du Code civil qui impose aux parties un devoir précontractuel d'information, qui ne saurait toutefois porter sur le prix, le **VENDEUR** déclare avoir porté à la connaissance de l'**ACQUEREUR** l'ensemble des informations dont il dispose ayant un lien direct et nécessaire avec le contenu du présent contrat et dont l'importance pourrait être déterminante de son consentement.
-Ce devoir s'applique à toute information sur les caractéristiques juridiques, matérielles et environnementales relatives au **BIEN**, ainsi qu'à son usage, dont il a personnellement connaissance par lui-même et par des tiers, sans que ces informations puissent être limitées dans le temps.
-Le **VENDEUR** reconnaît être informé qu'un manquement à ce devoir serait sanctionné par la mise en oeuvre de sa responsabilité, avec possibilité d'annulation du contrat s'il a vicié le consentement de l'**ACQUEREUR**.
-Pareillement, l'**ACQUEREUR** déclare avoir rempli les mêmes engagements, tout manquement pouvant être sanctionné comme indiqué ci-dessus.
-Le devoir d'information est donc réciproque.
-En outre, conformément aux dispositions de l'article 1602 du Code civil, le **VENDEUR** est tenu d'expliquer clairement ce à quoi il s'oblige, tout pacte obscur ou ambigu s'interprétant contre lui.
-Les **PARTIES** attestent que les informations déterminantes connues d'elles, données et reçues, sont rapportées aux présentes.
-
-### RENONCIATION À L'IMPRÉVISION
-
-Le mécanisme de l'imprévision nécessite un changement de circonstances rendant l'exécution d'un contrat excessivement onéreuse, changement imprévisible lors de la conclusion de celui-ci.
-Ce mécanisme est prévu à l'article 1195 du Code civil dont les dispositions sont littéralement rapportées :
-*"Si un changement de circonstances imprévisible lors de la conclusion du contrat rend l'exécution excessivement onéreuse pour une partie qui n'avait pas accepté d'en assumer le risque, celle-ci peut demander une renégociation du contrat à son cocontractant. Elle continue à exécuter ses obligations durant la renégociation.
-En cas de refus ou d'échec de la renégociation, les parties peuvent convenir de la résolution du contrat, à la date et aux conditions qu'elles déterminent, ou demander d'un commun accord au juge de procéder à son adaptation. A défaut d'accord dans un délai raisonnable, le juge peut, à la demande d'une partie, réviser le contrat ou y mettre fin, à la date et aux conditions qu'il fixe".*
-Les parties écartent de leur contrat les dispositions de l'article 1195 du Code civil permettant la révision du contrat pour imprévision, estimant que compte tenu du contexte des présentes, cette renonciation n'aura pas de conséquences déraisonnables à l'endroit de l'une d'entre elles. Par suite, elles ne pourront pas solliciter judiciairement la renégociation des présentes s'il survient un évènement imprévisible rendant l'exécution excessivement onéreuse pour l'une d'entre elles. Toutefois cette renonciation n'aura d'effet que pour les évènements qui n'auront pas été prévus aux termes des présentes.
-Une telle renonciation ne concerne pas le cas de force majeure caractérisé par l'irrésistibilité et l'imprévisibilité qui impliquent l'impossibilité pour le débiteur d'exécuter son obligation et dont seul le débiteur peut se prévaloir.
-Aux termes de l'article 1218 du Code civil "*Il y a force majeure en matière contractuelle lorsqu'un événement échappant au contrôle du débiteur, qui ne pouvait être raisonnablement prévu lors de la conclusion du contrat et dont les effets ne peuvent être évités par des mesures appropriées, empêche l'exécution de son obligation par le débiteur.
-Si l'empêchement est temporaire, l'exécution de l'obligation est suspendue à moins que le retard qui en résulterait ne justifie la résolution du contrat. Si l'empêchement est définitif, le contrat est résolu de plein droit et les parties sont libérées de leurs obligations dans les conditions prévues aux articles 1351 et 1351-1.*"
-
-{% if avant_contrat %}
-### CONVENTIONS ANTERIEURES
-
-Les présentes entrant dans le champ d'application de l'article L 271-1 du Code de la construction et de l'habitation issu de la loi relative à la solidarité et au renouvellement urbain, les parties attestent que les conventions contenues dans le présent acte sont identiques à celles figurant dans l'avant-contrat.
-Si toutefois des différences existaient les parties précisent qu'il ne s'agit alors que de points mineurs n'altérant pas les conditions essentielles et déterminantes de la vente telles qu'elles sont relatées dans l'avant contrat.
+{% if conclusion_contrat %}
+{% if conclusion_contrat.negociation_bonne_foi %}
+Les parties attestent avoir négocié de manière loyale et transparente, chacune ayant eu la possibilité de formuler ses observations et propositions.
 {% endif %}
 
-### MÉDIATION
+{% if conclusion_contrat.information_prealable %}
+Les parties reconnaissent avoir reçu et pris connaissance de toutes les informations nécessaires à la formation de leur consentement, notamment :
 
-Les parties sont informées qu'en cas de litige entre elles ou avec un tiers, elles pourront, préalablement à toute instance judiciaire, le soumettre à un médiateur qui sera désigné et missionné par le Centre de médiation notariale dont elles trouveront toutes les coordonnées et renseignements utiles sur le site : https://www.mediation.notaires.fr.
+{% for info in conclusion_contrat.information_prealable %}
+- {{ info }}
+{% endfor %}
+{% endif %}
+{% endif %}
 
-### ELECTION DE DOMICILE
+# DEVOIR D'INFORMATION RECIPROQUE
+
+Les parties s'engagent réciproquement à s'informer mutuellement de tout élément nouveau susceptible d'avoir une incidence sur l'exécution du présent contrat.
+
+{% if devoir_information %}
+Cet engagement porte notamment sur :
+
+{% if devoir_information.elements %}
+{% for element in devoir_information.elements %}
+- {{ element }}
+{% endfor %}
+{% else %}
+- Tout changement de situation personnelle (adresse, état civil, capacité juridique)
+- Toute modification affectant le bien (sinistre, travaux, servitudes nouvelles)
+- Tout litige ou contentieux relatif au bien
+- Toute évolution réglementaire ou fiscale ayant un impact sur les droits et obligations des parties
+{% endif %}
+
+Le manquement à cette obligation pourra engager la responsabilité de la partie défaillante sur le fondement des articles 1104 et suivants du Code civil.
+{% endif %}
+
+# Renonciation à l'imprévision
+
+{% if imprevision %}
+{% if imprevision.renonciation %}
+En application de l'article 1195 du Code civil, les parties conviennent expressément de renoncer à se prévaloir du régime de l'imprévision.
+
+En conséquence, même si un changement de circonstances imprévisible lors de la conclusion du contrat rend l'exécution excessivement onéreuse pour une partie qui n'avait pas accepté d'en assumer le risque, celle-ci ne pourra demander une renégociation du contrat à son cocontractant ni saisir le juge à cette fin.
+
+Les parties reconnaissent avoir été informées par le notaire soussigné de la portée de cette renonciation.
+{% else %}
+Les parties n'ont pas renoncé à l'application de l'article 1195 du Code civil relatif à l'imprévision.
+{% endif %}
+{% endif %}
+
+# CONVENTIONS ANTERIEURES
+
+{% if conventions_anterieures %}
+{% if conventions_anterieures.compromis %}
+Les présentes font suite à un compromis de vente sous signature privée en date du <<<VAR_START>>>{{ conventions_anterieures.compromis.date | format_date }}<<<VAR_END>>>, enregistré le <<<VAR_START>>>{{ conventions_anterieures.compromis.date_enregistrement | format_date }}<<<VAR_END>>> au Service de l'enregistrement de <<<VAR_START>>>{{ conventions_anterieures.compromis.lieu_enregistrement }}<<<VAR_END>>>, folio <<<VAR_START>>>{{ conventions_anterieures.compromis.folio }}<<<VAR_END>>>, case <<<VAR_START>>>{{ conventions_anterieures.compromis.case }}<<<VAR_END>>>.
+
+Le présent acte réitère et complète les termes de ce compromis, les parties déclarant qu'il n'existe aucune contre-lettre ni aucun avenant modificatif autres que ceux éventuellement mentionnés aux présentes.
+
+{% if conventions_anterieures.compromis.conditions_suspensives %}
+Les conditions suspensives stipulées au compromis {% if conventions_anterieures.compromis.conditions_realisees %}ont toutes été réalisées{% else %}ont été levées ou sont devenues caduques{% endif %}.
+{% endif %}
+{% else %}
+Le présent acte n'est précédé d'aucun avant-contrat.
+{% endif %}
+
+{% if conventions_anterieures.autres %}
+{% for convention in conventions_anterieures.autres %}
+### {{ convention.type }}
+
+{{ convention.description }}
+
+{% if convention.date %}
+Date : <<<VAR_START>>>{{ convention.date | format_date }}<<<VAR_END>>>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+# Médiation
+
+Les parties sont informées qu'en cas de litige entre elles ou avec un tiers, elles pourront, préalablement à toute instance judiciaire, le soumettre à un médiateur qui sera désigné et missionné par le **Centre de médiation notariale** dont elles trouveront toutes les coordonnées et renseignements utiles sur le site : **https://www.mediation.notaires.fr**.
+
+{% if mediation %}
+{% if mediation.clause_obligatoire %}
+Les parties s'engagent à recourir obligatoirement à la médiation avant toute action en justice, sauf en cas d'urgence ou de mesures conservatoires.
+
+Le délai de médiation ne pourra excéder <<<VAR_START>>>{{ mediation.delai_maximum | default(3) }}<<<VAR_END>>> mois.
+
+Les frais de médiation seront partagés par moitié entre les parties, sauf accord contraire.
+{% endif %}
+{% endif %}
+
+# ELECTION DE DOMICILE
 
 Les parties élisent domicile :
 
-* en leur demeure ou siège respectif pour l'exécution des présentes et de leurs suites,
+- En leur demeure ou siège respectif pour l'exécution des présentes et de leurs suites
+- En l'office notarial pour la publicité foncière, l'envoi des pièces et la correspondance s'y rapportant
 
-* en l'office notarial pour la publicité foncière, l'envoi des pièces et la correspondance s'y rapportant.
+{% if election_domicile %}
+{% if election_domicile.vendeur %}
+**VENDEUR** : <<<VAR_START>>>{{ election_domicile.vendeur }}<<<VAR_END>>>
+{% endif %}
 
-### TITRES - CORRESPONDANCE ET RENVOI DES PIECES
+{% if election_domicile.acquereur %}
+**ACQUEREUR** : <<<VAR_START>>>{{ election_domicile.acquereur }}<<<VAR_END>>>
+{% endif %}
 
-Il ne sera remis aucun ancien titre de propriété à l'**ACQUEREUR** qui pourra se faire délivrer, à ses frais, ceux dont il pourrait avoir besoin, et sera subrogé dans tous les droits du **VENDEUR** à ce sujet.
-En suite des présentes, la correspondance et le renvoi des pièces à l'**ACQUEREUR** devront s'effectuer à l'adresse du bien présentement acquis.
-La correspondance auprès du **VENDEUR** s'effectuera à l'adresse indiquée en tête des présentes.
 Chacune des parties s'oblige à communiquer au notaire tout changement de domicile ou siège et ce par lettre recommandée avec demande d'avis de réception.
+{% endif %}
 
-### POUVOIRS - PUBLICITÉ FONCIÈRE
+En suite des présentes, la correspondance et le renvoi des pièces à l'ACQUEREUR devront s'effectuer à l'adresse du bien présentement acquis.
+
+La correspondance auprès du VENDEUR s'effectuera à l'adresse indiquée en tête des présentes.
+
+# TITRES - CORRESPONDANCE ET RENVOI DES PIECES
+
+Il ne sera remis aucun ancien titre de propriété à l'ACQUEREUR qui pourra se faire délivrer, à ses frais, ceux dont il pourrait avoir besoin, et sera subrogé dans tous les droits du VENDEUR à ce sujet.
+
+{% if titres %}
+{% if titres.anciens_titres %}
+Les anciens titres de propriété concernant le BIEN sont les suivants :
+
+{% for titre in titres.anciens_titres %}
+- {{ titre.type }} du <<<VAR_START>>>{{ titre.date | format_date }}<<<VAR_END>>> reçu par Maître <<<VAR_START>>>{{ titre.notaire }}<<<VAR_END>>>, publié au service de la publicité foncière de <<<VAR_START>>>{{ titre.conservation }}<<<VAR_END>>> le <<<VAR_START>>>{{ titre.date_publication | format_date }}<<<VAR_END>>>, volume <<<VAR_START>>>{{ titre.volume }}<<<VAR_END>>>, numéro <<<VAR_START>>>{{ titre.numero }}<<<VAR_END>>>
+{% endfor %}
+{% endif %}
+
+{% if titres.correspondance %}
+La correspondance relative à l'exécution du présent acte sera adressée :
+
+- Pour le VENDEUR : <<<VAR_START>>>{{ titres.correspondance.vendeur }}<<<VAR_END>>>
+- Pour l'ACQUEREUR : <<<VAR_START>>>{{ titres.correspondance.acquereur }}<<<VAR_END>>>
+{% endif %}
+{% endif %}
+
+# Pouvoirs - Publicité foncière
 
 Pour l'accomplissement des formalités de publicité foncière ou réparer une erreur matérielle telle que l'omission d'une pièce annexe dont le contenu est relaté aux présentes, les parties agissant dans un intérêt commun donnent tous pouvoirs nécessaires à tout notaire ou à tout collaborateur de l'office notarial dénommé en tête des présentes, à l'effet de faire dresser et signer tous actes complémentaires ou rectificatifs pour mettre le présent acte en concordance avec tous les documents hypothécaires, cadastraux ou d'état civil.
 
-### AFFIRMATION DE SINCÉRITÉ
+{% if pouvoirs %}
+{% if pouvoirs.complementaires %}
+Les parties donnent également pouvoir pour :
+
+{% for pouvoir in pouvoirs.complementaires %}
+- {{ pouvoir }}
+{% endfor %}
+{% endif %}
+
+{% if pouvoirs.restrictions %}
+Ces pouvoirs sont limités aux opérations suivantes : <<<VAR_START>>>{{ pouvoirs.restrictions | join(', ') }}<<<VAR_END>>>.
+{% endif %}
+{% endif %}
+
+# Affirmation de sincérité
 
 Les parties affirment, sous les peines édictées par l'article 1837 du Code général des impôts, que le présent acte exprime l'intégralité du prix.
+
 Elles reconnaissent avoir été informées par le notaire soussigné des sanctions fiscales et des peines correctionnelles encourues en cas d'inexactitude de cette affirmation ainsi que des conséquences civiles édictées par l'article 1202 du Code civil.
+
 Le notaire soussigné précise qu'à sa connaissance le présent acte n'est modifié ni contredit par aucune contre-lettre contenant augmentation du prix.
 
-### DEMANDE DE RESTITUTION – AUTORISATION DE DESTRUCTION DES DOCUMENTS ET PIÈCES
+{% if affirmation %}
+{% if affirmation.sanctions %}
+Les parties ont été expressément informées que :
 
-Les originaux des documents et pièces remis par les parties au notaire leur seront restitués, si elles en font la demande expresse dans le délai d'un mois à compter des présentes.
+- Toute dissimulation de prix est punie d'une amende de 50% du montant dissimulé (article 1840 G ter du CGI)
+- La minoration du prix peut constituer le délit d'escroquerie au jugement puni de 5 ans d'emprisonnement et 375 000 EUR d'amende (article 313-1 du Code pénal)
+- La dissimulation de prix permet à l'administration fiscale de se prévaloir d'une présomption de revenu d'origine indéterminée
+{% endif %}
+{% endif %}
+
+# Demande de restitution – Autorisation de destruction des documents et pièces
+
+Les originaux des documents et pièces remis par les parties au notaire leur seront restitués, si elles en font la demande expresse dans le délai de <<<VAR_START>>>{{ restitution.delai | default('un mois') }}<<<VAR_END>>> à compter des présentes.
+
 A défaut, les parties autorisent l'office notarial à détruire ces documents et pièces, et notamment tout avant-contrat sous signature privée pouvant avoir été établi en vue de la conclusion du présent acte, considérant que celui-ci contient l'intégralité des conventions auxquelles elles ont entendu donner le caractère d'authenticité.
 
-### MENTION SUR LA PROTECTION DES DONNÉES PERSONNELLES
+{% if restitution %}
+{% if restitution.documents_conserves %}
+Les parties demandent expressément la conservation des documents suivants :
+
+{% for doc in restitution.documents_conserves %}
+- {{ doc }}
+{% endfor %}
+{% endif %}
+
+{% if restitution.duree_conservation %}
+Les documents seront conservés pendant une durée de <<<VAR_START>>>{{ restitution.duree_conservation }}<<<VAR_END>>> ans.
+{% endif %}
+{% endif %}
+
+# Mention sur la protection des données personnelles
 
 L'Office notarial traite des données personnelles concernant les personnes mentionnées aux présentes, pour l'accomplissement des activités notariales, notamment de formalités d'actes.
+
 Ce traitement est fondé sur le respect d'une obligation légale et l'exécution d'une mission relevant de l'exercice de l'autorité publique déléguée par l'Etat dont sont investis les notaires, officiers publics, conformément à l'ordonnance n°45-2590 du 2 novembre 1945.
+
 Ces données seront susceptibles d'être transférées aux destinataires suivants :
 
-* les administrations ou partenaires légalement habilités tels que la Direction Générale des Finances Publiques, ou, le cas échéant, le livre foncier, les instances notariales, les organismes du notariat, les fichiers centraux de la profession notariale (Fichier Central Des Dernières Volontés, Minutier Central Électronique des Notaires, registre du PACS, etc.),
+- Les administrations ou partenaires légalement habilités tels que la Direction Générale des Finances Publiques, ou, le cas échéant, le livre foncier
+- Les instances notariales
+- Les organismes du notariat
+- Les fichiers centraux de la profession notariale (Fichier Central Des Dernières Volontés, Minutier Central Électronique des Notaires, registre du PACS, etc.)
 
-* les offices notariaux participant ou concourant à l'acte,
+{% if rgpd %}
+{% if rgpd.duree_conservation %}
+Les données seront conservées pendant la durée légale de conservation des actes notariés, soit <<<VAR_START>>>{{ rgpd.duree_conservation | default(75) }}<<<VAR_END>>> ans à compter de la signature de l'acte.
+{% endif %}
 
-* les établissements financiers concernés,
+Les personnes concernées disposent d'un droit d'accès, de rectification, d'effacement, de limitation et de portabilité de leurs données ainsi que d'un droit d'opposition au traitement et d'un droit de définir des directives relatives au sort de leurs données après leur décès.
 
-* les organismes de conseils spécialisés pour la gestion des activités notariales,
+Ces droits peuvent être exercés auprès de l'office notarial :
 
-* le Conseil supérieur du notariat ou son délégataire, pour la production des statistiques permettant l'évaluation des biens immobiliers, en application du décret n° 2013-803 du 3 septembre 2013,
+{% if rgpd.contact_dpo %}
+- Par courrier : <<<VAR_START>>>{{ rgpd.contact_dpo.adresse }}<<<VAR_END>>>
+- Par email : <<<VAR_START>>>{{ rgpd.contact_dpo.email }}<<<VAR_END>>>
+{% endif %}
 
-* les organismes publics ou privés pour des opérations de vérification dans le cadre de la recherche de personnalités politiquement exposées ou ayant fait l'objet de gel des avoirs ou sanctions, de la lutte contre le blanchiment des capitaux et le financement du terrorisme. Ces vérifications font l'objet d'un transfert de données dans un pays situé hors de l'Union Européenne disposant d'une législation sur la protection des données reconnue comme équivalente par la Commission européenne.
+En cas de difficulté, les personnes concernées peuvent saisir la Commission Nationale de l'Informatique et des Libertés (CNIL) : www.cnil.fr.
+{% endif %}
 
-La communication de ces données à ces destinataires peut être indispensable pour l'accomplissement des activités notariales.
-Les documents permettant d'établir, d'enregistrer et de publier les actes sont conservés 30 ans à compter de la réalisation de l'ensemble des formalités. L'acte authentique et ses annexes sont conservés 75 ans et 100 ans lorsque l'acte porte sur des personnes mineures ou majeures protégées. Les vérifications liées aux personnalités politiquement exposées, au blanchiment des capitaux et au financement du terrorisme sont conservées 5 ans après la fin de la relation d'affaires.
-Conformément à la réglementation en vigueur relative à la protection des données personnelles, les intéressés peuvent demander l'accès aux données les concernant. Le cas échéant, ils peuvent demander la rectification ou l'effacement de celles-ci, obtenir la limitation du traitement de ces données ou s'y opposer pour des raisons tenant à leur situation particulière. Ils peuvent également définir des directives relatives à la conservation, à l'effacement et à la communication de leurs données personnelles après leur décès.
-L'Office notarial a désigné un Délégué à la protection des données que les intéressés peuvent contacter à l'adresse suivante : dpo.notaires@datavigiprotection.fr.
-Si ces personnes estiment, après avoir contacté l'Office notarial, que leurs droits ne sont pas respectés, elles peuvent introduire une réclamation auprès d'une autorité européenne de contrôle, la Commission Nationale de l'Informatique et des Libertés pour la France.
+# Certification d'identité
 
-### CERTIFICATION D'IDENTITÉ
+Le notaire soussigné certifie que l'identité complète des parties telle qu'elle est indiquée en tête des présentes lui a été régulièrement justifiée.
 
-Le notaire soussigné certifie que l'identité complète des parties dénommées dans le présent document telle qu'elle est indiquée en tête des présentes à la suite de leur nom ou dénomination lui a été régulièrement justifiée.
+{% if certification_identite %}
+{% if certification_identite.documents_presentes %}
+Les documents d'identité suivants ont été présentés :
 
-### FORMALISME LIÉ AUX ANNEXES
+**VENDEUR** :
+{% for doc in certification_identite.documents_presentes.vendeur %}
+- {{ doc.type }} n° <<<VAR_START>>>{{ doc.numero }}<<<VAR_END>>> délivré le <<<VAR_START>>>{{ doc.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ doc.autorite }}<<<VAR_END>>>
+{% endfor %}
 
-Les annexes, s'il en existe, font partie intégrante de la minute.
-Lorsque l'acte est établi sur support papier, les pièces annexées à l'acte sont revêtues d'une mention constatant cette annexe et signée du notaire, sauf si les feuilles de l'acte et des annexes sont réunies par un procédé empêchant toute substitution ou addition.
-Si l'acte est établi sur support électronique, la signature du notaire en fin d'acte vaut également pour ses annexes.
+**ACQUEREUR** :
+{% for doc in certification_identite.documents_presentes.acquereur %}
+- {{ doc.type }} n° <<<VAR_START>>>{{ doc.numero }}<<<VAR_END>>> délivré le <<<VAR_START>>>{{ doc.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ doc.autorite }}<<<VAR_END>>>
+{% endfor %}
+{% endif %}
+
+Le notaire a procédé à la vérification de l'authenticité de ces documents conformément aux dispositions de l'article 1369 du Code civil.
+{% endif %}
+
+# Formalisme lié aux annexes
+
+Le présent acte est complété par les annexes suivantes, qui en font partie intégrante :
+
+{% if annexes %}
+{% for annexe in annexes %}
+**Annexe n°{{ loop.index }}** : {{ annexe.titre }}
+{% if annexe.description %}
+{{ annexe.description }}
+{% endif %}
+{% endfor %}
+
+Les parties déclarent avoir pris connaissance de l'ensemble de ces annexes préalablement à la signature des présentes.
+{% else %}
+Aucune annexe n'est jointe au présent acte.
+{% endif %}

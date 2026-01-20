@@ -126,11 +126,67 @@ def generer_situation_matrimoniale() -> Dict:
         result["conjoint"] = generer_personne_physique(genre_conjoint)
 
     elif statut == "pacse":
-        result["date_pacs"] = fake.date_between(start_date="-10y", end_date="-1y").isoformat()
+        date_pacs = fake.date_between(start_date="-10y", end_date="-1y")
+        result["date_pacs"] = date_pacs.isoformat()
+        result["regime_pacs"] = random.choice(["séparation de biens", "indivision"])
+        result["lieu_pacs"] = f"au greffe du tribunal judiciaire de {random.choice(['Lyon', 'Villeurbanne', 'Vénissieux'])}"
         genre_partenaire = random.choice(["homme", "femme"])
         result["partenaire"] = generer_personne_physique(genre_partenaire)
+        result["conjoint"] = result["partenaire"]  # Alias pour compatibilité template
+
+    elif statut == "divorce":
+        date_jugement = fake.date_between(start_date="-15y", end_date="-1y")
+        result["jugement_divorce"] = {
+            "date": date_jugement.isoformat(),
+            "lieu": random.choice(["Lyon", "Villeurbanne", "Vénissieux"])
+        }
+        genre_ex = random.choice(["homme", "femme"])
+        ex_conjoint = generer_personne_physique(genre_ex)
+        result["ex_conjoint"] = {
+            "civilite": ex_conjoint["civilite"],
+            "nom": ex_conjoint["nom"]
+        }
+
+    elif statut == "veuf":
+        genre_defunt = random.choice(["homme", "femme"])
+        defunt = generer_personne_physique(genre_defunt)
+        result["defunt_conjoint"] = {
+            "civilite": defunt["civilite"],
+            "nom": defunt["nom"]
+        }
 
     return result
+
+
+def normaliser_situation_matrimoniale(sitmat: Dict) -> Dict:
+    """
+    Normalise la structure de situation matrimoniale pour compatibilité template.
+    Transforme la structure flat en structure nested attendue par les templates.
+    """
+    sitmat_norm = sitmat.copy()
+
+    # Pour PACS: restructurer en objet imbriqué
+    if sitmat.get("statut") == "pacse" and "pacs" not in sitmat:
+        sitmat_norm["pacs"] = {
+            "date": sitmat.get("date_pacs", ""),
+            "regime_libelle": sitmat.get("regime_pacs", "séparation de biens"),
+            "lieu_enregistrement": sitmat.get("lieu_pacs", "au greffe du tribunal")
+        }
+        # Assurer que conjoint existe (alias de partenaire)
+        if "partenaire" in sitmat and "conjoint" not in sitmat_norm:
+            sitmat_norm["conjoint"] = sitmat["partenaire"]
+
+    # Pour mariage: restructurer contrat_mariage
+    elif sitmat.get("statut") == "marie" and sitmat.get("contrat_mariage"):
+        if "contrat_mariage" not in sitmat or not isinstance(sitmat.get("contrat_mariage"), dict):
+            sitmat_norm["regime_matrimonial_libelle"] = sitmat.get("regime_matrimonial", "communauté légale")
+            sitmat_norm["contrat_mariage"] = {
+                "date": sitmat.get("date_mariage", ""),
+                "notaire": sitmat.get("notaire_contrat", ""),
+                "lieu": "Lyon"
+            }
+
+    return sitmat_norm
 
 
 def generer_personne_morale() -> Dict:
@@ -228,13 +284,20 @@ def generer_lot(numero: int, batiment: str = None) -> Dict:
         superficie = random.randint(5, 20)
         description = f"Un {designation.lower()}"
 
+    tantiemes_val = random.randint(50, 300)
     lot = {
         "numero": numero,
         "etage": etage if designation in ["Appartement", "Studio"] else "rez-de-chaussée",
         "designation": designation,
         "description_detaillee": description,
         "superficie_carrez": round(superficie + random.uniform(-2, 2), 2),
-        "tantiemes_generaux": random.randint(50, 300),
+        "tantiemes_generaux": tantiemes_val,
+        "tantiemes": {
+            "valeur": tantiemes_val,
+            "base": 1000,
+            "base_unite": "millièmes",
+            "type": "tantièmes généraux"
+        },
         "usage": "habitation" if designation in ["Appartement", "Studio"] else "commercial"
     }
 
@@ -281,6 +344,12 @@ def generer_lot_annexe(numero: int, type_lot: str, batiment: str = None) -> Dict
         "description_detaillee": description,
         "superficie_carrez": superficie if type_lot not in ["parking"] else None,
         "tantiemes_generaux": tantiemes,
+        "tantiemes": {
+            "valeur": tantiemes,
+            "base": 1000,
+            "base_unite": "millièmes",
+            "type": "tantièmes généraux"
+        },
         "usage": usage
     }
 
@@ -741,39 +810,42 @@ def generer_donnees_vente(nb_lots: int = 1) -> Dict:
     """
     date_acte = fake.date_between(start_date="today", end_date="+30d")
 
-    # Vendeurs
+    # Vendeurs (TOUJOURS personnes physiques pour compatibilité template)
     nb_vendeurs = random.randint(1, 2)
     vendeurs = []
     for _ in range(nb_vendeurs):
-        type_vendeur = random.choice(["personne_physique", "personne_morale"])
-        vendeur = {"type": type_vendeur}
-        if type_vendeur == "personne_physique":
-            vendeur["personne_physique"] = generer_personne_physique()
-            vendeur["personne_physique"]["situation_matrimoniale"] = generer_situation_matrimoniale()
-        else:
-            vendeur["personne_morale"] = generer_personne_morale()
+        vendeur = {"type": "personne_physique"}
+        vendeur["personne_physique"] = generer_personne_physique()
+        vendeur["personne_physique"]["situation_matrimoniale"] = normaliser_situation_matrimoniale(
+            generer_situation_matrimoniale()
+        )
         vendeurs.append(vendeur)
 
-    # Acquéreurs
+    # Acquéreurs (TOUJOURS personnes physiques pour compatibilité template)
     nb_acquereurs = random.randint(1, 2)
     acquereurs = []
     for _ in range(nb_acquereurs):
-        type_acquereur = random.choice(["personne_physique", "personne_morale"])
-        acquereur = {"type": type_acquereur}
-        if type_acquereur == "personne_physique":
-            acquereur["personne_physique"] = generer_personne_physique()
-            acquereur["personne_physique"]["situation_matrimoniale"] = generer_situation_matrimoniale()
-        else:
-            acquereur["personne_morale"] = generer_personne_morale()
+        acquereur = {"type": "personne_physique"}
+        acquereur["personne_physique"] = generer_personne_physique()
+        acquereur["personne_physique"]["situation_matrimoniale"] = normaliser_situation_matrimoniale(
+            generer_situation_matrimoniale()
+        )
         acquereurs.append(acquereur)
 
     # Lots
     lots = []
     for i in range(nb_lots):
-        lots.append(generer_lot(random.randint(1, 50)))
+        lots.append(generer_lot(i + 1))
+
+    # Surface Carrez totale (somme des lots principaux seulement)
+    superficie_totale = sum(
+        lot.get("superficie_carrez", 0)
+        for lot in lots
+        if lot.get("superficie_carrez") is not None
+    )
 
     # Prix
-    prix_total = sum(lot.get("superficie_carrez", 50) * random.randint(2000, 6000) for lot in lots)
+    prix_total = sum(lot.get("superficie_carrez", 50) * random.randint(2000, 6000) for lot in lots if lot.get("superficie_carrez"))
     prix_total = round(prix_total, -2)  # Arrondi à la centaine
 
     # Financement
@@ -786,6 +858,44 @@ def generer_donnees_vente(nb_lots: int = 1) -> Dict:
         financement["duree_mois"] = random.choice([180, 240, 300])
         financement["taux"] = round(random.uniform(2.5, 4.5), 2)
 
+    # Quotités vendues (OBLIGATOIRE pour template)
+    quotites_vendues = []
+    if nb_vendeurs == 1:
+        quotites_vendues.append({
+            "personne_index": 0,
+            "quotite": "100%",
+            "type_propriete": "pleine_propriete",
+            "type_propriete_libelle": "la pleine propriété"
+        })
+    else:
+        # Répartition 50/50 par défaut
+        for i in range(nb_vendeurs):
+            quotites_vendues.append({
+                "personne_index": i,
+                "quotite": "50%",
+                "type_propriete": "pleine_propriete",
+                "type_propriete_libelle": "la pleine propriété indivise"
+            })
+
+    # Quotités acquises (OBLIGATOIRE pour template)
+    quotites_acquises = []
+    if nb_acquereurs == 1:
+        quotites_acquises.append({
+            "personne_index": 0,
+            "quotite": "100%",
+            "type_propriete": "pleine_propriete",
+            "type_propriete_libelle": "la pleine propriété"
+        })
+    else:
+        # Répartition 50/50 par défaut
+        for i in range(nb_acquereurs):
+            quotites_acquises.append({
+                "personne_index": i,
+                "quotite": "50%",
+                "type_propriete": "pleine_propriete",
+                "type_propriete_libelle": "la pleine propriété indivise"
+            })
+
     return {
         "acte": {
             "date": date_acte.isoformat(),
@@ -795,21 +905,60 @@ def generer_donnees_vente(nb_lots: int = 1) -> Dict:
         },
         "vendeurs": vendeurs,
         "acquereurs": acquereurs,
+        "quotites_vendues": quotites_vendues,
+        "quotites_acquises": quotites_acquises,
         "bien": {
             "adresse": generer_adresse_structuree(),
             "cadastre": generer_cadastre(1),
-            "lots": lots
+            "lots": lots,
+            "superficie_carrez": {
+                "superficie_m2": round(superficie_totale, 2),
+                "lot_concerne": lots[0]["numero"] if lots else 1
+            }
         },
         "prix": {
             "montant": prix_total,
             "modalites_paiement": "comptant" if financement["type"] == "comptant" else "partie comptant, partie à crédit"
         },
         "financement": financement,
+        "meubles": {
+            "inclus": random.choice([True, False]),
+            "valeur": random.choice([None, random.randint(1000, 5000)]) if random.choice([True, False]) else None,
+            "liste": [
+                "Cuisine équipée avec plaques de cuisson, four encastrable et hotte",
+                "Salle de bain avec meuble vasque",
+                "Rangements sur mesure dans la chambre"
+            ] if random.choice([True, False]) else []
+        },
+        "jouissance": {
+            "jouissance_anticipee": random.choice([True, False]),
+            "date_jouissance": fake.date_between(start_date="-3m", end_date="today").isoformat() if random.choice([True, False]) else None,
+            "convention_occupation": {
+                "date": fake.date_between(start_date="-3m", end_date="today").isoformat()
+            } if random.choice([True, False]) else None
+        },
         "diagnostics": {
             "dpe": {
                 "date": fake.date_between(start_date="-6m", end_date="today").isoformat(),
                 "classe_energie": random.choice(["A", "B", "C", "D", "E", "F", "G"]),
                 "classe_ges": random.choice(["A", "B", "C", "D", "E", "F", "G"])
+            }
+        },
+        "copropriete": {
+            "syndic": {
+                "nom": random.choice(["Cabinet FONCIA", "ORPI Gestion", "Nexity", "Citya Immobilier", "SERGIC"]),
+                "adresse": generer_adresse_complete(),
+                "telephone": f"0{random.randint(1, 9)} {random.randint(10, 99)} {random.randint(10, 99)} {random.randint(10, 99)} {random.randint(10, 99)}"
+            },
+            "reglement": {
+                "notaire_origine": f"Maître {random.choice(NOTAIRES)['nom']}",
+                "date_origine": fake.date_between(start_date="-30y", end_date="-5y").isoformat(),
+                "publication": "Lyon 3ème",
+                "modificatifs": []
+            },
+            "immatriculation": {
+                "numero": f"{random.randint(100, 999)}-{random.randint(1000, 9999)}-{random.randint(100, 999)}",
+                "date": fake.date_between(start_date="-10y", end_date="-1y").isoformat()
             }
         }
     }

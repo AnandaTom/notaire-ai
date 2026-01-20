@@ -45,6 +45,10 @@ except ImportError:
     print("Erreur: rich n'est pas installé. Exécutez: pip install rich")
     sys.exit(1)
 
+# Fix encoding pour Windows
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
 # Configuration
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
