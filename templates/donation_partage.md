@@ -897,3 +897,5 @@ Généré en l'office notarial et visualisé sur support électronique aux lieu,
 Et lecture faite, les parties ont certifié exactes les déclarations les concernant, avant d'apposer leur signature manuscrite sur tablette numérique.
 
 Le notaire, qui a recueilli l'image de leur signature, a lui-même apposé sa signature manuscrite, puis signé l'acte au moyen d'un procédé de signature électronique qualifié.
+
+{{ signature_parties }}
