@@ -1,0 +1,564 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Variables Donation-Partage",
+  "description": "Schéma des variables pour une donation-partage",
+  "type": "object",
+  "required": [
+    "reference_acte",
+    "date_acte",
+    "lieu_signature",
+    "notaire",
+    "donateur_1",
+    "donateur_2",
+    "donataires",
+    "mariage",
+    "nombre_enfants_lettres",
+    "nombre_donataires",
+    "biens_donnes",
+    "repartition"
+  ],
+  "properties": {
+    "reference_acte": {
+      "type": "string",
+      "description": "Référence de l'acte (ex: 100583001)",
+      "examples": ["100583001"]
+    },
+    "initiales_notaire": {
+      "type": "string",
+      "description": "Initiales du notaire (ex: CDI/ALG)",
+      "examples": ["CDI/ALG"]
+    },
+    "date_acte": {
+      "type": "object",
+      "required": ["year", "month", "day"],
+      "properties": {
+        "year": {"type": "integer"},
+        "month": {"type": "integer", "minimum": 1, "maximum": 12},
+        "day": {"type": "integer", "minimum": 1, "maximum": 31}
+      }
+    },
+    "lieu_signature": {
+      "type": "object",
+      "required": ["ville", "code_postal", "adresse"],
+      "properties": {
+        "ville": {"type": "string"},
+        "code_postal": {"type": "string"},
+        "adresse": {"type": "string"}
+      }
+    },
+    "notaire": {
+      "type": "object",
+      "required": ["civilite", "prenom", "nom", "type_societe", "nom_societe", "office", "crpcen"],
+      "properties": {
+        "civilite": {"type": "string", "enum": ["Maître"]},
+        "prenom": {"type": "string"},
+        "nom": {"type": "string"},
+        "type_societe": {"type": "string", "examples": ["société par actions simplifiée"]},
+        "nom_societe": {"type": "string"},
+        "office": {
+          "type": "object",
+          "properties": {
+            "ville": {"type": "string"},
+            "departement": {"type": "string"},
+            "code_postal": {"type": "string"},
+            "adresse": {"type": "string"}
+          }
+        },
+        "crpcen": {"type": "string", "pattern": "^\\d{5}$"}
+      }
+    },
+    "donateur_1": {
+      "type": "object",
+      "required": [
+        "civilite",
+        "civilite_court",
+        "prenom",
+        "nom",
+        "profession",
+        "naissance",
+        "nationalite",
+        "adresse"
+      ],
+      "properties": {
+        "civilite": {"type": "string", "enum": ["Monsieur", "Madame"]},
+        "civilite_court": {"type": "string", "enum": ["M.", "Mme"]},
+        "prenom": {"type": "string"},
+        "deuxieme_prenom": {"type": "string"},
+        "nom": {"type": "string"},
+        "profession": {"type": "string"},
+        "naissance": {
+          "type": "object",
+          "required": ["ville", "code_postal", "date"],
+          "properties": {
+            "ville": {"type": "string"},
+            "code_postal": {"type": "string"},
+            "date": {
+              "type": "object",
+              "properties": {
+                "year": {"type": "integer"},
+                "month": {"type": "integer"},
+                "day": {"type": "integer"}
+              }
+            }
+          }
+        },
+        "nationalite": {"type": "string", "default": "française"},
+        "adresse": {
+          "type": "object",
+          "properties": {
+            "numero": {"type": "string"},
+            "voie": {"type": "string"},
+            "ville": {"type": "string"},
+            "code_postal": {"type": "string"}
+          }
+        },
+        "sexe": {"type": "string", "enum": ["M", "F"]},
+        "age": {"type": "integer"}
+      }
+    },
+    "donateur_2": {
+      "type": "object",
+      "required": [
+        "civilite",
+        "civilite_court",
+        "prenom",
+        "nom",
+        "nom_naissance",
+        "profession",
+        "naissance",
+        "nationalite",
+        "adresse"
+      ],
+      "properties": {
+        "civilite": {"type": "string", "enum": ["Monsieur", "Madame"]},
+        "civilite_court": {"type": "string", "enum": ["M.", "Mme"]},
+        "prenom": {"type": "string"},
+        "deuxieme_prenom": {"type": "string"},
+        "troisieme_prenom": {"type": "string"},
+        "nom": {"type": "string"},
+        "nom_naissance": {"type": "string"},
+        "profession": {"type": "string"},
+        "naissance": {
+          "type": "object",
+          "required": ["ville", "code_postal", "date"],
+          "properties": {
+            "ville": {"type": "string"},
+            "code_postal": {"type": "string"},
+            "date": {
+              "type": "object",
+              "properties": {
+                "year": {"type": "integer"},
+                "month": {"type": "integer"},
+                "day": {"type": "integer"}
+              }
+            }
+          }
+        },
+        "nationalite": {"type": "string", "default": "française"},
+        "adresse": {
+          "type": "object"},
+        "sexe": {"type": "string", "enum": ["M", "F"]},
+        "age": {"type": "integer"}
+      }
+    },
+    "mariage": {
+      "type": "object",
+      "required": ["ville", "code_postal", "date", "regime", "articles_code_civil", "notaire", "contrat"],
+      "properties": {
+        "ville": {"type": "string"},
+        "code_postal": {"type": "string"},
+        "date": {
+          "type": "object",
+          "properties": {
+            "year": {"type": "integer"},
+            "month": {"type": "integer"},
+            "day": {"type": "integer"}
+          }
+        },
+        "regime": {"type": "string", "examples": ["la participation aux acquêts", "la communauté universelle"]},
+        "articles_code_civil": {"type": "string", "examples": ["1569 et suivants"]},
+        "notaire": {
+          "type": "object",
+          "properties": {
+            "civilite": {"type": "string"},
+            "prenom": {"type": "string"},
+            "nom": {"type": "string"},
+            "ville": {"type": "string"},
+            "code_postal": {"type": "string"}
+          }
+        },
+        "contrat": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "object",
+              "properties": {
+                "year": {"type": "integer"},
+                "month": {"type": "integer"},
+                "day": {"type": "integer"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "donataires": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["civilite", "prenom", "nom", "profession", "naissance", "adresse", "situation_familiale", "nationalite"],
+        "properties": {
+          "civilite": {"type": "string", "enum": ["Monsieur", "Madame"]},
+          "prenom": {"type": "string"},
+          "deuxieme_prenom": {"type": "string"},
+          "troisieme_prenom": {"type": "string"},
+          "nom": {"type": "string"},
+          "profession": {"type": "string"},
+          "naissance": {
+            "type": "object",
+            "properties": {
+              "ville": {"type": "string"},
+              "code_postal": {"type": "string"},
+              "date": {
+                "type": "object",
+                "properties": {
+                  "year": {"type": "integer"},
+                  "month": {"type": "integer"},
+                  "day": {"type": "integer"}
+                }
+              }
+            }
+          },
+          "adresse": {
+            "type": "object",
+            "properties": {
+              "numero": {"type": "string"},
+              "voie": {"type": "string"},
+              "ville": {"type": "string"},
+              "code_postal": {"type": "string"}
+            }
+          },
+          "situation_familiale": {"type": "string", "enum": ["Célibataire", "Marié(e)", "Pacsé(e)", "Divorcé(e)", "Veuf/Veuve"]},
+          "nationalite": {"type": "string", "default": "française"},
+          "attributions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "designation": {"type": "string"},
+                "valeur": {"type": "number"}
+              }
+            }
+          },
+          "total_attributions": {"type": "number"},
+          "calcul_droits": {
+            "type": "object",
+            "description": "Calcul des droits pour chaque donateur",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "part": {"type": "number"},
+                "exonerations": {"type": "number"},
+                "donations_incorporees": {"type": "number"},
+                "part_imposable": {"type": "number"},
+                "abattement_applicable": {"type": "number"},
+                "abattement_utilise": {"type": "number"},
+                "abattement_nouveau": {"type": "number"},
+                "part_nette_taxable": {"type": "number"},
+                "calcul_detail": {"type": "string"},
+                "total_droits": {"type": "number"},
+                "droits_a_payer": {"type": "number"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "nombre_enfants_lettres": {
+      "type": "string",
+      "examples": ["deux", "trois", "quatre"]
+    },
+    "nombre_donataires": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "donation_anterieure": {
+      "type": "object",
+      "properties": {
+        "existe": {"type": "boolean"},
+        "notaire": {
+          "type": "object",
+          "properties": {
+            "civilite": {"type": "string"},
+            "nom": {"type": "string"},
+            "ville": {"type": "string"},
+            "code_postal": {"type": "string"}
+          }
+        },
+        "date": {
+          "type": "object",
+          "properties": {
+            "year": {"type": "integer"},
+            "month": {"type": "integer"},
+            "day": {"type": "integer"}
+          }
+        },
+        "donateurs": {"type": "string"},
+        "objet": {"type": "string"},
+        "valeur": {"type": "number"},
+        "valeur_lettres": {"type": "string"},
+        "rappel_texte": {"type": "string"},
+        "calcul_droits": {"type": "string"}
+      }
+    },
+    "societe": {
+      "type": "object",
+      "properties": {
+        "denomination": {"type": "string"},
+        "siren": {"type": "string", "pattern": "^\\d{9}$"},
+        "rcs": {"type": "string"},
+        "capital": {"type": "number"},
+        "capital_lettres": {"type": "string"},
+        "nombre_parts": {"type": "integer"},
+        "nombre_parts_lettres": {"type": "string"},
+        "valeur_part": {"type": "number"},
+        "valeur_part_lettres": {"type": "string"},
+        "siege": {
+          "type": "object",
+          "properties": {
+            "ville": {"type": "string"},
+            "code_postal": {"type": "string"},
+            "adresse": {"type": "string"}
+          }
+        },
+        "tribunal_commerce": {"type": "string"},
+        "duree": {"type": "integer"},
+        "duree_lettres": {"type": "string"},
+        "constitution": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "object",
+              "properties": {
+                "year": {"type": "integer"},
+                "month": {"type": "integer"},
+                "day": {"type": "integer"}
+              }
+            }
+          }
+        },
+        "objet_social": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "associes_fondateurs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "civilite": {"type": "string"},
+              "prenom": {"type": "string"},
+              "nom": {"type": "string"},
+              "adresse": {"type": "object"},
+              "naissance": {"type": "object"},
+              "mariage": {"type": "object"},
+              "conjoint": {"type": "object"}
+            }
+          }
+        },
+        "apports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "associe": {"type": "object"},
+              "montant": {"type": "number"},
+              "montant_lettres": {"type": "string"}
+            }
+          }
+        },
+        "attributions_initiales": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "associe": {"type": "object"},
+              "nombre_parts": {"type": "integer"},
+              "nombre_parts_lettres": {"type": "string"}
+            }
+          }
+        },
+        "informations_parts_donnees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nombre_parts": {"type": "integer"},
+              "nombre_parts_lettres": {"type": "string"},
+              "donateur": {"type": "object"}
+            }
+          }
+        },
+        "actifs": {
+          "type": "object",
+          "properties": {
+            "scpi": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {"type": "string"},
+                  "numero_debut": {"type": "string"},
+                  "numero_fin": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "passifs": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "number"},
+            "total_lettres": {"type": "string"},
+            "comptes_courants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "titulaire": {"type": "object"},
+                  "montant": {"type": "number"},
+                  "montant_lettres": {"type": "string"}
+                }
+              }
+            },
+            "date_arrete": {
+              "type": "object",
+              "properties": {
+                "year": {"type": "integer"},
+                "month": {"type": "integer"},
+                "day": {"type": "integer"}
+              }
+            }
+          }
+        },
+        "fiscalite": {
+          "type": "object",
+          "properties": {
+            "is_option": {"type": "boolean"}
+          }
+        },
+        "valorisation": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "number"},
+            "total_lettres": {"type": "string"},
+            "valeur_unitaire": {"type": "number"},
+            "attestation": {
+              "type": "object",
+              "properties": {
+                "date": {"type": "object"},
+                "cabinet": {"type": "string"},
+                "adresse": {"type": "string"}
+              }
+            }
+          }
+        },
+        "associes_intervenants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "civilite": {"type": "string"},
+              "prenom": {"type": "string"},
+              "nom": {"type": "string"},
+              "qualite_donateur": {"type": "boolean"},
+              "qualite_societe": {"type": "string"}
+            }
+          }
+        },
+        "gerants_noms": {"type": "string"},
+        "modification": {
+          "type": "object",
+          "properties": {
+            "texte_donation": {"type": "string"}
+          }
+        },
+        "tableau_repartition": {"type": "string", "description": "Tableau HTML ou Markdown de la répartition finale"}
+      }
+    },
+    "biens_donnes": {
+      "type": "object",
+      "required": ["total_masse"],
+      "properties": {
+        "biens_personnels_donateur_1": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "numero_article": {"type": "integer"},
+              "designation": {"type": "string", "description": "Description complète du bien (ex: La nue-propriété de 249 parts sociales...)"},
+              "valeur_pp": {"type": "number", "description": "Valeur en pleine propriété"},
+              "valeur_pp_lettres": {"type": "string"},
+              "taux_usufruit": {"type": "integer", "description": "Pourcentage de l'usufruit (ex: 40)"},
+              "usufruitier": {
+                "type": "object",
+                "properties": {
+                  "civilite": {"type": "string"},
+                  "prenom": {"type": "string"},
+                  "nom": {"type": "string"},
+                  "sexe": {"type": "string", "enum": ["M", "F"]}
+                }
+              },
+              "valeur_np": {"type": "number", "description": "Valeur en nue-propriété"},
+              "valeur_np_lettres": {"type": "string"}
+            }
+          }
+        },
+        "biens_personnels_donateur_2": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "numero_article": {"type": "integer"},
+              "designation": {"type": "string"},
+              "valeur_pp": {"type": "number"},
+              "valeur_pp_lettres": {"type": "string"},
+              "taux_usufruit": {"type": "integer"},
+              "usufruitier": {"type": "object"},
+              "valeur_np": {"type": "number"},
+              "valeur_np_lettres": {"type": "string"}
+            }
+          }
+        },
+        "total_donateur_1": {"type": "number"},
+        "total_donateur_2": {"type": "number"},
+        "total_masse": {"type": "number"}
+      }
+    },
+    "repartition": {
+      "type": "object",
+      "required": ["fraction", "fraction_lettres", "valeur_par_donataire", "valeur_par_donataire_lettres"],
+      "properties": {
+        "fraction": {"type": "string", "examples": ["1/2", "1/3"]},
+        "fraction_lettres": {"type": "string", "examples": ["LA MOITIE", "LE TIERS"]},
+        "valeur_par_donataire": {"type": "number"},
+        "valeur_par_donataire_lettres": {"type": "string"}
+      }
+    },
+    "usufruit_successif": {
+      "type": "boolean",
+      "description": "Indique si un usufruit successif au profit du conjoint est prévu",
+      "default": true
+    },
+    "modification_article_11": {
+      "type": "boolean",
+      "description": "Indique si l'article 11 des statuts sur le droit de vote doit être modifié",
+      "default": true
+    },
+    "total_droits_a_payer": {
+      "type": "number",
+      "description": "Total des droits de mutation à payer"
+    }
+  }
+}

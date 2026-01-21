@@ -1,0 +1,927 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Questions pour Donation-Partage",
+  "description": "Questions pour collecter les informations nécessaires à une donation-partage",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "question", "variable", "type"],
+    "properties": {
+      "id": {"type": "string"},
+      "section": {"type": "string"},
+      "question": {"type": "string"},
+      "variable": {"type": "string"},
+      "type": {"type": "string"},
+      "required": {"type": "boolean"},
+      "condition": {"type": "string"},
+      "help": {"type": "string"},
+      "validation": {"type": "object"}
+    }
+  },
+  "default": [
+    {
+      "section": "Informations générales de l'acte",
+      "questions": [
+        {
+          "id": "ref_001",
+          "question": "Référence de l'acte",
+          "variable": "reference_acte",
+          "type": "text",
+          "required": true,
+          "help": "Numéro de référence unique de l'acte (ex: 100583001)"
+        },
+        {
+          "id": "ref_002",
+          "question": "Initiales du notaire",
+          "variable": "initiales_notaire",
+          "type": "text",
+          "required": false,
+          "help": "Initiales du rédacteur (ex: CDI/ALG)"
+        },
+        {
+          "id": "ref_003",
+          "question": "Date de signature de l'acte",
+          "variable": "date_acte",
+          "type": "date",
+          "required": true,
+          "help": "Date à laquelle l'acte sera signé"
+        },
+        {
+          "id": "ref_004",
+          "question": "Lieu de signature - Ville",
+          "variable": "lieu_signature.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "ref_005",
+          "question": "Lieu de signature - Code postal",
+          "variable": "lieu_signature.code_postal",
+          "type": "text",
+          "required": true,
+          "validation": {"pattern": "^\\d{5}$"}
+        },
+        {
+          "id": "ref_006",
+          "question": "Lieu de signature - Adresse complète",
+          "variable": "lieu_signature.adresse",
+          "type": "text",
+          "required": true,
+          "help": "Ex: 29 chemin du panorama"
+        }
+      ]
+    },
+    {
+      "section": "Notaire rédacteur",
+      "questions": [
+        {
+          "id": "not_001",
+          "question": "Civilité du notaire",
+          "variable": "notaire.civilite",
+          "type": "choice",
+          "required": true,
+          "choices": ["Maître"]
+        },
+        {
+          "id": "not_002",
+          "question": "Prénom du notaire",
+          "variable": "notaire.prenom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "not_003",
+          "question": "Nom du notaire",
+          "variable": "notaire.nom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "not_004",
+          "question": "Type de société",
+          "variable": "notaire.type_societe",
+          "type": "text",
+          "required": true,
+          "help": "Ex: société par actions simplifiée, SELARL, etc."
+        },
+        {
+          "id": "not_005",
+          "question": "Nom de la société notariale",
+          "variable": "notaire.nom_societe",
+          "type": "text",
+          "required": true,
+          "help": "Ex: des Cèdres"
+        },
+        {
+          "id": "not_006",
+          "question": "Office - Ville",
+          "variable": "notaire.office.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "not_007",
+          "question": "Office - Département",
+          "variable": "notaire.office.departement",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "not_008",
+          "question": "Office - Code postal",
+          "variable": "notaire.office.code_postal",
+          "type": "text",
+          "required": true,
+          "validation": {"pattern": "^\\d{5}$"}
+        },
+        {
+          "id": "not_009",
+          "question": "Office - Adresse",
+          "variable": "notaire.office.adresse",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "not_010",
+          "question": "Numéro CRPCEN",
+          "variable": "notaire.crpcen",
+          "type": "text",
+          "required": true,
+          "validation": {"pattern": "^\\d{5}$"},
+          "help": "Numéro d'identification au Conseil Régional des Notaires (5 chiffres)"
+        }
+      ]
+    },
+    {
+      "section": "Donateur 1 - Identité",
+      "questions": [
+        {
+          "id": "don1_001",
+          "question": "Civilité",
+          "variable": "donateur_1.civilite",
+          "type": "choice",
+          "required": true,
+          "choices": ["Monsieur", "Madame"]
+        },
+        {
+          "id": "don1_002",
+          "question": "Civilité courte",
+          "variable": "donateur_1.civilite_court",
+          "type": "choice",
+          "required": true,
+          "choices": ["M.", "Mme"]
+        },
+        {
+          "id": "don1_003",
+          "question": "Prénom",
+          "variable": "donateur_1.prenom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don1_004",
+          "question": "Deuxième prénom (optionnel)",
+          "variable": "donateur_1.deuxieme_prenom",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "don1_005",
+          "question": "Nom de famille",
+          "variable": "donateur_1.nom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don1_006",
+          "question": "Profession",
+          "variable": "donateur_1.profession",
+          "type": "text",
+          "required": true,
+          "help": "Ex: retraité, ingénieur, etc."
+        },
+        {
+          "id": "don1_007",
+          "question": "Sexe",
+          "variable": "donateur_1.sexe",
+          "type": "choice",
+          "required": true,
+          "choices": ["M", "F"]
+        },
+        {
+          "id": "don1_008",
+          "question": "Âge (pour calcul usufruit)",
+          "variable": "donateur_1.age",
+          "type": "number",
+          "required": true,
+          "help": "Utilisé pour le calcul du taux d'usufruit selon le barème fiscal"
+        },
+        {
+          "id": "don1_009",
+          "question": "Nationalité",
+          "variable": "donateur_1.nationalite",
+          "type": "text",
+          "required": true,
+          "default": "française"
+        }
+      ]
+    },
+    {
+      "section": "Donateur 1 - Naissance",
+      "questions": [
+        {
+          "id": "don1_n001",
+          "question": "Ville de naissance",
+          "variable": "donateur_1.naissance.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don1_n002",
+          "question": "Code postal de naissance",
+          "variable": "donateur_1.naissance.code_postal",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don1_n003",
+          "question": "Date de naissance",
+          "variable": "donateur_1.naissance.date",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Donateur 1 - Adresse",
+      "questions": [
+        {
+          "id": "don1_a001",
+          "question": "Numéro et nom de la voie",
+          "variable": "donateur_1.adresse.numero",
+          "type": "text",
+          "required": true,
+          "help": "Ex: 29"
+        },
+        {
+          "id": "don1_a002",
+          "question": "Nom de la voie",
+          "variable": "donateur_1.adresse.voie",
+          "type": "text",
+          "required": true,
+          "help": "Ex: chemin du Panorama"
+        },
+        {
+          "id": "don1_a003",
+          "question": "Ville",
+          "variable": "donateur_1.adresse.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don1_a004",
+          "question": "Code postal",
+          "variable": "donateur_1.adresse.code_postal",
+          "type": "text",
+          "required": true,
+          "validation": {"pattern": "^\\d{5}$"}
+        }
+      ]
+    },
+    {
+      "section": "Donateur 2 - Identité",
+      "questions": [
+        {
+          "id": "don2_001",
+          "question": "Civilité",
+          "variable": "donateur_2.civilite",
+          "type": "choice",
+          "required": true,
+          "choices": ["Monsieur", "Madame"]
+        },
+        {
+          "id": "don2_002",
+          "question": "Civilité courte",
+          "variable": "donateur_2.civilite_court",
+          "type": "choice",
+          "required": true,
+          "choices": ["M.", "Mme"]
+        },
+        {
+          "id": "don2_003",
+          "question": "Prénom",
+          "variable": "donateur_2.prenom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don2_004",
+          "question": "Deuxième prénom (optionnel)",
+          "variable": "donateur_2.deuxieme_prenom",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "don2_005",
+          "question": "Troisième prénom (optionnel)",
+          "variable": "donateur_2.troisieme_prenom",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "don2_006",
+          "question": "Nom de famille",
+          "variable": "donateur_2.nom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don2_007",
+          "question": "Nom de naissance (si différent)",
+          "variable": "donateur_2.nom_naissance",
+          "type": "text",
+          "required": true,
+          "help": "Nom de jeune fille pour les femmes mariées"
+        },
+        {
+          "id": "don2_008",
+          "question": "Profession",
+          "variable": "donateur_2.profession",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don2_009",
+          "question": "Sexe",
+          "variable": "donateur_2.sexe",
+          "type": "choice",
+          "required": true,
+          "choices": ["M", "F"]
+        },
+        {
+          "id": "don2_010",
+          "question": "Âge (pour calcul usufruit)",
+          "variable": "donateur_2.age",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "don2_011",
+          "question": "Nationalité",
+          "variable": "donateur_2.nationalite",
+          "type": "text",
+          "required": true,
+          "default": "française"
+        }
+      ]
+    },
+    {
+      "section": "Donateur 2 - Naissance",
+      "questions": [
+        {
+          "id": "don2_n001",
+          "question": "Ville de naissance",
+          "variable": "donateur_2.naissance.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don2_n002",
+          "question": "Code postal de naissance",
+          "variable": "donateur_2.naissance.code_postal",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "don2_n003",
+          "question": "Date de naissance",
+          "variable": "donateur_2.naissance.date",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Mariage des donateurs",
+      "questions": [
+        {
+          "id": "mar_001",
+          "question": "Ville du mariage",
+          "variable": "mariage.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "mar_002",
+          "question": "Code postal du lieu de mariage",
+          "variable": "mariage.code_postal",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "mar_003",
+          "question": "Date du mariage",
+          "variable": "mariage.date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "mar_004",
+          "question": "Régime matrimonial",
+          "variable": "mariage.regime",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "la participation aux acquêts",
+            "la communauté réduite aux acquêts",
+            "la communauté universelle",
+            "la séparation de biens"
+          ]
+        },
+        {
+          "id": "mar_005",
+          "question": "Articles du Code civil",
+          "variable": "mariage.articles_code_civil",
+          "type": "text",
+          "required": true,
+          "help": "Ex: 1569 et suivants (pour participation aux acquêts)"
+        },
+        {
+          "id": "mar_006",
+          "question": "Y a-t-il eu un contrat de mariage ?",
+          "variable": "mariage.contrat.existe",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "id": "mar_007",
+          "question": "Notaire du contrat de mariage - Civilité",
+          "variable": "mariage.notaire.civilite",
+          "type": "text",
+          "required": true,
+          "condition": "mariage.contrat.existe === true"
+        },
+        {
+          "id": "mar_008",
+          "question": "Notaire du contrat de mariage - Prénom",
+          "variable": "mariage.notaire.prenom",
+          "type": "text",
+          "required": true,
+          "condition": "mariage.contrat.existe === true"
+        },
+        {
+          "id": "mar_009",
+          "question": "Notaire du contrat de mariage - Nom",
+          "variable": "mariage.notaire.nom",
+          "type": "text",
+          "required": true,
+          "condition": "mariage.contrat.existe === true"
+        },
+        {
+          "id": "mar_010",
+          "question": "Notaire du contrat de mariage - Ville",
+          "variable": "mariage.notaire.ville",
+          "type": "text",
+          "required": true,
+          "condition": "mariage.contrat.existe === true"
+        },
+        {
+          "id": "mar_011",
+          "question": "Notaire du contrat de mariage - Code postal",
+          "variable": "mariage.notaire.code_postal",
+          "type": "text",
+          "required": true,
+          "condition": "mariage.contrat.existe === true"
+        },
+        {
+          "id": "mar_012",
+          "question": "Date du contrat de mariage",
+          "variable": "mariage.contrat.date",
+          "type": "date",
+          "required": true,
+          "condition": "mariage.contrat.existe === true"
+        }
+      ]
+    },
+    {
+      "section": "Donataires - Informations générales",
+      "questions": [
+        {
+          "id": "dona_001",
+          "question": "Combien d'enfants (donataires) ?",
+          "variable": "nombre_donataires",
+          "type": "number",
+          "required": true,
+          "validation": {"minimum": 1},
+          "help": "Nombre total d'enfants qui vont recevoir la donation"
+        },
+        {
+          "id": "dona_002",
+          "question": "Nombre d'enfants en lettres",
+          "variable": "nombre_enfants_lettres",
+          "type": "text",
+          "required": true,
+          "help": "Ex: deux, trois, quatre..."
+        }
+      ]
+    },
+    {
+      "section": "Donataire {index} - Identité",
+      "is_repeatable": true,
+      "repeat_variable": "donataires",
+      "questions": [
+        {
+          "id": "donat_{index}_001",
+          "question": "Civilité",
+          "variable": "donataires[{index}].civilite",
+          "type": "choice",
+          "required": true,
+          "choices": ["Monsieur", "Madame"]
+        },
+        {
+          "id": "donat_{index}_002",
+          "question": "Prénom",
+          "variable": "donataires[{index}].prenom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_003",
+          "question": "Deuxième prénom (optionnel)",
+          "variable": "donataires[{index}].deuxieme_prenom",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "donat_{index}_004",
+          "question": "Troisième prénom (optionnel)",
+          "variable": "donataires[{index}].troisieme_prenom",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "donat_{index}_005",
+          "question": "Nom de famille",
+          "variable": "donataires[{index}].nom",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_006",
+          "question": "Profession",
+          "variable": "donataires[{index}].profession",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_007",
+          "question": "Situation familiale",
+          "variable": "donataires[{index}].situation_familiale",
+          "type": "choice",
+          "required": true,
+          "choices": ["Célibataire", "Marié(e)", "Pacsé(e)", "Divorcé(e)", "Veuf/Veuve"]
+        },
+        {
+          "id": "donat_{index}_008",
+          "question": "Nationalité",
+          "variable": "donataires[{index}].nationalite",
+          "type": "text",
+          "required": true,
+          "default": "française"
+        },
+        {
+          "id": "donat_{index}_009",
+          "question": "Ville de naissance",
+          "variable": "donataires[{index}].naissance.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_010",
+          "question": "Code postal de naissance",
+          "variable": "donataires[{index}].naissance.code_postal",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_011",
+          "question": "Date de naissance",
+          "variable": "donataires[{index}].naissance.date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_012",
+          "question": "Adresse - Numéro",
+          "variable": "donataires[{index}].adresse.numero",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_013",
+          "question": "Adresse - Voie",
+          "variable": "donataires[{index}].adresse.voie",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_014",
+          "question": "Adresse - Ville",
+          "variable": "donataires[{index}].adresse.ville",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "donat_{index}_015",
+          "question": "Adresse - Code postal",
+          "variable": "donataires[{index}].adresse.code_postal",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Donation antérieure",
+      "questions": [
+        {
+          "id": "ant_001",
+          "question": "Y a-t-il eu une donation antérieure non incorporée ?",
+          "variable": "donation_anterieure.existe",
+          "type": "boolean",
+          "required": true,
+          "help": "Donation effectuée il y a moins de 15 ans"
+        },
+        {
+          "id": "ant_002",
+          "question": "Notaire de la donation antérieure - Nom",
+          "variable": "donation_anterieure.notaire.nom",
+          "type": "text",
+          "required": true,
+          "condition": "donation_anterieure.existe === true"
+        },
+        {
+          "id": "ant_003",
+          "question": "Notaire - Ville",
+          "variable": "donation_anterieure.notaire.ville",
+          "type": "text",
+          "required": true,
+          "condition": "donation_anterieure.existe === true"
+        },
+        {
+          "id": "ant_004",
+          "question": "Date de la donation antérieure",
+          "variable": "donation_anterieure.date",
+          "type": "date",
+          "required": true,
+          "condition": "donation_anterieure.existe === true"
+        },
+        {
+          "id": "ant_005",
+          "question": "Objet de la donation antérieure",
+          "variable": "donation_anterieure.objet",
+          "type": "text",
+          "required": true,
+          "condition": "donation_anterieure.existe === true",
+          "help": "Ex: la nue-propriété d'un bien sis à..."
+        },
+        {
+          "id": "ant_006",
+          "question": "Valeur de la donation antérieure (en EUR)",
+          "variable": "donation_anterieure.valeur",
+          "type": "number",
+          "required": true,
+          "condition": "donation_anterieure.existe === true"
+        }
+      ]
+    },
+    {
+      "section": "Société (si donation de parts sociales)",
+      "questions": [
+        {
+          "id": "soc_001",
+          "question": "La donation porte-t-elle sur des parts sociales ?",
+          "variable": "societe.existe",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "id": "soc_002",
+          "question": "Dénomination de la société",
+          "variable": "societe.denomination",
+          "type": "text",
+          "required": true,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_003",
+          "question": "Numéro SIREN",
+          "variable": "societe.siren",
+          "type": "text",
+          "required": true,
+          "condition": "societe.existe === true",
+          "validation": {"pattern": "^\\d{9}$"}
+        },
+        {
+          "id": "soc_004",
+          "question": "RCS (Registre du Commerce et des Sociétés)",
+          "variable": "societe.rcs",
+          "type": "text",
+          "required": true,
+          "condition": "societe.existe === true",
+          "help": "Ex: LYON"
+        },
+        {
+          "id": "soc_005",
+          "question": "Capital social (en EUR)",
+          "variable": "societe.capital",
+          "type": "number",
+          "required": true,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_006",
+          "question": "Nombre total de parts",
+          "variable": "societe.nombre_parts",
+          "type": "number",
+          "required": true,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_007",
+          "question": "Valeur d'une part (en EUR)",
+          "variable": "societe.valeur_part",
+          "type": "number",
+          "required": true,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_008",
+          "question": "Date de constitution de la société",
+          "variable": "societe.constitution.date",
+          "type": "date",
+          "required": true,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_009",
+          "question": "Durée de la société (en années)",
+          "variable": "societe.duree",
+          "type": "number",
+          "required": true,
+          "condition": "societe.existe === true",
+          "help": "Ex: 99"
+        },
+        {
+          "id": "soc_010",
+          "question": "La société est-elle soumise à l'IS sur option ?",
+          "variable": "societe.fiscalite.is_option",
+          "type": "boolean",
+          "required": true,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_011",
+          "question": "La société possède-t-elle des parts de SCPI ?",
+          "variable": "societe.actifs.scpi_existe",
+          "type": "boolean",
+          "required": false,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_012",
+          "question": "Y a-t-il des comptes courants d'associés ?",
+          "variable": "societe.passifs.cc_existe",
+          "type": "boolean",
+          "required": false,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_013",
+          "question": "Valorisation totale des parts sociales (en EUR)",
+          "variable": "societe.valorisation.total",
+          "type": "number",
+          "required": true,
+          "condition": "societe.existe === true",
+          "help": "Selon attestation d'expert-comptable"
+        },
+        {
+          "id": "soc_014",
+          "question": "Date de l'attestation de valorisation",
+          "variable": "societe.valorisation.attestation.date",
+          "type": "date",
+          "required": true,
+          "condition": "societe.existe === true"
+        },
+        {
+          "id": "soc_015",
+          "question": "Cabinet d'expertise comptable",
+          "variable": "societe.valorisation.attestation.cabinet",
+          "type": "text",
+          "required": true,
+          "condition": "societe.existe === true"
+        }
+      ]
+    },
+    {
+      "section": "Biens donnés - Description",
+      "questions": [
+        {
+          "id": "bien_001",
+          "question": "Combien de biens personnels du donateur 1 ?",
+          "variable": "biens_donnes.nb_biens_donateur_1",
+          "type": "number",
+          "required": true,
+          "help": "Nombre d'articles de biens à donner"
+        },
+        {
+          "id": "bien_002",
+          "question": "Combien de biens personnels du donateur 2 ?",
+          "variable": "biens_donnes.nb_biens_donateur_2",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "bien_003",
+          "question": "Taux d'usufruit (selon barème fiscal)",
+          "variable": "biens_donnes.taux_usufruit",
+          "type": "number",
+          "required": true,
+          "help": "Ex: 40 (pour 40%) - dépend de l'âge de l'usufruitier"
+        }
+      ]
+    },
+    {
+      "section": "Répartition entre donataires",
+      "questions": [
+        {
+          "id": "rep_001",
+          "question": "La répartition est-elle égalitaire ?",
+          "variable": "repartition.egalitaire",
+          "type": "boolean",
+          "required": true,
+          "default": true,
+          "help": "Si oui, chaque donataire reçoit une part égale"
+        },
+        {
+          "id": "rep_002",
+          "question": "Fraction par donataire (format mathématique)",
+          "variable": "repartition.fraction",
+          "type": "text",
+          "required": true,
+          "help": "Ex: 1/2 (pour 2 enfants), 1/3 (pour 3 enfants)"
+        },
+        {
+          "id": "rep_003",
+          "question": "Fraction en lettres",
+          "variable": "repartition.fraction_lettres",
+          "type": "text",
+          "required": true,
+          "help": "Ex: LA MOITIE, LE TIERS, LE QUART"
+        }
+      ]
+    },
+    {
+      "section": "Usufruit successif",
+      "questions": [
+        {
+          "id": "usu_001",
+          "question": "Usufruit successif au profit du conjoint survivant ?",
+          "variable": "usufruit_successif",
+          "type": "boolean",
+          "required": true,
+          "default": true,
+          "help": "Permet au conjoint survivant de conserver l'usufruit jusqu'à son décès"
+        }
+      ]
+    },
+    {
+      "section": "Modifications statutaires (si société)",
+      "questions": [
+        {
+          "id": "mod_001",
+          "question": "Faut-il modifier l'article 11 des statuts (droit de vote) ?",
+          "variable": "modification_article_11",
+          "type": "boolean",
+          "required": false,
+          "condition": "societe.existe === true",
+          "default": true,
+          "help": "Pour attribuer le droit de vote à l'usufruitier"
+        }
+      ]
+    },
+    {
+      "section": "Fiscalité - Calcul des droits",
+      "questions": [
+        {
+          "id": "fisc_001",
+          "question": "Abattement parent-enfant disponible (en EUR)",
+          "variable": "fiscalite.abattement_parent_enfant",
+          "type": "number",
+          "required": true,
+          "default": 100000,
+          "help": "Abattement légal actuellement en vigueur (100 000 EUR en 2025)"
+        }
+      ]
+    }
+  ]
+}

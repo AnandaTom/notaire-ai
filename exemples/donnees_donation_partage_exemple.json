@@ -1,0 +1,563 @@
+{
+  "reference_acte": "100583001",
+  "initiales_notaire": "CDI/ALG",
+  "date_acte": {
+    "year": 2025,
+    "month": 12,
+    "day": 23
+  },
+  "lieu_signature": {
+    "ville": "DARDILLY",
+    "code_postal": "69570",
+    "adresse": "29 chemin du panorama"
+  },
+  "notaire": {
+    "civilite": "Maître",
+    "prenom": "Charlotte",
+    "nom": "DIAZ",
+    "type_societe": "société par actions simplifiée",
+    "nom_societe": "des Cèdres",
+    "office": {
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "departement": "Rhône",
+      "code_postal": "69160",
+      "adresse": "93 avenue du 11 Novembre 1918"
+    },
+    "crpcen": "69182"
+  },
+  "donateur_1": {
+    "civilite": "Monsieur",
+    "civilite_court": "M.",
+    "prenom": "Dominique",
+    "deuxieme_prenom": "Christian",
+    "nom": "AUVRAY",
+    "profession": "retraité",
+    "naissance": {
+      "ville": "PARIS 12ÈME ARRONDISSEMENT",
+      "code_postal": "75012",
+      "date": {"year": 1961, "month": 2, "day": 20}
+    },
+    "nationalite": "française",
+    "adresse": {
+      "numero": "29",
+      "voie": "chemin du Panorama",
+      "ville": "DARDILLY",
+      "code_postal": "69570"
+    },
+    "sexe": "M",
+    "age": 64
+  },
+  "donateur_2": {
+    "civilite": "Madame",
+    "civilite_court": "Mme",
+    "prenom": "Viviane",
+    "deuxieme_prenom": "Blanche",
+    "troisieme_prenom": "Célie",
+    "nom": "AUVRAY",
+    "nom_naissance": "ROBIN",
+    "profession": "retraitée",
+    "naissance": {
+      "ville": "TAIN-L'HERMITAGE",
+      "code_postal": "26600",
+      "date": {"year": 1961, "month": 4, "day": 16}
+    },
+    "nationalite": "française",
+    "adresse": {
+      "numero": "29",
+      "voie": "chemin du Panorama",
+      "ville": "DARDILLY",
+      "code_postal": "69570"
+    },
+    "sexe": "F",
+    "age": 64
+  },
+  "mariage": {
+    "ville": "CHANTEMERLE-LES-BLES",
+    "code_postal": "26600",
+    "date": {"year": 1989, "month": 9, "day": 9},
+    "regime": "la participation aux acquêts",
+    "articles_code_civil": "1569 et suivants",
+    "notaire": {
+      "civilite": "Maître",
+      "prenom": "Pierre",
+      "nom": "COHENDET",
+      "ville": "CHAROLLES",
+      "code_postal": "71120"
+    },
+    "contrat": {
+      "existe": true,
+      "date": {"year": 1989, "month": 6, "day": 24}
+    }
+  },
+  "donataires": [
+    {
+      "civilite": "Monsieur",
+      "prenom": "Antoine",
+      "deuxieme_prenom": "Christian",
+      "troisieme_prenom": "Edmond",
+      "nom": "AUVRAY",
+      "profession": "ingénieur référent agrivoltaïque",
+      "naissance": {
+        "ville": "LYON 9ÈME ARRONDISSEMENT",
+        "code_postal": "69009",
+        "date": {"year": 1991, "month": 2, "day": 19}
+      },
+      "adresse": {
+        "numero": "16",
+        "voie": "cours Lafayette",
+        "ville": "LYON 3ÈME ARRONDISSEMENT",
+        "code_postal": "69003"
+      },
+      "situation_familiale": "Célibataire",
+      "nationalite": "française",
+      "attributions": [
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 503 à 751 de la société BLOUGE formant l'article UN de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        },
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 3 à 251 de la société BLOUGE formant l'article TROIS de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        }
+      ],
+      "total_attributions": 419.64,
+      "calcul_droits": {
+        "donateur_1": {
+          "part": 209.82,
+          "exonerations": 0.00,
+          "donations_incorporees": 0.00,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.00,
+          "abattement_utilise": 100000.00,
+          "abattement_nouveau": 0.00,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.00,
+          "droits_a_payer": 10.00
+        },
+        "donateur_2": {
+          "part": 209.82,
+          "exonerations": 0.00,
+          "donations_incorporees": 0.00,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.00,
+          "abattement_utilise": 100000.00,
+          "abattement_nouveau": 0.00,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.00,
+          "droits_a_payer": 10.00
+        }
+      }
+    },
+    {
+      "civilite": "Madame",
+      "prenom": "Mathilde",
+      "deuxieme_prenom": "Yvonne",
+      "troisieme_prenom": "Nicole",
+      "nom": "AUVRAY",
+      "profession": "gérante d'une entreprise de conseil",
+      "naissance": {
+        "ville": "LYON 9ÈME ARRONDISSEMENT",
+        "code_postal": "69009",
+        "date": {"year": 1993, "month": 8, "day": 9}
+      },
+      "adresse": {
+        "numero": "18",
+        "voie": "rue Milton",
+        "ville": "PARIS 9ÈME ARRONDISSEMENT",
+        "code_postal": "75009"
+      },
+      "situation_familiale": "Célibataire",
+      "nationalite": "française",
+      "attributions": [
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 752 à 1000 de la société BLOUGE formant l'article DEUX de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        },
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 252 à 500 de la société BLOUGE formant l'article QUATRE de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        }
+      ],
+      "total_attributions": 419.64,
+      "calcul_droits": {
+        "donateur_1": {
+          "part": 209.82,
+          "exonerations": 0.00,
+          "donations_incorporees": 0.00,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.00,
+          "abattement_utilise": 100000.00,
+          "abattement_nouveau": 0.00,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.00,
+          "droits_a_payer": 10.00
+        },
+        "donateur_2": {
+          "part": 209.82,
+          "exonerations": 0.00,
+          "donations_incorporees": 0.00,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.00,
+          "abattement_utilise": 100000.00,
+          "abattement_nouveau": 0.00,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.00,
+          "droits_a_payer": 10.00
+        }
+      }
+    }
+  ],
+  "nombre_enfants_lettres": "deux",
+  "nombre_donataires": 2,
+  "donation_anterieure": {
+    "existe": true,
+    "notaire": {
+      "civilite": "Maître",
+      "nom": "ROBLOT-DIAZ",
+      "ville": "SEREZIN-DU-RHÔNE",
+      "code_postal": "69360"
+    },
+    "date": {"year": 2021, "month": 12, "day": 23},
+    "donateurs": "Monsieur et Madame Dominique et Viviane AUVRAY, donateurs aux présentes",
+    "objet": "la nue-propriété d'un bien sis à DARDILLY (69570), 29 chemin du panorama",
+    "valeur": 400000.00,
+    "valeur_lettres": "QUATRE CENT MILLE EUROS",
+    "rappel_texte": "l'acte de donation consenti par Monsieur et Madame Dominique et Viviane AUVRAY, DONATEURS aux présentes, au profit de leurs deux enfants, Monsieur Antoine AUVRAY et Madame Mathilde AUVRAY, donataires aux présentes, suivant acte reçu par Maître ROBLOT DIAZ, notaire à SEREZIN DU RHONE (69360), le 23 décembre 2021",
+    "calcul_droits": "Donation de Monsieur Dominique AUVRAY\nAu profit de Monsieur Antoine AUVRAY\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits.\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nAu profit de Madame Mathilde AUVRAY\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nDonation de Madame Viviane AUVRAY\nAu profit de Monsieur Antoine AUVRAY\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits.\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nAu profit de Madame Mathilde AUVRAY\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant"
+  },
+  "societe": {
+    "existe": true,
+    "denomination": "BLOUGE",
+    "siren": "985331354",
+    "rcs": "LYON",
+    "capital": 1000.00,
+    "capital_lettres": "MILLE EUROS",
+    "nombre_parts": 1000,
+    "nombre_parts_lettres": "MILLE",
+    "valeur_part": 1.00,
+    "valeur_part_lettres": "UN EURO",
+    "siege": {
+      "ville": "DARDILLY",
+      "code_postal": "69570",
+      "adresse": "29 chemin du Panorama"
+    },
+    "tribunal_commerce": "LYON",
+    "duree": 99,
+    "duree_lettres": "quatre-vingt-dix-neuf",
+    "constitution": {
+      "date": {"year": 2024, "month": 2, "day": 19}
+    },
+    "objet_social": [
+      "La propriété, la détention, la gestion et la cession de valeurs mobilières et immobilières, droits sociaux ou tous autres titres cotés ou non cotés, de SCPI ou d'OPCI, détenus en pleine propriété, nue-propriété ou usufruit, acquis par voie d'achat, d'échange, d'apport ou autrement",
+      "La propriété, la détention, la gestion, la construction, l'administration et l'exploitation par bail, location ou autrement de tous immeubles et droits immobiliers détenus en pleine propriété, nue-propriété ou usufruit, dont elle pourrait devenir propriétaire par voie d'acquisition, d'apport, d'échange ou autrement",
+      "L'organisation du patrimoine familial des associés en vue d'en faciliter la gestion et la transmission afin d'éviter qu'il ne soit livré aux aléas de l'indivision",
+      "Le placement et l'investissement par tous moyens monétaires ou financiers des fonds, de la trésorerie et des disponibilités de la société",
+      "La vente de ces mêmes biens pour autant toutefois qu'elle ne puisse être considérée comme un acte de commerce et ne porte pas atteinte au caractère civil de la société",
+      "L'emprunt, le cautionnement simple ou hypothécaire nécessaires à la réalisation de l'objet"
+    ],
+    "associes_fondateurs": [
+      {
+        "civilite": "Monsieur",
+        "prenom": "Dominique",
+        "nom": "AUVRAY",
+        "adresse": {
+          "ville": "DARDILLY",
+          "code_postal": "69570",
+          "numero": "29",
+          "voie": "chemin du Panorama"
+        },
+        "naissance": {
+          "ville": "PARIS 12ÈME ARRONDISSEMENT",
+          "code_postal": "75012",
+          "date": {"year": 1961, "month": 2, "day": 20}
+        },
+        "mariage": {
+          "ville": "CHANTEMERLE-LES-BLES",
+          "code_postal": "26600",
+          "date": {"year": 1989, "month": 9, "day": 9},
+          "regime": "la participation aux acquêts",
+          "articles_code_civil": "1569 et suivants",
+          "notaire": {
+            "civilite": "Maître",
+            "prenom": "Pierre",
+            "nom": "COHENDET",
+            "ville": "CHAROLLES",
+            "code_postal": "71120"
+          },
+          "contrat": {
+            "date": {"year": 1989, "month": 6, "day": 24}
+          }
+        },
+        "conjoint": {
+          "civilite": "Madame",
+          "prenom": "Viviane",
+          "nom": "ROBIN"
+        }
+      },
+      {
+        "civilite": "Madame",
+        "prenom": "Viviane",
+        "nom": "AUVRAY",
+        "nom_naissance": "ROBIN",
+        "adresse": {
+          "ville": "DARDILLY",
+          "code_postal": "69570",
+          "numero": "29",
+          "voie": "chemin du Panorama"
+        },
+        "naissance": {
+          "ville": "TAIN-L'HERMITAGE",
+          "code_postal": "26600",
+          "date": {"year": 1961, "month": 4, "day": 16}
+        },
+        "mariage": {
+          "ville": "CHANTEMERLE-LES-BLES",
+          "code_postal": "26600",
+          "date": {"year": 1989, "month": 9, "day": 9},
+          "regime": "la participation aux acquêts",
+          "articles_code_civil": "1569 et suivants",
+          "notaire": {
+            "civilite": "Maître",
+            "prenom": "Pierre",
+            "nom": "COHENDET",
+            "ville": "CHAROLLES",
+            "code_postal": "71120"
+          },
+          "contrat": {
+            "date": {"year": 1989, "month": 6, "day": 24}
+          }
+        },
+        "conjoint": {
+          "civilite": "Monsieur",
+          "prenom": "Dominique",
+          "nom": "AUVRAY"
+        }
+      }
+    ],
+    "apports": [
+      {
+        "associe": {
+          "civilite": "Monsieur",
+          "prenom": "Dominique",
+          "nom": "AUVRAY"
+        },
+        "montant": 500.00,
+        "montant_lettres": "CINQ CENTS EUROS"
+      },
+      {
+        "associe": {
+          "civilite": "Madame",
+          "prenom": "Viviane",
+          "nom": "AUVRAY"
+        },
+        "montant": 500.00,
+        "montant_lettres": "CINQ CENTS EUROS"
+      }
+    ],
+    "attributions_initiales": [
+      {
+        "associe": {
+          "civilite": "Monsieur",
+          "prenom": "Dominique",
+          "nom": "AUVRAY"
+        },
+        "nombre_parts": 500,
+        "nombre_parts_lettres": "cinq cents"
+      },
+      {
+        "associe": {
+          "civilite": "Madame",
+          "prenom": "Viviane",
+          "nom": "AUVRAY"
+        },
+        "nombre_parts": 500,
+        "nombre_parts_lettres": "cinq cents"
+      }
+    ],
+    "informations_parts_donnees": [
+      {
+        "nombre_parts": 498,
+        "nombre_parts_lettres": "quatre cent quatre-vingt-dix-huit",
+        "donateur": {
+          "civilite": "Monsieur",
+          "prenom": "Dominique",
+          "nom": "AUVRAY"
+        }
+      },
+      {
+        "nombre_parts": 498,
+        "nombre_parts_lettres": "quatre cent quatre-vingt-dix-huit",
+        "donateur": {
+          "civilite": "Madame",
+          "prenom": "Viviane",
+          "nom": "AUVRAY"
+        }
+      }
+    ],
+    "actifs": {
+      "scpi": [
+        {
+          "description": "Trente-deux (32) parts de SELECTIPIERRE 2",
+          "numero_debut": "721 987",
+          "numero_fin": "722 018"
+        },
+        {
+          "description": "Cent vingt parts (120 parts) de C3 FICOMMERCE numérotées",
+          "numero_debut": "3 742 105",
+          "numero_fin": "3 742 224"
+        },
+        {
+          "description": "Quatre-vingt-quatorze (94) parts de PX PIERRE EXPANSION SANTE numérotées",
+          "numero_debut": "362 044",
+          "numero_fin": "362 137"
+        },
+        {
+          "description": "Trente-huit (38) parts de la SCPI CŒUR DE REGIONS numérotées",
+          "numero_debut": "543 628",
+          "numero_fin": "543 665"
+        }
+      ]
+    },
+    "passifs": {
+      "total": 101787.49,
+      "total_lettres": "CENT UN MILLE SEPT CENT QUATRE-VINGT-SEPT EUROS ET QUARANTE-NEUF CENTIMES",
+      "comptes_courants": [
+        {
+          "titulaire": {
+            "civilite": "Monsieur",
+            "prenom": "Dominique",
+            "nom": "AUVRAY"
+          },
+          "montant": 51787.49,
+          "montant_lettres": "CINQUANTE ET UN MILLE SEPT CENT QUATRE-VINGT-SEPT EUROS ET QUARANTE-NEUF CENTIMES"
+        },
+        {
+          "titulaire": {
+            "civilite": "Madame",
+            "prenom": "Viviane",
+            "nom": "AUVRAY"
+          },
+          "montant": 50000.00,
+          "montant_lettres": "CINQUANTE MILLE EUROS"
+        }
+      ],
+      "date_arrete": {"year": 2025, "month": 5, "day": 13}
+    },
+    "fiscalite": {
+      "is_option": true
+    },
+    "valorisation": {
+      "total": 1404.41,
+      "total_lettres": "MILLE QUATRE CENT QUATRE EUROS ET QUARANTE ET UN CENTIMES",
+      "valeur_unitaire": 1.40441,
+      "attestation": {
+        "date": {"year": 2025, "month": 12, "day": 15},
+        "cabinet": "BOREL et associés",
+        "adresse": "10B Rue Joseph Cugnot, 38300 Bourgoin-Jallieu"
+      }
+    },
+    "associes_intervenants": [
+      {
+        "civilite": "Monsieur",
+        "prenom": "Dominique",
+        "nom": "AUVRAY",
+        "qualite_donateur": true,
+        "qualite_societe": "co-gérant et associé"
+      },
+      {
+        "civilite": "Madame",
+        "prenom": "Viviane",
+        "nom": "AUVRAY",
+        "qualite_donateur": true,
+        "qualite_societe": "co-gérante et associée"
+      }
+    ],
+    "gerants_noms": "Monsieur Dominique AUVRAY et Madame Viviane AUVRAY née ROBIN",
+    "modification": {
+      "texte_donation": "Monsieur Dominique et Madame Viviane AUVRAY ont donné en nue-propriété à chacun de leurs deux enfants 498 parts sociales"
+    },
+    "tableau_repartition": "| | Pleine propriété | Nue-Propriété | Usufruit |\n|---|---|---|---|\n| **Monsieur Dominique AUVRAY** | | | |\n| Numérotées 1 à 2 inclus | 2 parts | | |\n| Numérotées de 3 à 500 inclus | | | 498 parts |\n| **Madame Viviane AUVRAY née ROBIN** | | | |\n| Numérotées 501 à 502 inclus | 2 parts | | |\n| Numérotées de 503 à 1000 inclus | | | 498 parts |\n| **Monsieur Antoine AUVRAY** | | | |\n| Numérotées 3 à 251 inclus | | 498 parts | |\n| Numérotées 503 à 751 inclus | | | |\n| **Madame Mathilde AUVRAY** | | | |\n| Numérotées 252 à 500 inclus | | 498 parts | |\n| Numérotées 752 à 1000 inclus | | | |\n| **TOTAL** | 4 parts | 996 parts | 996 parts |"
+  },
+  "biens_donnes": {
+    "biens_personnels_donateur_1": [
+      {
+        "numero_article": 3,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Monsieur Dominique AUVRAY numérotées de 3 à 251 de la société civile dénommée « BLOUGE » susnommée",
+        "valeur_pp": 349.70,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Monsieur",
+          "prenom": "Dominique",
+          "nom": "AUVRAY",
+          "sexe": "M"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      },
+      {
+        "numero_article": 4,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Monsieur Dominique AUVRAY numérotées de 252 à 500 de la société civile dénommée « BLOUGE » susnommée",
+        "valeur_pp": 349.70,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Monsieur",
+          "prenom": "Dominique",
+          "nom": "AUVRAY",
+          "sexe": "M"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      }
+    ],
+    "biens_personnels_donateur_2": [
+      {
+        "numero_article": 1,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Madame Viviane AUVRAY numérotées de 503 à 751 de la société civile dénommée « BLOUGE » susnommée",
+        "valeur_pp": 349.70,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Madame",
+          "prenom": "Viviane",
+          "nom": "AUVRAY",
+          "sexe": "F"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      },
+      {
+        "numero_article": 2,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Madame Viviane AUVRAY numérotées de 752 à 1000 de la société civile dénommée « BLOUGE » susnommée",
+        "valeur_pp": 349.70,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Madame",
+          "prenom": "Viviane",
+          "nom": "AUVRAY",
+          "sexe": "F"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      }
+    ],
+    "total_donateur_1": 419.64,
+    "total_donateur_2": 419.64,
+    "total_masse": 839.28
+  },
+  "repartition": {
+    "fraction": "1/2",
+    "fraction_lettres": "LA MOITIE",
+    "valeur_par_donataire": 419.64,
+    "valeur_par_donataire_lettres": "QUATRE CENT DIX-NEUF EUROS ET SOIXANTE-QUATRE CENTIMES"
+  },
+  "usufruit_successif": true,
+  "modification_article_11": true,
+  "total_droits_a_payer": 40.00
+}

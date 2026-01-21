@@ -991,7 +991,7 @@ def configurer_styles(doc: Document):
     rFonts.set(qn('w:hAnsi'), 'Times New Roman')
     rFonts.set(qn('w:cs'), 'Times New Roman')
 
-    # Heading 1: bold, ALL CAPS, underline, CENTERED, space after 12pt
+    # Heading 1: bold, ALL CAPS, underline, CENTERED, espace avant/après
     style_h1 = doc.styles['Heading 1']
     style_h1.font.name = 'Times New Roman'
     style_h1.font.size = Pt(11)
@@ -999,13 +999,13 @@ def configurer_styles(doc: Document):
     style_h1.font.all_caps = True
     style_h1.font.underline = True
     style_h1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    style_h1.paragraph_format.space_before = Pt(0)
-    style_h1.paragraph_format.space_after = Pt(12)  # Original: 12pt
+    style_h1.paragraph_format.space_before = Pt(18)  # Espace avant pour séparer les sections
+    style_h1.paragraph_format.space_after = Pt(12)   # Espace après
     style_h1.paragraph_format.first_line_indent = Pt(0)
     style_h1.paragraph_format.keep_with_next = True
     style_h1.paragraph_format.keep_together = True
 
-    # Heading 2: bold, small caps, underline, CENTERED, space after 12pt
+    # Heading 2: bold, small caps, underline, CENTERED, espace avant/après
     style_h2 = doc.styles['Heading 2']
     style_h2.font.name = 'Times New Roman'
     style_h2.font.size = Pt(11)
@@ -1013,21 +1013,21 @@ def configurer_styles(doc: Document):
     style_h2.font.small_caps = True
     style_h2.font.underline = True
     style_h2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER  # CENTERED!
-    style_h2.paragraph_format.space_before = Pt(0)
-    style_h2.paragraph_format.space_after = Pt(12)  # Original: 12pt
+    style_h2.paragraph_format.space_before = Pt(12)  # Espace avant pour séparer
+    style_h2.paragraph_format.space_after = Pt(12)   # Espace après
     style_h2.paragraph_format.first_line_indent = Pt(0)
     style_h2.paragraph_format.keep_with_next = True
     style_h2.paragraph_format.keep_together = True
 
-    # Heading 3: bold, underline, CENTERED, space after 12pt
+    # Heading 3: bold, underline, CENTERED, espace avant/après
     style_h3 = doc.styles['Heading 3']
     style_h3.font.name = 'Times New Roman'
     style_h3.font.size = Pt(11)
     style_h3.font.bold = True
     style_h3.font.underline = True
     style_h3.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER  # CENTERED!
-    style_h3.paragraph_format.space_before = Pt(0)
-    style_h3.paragraph_format.space_after = Pt(12)  # Original: 12pt
+    style_h3.paragraph_format.space_before = Pt(6)   # Petit espace avant
+    style_h3.paragraph_format.space_after = Pt(12)   # Espace après
     style_h3.paragraph_format.first_line_indent = Pt(0)
     style_h3.paragraph_format.keep_with_next = True
     style_h3.paragraph_format.keep_together = True
@@ -1081,16 +1081,16 @@ def configurer_marges(doc: Document):
     """
     Configure les marges du document EXACTEMENT comme l'original DOCX.
     Basé sur l'analyse: G=6.0cm D=1.5cm H=2.5cm B=2.5cm
-    PAS de marges miroir (original: miroir=false)
+    AVEC marges miroir pour documents notariaux (pages paires/impaires inversées)
     """
     for section in doc.sections:
-        section.left_margin = Mm(60)   # 6.0 cm
-        section.right_margin = Mm(15)  # 1.5 cm
+        section.left_margin = Mm(60)   # 6.0 cm (page impaire/droite)
+        section.right_margin = Mm(15)  # 1.5 cm (page impaire/droite)
         section.top_margin = Mm(25)    # 2.5 cm
         section.bottom_margin = Mm(25) # 2.5 cm
         section.page_width = Mm(210)   # A4
         section.page_height = Mm(297)  # A4
-        section.gutter = Mm(0)         # Pas de reliure
+        section.gutter = Mm(0)         # Pas de reliure supplémentaire
 
         # Distance en-tête/pied de page (original: 1.27cm)
         section.header_distance = Mm(12.7)
@@ -1099,7 +1099,12 @@ def configurer_marges(doc: Document):
         # En-tête différent sur première page (original: true)
         section.different_first_page_header_footer = True
 
-        # PAS de marges miroir - supprimé car original n'en a pas
+        # ACTIVER les marges miroir via XML (pages paires inversent G/D)
+        sectPr = section._sectPr
+        mirrorMargins = sectPr.find(qn('w:mirrorMargins'))
+        if mirrorMargins is None:
+            mirrorMargins = OxmlElement('w:mirrorMargins')
+            sectPr.append(mirrorMargins)
 
 
 def configurer_compatibilite(doc: Document):
@@ -1323,6 +1328,31 @@ def est_sous_titre_notarial(texte: str) -> bool:
 # CONVERSION PRINCIPALE
 # =============================================================================
 
+def appliquer_bordures_tableau(table):
+    """
+    Applique des bordures noires simples à un tableau Word.
+    Utilisé pour créer des encadrés (boxes).
+    """
+    tblPr = table._element.tblPr
+    if tblPr is None:
+        tblPr = OxmlElement('w:tblPr')
+        table._element.insert(0, tblPr)
+
+    tblBorders = OxmlElement('w:tblBorders')
+    for border_name in ['top', 'left', 'bottom', 'right', 'insideH', 'insideV']:
+        border = OxmlElement(f'w:{border_name}')
+        border.set(qn('w:val'), 'single')
+        border.set(qn('w:sz'), '8')
+        border.set(qn('w:space'), '0')
+        border.set(qn('w:color'), '000000')
+        tblBorders.append(border)
+
+    existing = tblPr.find(qn('w:tblBorders'))
+    if existing is not None:
+        tblPr.remove(existing)
+    tblPr.append(tblBorders)
+
+
 def convertir_contenu_vers_docx(contenu: str, doc: Document):
     """Convertit le contenu HTML/Markdown vers Word."""
 
@@ -1344,10 +1374,61 @@ def convertir_contenu_vers_docx(contenu: str, doc: Document):
     parser = NotarialHTMLParser(doc) if has_html else None
     html_buffer = ""
     in_html_block = False
+    in_first_page_header = False
+    first_page_header_started = False
+    in_box = False
+    box_table = None
 
     while i < len(lignes):
         ligne = lignes[i]
         ligne_strip = ligne.strip()
+
+        # Detecter debut/fin de box (encadré)
+        if 'BOX_START}' in ligne_strip:
+            in_box = True
+            # Créer un tableau avec une seule cellule pour faire l'encadré
+            box_table = doc.add_table(rows=1, cols=1)
+            box_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+            # Appliquer les bordures
+            appliquer_bordures_tableau(box_table)
+            i += 1
+            continue
+        if 'BOX_END}' in ligne_strip:
+            in_box = False
+            box_table = None
+            i += 1
+            continue
+
+        # Detecter debut/fin de header de premiere page
+        if '{FIRST_PAGE_HEADER_START}' in ligne_strip:
+            in_first_page_header = True
+            first_page_header_started = True
+            # Ajouter un grand espace en haut de la premiere page (environ 10cm)
+            para_espace = doc.add_paragraph()
+            para_espace.paragraph_format.space_before = Mm(100)  # 10 cm d'espace avant
+            para_espace.paragraph_format.space_after = Pt(0)
+            i += 1
+            continue
+        if '{FIRST_PAGE_HEADER_END}' in ligne_strip:
+            in_first_page_header = False
+            # Ajouter un espace après le header (environ 1cm)
+            para_espace_apres = doc.add_paragraph()
+            para_espace_apres.paragraph_format.space_after = Mm(10)
+            i += 1
+            continue
+
+        # Traiter ligne header de premiere page (reference, initiales, date)
+        if in_first_page_header and ligne_strip:
+            para = doc.add_paragraph()
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER  # Centré comme dans l'original
+            para.paragraph_format.space_after = Pt(0)
+            para.paragraph_format.space_before = Pt(0)
+            para.paragraph_format.first_line_indent = Mm(0)  # Pas de retrait
+            para.paragraph_format.left_indent = Mm(0)  # Pas d'indentation
+            run = para.add_run(ligne_strip)
+            appliquer_police(run)
+            i += 1
+            continue
 
         # Ignorer lignes vides
         if not ligne_strip:
@@ -1385,8 +1466,51 @@ def convertir_contenu_vers_docx(contenu: str, doc: Document):
             continue
 
         # Ligne markdown simple
-        traiter_ligne_markdown(ligne_strip, doc)
+        # Si on est dans une box, ajouter le contenu dans la cellule du tableau
+        if in_box and box_table:
+            cell = box_table.rows[0].cells[0]
+            traiter_ligne_markdown_dans_conteneur(ligne_strip, cell)
+        else:
+            traiter_ligne_markdown(ligne_strip, doc)
         i += 1
+
+
+def traiter_ligne_markdown_dans_conteneur(ligne: str, cell):
+    """
+    Traite une ligne de Markdown et l'ajoute dans une cellule de tableau (pour les encadrés).
+    Utilise les mêmes styles que traiter_ligne_markdown mais adapté pour un conteneur.
+    """
+    # Ignorer separateurs
+    if ligne in ['---', '***', '___']:
+        return
+
+    # Nettoyer echappements
+    ligne = ligne.replace('\\-', '-')
+    ligne = ligne.replace('\\*', '*')
+
+    # Titres markdown avec # → ajouter avec formatage approprié
+    niveau, texte = detecter_titre_markdown(ligne)
+    if niveau > 0:
+        para = cell.add_paragraph()
+        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = para.add_run(texte)
+        run.bold = True
+        run.underline = True
+        if niveau == 1:
+            run.font.all_caps = True
+        elif niveau == 2:
+            run.font.small_caps = True
+        appliquer_police(run)
+        return
+
+    # Paragraphe normal dans la cellule
+    para = cell.add_paragraph()
+    para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    para.paragraph_format.space_after = Pt(3)
+    para.paragraph_format.space_before = Pt(0)
+    para.paragraph_format.line_spacing = 1.0
+    para.paragraph_format.first_line_indent = Mm(12.51)
+    ajouter_texte_formate(para, ligne)
 
 
 def traiter_ligne_markdown(ligne: str, doc: Document):

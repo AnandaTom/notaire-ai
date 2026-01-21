@@ -1,0 +1,319 @@
+{
+  "reference_acte": "XXXXXX",
+  "initiales_notaire": "XX/XX",
+  "date_acte": {
+    "year": 2025,
+    "month": 1,
+    "day": 20
+  },
+  "lieu_signature": {
+    "ville": "VILLE",
+    "code_postal": "00000",
+    "adresse": "Adresse du lieu de signature"
+  },
+  "notaire": {
+    "civilite": "Maître",
+    "prenom": "Prénom",
+    "nom": "NOM",
+    "type_societe": "société par actions simplifiée",
+    "nom_societe": "Nom de la société",
+    "office": {
+      "ville": "VILLE",
+      "departement": "Département",
+      "code_postal": "00000",
+      "adresse": "Adresse de l'office"
+    },
+    "crpcen": "00000"
+  },
+  "donateur_1": {
+    "civilite": "Monsieur",
+    "civilite_court": "M.",
+    "prenom": "Prénom1",
+    "deuxieme_prenom": "Prénom2",
+    "nom": "NOM_DONATEUR",
+    "profession": "profession",
+    "naissance": {
+      "ville": "VILLE_NAISSANCE",
+      "date": {
+        "year": 1960,
+        "month": 1,
+        "day": 1
+      }
+    },
+    "nationalite": "française",
+    "adresse": {
+      "numero": "00",
+      "voie": "rue/avenue",
+      "ville": "VILLE",
+      "code_postal": "00000"
+    },
+    "sexe": "M",
+    "age": 65
+  },
+  "donateur_2": {
+    "civilite": "Madame",
+    "civilite_court": "Mme",
+    "prenom": "Prénom1",
+    "deuxieme_prenom": "Prénom2",
+    "troisieme_prenom": "Prénom3",
+    "nom": "NOM_EPOUX",
+    "nom_naissance": "NOM_NAISSANCE",
+    "profession": "profession",
+    "naissance": {
+      "ville": "VILLE_NAISSANCE",
+      "date": {
+        "year": 1961,
+        "month": 2,
+        "day": 15
+      }
+    },
+    "nationalite": "française",
+    "adresse": {
+      "numero": "00",
+      "voie": "rue/avenue",
+      "ville": "VILLE",
+      "code_postal": "00000"
+    },
+    "sexe": "F",
+    "age": 64
+  },
+  "mariage": {
+    "ville": "VILLE_MARIAGE",
+    "code_postal": "00000",
+    "date": {
+      "year": 1985,
+      "month": 6,
+      "day": 15
+    },
+    "regime": "régime matrimonial",
+    "articles_code_civil": "XXXX et suivants",
+    "notaire": {
+      "civilite": "Maître",
+      "prenom": "Prénom",
+      "nom": "NOM",
+      "ville": "VILLE",
+      "code_postal": "00000"
+    },
+    "contrat": {
+      "date": {
+        "year": 1985,
+        "month": 5,
+        "day": 10
+      }
+    }
+  },
+  "donataires": [
+    {
+      "civilite": "Monsieur",
+      "prenom": "Prénom",
+      "deuxieme_prenom": "Prénom2",
+      "troisieme_prenom": "",
+      "nom": "NOM",
+      "profession": "profession",
+      "naissance": {
+        "ville": "VILLE_NAISSANCE",
+        "date": {
+          "year": 1990,
+          "month": 3,
+          "day": 20
+        }
+      },
+      "adresse": {
+        "numero": "00",
+        "voie": "rue/avenue",
+        "ville": "VILLE",
+        "code_postal": "00000"
+      },
+      "situation_familiale": "Célibataire",
+      "nationalite": "française",
+      "attributions": [
+        {
+          "article": "UN",
+          "description": "Description du bien 1",
+          "valeur": 100.0
+        },
+        {
+          "article": "TROIS",
+          "description": "Description du bien 2",
+          "valeur": 100.0
+        }
+      ],
+      "total_attributions": 200.0,
+      "calcul_droits": {
+        "donateur_1": {
+          "part": 100.0,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 100.0,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 0.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 100.0,
+          "calcul_detail": "100,00 x 5% : 5,00 €",
+          "total_droits": 5.0,
+          "droits_a_payer": 5.0
+        },
+        "donateur_2": {
+          "part": 100.0,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 100.0,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 0.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 100.0,
+          "calcul_detail": "100,00 x 5% : 5,00 €",
+          "total_droits": 5.0,
+          "droits_a_payer": 5.0
+        }
+      }
+    },
+    {
+      "civilite": "Madame",
+      "prenom": "Prénom",
+      "deuxieme_prenom": "Prénom2",
+      "troisieme_prenom": "Prénom3",
+      "nom": "NOM",
+      "profession": "profession",
+      "naissance": {
+        "ville": "VILLE_NAISSANCE",
+        "date": {
+          "year": 1992,
+          "month": 7,
+          "day": 10
+        }
+      },
+      "adresse": {
+        "numero": "00",
+        "voie": "rue/avenue",
+        "ville": "VILLE",
+        "code_postal": "00000"
+      },
+      "situation_familiale": "Célibataire",
+      "nationalite": "française",
+      "attributions": [
+        {
+          "article": "DEUX",
+          "description": "Description du bien 3",
+          "valeur": 100.0
+        },
+        {
+          "article": "QUATRE",
+          "description": "Description du bien 4",
+          "valeur": 100.0
+        }
+      ],
+      "total_attributions": 200.0,
+      "calcul_droits": {
+        "donateur_1": {
+          "part": 100.0,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 100.0,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 0.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 100.0,
+          "calcul_detail": "100,00 x 5% : 5,00 €",
+          "total_droits": 5.0,
+          "droits_a_payer": 5.0
+        },
+        "donateur_2": {
+          "part": 100.0,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 100.0,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 0.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 100.0,
+          "calcul_detail": "100,00 x 5% : 5,00 €",
+          "total_droits": 5.0,
+          "droits_a_payer": 5.0
+        }
+      }
+    }
+  ],
+  "nombre_enfants_lettres": "deux",
+  "nombre_donataires": 2,
+  "biens_donnes": {
+    "biens_personnels_donateur_1": [
+      {
+        "numero_article": 1,
+        "designation": "Description du bien personnel donateur 1 - article 1",
+        "valeur_pp": 200.0,
+        "valeur_pp_lettres": "deux cents euros",
+        "taux_usufruit": 40,
+        "valeur_usufruit": 80.0,
+        "valeur_np": 120.0,
+        "valeur_np_lettres": "cent vingt euros",
+        "usufruitier": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_DONATEUR",
+          "sexe": "M"
+        }
+      },
+      {
+        "numero_article": 3,
+        "designation": "Description du bien personnel donateur 1 - article 2",
+        "valeur_pp": 200.0,
+        "valeur_pp_lettres": "deux cents euros",
+        "taux_usufruit": 40,
+        "valeur_usufruit": 80.0,
+        "valeur_np": 120.0,
+        "valeur_np_lettres": "cent vingt euros",
+        "usufruitier": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_DONATEUR",
+          "sexe": "M"
+        }
+      }
+    ],
+    "biens_personnels_donateur_2": [
+      {
+        "numero_article": 2,
+        "designation": "Description du bien personnel donateur 2 - article 1",
+        "valeur_pp": 200.0,
+        "valeur_pp_lettres": "deux cents euros",
+        "taux_usufruit": 40,
+        "valeur_usufruit": 80.0,
+        "valeur_np": 120.0,
+        "valeur_np_lettres": "cent vingt euros",
+        "usufruitier": {
+          "civilite": "Madame",
+          "prenom": "Prénom1",
+          "nom": "NOM_EPOUX",
+          "sexe": "F"
+        }
+      },
+      {
+        "numero_article": 4,
+        "designation": "Description du bien personnel donateur 2 - article 2",
+        "valeur_pp": 200.0,
+        "valeur_pp_lettres": "deux cents euros",
+        "taux_usufruit": 40,
+        "valeur_usufruit": 80.0,
+        "valeur_np": 120.0,
+        "valeur_np_lettres": "cent vingt euros",
+        "usufruitier": {
+          "civilite": "Madame",
+          "prenom": "Prénom1",
+          "nom": "NOM_EPOUX",
+          "sexe": "F"
+        }
+      }
+    ],
+    "total_masse": 400.0
+  },
+  "repartition": {
+    "type": "egalitaire",
+    "quotite_par_donataire": 0.5
+  },
+  "usufruit_successif": {
+    "existe": true,
+    "beneficiaire": "conjoint survivant"
+  },
+  "total_droits_a_payer": 20.0
+}
