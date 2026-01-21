@@ -191,14 +191,21 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples:
-  # Générer acte de vente avec toutes les sections
-  python workflow_rapide.py --type vente --donnees exemples/donnees_vente_exemple.json --sections all
+  # Générer acte de TEST (brouillon) -> outputs/
+  python workflow_rapide.py --type vente --donnees data.json
 
-  # Générer acte de vente avec sections spécifiques
-  python workflow_rapide.py --type vente --donnees data.json --sections lots,fiscalite,garanties
+  # Générer acte FINAL confirmé -> actes_finaux/
+  python workflow_rapide.py --type vente --donnees data.json --final
+
+  # Acte final avec nom du client
+  python workflow_rapide.py --type vente --donnees data.json --final --nom-client "DUPONT_Jean"
 
   # Lister sections disponibles
   python workflow_rapide.py --type vente --list-sections
+
+Dossiers de sortie:
+  outputs/       -> Tests, brouillons, versions non confirmées
+  actes_finaux/  -> Versions finales confirmées (avec --final)
         """
     )
 
@@ -209,9 +216,13 @@ Exemples:
     parser.add_argument('--list-sections', action='store_true',
                        help='Lister les sections disponibles et quitter')
     parser.add_argument('--output', type=Path, default=Path('outputs'),
-                       help='Dossier de sortie (défaut: outputs/)')
+                       help='Dossier de sortie pour tests (défaut: outputs/)')
     parser.add_argument('--validate', action='store_true',
                        help='Valider la conformité avec le document original')
+    parser.add_argument('--final', '-f', action='store_true',
+                       help='Acte final confirmé - stocke dans actes_finaux/ au lieu de outputs/')
+    parser.add_argument('--nom-client', type=str, default=None,
+                       help='Nom du client pour nommer le fichier final (ex: "DUPONT_Jean")')
 
     args = parser.parse_args()
 
@@ -251,9 +262,23 @@ Exemples:
         return 1
 
     # 3. Export DOCX
-    args.output.mkdir(exist_ok=True, parents=True)
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    docx_output = args.output / f"{args.type}_{timestamp}.docx"
+
+    if args.final:
+        # Acte final confirmé -> actes_finaux/
+        output_dir = Path('actes_finaux')
+        output_dir.mkdir(exist_ok=True, parents=True)
+        if args.nom_client:
+            docx_output = output_dir / f"{args.nom_client}_{args.type}_{timestamp}.docx"
+        else:
+            docx_output = output_dir / f"acte_final_{args.type}_{timestamp}.docx"
+        print(f"  📁 Acte FINAL confirmé -> {output_dir}/")
+    else:
+        # Test/brouillon -> outputs/
+        output_dir = args.output
+        output_dir.mkdir(exist_ok=True, parents=True)
+        docx_output = output_dir / f"{args.type}_{timestamp}.docx"
+        print(f"  📁 Test/brouillon -> {output_dir}/")
 
     if not exporter_docx(acte_md_path, docx_output):
         return 1
@@ -271,11 +296,16 @@ Exemples:
 
     # Résumé
     print(f"\n{'='*60}")
-    print(f"✅ WORKFLOW TERMINÉ")
+    if args.final:
+        print(f"✅ ACTE FINAL CONFIRMÉ - WORKFLOW TERMINÉ")
+    else:
+        print(f"✅ WORKFLOW TERMINÉ (test/brouillon)")
     print(f"{'='*60}")
     print(f"📄 Markdown: {acte_md_path}")
     print(f"📦 DOCX: {docx_output}")
-    print(f"📁 Dossier: {args.output}")
+    print(f"📁 Dossier: {output_dir}")
+    if args.final:
+        print(f"\n🔒 Cet acte a été stocké dans le dossier des actes finaux confirmés.")
     print(f"\n💡 Ouvrir le DOCX:")
     print(f"   start {docx_output}  (Windows)")
     print(f"   open {docx_output}   (macOS)")

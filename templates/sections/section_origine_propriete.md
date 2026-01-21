@@ -3,7 +3,7 @@
 {% if origine_propriete %}
 {% for origine in origine_propriete %}
 
-## Concernant {{ origine.lots_designation }}
+**Concernant {{ origine.lots_designation }}**
 
 ### Origine immédiate
 
@@ -94,7 +94,7 @@ L'origine de propriété antérieure est ci-après relatée telle qu'elle résul
 
 {% for origine_ant in origine.origines_anterieures %}
 
-#### {{ origine_ant.titre }}
+**{{ origine_ant.titre }}**
 
 {% if origine_ant.type == 'acquisition' %}
 Les biens et droits immobiliers objet des présentes appartenaient au VENDEUR par suite de l'acquisition qu'il en a faite de :

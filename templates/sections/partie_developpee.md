@@ -413,7 +413,7 @@ Le coût global de l'opération s'établit comme suit :
 Le financement de cette opération sera assuré comme suit :
 
 {% for acquereur in indivision.acquereurs %}
-#### <<<VAR_START>>>{{ acquereur.civilite }} {{ acquereur.prenom }} {{ acquereur.nom | upper }}<<<VAR_END>>>
+**<<<VAR_START>>>{{ acquereur.civilite }} {{ acquereur.prenom }} {{ acquereur.nom | upper }}<<<VAR_END>>>**
 
 {% if acquereur.financement.apport_personnel %}
 ##### Fonds personnels
@@ -812,7 +812,7 @@ Le BIEN n'est pas situé dans une zone de préemption urbaine.
 
 {% if urbanisme.preemption.autres %}
 {% for autre_preemption in urbanisme.preemption.autres %}
-### {{ autre_preemption.type }}
+**{{ autre_preemption.type }}**
 
 {{ autre_preemption.description }}
 
@@ -934,7 +934,7 @@ La commune de <<<VAR_START>>>{{ bien.adresse.ville }}<<<VAR_END>>> {% if diagnos
 
 ### Contrôle de l'installation de gaz
 
-{% if diagnostics.gaz %}
+{% if diagnostics.gaz and diagnostics.gaz.diagnostiqueur %}
 Un état de l'installation intérieure de gaz a été établi le <<<VAR_START>>>{{ diagnostics.gaz.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.gaz.diagnostiqueur.nom }}<<<VAR_END>>>.
 
 Conclusion : <<<VAR_START>>>{{ diagnostics.gaz.conclusion }}<<<VAR_END>>>.
@@ -942,6 +942,8 @@ Conclusion : <<<VAR_START>>>{{ diagnostics.gaz.conclusion }}<<<VAR_END>>>.
 {% if diagnostics.gaz.anomalies %}
 Des anomalies ont été relevées. Le rapport complet est annexé aux présentes.
 {% endif %}
+{% elif diagnostics.gaz and diagnostics.gaz.applicable is sameas false %}
+Le BIEN n'est pas équipé d'une installation intérieure de gaz. Le diagnostic gaz n'est pas requis.
 {% endif %}
 
 ### Contrôle de l'installation intérieure d'électricité
@@ -1164,7 +1166,7 @@ Le présent acte n'est précédé d'aucun avant-contrat.
 
 {% if conventions_anterieures.autres %}
 {% for convention in conventions_anterieures.autres %}
-### {{ convention.type }}
+**{{ convention.type }}**
 
 {{ convention.description }}
 
@@ -1375,6 +1377,10 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_impots_taxes.md' %}
 {% endif %}
 
+{% if obligations_proprietaire %}
+{% include 'sections/section_obligations_proprietaire.md' %}
+{% endif %}
+
 {% if contrats_fourniture %}
 {% include 'sections/section_contrats_fourniture.md' %}
 {% endif %}
@@ -1383,12 +1389,16 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_assurance.md' %}
 {% endif %}
 
+{% if contrat_affichage %}
+{% include 'sections/section_contrat_affichage.md' %}
+{% endif %}
+
 {% if urbanisme and (urbanisme.plu or urbanisme.servitudes_utilite_publique or urbanisme.droit_preemption) %}
 {% include 'sections/section_urbanisme_detail.md' %}
 {% endif %}
 
 {% if diagnostics %}
-{# {% include 'sections/section_diagnostics_complets.md' %} #}
+{% include 'sections/section_diagnostics_complets.md' %}
 {% endif %}
 
 {% if avantages_fiscaux or ptz %}
@@ -1399,8 +1409,60 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_travaux_construction.md' %}
 {% endif %}
 
+{% if absence_construction %}
+{% include 'sections/section_absence_construction.md' %}
+{% endif %}
+
 {% if paiement and paiement.prets and paiement.prets|length > 0 %}
 {% include 'sections/section_financement_detail.md' %}
+{% endif %}
+
+{% if aides %}
+{% include 'sections/section_aides_logement.md' %}
+{% endif %}
+
+{% if risques_pollution or erp %}
+{% include 'sections/section_risques_pollution.md' %}
+{% endif %}
+
+{% if erp or sinistres %}
+{% include 'sections/section_diagnostics_environnementaux.md' %}
+{% endif %}
+
+{% if situation_environnementale %}
+{% include 'sections/section_situation_environnementale.md' %}
+{% endif %}
+
+{% if copropriete and copropriete.syndic %}
+{% include 'sections/section_syndic_informations.md' %}
+{% endif %}
+
+{% if copropriete %}
+{% include 'sections/section_copropriete_reglementations.md' %}
+{% endif %}
+
+{% if copropriete %}
+{% include 'sections/section_repartition_charges.md' %}
+{% endif %}
+
+{% if conventions_parties or consultation_bases %}
+{% include 'sections/section_conventions_parties.md' %}
+{% endif %}
+
+{% if copropriete %}
+{% include 'sections/section_travaux_urgents.md' %}
+{% endif %}
+
+{% if copropriete and (copropriete.reglement_charges or copropriete.solde_anterieur or copropriete.avances) %}
+{% include 'sections/section_reglement_charges.md' %}
+{% endif %}
+
+{% if copropriete and copropriete.syndic %}
+{% include 'sections/section_notification_mutation.md' %}
+{% endif %}
+
+{% if negociation %}
+{% include 'sections/section_negociation.md' %}
 {% endif %}
 
 # Formalisme lié aux annexes

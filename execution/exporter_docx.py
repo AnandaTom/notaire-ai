@@ -1624,11 +1624,37 @@ def exporter_docx(chemin_entree: Path, chemin_sortie: Path, zones_grisees: bool 
 def main():
     parser = argparse.ArgumentParser(description='Exporter un acte HTML/Markdown vers DOCX')
     parser.add_argument('--input', '-i', type=Path, required=True, help='Fichier source')
-    parser.add_argument('--output', '-o', type=Path, required=True, help='Fichier DOCX de sortie')
+    parser.add_argument('--output', '-o', type=Path, default=None, help='Fichier DOCX de sortie (optionnel si --final)')
     parser.add_argument('--zones-grisees', '-z', action='store_true',
                         help='Conserver les zones grisees sur les variables remplies')
+    parser.add_argument('--final', '-f', action='store_true',
+                        help='Acte final confirme - stocke dans actes_finaux/ au lieu de outputs/')
+    parser.add_argument('--nom-client', type=str, default=None,
+                        help='Nom du client pour nommer le fichier final (ex: "DUPONT_Jean")')
 
     args = parser.parse_args()
+
+    # Determiner le chemin de sortie
+    if args.final:
+        # Acte final confirme -> actes_finaux/
+        from datetime import datetime
+        base_dir = Path(__file__).parent.parent / 'actes_finaux'
+        base_dir.mkdir(parents=True, exist_ok=True)
+
+        # Nom du fichier: [NOM_CLIENT]_[DATE]_[TYPE].docx ou acte_final_[DATE].docx
+        date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+        if args.nom_client:
+            filename = f"{args.nom_client}_{date_str}.docx"
+        else:
+            # Extraire le nom du template depuis le fichier d'entree
+            stem = args.input.stem.replace('acte', '').replace('_', ' ').strip()
+            filename = f"acte_final_{date_str}.docx" if not stem else f"{stem}_{date_str}.docx"
+
+        args.output = base_dir / filename
+        print(f'[INFO] Acte final confirme -> {args.output}')
+    elif args.output is None:
+        print('[ERREUR] Specifier --output ou utiliser --final pour un acte confirme')
+        return 1
 
     if not args.input.exists():
         print(f'[ERREUR] Fichier non trouve: {args.input}')

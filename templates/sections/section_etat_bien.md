@@ -1,4 +1,4 @@
-## État du bien
+## Etat du bien
 
 {% if etat_bien %}
 
@@ -20,9 +20,9 @@ L'occupation fait l'objet d'un bail en date du {{ etat_bien.occupation.bail.date
 {% endif %}
 
 {% if etat_bien.travaux_recents and etat_bien.travaux_recents|length > 0 %}
-### Travaux récents
+### Travaux recents
 
-Les travaux suivants ont été réalisés :
+Les travaux suivants ont ete realises :
 
 {% for travail in etat_bien.travaux_recents %}
 - **{{ travail.nature }}** ({{ travail.date }}){% if travail.montant %} : <<<VAR_START>>>{{ travail.montant | format_nombre }}<<<VAR_END>>> EUR{% endif %}
@@ -31,16 +31,16 @@ Les travaux suivants ont été réalisés :
 {% endif %}
 
 {% if etat_bien.vices_apparents %}
-### Vices apparents déclarés
+### Vices apparents declares
 
 {{ etat_bien.vices_apparents }}
 {% endif %}
 
 {% if etat_bien.conformite %}
-### Conformité
+### Conformite
 
 {% if etat_bien.conformite.electricite %}
-- **Installation électrique** : {{ etat_bien.conformite.electricite }}
+- **Installation electrique** : {{ etat_bien.conformite.electricite }}
 {% endif %}
 {% if etat_bien.conformite.gaz %}
 - **Installation gaz** : {{ etat_bien.conformite.gaz }}

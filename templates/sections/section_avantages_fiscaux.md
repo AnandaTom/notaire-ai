@@ -1,3 +1,25 @@
+## Avantage fiscal lié à un engagement de location
+
+{% if avantages_fiscaux and avantages_fiscaux.engagement_location %}
+
+Le bien a bénéficié d'un avantage fiscal au titre d'un engagement de location :
+- **Dispositif** : {{ avantages_fiscaux.engagement_location.dispositif }}
+- **Date d'engagement** : {{ avantages_fiscaux.engagement_location.date_debut }}
+- **Durée de l'engagement** : {{ avantages_fiscaux.engagement_location.duree }} ans
+{% if avantages_fiscaux.engagement_location.date_fin %}
+- **Date de fin** : {{ avantages_fiscaux.engagement_location.date_fin }}
+{% endif %}
+
+{% if avantages_fiscaux.engagement_location.transfert %}
+L'ACQUÉREUR déclare vouloir reprendre cet engagement de location conformément aux dispositions fiscales applicables.
+{% else %}
+L'ACQUÉREUR est informé que la vente du bien peut entraîner la remise en cause de l'avantage fiscal obtenu par le VENDEUR.
+{% endif %}
+
+{% else %}
+Le VENDEUR déclare que le bien n'a pas bénéficié d'un avantage fiscal au titre d'un engagement de location (Pinel, Duflot, Scellier, etc.).
+{% endif %}
+
 ## Avantages fiscaux liés à un engagement de location
 
 {% if avantages_fiscaux %}
