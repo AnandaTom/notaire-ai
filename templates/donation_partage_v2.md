@@ -1,9 +1,7 @@
-{FIRST_PAGE_HEADER_START}
 {{ reference_acte }}
 {{ initiales_notaire }}/
 
 Le {{ date_acte.day }} {{ date_acte.month|mois_en_lettres }} {{ date_acte.year }}
-{FIRST_PAGE_HEADER_END}
 
 **DONATION-PARTAGE**
 **Par {{ donateur_1.civilite }} {{ donateur_1.prenom }} {{ donateur_1.nom|upper }}**
