@@ -234,6 +234,45 @@
       "variables_requises": ["urbanisme"]
     },
 
+    "urbanisme_detail": {
+      "id": "urbanisme_detail",
+      "nom": "Urbanisme détaillé",
+      "categorie": "optionnelle",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 20.5,
+      "description": "PLU, zonage, coefficient occupation sols, servitudes d'utilité publique, risques, droit de préemption urbain détaillé",
+      "fichier_template": "templates/sections/section_urbanisme_detail.md",
+      "sous_sections": [
+        "plu_zonage",
+        "servitudes_utilite_publique",
+        "risques_naturels_technologiques",
+        "droit_preemption_urbain"
+      ],
+      "variables_requises": ["urbanisme.plu", "urbanisme.servitudes_utilite_publique", "urbanisme.risques", "urbanisme.preemption"],
+      "date_creation": "2026-01-21",
+      "remarques": "Section enrichie avec détails PLU, servitudes SUP, PPR et préemption urbain. Utiliser à la place de 'urbanisme' pour actes nécessitant niveau de détail élevé."
+    },
+
+    "risques_pollution": {
+      "id": "risques_pollution",
+      "nom": "État des risques et pollutions",
+      "categorie": "optionnelle",
+      "applicable_a": ["vente", "promesse"],
+      "ordre": 24.5,
+      "description": "ERP, risques naturels (inondation, séisme, radon), risques technologiques (ICPE, SEVESO), pollution sols (BASIAS/BASOL), obligations information acquéreur",
+      "fichier_template": "templates/sections/section_risques_pollution.md",
+      "sous_sections": [
+        "etat_risques_pollutions",
+        "risques_naturels_detail",
+        "risques_technologiques_detail",
+        "pollution_sols_basias_basol",
+        "obligations_information_acquereur"
+      ],
+      "variables_requises": ["risques.erp", "risques.naturels", "risques.technologiques", "risques.pollution"],
+      "date_creation": "2026-01-21",
+      "remarques": "Section complète ERP avec détail inondations, séismes, radon, ICPE, SEVESO, BASIAS/BASOL. Obligatoire si zone à risque identifiée."
+    },
+
     "travaux_vendeur": {
       "id": "travaux_vendeur",
       "nom": "Travaux réalisés par le vendeur",

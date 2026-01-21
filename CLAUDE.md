@@ -10,6 +10,12 @@ You operate within a 3-layer architecture that separates concerns to maximize re
 
 Ce projet permet de générer des actes notariaux (vente, promesse de vente, règlement de copropriété, modificatif EDD) à partir d'un dialogue avec le notaire. Les actes générés sont **100% fidèles** aux trames originales.
 
+### 🚀 Démarrage Rapide
+
+**Nouveau utilisateur ?** Consulter [QUICKSTART.md](QUICKSTART.md) pour générer votre premier acte en 30 secondes.
+
+**Développeur ?** Suivre [directives/bonnes_pratiques_templates.md](directives/bonnes_pratiques_templates.md) pour un développement 12x plus rapide.
+
 ### Workflow principal
 
 ```
@@ -34,6 +40,7 @@ Ce projet permet de générer des actes notariaux (vente, promesse de vente, rè
 | `directives/apprentissage_continu.md` | Enrichissement continu de la base |
 | `directives/lecons_apprises.md` | ⭐ **15 leçons** tirées des tests de production |
 | `directives/workflow_notaire.md` | 🎯 **WORKFLOW PRINCIPAL** - À suivre pour chaque génération |
+| `directives/bonnes_pratiques_templates.md` | 🚀 **PATTERNS JINJA2** - Templates robustes (12x plus rapide) |
 
 ### Scripts d'exécution
 
@@ -50,6 +57,11 @@ Ce projet permet de générer des actes notariaux (vente, promesse de vente, rè
 | `execution/suggerer_clauses.py` | Intelligence de suggestion contextuelle |
 | `execution/collecter_informations.py` | CLI interactive avec questionary |
 | `execution/historique_supabase.py` | Sauvegarde historique (Supabase + offline) |
+| `execution/workflow_rapide.py` | 🚀 **Génération 1 commande** - Validation → Assemblage → Export → Score |
+| `execution/test_fiabilite.py` | ✅ **Tests automatisés** - Vérif min/max, zones grisées, conformité |
+| `execution/valider_rapide.ps1` / `.sh` | ⚡ **Validation pré-commit** - 4 tests en 10 secondes |
+| `execution/generer_donnees_minimales.py` | 🔧 Enrichit données avec 16 variables obligatoires |
+| `execution/enrichir_prets_existants.py` | 💰 Calcule mensualités et enrichit prêts |
 
 ### Schémas de données
 
@@ -265,6 +277,29 @@ Après chaque acte généré :
 - Si erreur → Corriger le script + mettre à jour la directive
 - Si nouvelle situation → Ajouter la question dans `questions_notaire.json`
 - Si nouveau template → Documenter dans `ajouter_template.md`
+
+### Intégration de nouvelles sections (Vagues 4-5+)
+
+**Règle d'Or** : **TOUJOURS** ajouter les sections à la FIN de `partie_developpee.md`, jamais inline.
+
+**Conditions Obligatoires** :
+```jinja2
+{% if variable_racine and variable_racine.enfant %}
+{% include 'sections/ma_section.md' %}
+{% endif %}
+```
+
+**Test Progressif** :
+1. Ajouter UN SEUL include
+2. Tester assemblage avec `python execution/assembler_acte.py`
+3. Si ✅ → Ajouter le suivant
+4. Si ❌ → Commenter et analyser erreur avec message amélioré
+
+**Messages d'erreur clairs** (depuis Vague 5) :
+```
+Variable manquante dans le template: 'plus_value' - 'dict object' has no attribute 'plus_value'
+Vérifier que cette variable existe dans les données ou ajouter {% if plus_value %}
+```
 
 ---
 

@@ -375,7 +375,7 @@ Cet acte a été publié au service de la publicité foncière de {{ origine.ori
 
 {% endfor %}
 
-{% if fiscalite.plus_value.exoneration %}
+{% if fiscalite and fiscalite.plus_value and fiscalite.plus_value.exoneration %}
 **Exonération de l'impôt sur les plus-values immobilières en vertu de l'article 150 U II 1° du Code général des impôts**
 Le **VENDEUR** déclare que les présentes portent sur sa résidence principale, c'est-à-dire sa résidence effective et habituelle.
 Par suite, il bénéficie de l'exonération de l'impôt sur les plus-values conformément aux dispositions de l'article 150 U II 1° du Code général des impôts.
@@ -388,8 +388,10 @@ En conséquence, le notaire est dispensé de déposer l'imprimé 2048-IMM-SD.
 
 Pour le contrôle de l'impôt, le **VENDEUR** déclare être effectivement domicilié à l'adresse susvisée, et s'engage à signaler au centre tout changement d'adresse.
 
+{% if fiscalite and fiscalite.centre_impots_vendeur %}
 **Quant au centre des finances publiques du VENDEUR**
 {% for v in vendeurs %}{{ v.civilite }} {{ v.prenoms }} {{ v.nom }}{% if not loop.last %} et {% endif %}{% endfor %} {{ "dépendent" if vendeurs|length > 1 else "dépend" }} actuellement du centre des finances publiques de {{ fiscalite.centre_impots_vendeur.nom }} \- {{ fiscalite.centre_impots_vendeur.adresse }}.
+{% endif %}
 
 ## Impôt sur la mutation
 

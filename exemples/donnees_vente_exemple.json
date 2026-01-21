@@ -25,7 +25,6 @@
       "ville": "LYON"
     }
   },
-
   "vendeurs": [
     {
       "civilite": "Madame",
@@ -60,7 +59,6 @@
       }
     }
   ],
-
   "acquereurs": [
     {
       "civilite": "Monsieur",
@@ -117,7 +115,6 @@
       }
     }
   ],
-
   "quotites_vendues": [
     {
       "personne_index": 0,
@@ -132,7 +129,6 @@
       "type_propriete": "pleine_propriete"
     }
   ],
-
   "quotites_acquises": [
     {
       "personne_index": 0,
@@ -147,7 +143,6 @@
       "type_propriete": "pleine_propriete"
     }
   ],
-
   "bien": {
     "adresse": {
       "numero": "170",
@@ -218,7 +213,6 @@
     "usage_actuel": "habitation",
     "usage_futur": "inchange"
   },
-
   "copropriete": {
     "reglement": {
       "notaire_origine": "Maître MARMEY, notaire à MEYZIEU",
@@ -250,7 +244,6 @@
       "date_solde": "2025-11-21"
     }
   },
-
   "meubles": {
     "inclus": true,
     "liste": [
@@ -262,12 +255,10 @@
     ],
     "valeur": null
   },
-
   "prix": {
     "montant": 245000,
     "devise": "EUR"
   },
-
   "paiement": {
     "mode": "mixte",
     "fonds_personnels": 36,
@@ -291,6 +282,14 @@
         "acte_pret": {
           "notaire": "Maître Claude-Henri GOYET, notaire à LA TALAUDIERE",
           "date": "13 novembre 2025"
+        },
+        "taux_nominal": 3.09,
+        "mensualite": 1056.29,
+        "type_taux": "fixe",
+        "garantie": {
+          "type": "hypotheque",
+          "montant_inscription": 286733.2,
+          "rang": "1er rang"
         }
       },
       {
@@ -312,14 +311,23 @@
         "acte_pret": {
           "notaire": "Maître Claude-Henri GOYET, notaire à LA TALAUDIERE",
           "date": "13 novembre 2025"
+        },
+        "taux_nominal": 1.99,
+        "mensualite": 103.3,
+        "type_taux": "fixe",
+        "garantie": {
+          "type": "hypotheque",
+          "montant_inscription": 31720.0,
+          "rang": "1er rang"
         }
       }
     ]
   },
-
   "origine_propriete": [
     {
-      "lots_concernes": ["48"],
+      "lots_concernes": [
+        "48"
+      ],
       "origine_immediate": {
         "type": "acquisition",
         "notaire": "Maître DUPONT, notaire à LYON",
@@ -333,7 +341,10 @@
       }
     },
     {
-      "lots_concernes": ["14", "29"],
+      "lots_concernes": [
+        "14",
+        "29"
+      ],
       "origine_immediate": {
         "type": "acquisition",
         "notaire": "Maître MARTIN, notaire à TASSIN",
@@ -347,7 +358,6 @@
       }
     }
   ],
-
   "jouissance": {
     "date_propriete": "ce jour",
     "date_jouissance": "14 novembre 2025",
@@ -357,7 +367,6 @@
       "date": "13 novembre 2025"
     }
   },
-
   "fiscalite": {
     "plus_value": {
       "exoneration": true,
@@ -365,8 +374,8 @@
     },
     "droits_mutation": {
       "assiette": 245000,
-      "taux_departemental": 4.50,
-      "taux_communal": 1.20,
+      "taux_departemental": 4.5,
+      "taux_communal": 1.2,
       "primo_accedant": true,
       "total": 14226
     },
@@ -375,7 +384,6 @@
       "adresse": "1 rue CLAUDE BAUDRAND BOITE POSTALE 236 - 69732 CALUIRE"
     }
   },
-
   "diagnostics": {
     "diagnostiqueur": {
       "nom": "ACHIN DIAG EXPERT",
@@ -401,14 +409,160 @@
       "date": "22 mai 2025"
     }
   },
-
   "publication": {
     "service_publicite_fonciere": "LYON 1"
   },
-
   "avant_contrat": {
     "type": "promesse_unilaterale",
     "date": "15 octobre 2025",
     "notaire": "Maître Charlotte DIAZ"
+  },
+  "urbanisme": {
+    "plan_local_urbanisme": {
+      "zonage": "UAa",
+      "autorise_usage": true
+    },
+    "droit_preemption": {
+      "applicable": false
+    }
+  },
+  "indivision": {
+    "regime": "indivision_simple",
+    "acquereurs": [
+      {
+        "civilite": "Monsieur",
+        "nom": "MARTIN",
+        "prenom": "Jean",
+        "quotite": "la moitié",
+        "pourcentage": 50,
+        "financement": {
+          "apport_personnel": 36,
+          "emprunt": {
+            "montant": 122482.0,
+            "taux": 3.09,
+            "duree": 300
+          }
+        }
+      },
+      {
+        "civilite": "Madame",
+        "nom": "BERNARD",
+        "prenom": "Sophie",
+        "quotite": "la moitié",
+        "pourcentage": 50,
+        "financement": {
+          "apport_personnel": 36,
+          "emprunt": {
+            "montant": 122482.0,
+            "taux": 3.09,
+            "duree": 300
+          }
+        }
+      }
+    ],
+    "conditions_generales": {
+      "gestion": {
+        "mode": "unanimite",
+        "designation_gerant": false
+      },
+      "jouissance": {
+        "mode": "occupation_exclusive",
+        "indemnite_occupation": false
+      },
+      "charges": {
+        "repartition": "proportionnelle",
+        "proportionnelles_quotite": true
+      },
+      "alienation": {
+        "droit_preemption": true,
+        "notification_obligatoire": true
+      },
+      "revente": {
+        "droit_preference": true,
+        "delai_reponse": 60
+      }
+    }
+  },
+  "modalites_delivrance": {
+    "remise_cles": {
+      "date": "14 novembre 2025",
+      "modalites": "Remise physique au notaire"
+    },
+    "libre_occupation": true
+  },
+  "negociation": {
+    "agent_immobilier": null,
+    "conditions_suspensives": []
+  },
+  "conclusion_contrat": {
+    "lieu": "TASSIN-LA-DEMI-LUNE",
+    "lieu_signature": "Étude notariale"
+  },
+  "devoir_information": {
+    "conseil_notaire": true,
+    "delai_reflexion": true
+  },
+  "imprevision": {
+    "clause_applicable": true,
+    "seuil_variation": 10
+  },
+  "conventions_anterieures": {
+    "existe": false,
+    "liste": []
+  },
+  "mediation": {
+    "clause_applicable": true,
+    "organisme": "Chambre des Notaires"
+  },
+  "election_domicile": {
+    "vendeur": {
+      "lieu": "170 rue Joliot Curie",
+      "ville": "TASSIN-LA-DEMI-LUNE"
+    },
+    "acquereur": {
+      "lieu": "25 rue de la République",
+      "ville": "LYON"
+    }
+  },
+  "titres": {
+    "conservation": "Acquéreur",
+    "remise_copies": true
+  },
+  "pouvoirs": {
+    "vendeur": {
+      "procuration": false
+    },
+    "acquereur": {
+      "procuration": false
+    }
+  },
+  "affirmation": {
+    "sincere": true,
+    "complete": true
+  },
+  "restitution": {
+    "garantie_bancaire": false,
+    "sequestre": false
+  },
+  "rgpd": {
+    "consentement": true,
+    "traitement_donnees": "Notaire responsable de traitement",
+    "duree_conservation": "10 ans"
+  },
+  "certification_identite": {
+    "vendeur": {
+      "documents": [
+        "CNI",
+        "Justificatif de domicile"
+      ],
+      "certifie": true
+    },
+    "acquereur": {
+      "documents": [
+        "CNI",
+        "Justificatif de domicile"
+      ],
+      "certifie": true
+    }
   }
 }

@@ -1341,52 +1341,6 @@ Les documents d'identité suivants ont été présentés :
 Le notaire a procédé à la vérification de l'authenticité de ces documents conformément aux dispositions de l'article 1369 du Code civil.
 {% endif %}
 
-# Origine de propriété
-
-{% if origine_propriete %}
-{% include 'sections/section_origine_propriete.md' %}
-{% endif %}
-
-{% if bien and bien.lots and bien.lots|length > 0 %}
-{% include 'sections/section_lots_details.md' %}
-{% endif %}
-
-{% if fiscalite and fiscalite.contribution_securite_immobiliere %}
-{% include 'sections/section_fiscalite_complete.md' %}
-{% endif %}
-
-{% if garanties %}
-{% include 'sections/section_garanties.md' %}
-{% endif %}
-
-{% if servitudes %}
-{% include 'sections/section_servitudes.md' %}
-{% endif %}
-
-{% if etat_bien %}
-{% include 'sections/section_etat_bien.md' %}
-{% endif %}
-
-{% if equipements %}
-{% include 'sections/section_equipements.md' %}
-{% endif %}
-
-{% if impots %}
-{% include 'sections/section_impots_taxes.md' %}
-{% endif %}
-
-{% if contrats_fourniture %}
-{% include 'sections/section_contrats_fourniture.md' %}
-{% endif %}
-
-{% if assurance %}
-{% include 'sections/section_assurance.md' %}
-{% endif %}
-
-{% if paiement and paiement.prets and paiement.prets|length > 0 %}
-{% include 'sections/section_financement_detail.md' %}
-{% endif %}
-
 # Formalisme lié aux annexes
 
 Le présent acte est complété par les annexes suivantes, qui en font partie intégrante :
