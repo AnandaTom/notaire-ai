@@ -55,18 +55,20 @@ Le bien est situé dans une zone exposée au risque d'inondation.
 {% if risques.naturels.inondation.sinistres and risques.naturels.inondation.sinistres|length > 0 %}
 **Sinistres indemnisés** :
 {% for sinistre in risques.naturels.inondation.sinistres %}
+{% if sinistre.date %}
 - Date : <<<VAR_START>>>{{ sinistre.date }}<<<VAR_END>>>{% if sinistre.reconnaissance_catastrophe %} (reconnu catastrophe naturelle le <<<VAR_START>>>{{ sinistre.reconnaissance_catastrophe }}<<<VAR_END>>>){% endif %}
 {% if sinistre.description %}
-  Description : {{ sinistre.description }}
+  Description : <<<VAR_START>>>{{ sinistre.description }}<<<VAR_END>>>
 {% endif %}
 {% if sinistre.montant_indemnise %}
   Montant indemnisé : <<<VAR_START>>>{{ sinistre.montant_indemnise | format_nombre }}<<<VAR_END>>> EUR
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endif %}
 
 {% if risques.naturels.inondation.travaux_protection %}
-**Travaux de protection réalisés** : {{ risques.naturels.inondation.travaux_protection }}
+**Travaux de protection réalisés** : <<<VAR_START>>>{{ risques.naturels.inondation.travaux_protection }}<<<VAR_END>>>
 {% endif %}
 
 {% else %}
@@ -85,7 +87,7 @@ Le bien est situé dans une zone exposée au risque de mouvement de terrain.
 {% endif %}
 
 {% if risques.naturels.mouvement_terrain.cavites %}
-**Présence de cavités souterraines** : {% if risques.naturels.mouvement_terrain.cavites.connues %}Oui{% if risques.naturels.mouvement_terrain.cavites.type %} ({{ risques.naturels.mouvement_terrain.cavites.type }}){% endif %}{% else %}Non{% endif %}
+**Présence de cavités souterraines** : {% if risques.naturels.mouvement_terrain.cavites.connues %}Oui{% if risques.naturels.mouvement_terrain.cavites.type %} (<<<VAR_START>>>{{ risques.naturels.mouvement_terrain.cavites.type }}<<<VAR_END>>>){% endif %}{% else %}Non{% endif %}
 {% endif %}
 
 {% else %}
@@ -100,7 +102,7 @@ Le bien n'est pas exposé à un risque de mouvement de terrain connu.
 **Zone de sismicité** : <<<VAR_START>>>{{ risques.naturels.seisme.zone }}<<<VAR_END>>>
 
 {% if risques.naturels.seisme.prescriptions %}
-Prescriptions particulières : {{ risques.naturels.seisme.prescriptions }}
+Prescriptions particulières : <<<VAR_START>>>{{ risques.naturels.seisme.prescriptions }}<<<VAR_END>>>
 {% endif %}
 {% endif %}
 {% endif %}
@@ -109,12 +111,14 @@ Prescriptions particulières : {{ risques.naturels.seisme.prescriptions }}
 #### Autres risques naturels
 
 {% for risque in risques.naturels.autres %}
+{% if risque.type %}
 **{{ risque.type | capitalize }}**
 {% if risque.description %}
-- Description : {{ risque.description }}
+- Description : <<<VAR_START>>>{{ risque.description }}<<<VAR_END>>>
 {% endif %}
 {% if risque.niveau_aleas %}
 - Niveau d'aléa : <<<VAR_START>>>{{ risque.niveau_aleas }}<<<VAR_END>>>
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endif %}
@@ -133,6 +137,7 @@ Prescriptions particulières : {{ risques.naturels.seisme.prescriptions }}
 Le bien est situé à proximité d'installations classées :
 
 {% for installation in risques.technologiques.icpe.liste %}
+{% if installation.nom %}
 **{{ installation.nom }}**
 {% if installation.distance %}
 - Distance : <<<VAR_START>>>{{ installation.distance }}<<<VAR_END>>> mètres
@@ -141,7 +146,8 @@ Le bien est situé à proximité d'installations classées :
 - Régime : <<<VAR_START>>>{{ installation.regime }}<<<VAR_END>>>
 {% endif %}
 {% if installation.activite %}
-- Activité : {{ installation.activite }}
+- Activité : <<<VAR_START>>>{{ installation.activite }}<<<VAR_END>>>
+{% endif %}
 {% endif %}
 {% endfor %}
 
@@ -156,7 +162,9 @@ Le bien n'est pas situé à proximité d'installations classées.
 {% if risques.technologiques.seveso.proximite %}
 Le bien est situé à proximité d'un site SEVESO :
 
+{% if risques.technologiques.seveso.nom %}
 **Nom de l'installation** : <<<VAR_START>>>{{ risques.technologiques.seveso.nom }}<<<VAR_END>>>
+{% endif %}
 
 {% if risques.technologiques.seveso.seuil %}
 **Seuil** : <<<VAR_START>>>{{ risques.technologiques.seveso.seuil }}<<<VAR_END>>>
@@ -191,7 +199,7 @@ Le bien ou sa parcelle figure dans l'inventaire BASIAS des sites industriels et 
 {% endif %}
 
 {% if risques.pollution.basias.activite %}
-**Activité recensée** : {{ risques.pollution.basias.activite }}
+**Activité recensée** : <<<VAR_START>>>{{ risques.pollution.basias.activite }}<<<VAR_END>>>
 {% endif %}
 
 {% if risques.pollution.basias.periode %}
@@ -199,7 +207,7 @@ Le bien ou sa parcelle figure dans l'inventaire BASIAS des sites industriels et 
 {% endif %}
 
 {% if risques.pollution.basias.commentaire %}
-{{ risques.pollution.basias.commentaire }}
+<<<VAR_START>>>{{ risques.pollution.basias.commentaire }}<<<VAR_END>>>
 {% endif %}
 
 {% else %}
@@ -218,7 +226,7 @@ Le bien ou sa parcelle figure dans l'inventaire BASOL des sites et sols pollués
 {% endif %}
 
 {% if risques.pollution.basol.origine %}
-**Origine de la pollution** : {{ risques.pollution.basol.origine }}
+**Origine de la pollution** : <<<VAR_START>>>{{ risques.pollution.basol.origine }}<<<VAR_END>>>
 {% endif %}
 
 {% if risques.pollution.basol.statut %}
@@ -226,7 +234,7 @@ Le bien ou sa parcelle figure dans l'inventaire BASOL des sites et sols pollués
 {% endif %}
 
 {% if risques.pollution.basol.mesures %}
-**Mesures prises ou à prendre** : {{ risques.pollution.basol.mesures }}
+**Mesures prises ou à prendre** : <<<VAR_START>>>{{ risques.pollution.basol.mesures }}<<<VAR_END>>>
 {% endif %}
 
 {% else %}
@@ -248,18 +256,20 @@ Un diagnostic de pollution des sols a été réalisé.
 {% endif %}
 
 {% if risques.pollution.diagnostic_pollution.conclusion %}
-**Conclusion** : {{ risques.pollution.diagnostic_pollution.conclusion }}
+**Conclusion** : <<<VAR_START>>>{{ risques.pollution.diagnostic_pollution.conclusion }}<<<VAR_END>>>
 {% endif %}
 
 {% if risques.pollution.diagnostic_pollution.polluants_detectes and risques.pollution.diagnostic_pollution.polluants_detectes|length > 0 %}
 **Polluants détectés** :
 {% for polluant in risques.pollution.diagnostic_pollution.polluants_detectes %}
-- {{ polluant.nom }}{% if polluant.concentration %} : <<<VAR_START>>>{{ polluant.concentration }}<<<VAR_END>>>{% endif %}
+{% if polluant.nom %}
+- <<<VAR_START>>>{{ polluant.nom }}<<<VAR_END>>>{% if polluant.concentration %} : <<<VAR_START>>>{{ polluant.concentration }}<<<VAR_END>>>{% endif %}
+{% endif %}
 {% endfor %}
 {% endif %}
 
 {% if risques.pollution.diagnostic_pollution.recommandations %}
-**Recommandations** : {{ risques.pollution.diagnostic_pollution.recommandations }}
+**Recommandations** : <<<VAR_START>>>{{ risques.pollution.diagnostic_pollution.recommandations }}<<<VAR_END>>>
 {% endif %}
 {% endif %}
 
@@ -275,7 +285,11 @@ Le bien ne figure ni dans l'inventaire BASIAS, ni dans l'inventaire BASOL.
 Conformément aux articles L. 125-5, L. 125-7 et R. 125-23 à R. 125-27 du Code de l'environnement :
 
 {% if risques.obligations_information.erp_remis %}
+{% if risques.obligations_information.erp_remis_date %}
 1. L'État des Risques et Pollutions a été remis à l'acquéreur le <<<VAR_START>>>{{ risques.obligations_information.erp_remis_date }}<<<VAR_END>>>
+{% else %}
+1. L'État des Risques et Pollutions a été remis à l'acquéreur
+{% endif %}
 {% else %}
 1. L'État des Risques et Pollutions sera remis à l'acquéreur préalablement à la signature du présent acte
 {% endif %}
@@ -301,7 +315,7 @@ L'ACQUEREUR reconnaît avoir été parfaitement informé.
 
 ### Remarques particulières
 
-{{ risques.remarques }}
+<<<VAR_START>>>{{ risques.remarques }}<<<VAR_END>>>
 {% endif %}
 
 {% else %}

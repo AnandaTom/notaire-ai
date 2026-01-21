@@ -1383,6 +1383,22 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_assurance.md' %}
 {% endif %}
 
+{% if urbanisme and (urbanisme.plu or urbanisme.servitudes_utilite_publique or urbanisme.droit_preemption) %}
+{% include 'sections/section_urbanisme_detail.md' %}
+{% endif %}
+
+{% if diagnostics %}
+{# {% include 'sections/section_diagnostics_complets.md' %} #}
+{% endif %}
+
+{% if avantages_fiscaux or ptz %}
+{% include 'sections/section_avantages_fiscaux.md' %}
+{% endif %}
+
+{% if travaux %}
+{% include 'sections/section_travaux_construction.md' %}
+{% endif %}
+
 {% if paiement and paiement.prets and paiement.prets|length > 0 %}
 {% include 'sections/section_financement_detail.md' %}
 {% endif %}
