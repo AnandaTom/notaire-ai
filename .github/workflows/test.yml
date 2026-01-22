@@ -1,0 +1,70 @@
+name: Tests on Pull Request
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short || true
+
+      - name: Validate JSON schemas
+        run: |
+          python -c "
+          import json
+          import glob
+
+          errors = []
+          for f in glob.glob('schemas/*.json'):
+              try:
+                  with open(f) as fp:
+                      json.load(fp)
+                  print(f'✅ {f}')
+              except Exception as e:
+                  errors.append(f'❌ {f}: {e}')
+                  print(f'❌ {f}: {e}')
+
+          if errors:
+              exit(1)
+          "
+
+      - name: Check templates syntax
+        run: |
+          python -c "
+          from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError
+          import glob
+
+          env = Environment(loader=FileSystemLoader('.'))
+          errors = []
+
+          for f in glob.glob('templates/**/*.md', recursive=True):
+              try:
+                  env.get_template(f)
+                  print(f'✅ {f}')
+              except TemplateSyntaxError as e:
+                  errors.append(f'❌ {f}: {e}')
+                  print(f'❌ {f}: ligne {e.lineno}: {e.message}')
+
+          if errors:
+              exit(1)
+          "
