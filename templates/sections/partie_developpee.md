@@ -1453,6 +1453,10 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_repartition_charges.md' %}
 {% endif %}
 
+{% if copropriete or charges_copropriete %}
+{% include 'sections/section_charges_copropriete.md' %}
+{% endif %}
+
 {% if conventions_parties or consultation_bases %}
 {% include 'sections/section_conventions_parties.md' %}
 {% endif %}
@@ -1471,6 +1475,18 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 
 {% if negociation %}
 {% include 'sections/section_negociation.md' %}
+{% endif %}
+
+{% if pouvoirs or representation or mandats %}
+{% include 'sections/section_mandats_representation.md' %}
+{% endif %}
+
+{% if dommages_ouvrage or garanties or assurances %}
+{% include 'sections/section_assurances_garanties.md' %}
+{% endif %}
+
+{% if fiscalite or declarations_fiscales or tva or plus_value %}
+{% include 'sections/section_declarations_fiscales.md' %}
 {% endif %}
 
 # Formalisme lié aux annexes
