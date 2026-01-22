@@ -1425,8 +1425,16 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_risques_pollution.md' %}
 {% endif %}
 
-{% if erp or sinistres %}
+{% if diagnostics and (diagnostics.erp or diagnostics.sinistres or diagnostics.environnement) %}
 {% include 'sections/section_diagnostics_environnementaux.md' %}
+{% endif %}
+
+{% if obligation_declarative or aides %}
+{% include 'sections/section_obligation_declarative.md' %}
+{% endif %}
+
+{% if consultation_bases or diagnostics %}
+{% include 'sections/section_consultation_bases_donnees.md' %}
 {% endif %}
 
 {% if situation_environnementale %}
@@ -1443,6 +1451,10 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 
 {% if copropriete %}
 {% include 'sections/section_repartition_charges.md' %}
+{% endif %}
+
+{% if copropriete or charges_copropriete %}
+{% include 'sections/section_charges_copropriete.md' %}
 {% endif %}
 
 {% if conventions_parties or consultation_bases %}
@@ -1463,6 +1475,18 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 
 {% if negociation %}
 {% include 'sections/section_negociation.md' %}
+{% endif %}
+
+{% if pouvoirs or representation or mandats %}
+{% include 'sections/section_mandats_representation.md' %}
+{% endif %}
+
+{% if dommages_ouvrage or garanties or assurances %}
+{% include 'sections/section_assurances_garanties.md' %}
+{% endif %}
+
+{% if fiscalite or declarations_fiscales or tva or plus_value %}
+{% include 'sections/section_declarations_fiscales.md' %}
 {% endif %}
 
 # Formalisme lié aux annexes
