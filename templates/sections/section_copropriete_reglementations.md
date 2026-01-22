@@ -41,21 +41,23 @@ La fiche synthétique de la copropriété prévue à l'article L 711-2 du Code d
 
 ### Emprunt collectif
 
-{% if copropriete.emprunt_collectif %}
+{% if copropriete.emprunt_collectif and copropriete.emprunt_collectif.montant %}
 Le syndicat des copropriétaires a souscrit un emprunt collectif :
 - Montant : <<<VAR_START>>>{{ copropriete.emprunt_collectif.montant | format_nombre }}<<<VAR_END>>>
-- Objet : {{ copropriete.emprunt_collectif.objet }}
-- Part du lot : <<<VAR_START>>>{{ copropriete.emprunt_collectif.part_lot | format_nombre }}<<<VAR_END>>>
+{% if copropriete.emprunt_collectif.objet %}- Objet : {{ copropriete.emprunt_collectif.objet }}{% endif %}
+{% if copropriete.emprunt_collectif.part_lot %}- Part du lot : <<<VAR_START>>>{{ copropriete.emprunt_collectif.part_lot | format_nombre }}<<<VAR_END>>>{% endif %}
 {% else %}
 Le syndicat des copropriétaires n'a pas souscrit d'emprunt collectif.
 {% endif %}
 
 ### Fonds de travaux
 
-{% if copropriete.fonds_travaux %}
+{% if copropriete.fonds_travaux and copropriete.fonds_travaux.montant %}
 Le fonds de travaux prévu à l'article 14-2 de la loi du 10 juillet 1965 a été constitué.
 - Montant actuel : <<<VAR_START>>>{{ copropriete.fonds_travaux.montant | format_nombre }}<<<VAR_END>>>
-- Quote-part du lot : <<<VAR_START>>>{{ copropriete.fonds_travaux.quote_part | format_nombre }}<<<VAR_END>>>
+{% if copropriete.fonds_travaux.quote_part %}- Quote-part du lot : <<<VAR_START>>>{{ copropriete.fonds_travaux.quote_part | format_nombre }}<<<VAR_END>>>{% endif %}
+{% else %}
+Le fonds de travaux n'a pas encore été constitué ou les informations ne sont pas disponibles.
 {% endif %}
 
 ### Garantie de superficie (Loi Carrez)
