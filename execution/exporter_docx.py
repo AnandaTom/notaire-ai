@@ -1166,8 +1166,12 @@ def traiter_formatage_markdown(texte: str):
     underline = False
     zone_grisee = False
 
+    # Placeholders utilisés pour protéger les marqueurs du parser HTML
+    PLACEHOLDER_START = "___ZONEVAR_DEBUT___"
+    PLACEHOLDER_END = "___ZONEVAR_FIN___"
+
     while i < len(texte):
-        # Detecter debut de zone variable (marqueur)
+        # Detecter debut de zone variable (marqueur original OU placeholder)
         if texte[i:i+len(MARQUEUR_VAR_START)] == MARQUEUR_VAR_START:
             if current_text:
                 segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
@@ -1176,13 +1180,29 @@ def traiter_formatage_markdown(texte: str):
             i += len(MARQUEUR_VAR_START)
             continue
 
-        # Detecter fin de zone variable (marqueur)
+        if texte[i:i+len(PLACEHOLDER_START)] == PLACEHOLDER_START:
+            if current_text:
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
+                current_text = ""
+            zone_grisee = True
+            i += len(PLACEHOLDER_START)
+            continue
+
+        # Detecter fin de zone variable (marqueur original OU placeholder)
         if texte[i:i+len(MARQUEUR_VAR_END)] == MARQUEUR_VAR_END:
             if current_text:
                 segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
                 current_text = ""
             zone_grisee = False
             i += len(MARQUEUR_VAR_END)
+            continue
+
+        if texte[i:i+len(PLACEHOLDER_END)] == PLACEHOLDER_END:
+            if current_text:
+                segments.append((current_text, {'bold': bold, 'italic': italic, 'underline': underline, 'zone_grisee': zone_grisee}))
+                current_text = ""
+            zone_grisee = False
+            i += len(PLACEHOLDER_END)
             continue
 
         if texte[i:i+3] == '***':
@@ -1366,6 +1386,14 @@ def convertir_contenu_vers_docx(contenu: str, doc: Document):
     # Supprimer les balises <u> et </u> du HTML source
     # Le soulignement n'est appliqué que via __text__ en Markdown
     contenu = re.sub(r'</?u>', '', contenu)
+
+    # CORRECTION: Protéger les marqueurs de zones grisées pendant tout le traitement HTML
+    # Les triples chevrons <<< >>> sont interprétés comme HTML invalide par le parser
+    # On utilise des placeholders qui ne ressemblent pas à du HTML
+    PLACEHOLDER_START = "___ZONEVAR_DEBUT___"
+    PLACEHOLDER_END = "___ZONEVAR_FIN___"
+    contenu = contenu.replace(MARQUEUR_VAR_START, PLACEHOLDER_START)
+    contenu = contenu.replace(MARQUEUR_VAR_END, PLACEHOLDER_END)
 
     has_html = '<div' in contenu or '<strong>' in contenu or '<br' in contenu
 
