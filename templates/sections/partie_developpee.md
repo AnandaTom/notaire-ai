@@ -1429,6 +1429,14 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_diagnostics_environnementaux.md' %}
 {% endif %}
 
+{% if obligation_declarative or aides %}
+{% include 'sections/section_obligation_declarative.md' %}
+{% endif %}
+
+{% if consultation_bases or diagnostics %}
+{% include 'sections/section_consultation_bases_donnees.md' %}
+{% endif %}
+
 {% if situation_environnementale %}
 {% include 'sections/section_situation_environnementale.md' %}
 {% endif %}
