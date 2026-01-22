@@ -239,312 +239,40 @@
   "nombre_donataires": 2,
   "donation_anterieure": {
     "existe": true,
+    "date": {
+      "day": 23,
+      "month": 12,
+      "year": 2021
+    },
     "notaire": {
       "civilite": "Maître",
-      "nom": "ROBLOT-NOM_NOTAIRE",
-      "ville": "SEREZIN-DU-RHÔNE",
-      "code_postal": "69360"
+      "prenom": "Prénom",
+      "nom": "NOM_NOTAIRE_ANCIEN",
+      "ville": "VILLE_ANCIEN",
+      "code_postal": "00000"
     },
-    "date": {
-      "year": 2021,
-      "month": 12,
-      "day": 23
-    },
-    "donateurs": "Monsieur et Madame Prénom1 et Prénom2 NOM_FAMILLE, donateurs aux présentes",
-    "objet": "la nue-propriété d'un bien sis à VILLE (00000), 00 rue Exemple",
-    "valeur": 400000.0,
-    "valeur_lettres": "QUATRE CENT MILLE EUROS",
-    "rappel_texte": "l'acte de donation consenti par Monsieur et Madame Prénom1 et Prénom2 NOM_FAMILLE, DONATEURS aux présentes, au profit de leurs deux enfants, Monsieur Prénom4 NOM_FAMILLE et Madame Prénom5 NOM_FAMILLE, donataires aux présentes, suivant acte reçu par Maître ROBLOT NOM_NOTAIRE, notaire à SEREZIN DU RHONE (69360), le 23 décembre 2021",
-    "calcul_droits": "Donation de Monsieur Prénom1 NOM_FAMILLE\nAu profit de Monsieur Prénom4 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits.\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nAu profit de Madame Prénom5 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nDonation de Madame Prénom2 NOM_FAMILLE\nAu profit de Monsieur Prénom4 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits.\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nAu profit de Madame Prénom5 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant"
+    "valeur": 400000,
+    "valeur_lettres": "quatre cent mille",
+    "objet": "la nue-propriété d'un bien"
   },
   "societe": {
-    "existe": true,
-    "denomination": "SOCIETE",
-    "siren": "985331354",
-    "rcs": "METROPOLE",
-    "capital": 1000.0,
-    "capital_lettres": "MILLE EUROS",
-    "nombre_parts": 1000,
-    "nombre_parts_lettres": "MILLE",
-    "valeur_part": 1.0,
-    "valeur_part_lettres": "UN EURO",
+    "nom": "NOM_SOCIETE",
+    "siren": "000 000 000",
+    "capital": 1000,
+    "capital_lettres": "mille",
+    "constitution": {
+      "date": {
+        "day": 1,
+        "month": 1,
+        "year": 2024
+      }
+    },
     "siege": {
       "ville": "VILLE",
       "code_postal": "00000",
       "adresse": "00 rue Exemple"
     },
-    "tribunal_commerce": "METROPOLE",
-    "duree": 99,
-    "duree_lettres": "quatre-vingt-dix-neuf",
-    "constitution": {
-      "date": {
-        "year": 2024,
-        "month": 2,
-        "day": 19
-      }
-    },
-    "objet_social": [
-      "La propriété, la détention, la gestion et la cession de valeurs mobilières et immobilières, droits sociaux ou tous autres titres cotés ou non cotés, de SCPI ou d'OPCI, détenus en pleine propriété, nue-propriété ou usufruit, acquis par voie d'achat, d'échange, d'apport ou autrement",
-      "La propriété, la détention, la gestion, la construction, l'administration et l'exploitation par bail, location ou autrement de tous immeubles et droits immobiliers détenus en pleine propriété, nue-propriété ou usufruit, dont elle pourrait devenir propriétaire par voie d'acquisition, d'apport, d'échange ou autrement",
-      "L'organisation du patrimoine familial des associés en vue d'en faciliter la gestion et la transmission afin d'éviter qu'il ne soit livré aux aléas de l'indivision",
-      "Le placement et l'investissement par tous moyens monétaires ou financiers des fonds, de la trésorerie et des disponibilités de la société",
-      "La vente de ces mêmes biens pour autant toutefois qu'elle ne puisse être considérée comme un acte de commerce et ne porte pas atteinte au caractère civil de la société",
-      "L'emprunt, le cautionnement simple ou hypothécaire nécessaires à la réalisation de l'objet"
-    ],
-    "associes_fondateurs": [
-      {
-        "civilite": "Monsieur",
-        "prenom": "Prénom1",
-        "nom": "NOM_FAMILLE",
-        "adresse": {
-          "ville": "VILLE",
-          "code_postal": "00000",
-          "numero": "29",
-          "voie": "chemin du Panorama"
-        },
-        "naissance": {
-          "ville": "PARIS 12ÈME ARRONDISSEMENT",
-          "code_postal": "75012",
-          "date": {
-            "year": 1961,
-            "month": 2,
-            "day": 20
-          }
-        },
-        "mariage": {
-          "ville": "CHANTEMERLE-LES-BLES",
-          "code_postal": "26600",
-          "date": {
-            "year": 1989,
-            "month": 9,
-            "day": 9
-          },
-          "regime": "la participation aux acquêts",
-          "articles_code_civil": "1569 et suivants",
-          "notaire": {
-            "civilite": "Maître",
-            "prenom": "Prénom_Ancien",
-            "nom": "NOM_ANCIEN_NOTAIRE",
-            "ville": "CHAROLLES",
-            "code_postal": "71120"
-          },
-          "contrat": {
-            "date": {
-              "year": 1989,
-              "month": 6,
-              "day": 24
-            }
-          }
-        },
-        "conjoint": {
-          "civilite": "Madame",
-          "prenom": "Prénom2",
-          "nom": "NOM_NAISSANCE"
-        }
-      },
-      {
-        "civilite": "Madame",
-        "prenom": "Prénom2",
-        "nom": "NOM_FAMILLE",
-        "nom_naissance": "NOM_NAISSANCE",
-        "adresse": {
-          "ville": "VILLE",
-          "code_postal": "00000",
-          "numero": "29",
-          "voie": "chemin du Panorama"
-        },
-        "naissance": {
-          "ville": "TAIN-L'HERMITAGE",
-          "code_postal": "26600",
-          "date": {
-            "year": 1961,
-            "month": 4,
-            "day": 16
-          }
-        },
-        "mariage": {
-          "ville": "CHANTEMERLE-LES-BLES",
-          "code_postal": "26600",
-          "date": {
-            "year": 1989,
-            "month": 9,
-            "day": 9
-          },
-          "regime": "la participation aux acquêts",
-          "articles_code_civil": "1569 et suivants",
-          "notaire": {
-            "civilite": "Maître",
-            "prenom": "Prénom_Ancien",
-            "nom": "NOM_ANCIEN_NOTAIRE",
-            "ville": "CHAROLLES",
-            "code_postal": "71120"
-          },
-          "contrat": {
-            "date": {
-              "year": 1989,
-              "month": 6,
-              "day": 24
-            }
-          }
-        },
-        "conjoint": {
-          "civilite": "Monsieur",
-          "prenom": "Prénom1",
-          "nom": "NOM_FAMILLE"
-        }
-      }
-    ],
-    "apports": [
-      {
-        "associe": {
-          "civilite": "Monsieur",
-          "prenom": "Prénom1",
-          "nom": "NOM_FAMILLE"
-        },
-        "montant": 500.0,
-        "montant_lettres": "CINQ CENTS EUROS"
-      },
-      {
-        "associe": {
-          "civilite": "Madame",
-          "prenom": "Prénom2",
-          "nom": "NOM_FAMILLE"
-        },
-        "montant": 500.0,
-        "montant_lettres": "CINQ CENTS EUROS"
-      }
-    ],
-    "attributions_initiales": [
-      {
-        "associe": {
-          "civilite": "Monsieur",
-          "prenom": "Prénom1",
-          "nom": "NOM_FAMILLE"
-        },
-        "nombre_parts": 500,
-        "nombre_parts_lettres": "cinq cents"
-      },
-      {
-        "associe": {
-          "civilite": "Madame",
-          "prenom": "Prénom2",
-          "nom": "NOM_FAMILLE"
-        },
-        "nombre_parts": 500,
-        "nombre_parts_lettres": "cinq cents"
-      }
-    ],
-    "informations_parts_donnees": [
-      {
-        "nombre_parts": 498,
-        "nombre_parts_lettres": "quatre cent quatre-vingt-dix-huit",
-        "donateur": {
-          "civilite": "Monsieur",
-          "prenom": "Prénom1",
-          "nom": "NOM_FAMILLE"
-        }
-      },
-      {
-        "nombre_parts": 498,
-        "nombre_parts_lettres": "quatre cent quatre-vingt-dix-huit",
-        "donateur": {
-          "civilite": "Madame",
-          "prenom": "Prénom2",
-          "nom": "NOM_FAMILLE"
-        }
-      }
-    ],
-    "actifs": {
-      "scpi": [
-        {
-          "description": "Trente-deux (32) parts de SELECTIPIERRE 2",
-          "numero_debut": "721 987",
-          "numero_fin": "722 018"
-        },
-        {
-          "description": "Cent vingt parts (120 parts) de C3 FICOMMERCE numérotées",
-          "numero_debut": "3 742 105",
-          "numero_fin": "3 742 224"
-        },
-        {
-          "description": "Quatre-vingt-quatorze (94) parts de PX PIERRE EXPANSION SANTE numérotées",
-          "numero_debut": "362 044",
-          "numero_fin": "362 137"
-        },
-        {
-          "description": "Trente-huit (38) parts de la SCPI CŒUR DE REGIONS numérotées",
-          "numero_debut": "543 628",
-          "numero_fin": "543 665"
-        }
-      ]
-    },
-    "passifs": {
-      "total": 101787.49,
-      "total_lettres": "CENT UN MILLE SEPT CENT QUATRE-VINGT-SEPT EUROS ET QUARANTE-NEUF CENTIMES",
-      "comptes_courants": [
-        {
-          "titulaire": {
-            "civilite": "Monsieur",
-            "prenom": "Prénom1",
-            "nom": "NOM_FAMILLE"
-          },
-          "montant": 51787.49,
-          "montant_lettres": "CINQUANTE ET UN MILLE SEPT CENT QUATRE-VINGT-SEPT EUROS ET QUARANTE-NEUF CENTIMES"
-        },
-        {
-          "titulaire": {
-            "civilite": "Madame",
-            "prenom": "Prénom2",
-            "nom": "NOM_FAMILLE"
-          },
-          "montant": 50000.0,
-          "montant_lettres": "CINQUANTE MILLE EUROS"
-        }
-      ],
-      "date_arrete": {
-        "year": 2025,
-        "month": 5,
-        "day": 13
-      }
-    },
-    "fiscalite": {
-      "is_option": true
-    },
-    "valorisation": {
-      "total": 1404.41,
-      "total_lettres": "MILLE QUATRE CENT QUATRE EUROS ET QUARANTE ET UN CENTIMES",
-      "valeur_unitaire": 1.40441,
-      "attestation": {
-        "date": {
-          "year": 2025,
-          "month": 12,
-          "day": 15
-        },
-        "cabinet": "BOREL et associés",
-        "adresse": "10B Rue Joseph Cugnot, 38300 Bourgoin-Jallieu"
-      }
-    },
-    "associes_intervenants": [
-      {
-        "civilite": "Monsieur",
-        "prenom": "Prénom1",
-        "nom": "NOM_FAMILLE",
-        "qualite_donateur": true,
-        "qualite_societe": "co-gérant et associé"
-      },
-      {
-        "civilite": "Madame",
-        "prenom": "Prénom2",
-        "nom": "NOM_FAMILLE",
-        "qualite_donateur": true,
-        "qualite_societe": "co-gérante et associée"
-      }
-    ],
-    "gerants_noms": "Monsieur Prénom1 NOM_FAMILLE et Madame Prénom2 NOM_FAMILLE née NOM_NAISSANCE",
-    "modification": {
-      "texte_donation": "Monsieur Prénom1 et Madame Prénom2 NOM_FAMILLE ont donné en nue-propriété à chacun de leurs deux enfants 498 parts sociales"
-    },
-    "tableau_repartition": "| | Pleine propriété | Nue-Propriété | Usufruit |\n|---|---|---|---|\n| **Monsieur Prénom1 NOM_FAMILLE** | | | |\n| Numérotées 1 à 2 inclus | 2 parts | | |\n| Numérotées de 3 à 500 inclus | | | 498 parts |\n| **Madame Prénom2 NOM_FAMILLE née NOM_NAISSANCE** | | | |\n| Numérotées 501 à 502 inclus | 2 parts | | |\n| Numérotées de 503 à 1000 inclus | | | 498 parts |\n| **Monsieur Prénom4 NOM_FAMILLE** | | | |\n| Numérotées 3 à 251 inclus | | 498 parts | |\n| Numérotées 503 à 751 inclus | | | |\n| **Madame Prénom5 NOM_FAMILLE** | | | |\n| Numérotées 252 à 500 inclus | | 498 parts | |\n| Numérotées 752 à 1000 inclus | | | |\n| **TOTAL** | 4 parts | 996 parts | 996 parts |"
+    "rcs": "VILLE"
   },
   "biens_donnes": {
     "biens_personnels_donateur_1": [
@@ -623,5 +351,9 @@
   },
   "usufruit_successif": true,
   "modification_article_11": true,
-  "total_droits_a_payer": 40.0
+  "total_droits_a_payer": 40.0,
+  "montant_compte_bancaire": 50000,
+  "usufruit_montant_1": 166,
+  "usufruit_centimes_1": 67,
+  "nombre_parts_pleines": 500
 }

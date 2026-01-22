@@ -1,0 +1,708 @@
+{
+  "reference_acte": "XXXXXX",
+  "initiales_notaire": "XX/XX",
+  "date_acte": {
+    "year": 2025,
+    "month": 12,
+    "day": 23
+  },
+  "lieu_signature": {
+    "ville": "VILLE",
+    "code_postal": "00000",
+    "adresse": "00 rue Exemple"
+  },
+  "notaire": {
+    "civilite": "Maître",
+    "prenom": "Prénom_Notaire",
+    "nom": "NOM_NOTAIRE",
+    "type_societe": "société par actions simplifiée",
+    "nom_societe": "Exemple SAS",
+    "office": {
+      "ville": "VILLE_OFFICE",
+      "departement": "Rhône",
+      "code_postal": "69160",
+      "adresse": "00 rue Office"
+    },
+    "crpcen": "00000"
+  },
+  "donateur_1": {
+    "civilite": "Monsieur",
+    "civilite_court": "M.",
+    "prenom": "Prénom1",
+    "deuxieme_prenom": "Prénom3",
+    "nom": "NOM_FAMILLE",
+    "profession": "retraité",
+    "naissance": {
+      "ville": "PARIS 12ÈME ARRONDISSEMENT",
+      "code_postal": "75012",
+      "date": {
+        "year": 1961,
+        "month": 2,
+        "day": 20
+      }
+    },
+    "nationalite": "française",
+    "adresse": {
+      "numero": "29",
+      "voie": "chemin du Panorama",
+      "ville": "VILLE",
+      "code_postal": "00000"
+    },
+    "sexe": "M",
+    "age": 64
+  },
+  "donateur_2": {
+    "civilite": "Madame",
+    "civilite_court": "Mme",
+    "prenom": "Prénom2",
+    "deuxieme_prenom": "Prénom6",
+    "troisieme_prenom": "Prénom7",
+    "nom": "NOM_FAMILLE",
+    "nom_naissance": "NOM_NAISSANCE",
+    "profession": "retraitée",
+    "naissance": {
+      "ville": "TAIN-L'HERMITAGE",
+      "code_postal": "26600",
+      "date": {
+        "year": 1961,
+        "month": 4,
+        "day": 16
+      }
+    },
+    "nationalite": "française",
+    "adresse": {
+      "numero": "29",
+      "voie": "chemin du Panorama",
+      "ville": "VILLE",
+      "code_postal": "00000"
+    },
+    "sexe": "F",
+    "age": 64
+  },
+  "mariage": {
+    "ville": "CHANTEMERLE-LES-BLES",
+    "code_postal": "26600",
+    "date": {
+      "year": 1989,
+      "month": 9,
+      "day": 9
+    },
+    "regime": "la participation aux acquêts",
+    "articles_code_civil": "1569 et suivants",
+    "notaire": {
+      "civilite": "Maître",
+      "prenom": "Prénom_Ancien",
+      "nom": "NOM_ANCIEN_NOTAIRE",
+      "ville": "CHAROLLES",
+      "code_postal": "71120"
+    },
+    "contrat": {
+      "existe": true,
+      "date": {
+        "year": 1989,
+        "month": 6,
+        "day": 24
+      }
+    }
+  },
+  "donataires": [
+    {
+      "civilite": "Monsieur",
+      "prenom": "Prénom4",
+      "deuxieme_prenom": "Prénom3",
+      "troisieme_prenom": "Prénom8",
+      "nom": "NOM_FAMILLE",
+      "profession": "ingénieur référent agrivoltaïque",
+      "naissance": {
+        "ville": "METROPOLE 9ÈME ARRONDISSEMENT",
+        "code_postal": "69009",
+        "date": {
+          "year": 1991,
+          "month": 2,
+          "day": 19
+        }
+      },
+      "adresse": {
+        "numero": "16",
+        "voie": "cours Lafayette",
+        "ville": "METROPOLE 3ÈME ARRONDISSEMENT",
+        "code_postal": "00001"
+      },
+      "situation_familiale": "Célibataire",
+      "nationalite": "française",
+      "attributions": [
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 503 à 751 de la société SOCIETE formant l'article UN de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        },
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 3 à 251 de la société SOCIETE formant l'article TROIS de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        }
+      ],
+      "total_attributions": 419.64,
+      "calcul_droits": {
+        "donateur_1": {
+          "part": 209.82,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 100000.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.0,
+          "droits_a_payer": 10.0
+        },
+        "donateur_2": {
+          "part": 209.82,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 100000.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.0,
+          "droits_a_payer": 10.0
+        }
+      }
+    },
+    {
+      "civilite": "Madame",
+      "prenom": "Prénom5",
+      "deuxieme_prenom": "Prénom9",
+      "troisieme_prenom": "Prénom10",
+      "nom": "NOM_FAMILLE",
+      "profession": "gérante d'une entreprise de conseil",
+      "naissance": {
+        "ville": "METROPOLE 9ÈME ARRONDISSEMENT",
+        "code_postal": "69009",
+        "date": {
+          "year": 1993,
+          "month": 8,
+          "day": 9
+        }
+      },
+      "adresse": {
+        "numero": "18",
+        "voie": "rue Milton",
+        "ville": "PARIS 9ÈME ARRONDISSEMENT",
+        "code_postal": "00002"
+      },
+      "situation_familiale": "Célibataire",
+      "nationalite": "française",
+      "attributions": [
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 752 à 1000 de la société SOCIETE formant l'article DEUX de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        },
+        {
+          "designation": "La nue-propriété des parts sociales numérotées de 252 à 500 de la société SOCIETE formant l'article QUATRE de la masse d'une valeur de DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES",
+          "valeur": 209.82
+        }
+      ],
+      "total_attributions": 419.64,
+      "calcul_droits": {
+        "donateur_1": {
+          "part": 209.82,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 100000.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.0,
+          "droits_a_payer": 10.0
+        },
+        "donateur_2": {
+          "part": 209.82,
+          "exonerations": 0.0,
+          "donations_incorporees": 0.0,
+          "part_imposable": 209.82,
+          "abattement_applicable": 100000.0,
+          "abattement_utilise": 100000.0,
+          "abattement_nouveau": 0.0,
+          "part_nette_taxable": 209.82,
+          "calcul_detail": "209,82 x 5% : 10,49 €",
+          "total_droits": 10.0,
+          "droits_a_payer": 10.0
+        }
+      }
+    }
+  ],
+  "nombre_enfants_lettres": "deux",
+  "nombre_donataires": 2,
+  "donation_anterieure": {
+    "existe": true,
+    "notaire": {
+      "civilite": "Maître",
+      "nom": "ROBLOT-NOM_NOTAIRE",
+      "ville": "SEREZIN-DU-RHÔNE",
+      "code_postal": "69360"
+    },
+    "date": {
+      "year": 2021,
+      "month": 12,
+      "day": 23
+    },
+    "donateurs": "Monsieur et Madame Prénom1 et Prénom2 NOM_FAMILLE, donateurs aux présentes",
+    "objet": "la nue-propriété d'un bien sis à VILLE (00000), 00 rue Exemple",
+    "valeur": 400000.0,
+    "valeur_lettres": "QUATRE CENT MILLE EUROS",
+    "rappel_texte": "l'acte de donation consenti par Monsieur et Madame Prénom1 et Prénom2 NOM_FAMILLE, DONATEURS aux présentes, au profit de leurs deux enfants, Monsieur Prénom4 NOM_FAMILLE et Madame Prénom5 NOM_FAMILLE, donataires aux présentes, suivant acte reçu par Maître ROBLOT NOM_NOTAIRE, notaire à SEREZIN DU RHONE (69360), le 23 décembre 2021",
+    "calcul_droits": "Donation de Monsieur Prénom1 NOM_FAMILLE\nAu profit de Monsieur Prénom4 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits.\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nAu profit de Madame Prénom5 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nDonation de Madame Prénom2 NOM_FAMILLE\nAu profit de Monsieur Prénom4 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits.\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant\n\nAu profit de Madame Prénom5 NOM_FAMILLE\nAbsence de droits : Compte tenu de la valeur transmise et de l'abattement bénéficiant au DONATAIRE, la présente donation ne génère pas de droits\n- Valeur reçue 100 000,00 EUR\n- Abattement légal disponible 100 000,00 EUR\n- Base taxable Néant"
+  },
+  "societe": {
+    "existe": true,
+    "denomination": "SOCIETE",
+    "siren": "985331354",
+    "rcs": "METROPOLE",
+    "capital": 1000.0,
+    "capital_lettres": "MILLE EUROS",
+    "nombre_parts": 1000,
+    "nombre_parts_lettres": "MILLE",
+    "valeur_part": 1.0,
+    "valeur_part_lettres": "UN EURO",
+    "siege": {
+      "ville": "VILLE",
+      "code_postal": "00000",
+      "adresse": "00 rue Exemple"
+    },
+    "tribunal_commerce": "METROPOLE",
+    "duree": 99,
+    "duree_lettres": "quatre-vingt-dix-neuf",
+    "constitution": {
+      "date": {
+        "year": 2024,
+        "month": 2,
+        "day": 19
+      }
+    },
+    "objet_social": [
+      "La propriété, la détention, la gestion et la cession de valeurs mobilières et immobilières, droits sociaux ou tous autres titres cotés ou non cotés, de SCPI ou d'OPCI, détenus en pleine propriété, nue-propriété ou usufruit, acquis par voie d'achat, d'échange, d'apport ou autrement",
+      "La propriété, la détention, la gestion, la construction, l'administration et l'exploitation par bail, location ou autrement de tous immeubles et droits immobiliers détenus en pleine propriété, nue-propriété ou usufruit, dont elle pourrait devenir propriétaire par voie d'acquisition, d'apport, d'échange ou autrement",
+      "L'organisation du patrimoine familial des associés en vue d'en faciliter la gestion et la transmission afin d'éviter qu'il ne soit livré aux aléas de l'indivision",
+      "Le placement et l'investissement par tous moyens monétaires ou financiers des fonds, de la trésorerie et des disponibilités de la société",
+      "La vente de ces mêmes biens pour autant toutefois qu'elle ne puisse être considérée comme un acte de commerce et ne porte pas atteinte au caractère civil de la société",
+      "L'emprunt, le cautionnement simple ou hypothécaire nécessaires à la réalisation de l'objet"
+    ],
+    "associes_fondateurs": [
+      {
+        "civilite": "Monsieur",
+        "prenom": "Prénom1",
+        "nom": "NOM_FAMILLE",
+        "adresse": {
+          "ville": "VILLE",
+          "code_postal": "00000",
+          "numero": "29",
+          "voie": "chemin du Panorama"
+        },
+        "naissance": {
+          "ville": "PARIS 12ÈME ARRONDISSEMENT",
+          "code_postal": "75012",
+          "date": {
+            "year": 1961,
+            "month": 2,
+            "day": 20
+          }
+        },
+        "mariage": {
+          "ville": "CHANTEMERLE-LES-BLES",
+          "code_postal": "26600",
+          "date": {
+            "year": 1989,
+            "month": 9,
+            "day": 9
+          },
+          "regime": "la participation aux acquêts",
+          "articles_code_civil": "1569 et suivants",
+          "notaire": {
+            "civilite": "Maître",
+            "prenom": "Prénom_Ancien",
+            "nom": "NOM_ANCIEN_NOTAIRE",
+            "ville": "CHAROLLES",
+            "code_postal": "71120"
+          },
+          "contrat": {
+            "date": {
+              "year": 1989,
+              "month": 6,
+              "day": 24
+            }
+          }
+        },
+        "conjoint": {
+          "civilite": "Madame",
+          "prenom": "Prénom2",
+          "nom": "NOM_NAISSANCE"
+        }
+      },
+      {
+        "civilite": "Madame",
+        "prenom": "Prénom2",
+        "nom": "NOM_FAMILLE",
+        "nom_naissance": "NOM_NAISSANCE",
+        "adresse": {
+          "ville": "VILLE",
+          "code_postal": "00000",
+          "numero": "29",
+          "voie": "chemin du Panorama"
+        },
+        "naissance": {
+          "ville": "TAIN-L'HERMITAGE",
+          "code_postal": "26600",
+          "date": {
+            "year": 1961,
+            "month": 4,
+            "day": 16
+          }
+        },
+        "mariage": {
+          "ville": "CHANTEMERLE-LES-BLES",
+          "code_postal": "26600",
+          "date": {
+            "year": 1989,
+            "month": 9,
+            "day": 9
+          },
+          "regime": "la participation aux acquêts",
+          "articles_code_civil": "1569 et suivants",
+          "notaire": {
+            "civilite": "Maître",
+            "prenom": "Prénom_Ancien",
+            "nom": "NOM_ANCIEN_NOTAIRE",
+            "ville": "CHAROLLES",
+            "code_postal": "71120"
+          },
+          "contrat": {
+            "date": {
+              "year": 1989,
+              "month": 6,
+              "day": 24
+            }
+          }
+        },
+        "conjoint": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_FAMILLE"
+        }
+      }
+    ],
+    "apports": [
+      {
+        "associe": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_FAMILLE"
+        },
+        "montant": 500.0,
+        "montant_lettres": "CINQ CENTS EUROS"
+      },
+      {
+        "associe": {
+          "civilite": "Madame",
+          "prenom": "Prénom2",
+          "nom": "NOM_FAMILLE"
+        },
+        "montant": 500.0,
+        "montant_lettres": "CINQ CENTS EUROS"
+      }
+    ],
+    "attributions_initiales": [
+      {
+        "associe": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_FAMILLE"
+        },
+        "nombre_parts": 500,
+        "nombre_parts_lettres": "cinq cents"
+      },
+      {
+        "associe": {
+          "civilite": "Madame",
+          "prenom": "Prénom2",
+          "nom": "NOM_FAMILLE"
+        },
+        "nombre_parts": 500,
+        "nombre_parts_lettres": "cinq cents"
+      }
+    ],
+    "informations_parts_donnees": [
+      {
+        "nombre_parts": 498,
+        "nombre_parts_lettres": "quatre cent quatre-vingt-dix-huit",
+        "donateur": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_FAMILLE"
+        }
+      },
+      {
+        "nombre_parts": 498,
+        "nombre_parts_lettres": "quatre cent quatre-vingt-dix-huit",
+        "donateur": {
+          "civilite": "Madame",
+          "prenom": "Prénom2",
+          "nom": "NOM_FAMILLE"
+        }
+      }
+    ],
+    "actifs": {
+      "scpi": [
+        {
+          "description": "Trente-deux (32) parts de SELECTIPIERRE 2",
+          "numero_debut": "721 987",
+          "numero_fin": "722 018"
+        },
+        {
+          "description": "Cent vingt parts (120 parts) de C3 FICOMMERCE numérotées",
+          "numero_debut": "3 742 105",
+          "numero_fin": "3 742 224"
+        },
+        {
+          "description": "Quatre-vingt-quatorze (94) parts de PX PIERRE EXPANSION SANTE numérotées",
+          "numero_debut": "362 044",
+          "numero_fin": "362 137"
+        },
+        {
+          "description": "Trente-huit (38) parts de la SCPI CŒUR DE REGIONS numérotées",
+          "numero_debut": "543 628",
+          "numero_fin": "543 665"
+        }
+      ]
+    },
+    "passifs": {
+      "total": 101787.49,
+      "total_lettres": "CENT UN MILLE SEPT CENT QUATRE-VINGT-SEPT EUROS ET QUARANTE-NEUF CENTIMES",
+      "comptes_courants": [
+        {
+          "titulaire": {
+            "civilite": "Monsieur",
+            "prenom": "Prénom1",
+            "nom": "NOM_FAMILLE"
+          },
+          "montant": 51787.49,
+          "montant_lettres": "CINQUANTE ET UN MILLE SEPT CENT QUATRE-VINGT-SEPT EUROS ET QUARANTE-NEUF CENTIMES"
+        },
+        {
+          "titulaire": {
+            "civilite": "Madame",
+            "prenom": "Prénom2",
+            "nom": "NOM_FAMILLE"
+          },
+          "montant": 50000.0,
+          "montant_lettres": "CINQUANTE MILLE EUROS"
+        }
+      ],
+      "date_arrete": {
+        "year": 2025,
+        "month": 5,
+        "day": 13
+      }
+    },
+    "fiscalite": {
+      "is_option": true
+    },
+    "valorisation": {
+      "total": 1404.41,
+      "total_lettres": "MILLE QUATRE CENT QUATRE EUROS ET QUARANTE ET UN CENTIMES",
+      "valeur_unitaire": 1.40441,
+      "attestation": {
+        "date": {
+          "year": 2025,
+          "month": 12,
+          "day": 15
+        },
+        "cabinet": "BOREL et associés",
+        "adresse": "10B Rue Joseph Cugnot, 38300 Bourgoin-Jallieu"
+      }
+    },
+    "associes_intervenants": [
+      {
+        "civilite": "Monsieur",
+        "prenom": "Prénom1",
+        "nom": "NOM_FAMILLE",
+        "qualite_donateur": true,
+        "qualite_societe": "co-gérant et associé"
+      },
+      {
+        "civilite": "Madame",
+        "prenom": "Prénom2",
+        "nom": "NOM_FAMILLE",
+        "qualite_donateur": true,
+        "qualite_societe": "co-gérante et associée"
+      }
+    ],
+    "gerants_noms": "Monsieur Prénom1 NOM_FAMILLE et Madame Prénom2 NOM_FAMILLE née NOM_NAISSANCE",
+    "modification": {
+      "texte_donation": "Monsieur Prénom1 et Madame Prénom2 NOM_FAMILLE ont donné en nue-propriété à chacun de leurs deux enfants 498 parts sociales"
+    },
+    "tableau_repartition": "| | Pleine propriété | Nue-Propriété | Usufruit |\n|---|---|---|---|\n| **Monsieur Prénom1 NOM_FAMILLE** | | | |\n| Numérotées 1 à 2 inclus | 2 parts | | |\n| Numérotées de 3 à 500 inclus | | | 498 parts |\n| **Madame Prénom2 NOM_FAMILLE née NOM_NAISSANCE** | | | |\n| Numérotées 501 à 502 inclus | 2 parts | | |\n| Numérotées de 503 à 1000 inclus | | | 498 parts |\n| **Monsieur Prénom4 NOM_FAMILLE** | | | |\n| Numérotées 3 à 251 inclus | | 498 parts | |\n| Numérotées 503 à 751 inclus | | | |\n| **Madame Prénom5 NOM_FAMILLE** | | | |\n| Numérotées 252 à 500 inclus | | 498 parts | |\n| Numérotées 752 à 1000 inclus | | | |\n| **TOTAL** | 4 parts | 996 parts | 996 parts |"
+  },
+  "biens_donnes": {
+    "biens_personnels_donateur_1": [
+      {
+        "numero_article": 3,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Monsieur Prénom1 NOM_FAMILLE numérotées de 3 à 251 de la société civile dénommée « SOCIETE » susnommée",
+        "valeur_pp": 349.7,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_FAMILLE",
+          "sexe": "M"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      },
+      {
+        "numero_article": 4,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Monsieur Prénom1 NOM_FAMILLE numérotées de 252 à 500 de la société civile dénommée « SOCIETE » susnommée",
+        "valeur_pp": 349.7,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Monsieur",
+          "prenom": "Prénom1",
+          "nom": "NOM_FAMILLE",
+          "sexe": "M"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      }
+    ],
+    "biens_personnels_donateur_2": [
+      {
+        "numero_article": 1,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Madame Prénom2 NOM_FAMILLE numérotées de 503 à 751 de la société civile dénommée « SOCIETE » susnommée",
+        "valeur_pp": 349.7,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Madame",
+          "prenom": "Prénom2",
+          "nom": "NOM_FAMILLE",
+          "sexe": "F"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      },
+      {
+        "numero_article": 2,
+        "designation": "La nue-propriété de 249 parts sociales au nom de Madame Prénom2 NOM_FAMILLE numérotées de 752 à 1000 de la société civile dénommée « SOCIETE » susnommée",
+        "valeur_pp": 349.7,
+        "valeur_pp_lettres": "TROIS CENT QUARANTE-NEUF EUROS ET SOIXANTE-DIX CENTIMES",
+        "taux_usufruit": 40,
+        "usufruitier": {
+          "civilite": "Madame",
+          "prenom": "Prénom2",
+          "nom": "NOM_FAMILLE",
+          "sexe": "F"
+        },
+        "valeur_np": 209.82,
+        "valeur_np_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+      }
+    ],
+    "total_donateur_1": 419.64,
+    "total_donateur_2": 419.64,
+    "total_masse": 839.28
+  },
+  "repartition": {
+    "fraction": "1/2",
+    "fraction_lettres": "LA MOITIE",
+    "valeur_par_donataire": 419.64,
+    "valeur_par_donataire_lettres": "QUATRE CENT DIX-NEUF EUROS ET SOIXANTE-QUATRE CENTIMES"
+  },
+  "usufruit_successif": true,
+  "modification_article_11": true,
+  "total_droits_a_payer": 40.0,
+  "clauses": {
+    "repartition_egalitaire": true,
+    "caractere_donation_partage": true,
+    "mode_calcul_quotite": true,
+    "exclusion_communaute": true,
+    "exclusion_pacs": true,
+    "reserve_droit_retour": true,
+    "droit_retour_legal_parents": true,
+    "info_droit_retour_freres_soeurs": true,
+    "interdiction_aliener": true,
+    "action_revocatoire": true,
+    "condition_non_attaque": true,
+    "info_consentement_alienation": true,
+    "rapport_donation_renonciation": true,
+    "conditions_particulieres": true,
+    "propriete_jouissance": true,
+    "exercice_usufruit": true,
+    "conditions_usufruit": true,
+    "repartition_droit_vote": true,
+    "decision_agrement": true,
+    "dispense_signification": true,
+    "mise_a_jour_statuts": true,
+    "origine_propriete": true,
+    "droit_preemption": true,
+    "decharge_respective": true,
+    "presomption_propriete": true,
+    "rappel_fiscal": true,
+    "calcul_droits": true,
+    "plus_values": true,
+    "modification_statuts": true
+  },
+  "articles_masse": [
+    {
+      "numero": "UN",
+      "description": "La nue-propriété de DEUX CENT QUARANTE NEUF (249) parts sociales numérotées de 503 à 751 de la société {{ societe.nom }}",
+      "valeur": 209.82,
+      "valeur_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+    },
+    {
+      "numero": "DEUX",
+      "description": "La nue-propriété de DEUX CENT QUARANTE NEUF (249) parts sociales numérotées de 752 à 1000 de la société {{ societe.nom }}",
+      "valeur": 209.82,
+      "valeur_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+    },
+    {
+      "numero": "TROIS",
+      "description": "La nue-propriété de DEUX CENT QUARANTE NEUF (249) parts sociales numérotées de 3 à 251 de la société {{ societe.nom }}",
+      "valeur": 209.82,
+      "valeur_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+    },
+    {
+      "numero": "QUATRE",
+      "description": "La nue-propriété de DEUX CENT QUARANTE NEUF (249) parts sociales numérotées de 252 à 500 de la société {{ societe.nom }}",
+      "valeur": 209.82,
+      "valeur_lettres": "DEUX CENT NEUF EUROS ET QUATRE-VINGT-DEUX CENTIMES"
+    }
+  ],
+  "attributions": [
+    {
+      "donataire_index": 0,
+      "articles": [
+        "UN",
+        "TROIS"
+      ],
+      "valeur_totale": 419.64,
+      "valeur_totale_lettres": "QUATRE CENT DIX-NEUF EUROS ET SOIXANTE-QUATRE CENTIMES"
+    },
+    {
+      "donataire_index": 1,
+      "articles": [
+        "DEUX",
+        "QUATRE"
+      ],
+      "valeur_totale": 419.64,
+      "valeur_totale_lettres": "QUATRE CENT DIX-NEUF EUROS ET SOIXANTE-QUATRE CENTIMES"
+    }
+  ],
+  "masse_totale": {
+    "valeur": 839.28,
+    "valeur_lettres": "HUIT CENT TRENTE-NEUF EUROS ET VINGT-HUIT CENTIMES"
+  }
+}
