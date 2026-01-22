@@ -1,34 +1,53 @@
 # Auto-push script for NotaireAI
-# Runs every 30 minutes and pushes changes to GitHub
+# Runs every X minutes and pushes changes to GitHub
+# Customize INTERVAL_MINUTES below
+
+param(
+    [int]$INTERVAL_MINUTES = 30,
+    [string]$BRANCH = "tom/dev"
+)
 
 $projectPath = "c:\Users\tomra\OneDrive\Dokumente\Agence IA Automatisation\Agentic Workflows\Agent AI Création & Modification d'actes notariaux"
+$intervalSeconds = $INTERVAL_MINUTES * 60
+
+Write-Host "🚀 NotaireAI Auto-Push Started"
+Write-Host "Branch: $BRANCH"
+Write-Host "Interval: $INTERVAL_MINUTES minutes"
+Write-Host "───────────────────────────────────────"
 
 while ($true) {
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
     Set-Location $projectPath
 
+    # Ensure we're on the right branch
+    $currentBranch = git rev-parse --abbrev-ref HEAD
+    if ($currentBranch -ne $BRANCH) {
+        Write-Host "[$timestamp] ⚠️  Not on $BRANCH (currently on $currentBranch), switching..."
+        git checkout $BRANCH
+    }
+
     # Check if there are changes
     $status = git status --porcelain
 
     if ($status) {
-        Write-Host "[$timestamp] Changes detected, pushing to GitHub..."
+        Write-Host "[$timestamp] ✅ Changes detected, committing and pushing..."
 
         # Add all changes
         git add .
 
         # Commit with timestamp
-        git commit -m "auto: Sauvegarde automatique - $timestamp"
+        git commit -m "auto: Sauvegarde automatique sur $BRANCH - $timestamp"
 
-        # Push
-        git push
+        # Push to the current branch
+        git push origin $BRANCH
 
-        Write-Host "[$timestamp] Push completed!"
+        Write-Host "[$timestamp] ✅ Push completed to $BRANCH!"
     } else {
-        Write-Host "[$timestamp] No changes to push."
+        Write-Host "[$timestamp] ⏸️  No changes to push."
     }
 
-    # Wait 1 hour (3600 seconds)
-    Write-Host "[$timestamp] Next push in 1 hour..."
-    Start-Sleep -Seconds 3600
+    Write-Host "[$timestamp] ⏳ Next push in $INTERVAL_MINUTES minutes..."
+    Write-Host "───────────────────────────────────────"
+    Start-Sleep -Seconds $intervalSeconds
 }
