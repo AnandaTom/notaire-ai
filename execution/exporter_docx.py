@@ -27,7 +27,7 @@ import re
 from pathlib import Path
 from html.parser import HTMLParser
 from docx import Document
-from docx.shared import Pt, Mm, Inches
+from docx.shared import Pt, Mm, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_TABLE_ALIGNMENT
@@ -788,6 +788,32 @@ def ajouter_tableau_word(doc: Document, donnees: dict):
     table.style = 'Table Grid'
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
 
+    # Calculer les largeurs de colonnes proportionnelles au contenu
+    # Largeur totale disponible: page A4 - marges (210mm - 60mm gauche - 15mm droite = 135mm)
+    LARGEUR_TOTALE = Mm(135)
+
+    # Calculer la largeur max de chaque colonne basée sur le contenu
+    max_largeurs = [0] * nb_cols
+    for row_data in lignes:
+        for j, cell_text in enumerate(row_data):
+            if j < nb_cols:
+                # Approximation: 2.5mm par caractère (Times New Roman 11pt)
+                largeur_estimee = len(str(cell_text)) * 2.5
+                max_largeurs[j] = max(max_largeurs[j], largeur_estimee)
+
+    # Assurer une largeur minimale de 15mm par colonne
+    max_largeurs = [max(l, 15) for l in max_largeurs]
+
+    # Calculer le total et normaliser
+    total_largeur = sum(max_largeurs)
+    if total_largeur > 0:
+        for j in range(nb_cols):
+            largeur_col = int((max_largeurs[j] / total_largeur) * LARGEUR_TOTALE)
+            # Appliquer la largeur à toutes les cellules de la colonne
+            for row in table.rows:
+                if j < len(row.cells):
+                    row.cells[j].width = largeur_col
+
     # Appliquer bordures
     tblPr = table._element.tblPr
     if tblPr is None:
@@ -818,6 +844,7 @@ def ajouter_tableau_word(doc: Document, donnees: dict):
             para = cell.paragraphs[0]
             para.paragraph_format.space_after = Pt(0)
             para.paragraph_format.space_before = Pt(0)
+            para.paragraph_format.first_line_indent = Pt(0)  # Pas de retrait dans les tableaux
 
             # Alignement
             if j < len(alignements):
@@ -871,11 +898,63 @@ class NotarialHTMLParser(HTMLParser):
     def flush_text(self):
         if self.text_buffer and self.current_paragraph is not None:
             fmt = self.get_current_format()
-            run = self.current_paragraph.add_run(self.text_buffer)
-            run.bold = fmt['bold']
-            run.italic = fmt['italic']
-            run.underline = fmt['underline']
-            appliquer_police(run)
+            # Traiter les zones grisées (placeholders)
+            PLACEHOLDER_START = "___ZONEVAR_DEBUT___"
+            PLACEHOLDER_END = "___ZONEVAR_FIN___"
+
+            text = self.text_buffer
+            while PLACEHOLDER_START in text or PLACEHOLDER_END in text:
+                # Trouver la première occurrence d'un placeholder
+                start_pos = text.find(PLACEHOLDER_START)
+                end_pos = text.find(PLACEHOLDER_END)
+
+                if start_pos == -1 and end_pos == -1:
+                    break
+
+                # Si on a du texte avant le premier placeholder, l'ajouter
+                if start_pos > 0 or (start_pos == -1 and end_pos > 0):
+                    first_pos = start_pos if start_pos != -1 else end_pos
+                    if first_pos > 0:
+                        before_text = text[:first_pos]
+                        run = self.current_paragraph.add_run(before_text)
+                        run.bold = fmt['bold']
+                        run.italic = fmt['italic']
+                        run.underline = fmt['underline']
+                        appliquer_police(run)
+                        text = text[first_pos:]
+                        continue
+
+                # Traiter une zone grisée complète
+                if text.startswith(PLACEHOLDER_START):
+                    text = text[len(PLACEHOLDER_START):]
+                    end_idx = text.find(PLACEHOLDER_END)
+                    if end_idx != -1:
+                        zone_text = text[:end_idx]
+                        text = text[end_idx + len(PLACEHOLDER_END):]
+                        if zone_text:
+                            run = self.current_paragraph.add_run(zone_text)
+                            run.bold = fmt['bold']
+                            run.italic = fmt['italic']
+                            run.underline = fmt['underline']
+                            appliquer_police(run)
+                            if ZONES_GRISEES_ACTIVES:
+                                appliquer_fond_gris(run)
+                    else:
+                        # Pas de fin trouvée, ajouter tel quel
+                        break
+                elif text.startswith(PLACEHOLDER_END):
+                    # Placeholder de fin orphelin, le supprimer
+                    text = text[len(PLACEHOLDER_END):]
+                else:
+                    break
+
+            # Ajouter le texte restant
+            if text:
+                run = self.current_paragraph.add_run(text)
+                run.bold = fmt['bold']
+                run.italic = fmt['italic']
+                run.underline = fmt['underline']
+                appliquer_police(run)
         self.text_buffer = ""
 
     def handle_starttag(self, tag, attrs):
@@ -991,13 +1070,14 @@ def configurer_styles(doc: Document):
     rFonts.set(qn('w:hAnsi'), 'Times New Roman')
     rFonts.set(qn('w:cs'), 'Times New Roman')
 
-    # Heading 1: bold, ALL CAPS, underline, CENTERED, espace avant/après
+    # Heading 1: bold, ALL CAPS, underline, CENTERED, espace avant/après, NOIR
     style_h1 = doc.styles['Heading 1']
     style_h1.font.name = 'Times New Roman'
     style_h1.font.size = Pt(11)
     style_h1.font.bold = True
     style_h1.font.all_caps = True
     style_h1.font.underline = True
+    style_h1.font.color.rgb = RGBColor(0, 0, 0)  # NOIR - pas bleu!
     style_h1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     style_h1.paragraph_format.space_before = Pt(18)  # Espace avant pour séparer les sections
     style_h1.paragraph_format.space_after = Pt(12)   # Espace après
@@ -1005,13 +1085,14 @@ def configurer_styles(doc: Document):
     style_h1.paragraph_format.keep_with_next = True
     style_h1.paragraph_format.keep_together = True
 
-    # Heading 2: bold, small caps, underline, CENTERED, espace avant/après
+    # Heading 2: bold, small caps, underline, CENTERED, espace avant/après, NOIR
     style_h2 = doc.styles['Heading 2']
     style_h2.font.name = 'Times New Roman'
     style_h2.font.size = Pt(11)
     style_h2.font.bold = True
     style_h2.font.small_caps = True
     style_h2.font.underline = True
+    style_h2.font.color.rgb = RGBColor(0, 0, 0)  # NOIR - pas bleu!
     style_h2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER  # CENTERED!
     style_h2.paragraph_format.space_before = Pt(12)  # Espace avant pour séparer
     style_h2.paragraph_format.space_after = Pt(12)   # Espace après
@@ -1019,12 +1100,13 @@ def configurer_styles(doc: Document):
     style_h2.paragraph_format.keep_with_next = True
     style_h2.paragraph_format.keep_together = True
 
-    # Heading 3: bold, underline, CENTERED, espace avant/après
+    # Heading 3: bold, underline, CENTERED, espace avant/après, NOIR
     style_h3 = doc.styles['Heading 3']
     style_h3.font.name = 'Times New Roman'
     style_h3.font.size = Pt(11)
     style_h3.font.bold = True
     style_h3.font.underline = True
+    style_h3.font.color.rgb = RGBColor(0, 0, 0)  # NOIR - pas bleu!
     style_h3.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER  # CENTERED!
     style_h3.paragraph_format.space_before = Pt(6)   # Petit espace avant
     style_h3.paragraph_format.space_after = Pt(12)   # Espace après
@@ -1032,13 +1114,14 @@ def configurer_styles(doc: Document):
     style_h3.paragraph_format.keep_with_next = True
     style_h3.paragraph_format.keep_together = True
 
-    # Heading 4: bold only, space BEFORE 6pt (NOT after)
+    # Heading 4: bold only, space BEFORE 6pt (NOT after), NOIR
     style_h4 = doc.styles['Heading 4']
     style_h4.font.name = 'Times New Roman'
     style_h4.font.size = Pt(11)
     style_h4.font.bold = True
     style_h4.font.italic = False
     style_h4.font.underline = False
+    style_h4.font.color.rgb = RGBColor(0, 0, 0)  # NOIR - pas bleu!
     style_h4.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY  # Hérite de Normal
     style_h4.paragraph_format.space_before = Pt(6)  # Original: 6pt AVANT
     style_h4.paragraph_format.space_after = Pt(0)   # Pas d'espace après
@@ -1046,12 +1129,13 @@ def configurer_styles(doc: Document):
     style_h4.paragraph_format.keep_with_next = True
     style_h4.paragraph_format.keep_together = True
 
-    # Heading 5: bold, underline (utilisé rarement)
+    # Heading 5: bold, underline (utilisé rarement), NOIR
     style_h5 = doc.styles['Heading 5']
     style_h5.font.name = 'Times New Roman'
     style_h5.font.size = Pt(11)
     style_h5.font.bold = True
     style_h5.font.underline = True
+    style_h5.font.color.rgb = RGBColor(0, 0, 0)  # NOIR - pas bleu!
     style_h5.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     style_h5.paragraph_format.first_line_indent = Pt(0)
 
@@ -1247,10 +1331,15 @@ def traiter_formatage_markdown(texte: str):
     return segments
 
 
-def ajouter_texte_formate(paragraph, texte: str):
+def ajouter_texte_formate(paragraph, texte: str, force_bold=None):
     """
     Ajoute du texte avec formatage Markdown a un paragraphe.
     Applique un fond gris aux variables si ZONES_GRISEES_ACTIVES est True.
+
+    Args:
+        paragraph: Le paragraphe Word
+        texte: Le texte à ajouter
+        force_bold: Si True, force le bold (pour titres). Si None, utilise le formatage Markdown.
     """
     segments = traiter_formatage_markdown(texte)
     for text, fmt in segments:
@@ -1259,7 +1348,8 @@ def ajouter_texte_formate(paragraph, texte: str):
             text = nettoyer_texte_xml(text)
             if text:  # Verifier apres nettoyage
                 run = paragraph.add_run(text)
-                run.bold = fmt['bold']
+                # Pour les titres, forcer le bold; sinon utiliser le formatage Markdown
+                run.bold = force_bold if force_bold is not None else fmt['bold']
                 run.italic = fmt['italic']
                 run.underline = fmt['underline']
                 appliquer_police(run)
@@ -1288,7 +1378,12 @@ def appliquer_police(run):
 def detecter_titre_markdown(ligne: str):
     """Detecte si une ligne est un titre markdown et retourne (niveau, texte)."""
     ligne_strip = ligne.strip()
-    if ligne_strip.startswith('### '):
+    # Ordre important: du plus spécifique au plus général
+    if ligne_strip.startswith('##### '):
+        return (5, ligne_strip[6:])
+    elif ligne_strip.startswith('#### '):
+        return (4, ligne_strip[5:])
+    elif ligne_strip.startswith('### '):
         return (3, ligne_strip[4:])
     elif ligne_strip.startswith('## '):
         return (2, ligne_strip[3:])
@@ -1516,19 +1611,30 @@ def traiter_ligne_markdown_dans_conteneur(ligne: str, cell):
     ligne = ligne.replace('\\-', '-')
     ligne = ligne.replace('\\*', '*')
 
-    # Titres markdown avec # → ajouter avec formatage approprié
+    # Titres markdown avec # → ajouter avec formatage approprié et zones grisées
     niveau, texte = detecter_titre_markdown(ligne)
     if niveau > 0:
         para = cell.add_paragraph()
-        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = para.add_run(texte)
-        run.bold = True
-        run.underline = True
-        if niveau == 1:
-            run.font.all_caps = True
-        elif niveau == 2:
-            run.font.small_caps = True
-        appliquer_police(run)
+        # Centrer seulement pour H1, H2, H3; H4 est justifié
+        para.alignment = WD_ALIGN_PARAGRAPH.CENTER if niveau <= 3 else WD_ALIGN_PARAGRAPH.JUSTIFY
+        # Parser le texte pour gérer les zones grisées
+        segments = traiter_formatage_markdown(texte)
+        for text, fmt in segments:
+            if text:
+                text = nettoyer_texte_xml(text)
+                if text:
+                    run = para.add_run(text)
+                    run.bold = True
+                    # Underline seulement pour H1, H2, H3 et H5; pas pour H4
+                    run.underline = (niveau != 4)
+                    run.font.color.rgb = RGBColor(0, 0, 0)  # NOIR
+                    if niveau == 1:
+                        run.font.all_caps = True
+                    elif niveau == 2:
+                        run.font.small_caps = True
+                    appliquer_police(run)
+                    if ZONES_GRISEES_ACTIVES and fmt.get('zone_grisee', False):
+                        appliquer_fond_gris(run)
         return
 
     # Paragraphe normal dans la cellule
@@ -1566,10 +1672,14 @@ def traiter_ligne_markdown(ligne: str, doc: Document):
             para = doc.add_paragraph(style='Heading 1')
         elif niveau == 2:
             para = doc.add_paragraph(style='Heading 2')
-        else:
+        elif niveau == 3:
             para = doc.add_paragraph(style='Heading 3')
-        run = para.add_run(texte)
-        appliquer_police(run)
+        elif niveau == 4:
+            para = doc.add_paragraph(style='Heading 4')
+        else:  # niveau 5+
+            para = doc.add_paragraph(style='Heading 5')
+        # Utiliser ajouter_texte_formate pour gérer les zones grisées (avec bold forcé pour titres)
+        ajouter_texte_formate(para, texte, force_bold=True)
         return
 
     # Listes a puces
@@ -1595,8 +1705,8 @@ def traiter_ligne_markdown(ligne: str, doc: Document):
     if est_titre_notarial(texte_clean) and (est_entoure_bold or len(texte_clean) < 80):
         # Titre principal → Heading 1 (bold, ALL CAPS, underline, centered)
         para = doc.add_paragraph(style='Heading 1')
-        run = para.add_run(texte_clean)
-        appliquer_police(run)
+        # Utiliser ajouter_texte_formate pour gérer les zones grisées dans les titres
+        ajouter_texte_formate(para, texte_clean, force_bold=True)
         return
 
     # Sous-titres notariaux - detecter avec ou sans ** marqueurs
@@ -1604,8 +1714,8 @@ def traiter_ligne_markdown(ligne: str, doc: Document):
     if est_sous_titre_notarial(texte_clean) and (est_entoure_bold or len(texte_clean) < 50):
         # Sous-titre → Heading 2 (bold, small caps, underline)
         para = doc.add_paragraph(style='Heading 2')
-        run = para.add_run(texte_clean)
-        appliquer_police(run)
+        # Utiliser ajouter_texte_formate pour gérer les zones grisées dans les titres
+        ajouter_texte_formate(para, texte_clean, force_bold=True)
         return
 
     # Paragraphe normal - EXACTEMENT comme l'original
