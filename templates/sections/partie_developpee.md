@@ -1425,7 +1425,7 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_risques_pollution.md' %}
 {% endif %}
 
-{% if erp or sinistres %}
+{% if diagnostics and (diagnostics.erp or diagnostics.sinistres or diagnostics.environnement) %}
 {% include 'sections/section_diagnostics_environnementaux.md' %}
 {% endif %}
 

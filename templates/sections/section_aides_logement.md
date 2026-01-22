@@ -234,3 +234,68 @@ Le bien acquis ne bénéficie d'aucune aide au logement spécifique (APL, ANAH).
 
 L'ACQUEREUR déclare être informé de l'existence de ces dispositifs et des conditions pour en bénéficier ultérieurement.
 {% endif %}
+
+## Obligation declarative du proprietaire de bien a usage d'habitation
+
+{% if aides and aides.declaration_occupation %}
+
+### Article 1649 quater-0 B bis du Code general des impots
+
+Conformement aux dispositions de l'article 1649 quater-0 B bis du Code general des impots, tout proprietaire d'un local affecte a l'habitation est tenu de declarer a l'administration fiscale, avant le 1er juillet de chaque annee, les informations relatives a la nature de l'occupation de ce local au 1er janvier.
+
+{% if aides.declaration_occupation.effectuee %}
+**Declaration effectuee** : <<<VAR_START>>>{{ "OUI" }}<<<VAR_END>>>
+
+{% if aides.declaration_occupation.date %}
+**Date de la derniere declaration** : <<<VAR_START>>>{{ aides.declaration_occupation.date }}<<<VAR_END>>>
+{% endif %}
+
+{% if aides.declaration_occupation.type_occupation %}
+**Nature de l'occupation declaree** : <<<VAR_START>>>{{ aides.declaration_occupation.type_occupation }}<<<VAR_END>>>
+{% endif %}
+
+{% if aides.declaration_occupation.identite_occupant %}
+**Identite de l'occupant** : <<<VAR_START>>>{{ aides.declaration_occupation.identite_occupant }}<<<VAR_END>>>
+{% endif %}
+
+{% if aides.declaration_occupation.montant_loyer %}
+**Montant du loyer mensuel declare** : <<<VAR_START>>>{{ aides.declaration_occupation.montant_loyer | format_nombre }}<<<VAR_END>>> EUR
+{% endif %}
+
+{% else %}
+**Declaration effectuee** : <<<VAR_START>>>{{ "NON" }}<<<VAR_END>>>
+
+Le VENDEUR s'engage a regulariser cette declaration avant la signature de l'acte authentique ou a informer l'ACQUEREUR des consequences fiscales eventuelles.
+{% endif %}
+
+### Obligations de l'acquereur
+
+L'ACQUEREUR est informe qu'il devra, a compter de la prise de possession du bien :
+
+- Effectuer la declaration d'occupation via le service en ligne "Gerer mes biens immobiliers" sur impots.gouv.fr ;
+- Mettre a jour cette declaration chaque annee avant le 1er juillet ;
+- Declarer tout changement dans la situation d'occupation du bien (changement de locataire, mise en location, occupation personnelle, vacance).
+
+{% if aides.declaration_occupation.sanctions %}
+### Sanctions
+
+Le defaut de declaration ou la declaration inexacte est passible d'une amende de <<<VAR_START>>>{{ aides.declaration_occupation.montant_amende | default("150") }}<<<VAR_END>>> EUR par local, conformement aux dispositions fiscales en vigueur.
+{% endif %}
+
+{% else %}
+### Article 1649 quater-0 B bis du Code general des impots
+
+Conformement aux dispositions de l'article 1649 quater-0 B bis du Code general des impots, tout proprietaire d'un local affecte a l'habitation est tenu de declarer a l'administration fiscale, avant le 1er juillet de chaque annee, les informations relatives a la nature de l'occupation de ce local au 1er janvier.
+
+Le VENDEUR declare avoir satisfait a cette obligation declarative pour l'annee en cours.
+
+### Obligations de l'acquereur
+
+L'ACQUEREUR est informe qu'il devra, a compter de la prise de possession du bien :
+
+- Effectuer la declaration d'occupation via le service en ligne "Gerer mes biens immobiliers" sur impots.gouv.fr ;
+- Mettre a jour cette declaration chaque annee avant le 1er juillet ;
+- Declarer tout changement dans la situation d'occupation du bien (changement de locataire, mise en location, occupation personnelle, vacance).
+
+Le defaut de declaration ou la declaration inexacte est passible d'une amende de 150 EUR par local, conformement aux dispositions fiscales en vigueur.
+{% endif %}
