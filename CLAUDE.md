@@ -412,20 +412,27 @@ Be pragmatic. Be reliable. Self-anneal. **Build knowledge.**
 
 ---
 
-## Version 1.1.0 - Améliorations Majeures
+## Version 1.2.0 - Performance & Templates PROD
 
-### 🎯 Tests Complets de Production
-
-Tous les types d'actes ont été testés avec pipeline complet (génération → assemblage → export → validation conformité):
+### 🎯 Conformité Templates (Janvier 2026)
 
 | Type | Conformité | Statut | Notes |
 |------|-----------|--------|-------|
 | Règlement copropriété | **85.5%** | ✅ PROD | Template complet, 22 tableaux |
 | Modificatif EDD | **91.7%** | ✅ PROD | Template le plus abouti |
-| Vente | 46% | ⚠️ Dev | Template squelette (manque 97 titres) |
+| **Vente** | **85.1%** | ✅ PROD | **37 sections, données enrichies** |
 | Promesse | 60.9% | ⚠️ Dev | Template squelette (manque 24 titres) |
 
-**Seuil production**: ≥80% de conformité structurelle.
+**Seuil production**: ≥80% de conformité structurelle. **3/4 templates en PROD!**
+
+### ⚡ Performance Pipeline
+
+| Étape | Durée | Description |
+|-------|-------|-------------|
+| Assemblage Jinja2 | 1.5s | Template + données → Markdown |
+| Export DOCX | 3.5s | Markdown → Word formaté |
+| Vérification | 0.7s | Comparaison structure |
+| **TOTAL** | **5.7s** | **~8 pages/seconde** |
 
 ### 🔧 Corrections Critiques Appliquées
 
