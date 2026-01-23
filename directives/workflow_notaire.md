@@ -27,8 +27,17 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 |----------|-----------|--------|--------|
 | `reglement_copropriete_edd.md` | **85.5%** | ✅ PROD | Utiliser directement |
 | `modificatif_edd.md` | **91.7%** | ✅ PROD | Utiliser directement |
-| `vente_lots_copropriete.md` | 46% | ⚠️ DEV | Utiliser `donnees_vente_exemple.json` |
+| `vente_lots_copropriete.md` | **85.1%** | ✅ PROD | 37 sections, données enrichies requises |
 | `promesse_vente_lots_copropriete.md` | 60.9% | ⚠️ DEV | Utiliser `donnees_promesse_exemple.json` |
+
+### ⚡ Performance Pipeline (v1.2.0)
+
+| Étape | Durée | Description |
+|-------|-------|-------------|
+| Assemblage Jinja2 | **1.5s** | Template + données → Markdown |
+| Export DOCX | **3.5s** | Markdown → Word avec formatage |
+| Vérification conformité | **0.7s** | Comparaison structure originale |
+| **TOTAL** | **5.7s** | ~8 pages/seconde |
 
 **Si template <80%**: Utiliser les exemples fournis dans `exemples/` jusqu'à enrichissement complet.
 

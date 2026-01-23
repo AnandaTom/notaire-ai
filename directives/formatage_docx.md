@@ -56,6 +56,7 @@ Garantir que tous les actes générés en format DOCX soient **100% fidèles** �
 ### Heading 1 (Titres principaux)
 
 **Utilisé pour**: PARTIE NORMALISÉE, PARTIE DÉVELOPPÉE, IDENTIFICATION DES PARTIES, DÉSIGNATION, etc.
+**Markdown**: `# Titre`
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -63,8 +64,9 @@ Garantir que tous les actes générés en format DOCX soient **100% fidèles** �
 | Gras | OUI |
 | Majuscules | ALL CAPS |
 | Souligné | OUI |
+| **Couleur** | **Noir (RGBColor(0,0,0))** |
 | Alignement | Centré |
-| Espace avant | 0pt |
+| Espace avant | 18pt |
 | Espace après | 12pt |
 | Retrait première ligne | 0 |
 | Garder avec suivant | OUI |
@@ -87,6 +89,7 @@ Garantir que tous les actes générés en format DOCX soient **100% fidèles** �
 ### Heading 2 (Sous-sections)
 
 **Utilisé pour**: VENDEUR, ACQUÉREUR, QUOTITÉS, FINANCEMENT, etc.
+**Markdown**: `## Titre`
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -94,8 +97,9 @@ Garantir que tous les actes générés en format DOCX soient **100% fidèles** �
 | Gras | OUI |
 | Petites majuscules | OUI |
 | Souligné | OUI |
+| **Couleur** | **Noir (RGBColor(0,0,0))** |
 | Alignement | Centré |
-| Espace avant | 0pt |
+| Espace avant | 12pt |
 | Espace après | 12pt |
 | Retrait première ligne | 0 |
 
@@ -114,16 +118,22 @@ Garantir que tous les actes générés en format DOCX soient **100% fidèles** �
 
 ### Heading 3 (Sous-sous-sections)
 
+**Markdown**: `### Titre`
+
 | Propriété | Valeur |
 |-----------|--------|
 | Police | Times New Roman 11pt |
 | Gras | OUI |
 | Souligné | OUI |
+| **Couleur** | **Noir (RGBColor(0,0,0))** |
 | Alignement | Centré |
-| Espace avant | 0pt |
+| Espace avant | 6pt |
 | Espace après | 12pt |
 
-### Heading 4 (Petits titres)
+### Heading 4 (Petits titres inline)
+
+**Utilisé pour**: Industrie personnelle, Vie courante, Répartition lors de la revente, etc.
+**Markdown**: `#### Titre`
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -131,8 +141,23 @@ Garantir que tous les actes générés en format DOCX soient **100% fidèles** �
 | Gras | OUI |
 | Souligné | NON |
 | Italique | NON |
+| **Couleur** | **Noir (RGBColor(0,0,0))** |
 | Alignement | Justifié |
 | Espace avant | 6pt |
+| Espace après | 0pt |
+
+### Heading 5 (Titres mineurs)
+
+**Markdown**: `##### Titre`
+
+| Propriété | Valeur |
+|-----------|--------|
+| Police | Times New Roman 11pt |
+| Gras | OUI |
+| Souligné | OUI |
+| **Couleur** | **Noir (RGBColor(0,0,0))** |
+| Alignement | Justifié |
+| Espace avant | 0pt |
 | Espace après | 0pt |
 
 ---
@@ -168,6 +193,13 @@ Garantir que tous les actes générés en format DOCX soient **100% fidèles** �
 - **Style Word**: Table Grid
 - **Alignement**: Centré dans la page
 - **Bordures**: Simples, noires, 8pt
+
+### Largeurs de colonnes (v1.2.1)
+- **Calcul automatique**: Proportionnel au contenu le plus long de chaque colonne
+- **Approximation**: 2.5mm par caractère (Times New Roman 11pt)
+- **Largeur minimale**: 15mm par colonne
+- **Largeur totale**: 135mm (page A4 - marges: 210mm - 60mm gauche - 15mm droite)
+- **Pas de retrait**: `first_line_indent = Pt(0)` dans les cellules
 
 ### Bordures XML
 ```xml

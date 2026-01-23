@@ -628,7 +628,7 @@
           "lots_concernes": { "type": "array", "items": { "type": "integer" } },
           "type": {
             "type": "string",
-            "enum": ["acquisition", "succession", "donation", "licitation", "partage", "adjudication"]
+            "enum": ["acquisition", "succession", "donation", "licitation", "partage", "adjudication", "vefa"]
           },
           "vendeur_precedent": { "type": "string" },
           "notaire": { "type": "string" },

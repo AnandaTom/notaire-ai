@@ -1,0 +1,294 @@
+{
+  "acte": {
+    "numero_repertoire": "2025/123",
+    "reference_interne": "PROM-2025-001",
+    "date": {
+      "jour": 23,
+      "mois": "janvier",
+      "annee": 2025
+    },
+    "notaire": {
+      "civilite": "Maître",
+      "prenom": "Augustin",
+      "nom": "PAYOSS",
+      "societe": "PAYOSS & ASSOCIES",
+      "ville": "Lyon",
+      "departement": "Rhône",
+      "code_postal": "69002",
+      "adresse": "15 Rue de la République",
+      "crpcen": "69123456"
+    }
+  },
+  "promettants": [
+    {
+      "civilite": "Monsieur",
+      "nom": "TARBOURIECH",
+      "prenoms": "Thibault",
+      "profession": "Ingénieur informatique",
+      "adresse": "12 Avenue Victor Hugo",
+      "code_postal": "69003",
+      "ville": "Lyon",
+      "lieu_naissance": "Lyon 3ème",
+      "date_naissance": "15/06/1985",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      },
+      "coordonnees": {
+        "telephone": "06 12 34 56 78",
+        "courriel": "t.tarbouriech@email.fr"
+      }
+    }
+  ],
+  "beneficiaires": [
+    {
+      "civilite": "Monsieur",
+      "nom": "MARTIN",
+      "prenoms": "Pierre Jean",
+      "profession": "Cadre commercial",
+      "adresse": "8 Rue des Lilas",
+      "code_postal": "69001",
+      "ville": "Lyon",
+      "lieu_naissance": "Paris 14ème",
+      "date_naissance": "22/03/1990",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "marie",
+        "regime_libelle": "la communauté réduite aux acquêts"
+      },
+      "coordonnees": {
+        "telephone": "06 98 76 54 32",
+        "courriel": "p.martin@email.fr"
+      }
+    }
+  ],
+  "quotites_beneficiaires": [
+    {
+      "personne_index": 0,
+      "quotite": "la totalité",
+      "type_propriete": "pleine_propriete"
+    }
+  ],
+  "bien": {
+    "adresse": {
+      "numero": "28",
+      "voie": "Chemin de la Raude",
+      "code_postal": "69160",
+      "ville": "Tassin-la-Demi-Lune",
+      "departement": "Rhône"
+    },
+    "description_ensemble": "Dans un ensemble immobilier dénommé \"Résidence Les Feuillantines\", édifié sur un terrain situé lieu-dit \"La Raude\".",
+    "cadastre": [
+      {
+        "section": "AH",
+        "numero": "125",
+        "lieudit": "La Raude",
+        "surface": "2450 m²"
+      }
+    ],
+    "lots": [
+      {
+        "numero": 25,
+        "numero_lettres": "VINGT-CINQ",
+        "type": "appartement",
+        "type_appartement": "T4",
+        "etage": "2ème étage",
+        "escalier": "A",
+        "orientation": "Sud-Ouest",
+        "description": "une entrée, un séjour-salon, une cuisine, trois chambres, une salle de bains, un WC séparé, un balcon",
+        "tantiemes": {
+          "valeur": 185,
+          "base": 10000,
+          "base_unite": "dix-millièmes",
+          "type": "parties communes générales"
+        }
+      },
+      {
+        "numero": 7,
+        "numero_lettres": "SEPT",
+        "type": "cave",
+        "etage": "sous-sol",
+        "escalier": "A",
+        "numero_cave": "7",
+        "description": "une cave",
+        "tantiemes": {
+          "valeur": 10,
+          "base": 10000,
+          "base_unite": "dix-millièmes",
+          "type": "parties communes générales"
+        }
+      }
+    ],
+    "superficie_carrez": {
+      "superficie_m2": "74,01",
+      "date_mesurage": "12/12/2024",
+      "diagnostiqueur": "DIAG IMMO EXPERT, situé à Lyon (69003)"
+    },
+    "usage_actuel": "d'habitation",
+    "usage_futur": "residence_principale",
+    "equipements": {
+      "detecteur_fumee": true,
+      "cheminee_foyer_ouvert": false,
+      "cheminee_foyer_ferme": false,
+      "chaudiere_individuelle": true,
+      "chaudiere_collective": false,
+      "cuve_fioul": false,
+      "cuve_gaz": false,
+      "pompe_chaleur": false,
+      "climatisation": false,
+      "panneaux_photovoltaiques": false,
+      "recuperation_eaux_pluie": false,
+      "puits_forage": false,
+      "wc_broyeur": false,
+      "videosurveillance": false,
+      "alarme": false,
+      "fibre": true,
+      "recharge_vehicule_electrique": false,
+      "coffre_fort_mural": false,
+      "piscine": false,
+      "loggia_fermee": false
+    },
+    "chauffage": {
+      "type": "chauffage",
+      "collectif": true,
+      "energie": "gaz naturel",
+      "entretien": "le syndic de copropriété"
+    }
+  },
+  "copropriete": {
+    "reglement": {
+      "notaire_origine": "Maître FILLON, notaire à Lyon",
+      "date_origine": "28 avril 1970",
+      "publication": "Lyon 5ème, le 11 mai 1970",
+      "modificatifs": []
+    },
+    "syndic": {
+      "nom": "SYNDIC RHONE-ALPES",
+      "adresse": "45 Rue de la République, 69002 Lyon",
+      "telephone": "04 72 00 00 00",
+      "courriel": "contact@syndic-ra.fr"
+    },
+    "immatriculation": {
+      "numero": "069 123 456",
+      "date": "15/06/2017"
+    }
+  },
+  "origine_propriete": [
+    {
+      "lots_concernes": [25, 7],
+      "origine_immediate": {
+        "type": "acquisition",
+        "vendeur_precedent": "Christian GROS",
+        "notaire": "Maître Mathieu PAGLIAROLI, notaire à Saint Alban de Roche",
+        "date": "30 juin 2014",
+        "publication": {
+          "service": "LYON 5ème",
+          "date": "24 juillet 2014",
+          "volume": "2014P",
+          "numero": "4164"
+        }
+      }
+    }
+  ],
+  "prix": {
+    "montant": 245000,
+    "devise": "EUR"
+  },
+  "meubles": {
+    "inclus": false
+  },
+  "negociation": {
+    "existe": false
+  },
+  "indemnite_immobilisation": {
+    "montant": 24500,
+    "pourcentage": 10,
+    "depot_garantie": 24500
+  },
+  "delais": {
+    "expiration_promesse": {
+      "date": "30/06/2025",
+      "heure": "23h59"
+    },
+    "delai_depot_garantie_jours": 15
+  },
+  "financement": {
+    "fonds_empruntes": 200000,
+    "fonds_personnels": 45000
+  },
+  "conditions_suspensives": {
+    "pret": {
+      "applicable": true,
+      "montant": 200000,
+      "duree_mois": 240,
+      "taux_maximum": 4.5,
+      "delai_obtention": "30/05/2025",
+      "type_pret": "amortissable",
+      "etablissement": "à déterminer"
+    },
+    "preemption": {
+      "applicable": true,
+      "delai_jours": 60
+    }
+  },
+  "clause_penale": {
+    "pourcentage": 10
+  },
+  "diagnostics": {
+    "dpe": {
+      "date": "10/12/2024",
+      "classe_energie": "D",
+      "classe_ges": "D",
+      "diagnostiqueur": "DIAG IMMO EXPERT"
+    },
+    "amiante": {
+      "date": "10/12/2024",
+      "presence": false,
+      "diagnostiqueur": "DIAG IMMO EXPERT"
+    },
+    "electricite": {
+      "date": "10/12/2024",
+      "conforme": true,
+      "diagnostiqueur": "DIAG IMMO EXPERT"
+    },
+    "gaz": {
+      "applicable": false
+    },
+    "plomb": {
+      "applicable": false,
+      "raison": "Immeuble construit après 1949"
+    },
+    "termites": {
+      "applicable": false,
+      "raison": "Zone non délimitée par arrêté préfectoral"
+    },
+    "erp": {
+      "date": "10/12/2024",
+      "niveau_risque": "faible",
+      "diagnostiqueur": "DIAG IMMO EXPERT"
+    }
+  },
+  "annexes": [
+    "Plans cadastral et géoportail",
+    "Plans des lots et plan de masse",
+    "Diagnostic Carrez",
+    "Note d'urbanisme",
+    "Note de voirie",
+    "Diagnostic amiante parties privatives",
+    "État de l'installation intérieure d'électricité",
+    "Diagnostic de performances énergétiques (DPE)",
+    "État des risques",
+    "Attestation de mise à jour annuelle copropriété",
+    "Carnet d'entretien",
+    "Fiche synthétique",
+    "Procès-verbaux AG des trois dernières années",
+    "Titre de propriété du promettant (acte du 30 juin 2014)"
+  ],
+  "_metadata": {
+    "source": "Extrait du titre de propriété ACTE_AUTHENTIQUE_PAGES_1-39.pdf",
+    "date_extraction": "2026-01-23",
+    "notes": "Données simplifiées pour test de génération de promesse de vente. L'origine de propriété complète (chaîne à 3 niveaux) figure dans le titre de propriété annexé."
+  }
+}

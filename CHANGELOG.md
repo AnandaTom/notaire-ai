@@ -7,6 +7,41 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.2.1] - 2026-01-22
+
+### 🔧 Corrections Export DOCX
+
+#### Styles des Titres
+- **Couleur noire forcée** - Tous les styles Heading (1-5) ont maintenant `font.color.rgb = RGBColor(0, 0, 0)` pour éviter les titres bleus par défaut de Word
+- **Support complet #### et #####** - `detecter_titre_markdown` détecte maintenant les 5 niveaux de titres Markdown (était limité à 3)
+- **Mapping Heading 4/5** - Les titres `####` utilisent maintenant `Heading 4` (bold only, justified) et `#####` utilise `Heading 5` (bold, underline)
+
+#### Zones Grisées dans les Titres
+- **`ajouter_texte_formate(force_bold=)`** - Nouveau paramètre optionnel pour forcer le bold dans les titres tout en gérant les zones grisées
+- **Titres notariaux** - Les sections `est_titre_notarial` et `est_sous_titre_notarial` utilisent maintenant `ajouter_texte_formate` avec `force_bold=True`
+- **Cellules de tableau** - Les titres dans les cellules gèrent maintenant correctement les zones grisées
+
+#### Formatage des Tableaux
+- **Largeurs proportionnelles** - Calcul automatique des largeurs de colonnes basé sur le contenu (approximation 2.5mm/caractère)
+- **Largeur minimale** - 15mm minimum par colonne pour éviter les colonnes trop étroites
+- **Largeur totale fixe** - 135mm (page A4 - marges) pour des tableaux bien dimensionnés
+- **Pas de retrait** - `first_line_indent = Pt(0)` dans les cellules de tableau
+
+### 📁 Fichiers Modifiés
+
+| Fichier | Changements |
+|---------|-------------|
+| `execution/exporter_docx.py` | Import `RGBColor`, couleur noire sur H1-H5, support H4/H5, largeurs tableaux proportionnelles |
+
+### ✅ Tests
+
+```bash
+# Régénérer avec corrections
+python execution/exporter_docx.py --input .tmp/acte_test_final/9489bd1b/acte.md --output .tmp/test_v2_corrections.docx --zones-grisees
+```
+
+---
+
 ## [1.1.0] - 2026-01-20
 
 ### 🎯 Objectif de cette Release

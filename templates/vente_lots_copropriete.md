@@ -336,7 +336,7 @@ Le paiement de ce prix a lieu de la manière indiquée ci-après.
 L'**ACQUEREUR** a payé le prix comptant ce jour ainsi qu'il résulte de la comptabilité de l'office notarial dénommé en tête des présentes au **VENDEUR**, qui le reconnaît et lui en consent quittance sans réserve.
 **DONT QUITTANCE**
 
-{% if paiement.fonds_empruntes > 0 %}
+{% if paiement and paiement.fonds_empruntes and paiement.fonds_empruntes > 0 %}
 # DECLARATION D'ORIGINE DES FONDS
 
 L'**ACQUEREUR** déclare que sur la somme ci-dessus payée, celle de **{{ paiement.fonds_empruntes_lettres|upper }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})** provient de fonds empruntés à cet effet suivant acte reçu par {{ paiement.prets[0].acte_pret.notaire }}, le {{ paiement.prets[0].acte_pret.date | format_date }}.
