@@ -558,6 +558,7 @@ class AssembleurActe:
         except UndefinedError as e:
             # Extraire la variable manquante pour un message plus clair
             import re
+            import traceback
             match = re.search(r"'(\w+)' is undefined|has no attribute '(\w+)'", str(e))
             if match:
                 var_name = match.group(1) or match.group(2)
@@ -565,6 +566,9 @@ class AssembleurActe:
                 raise ValueError(f"Variable manquante dans le template: '{var_name}' - {e}\n"
                                f"Vérifier que cette variable existe dans les données ou ajouter {suggestion}")
             else:
+                # Afficher traceback complet pour déboguer
+                print("[DEBUG] Traceback complet:")
+                traceback.print_exc()
                 raise ValueError(f"Variable manquante dans le template: {e}")
 
         return acte
