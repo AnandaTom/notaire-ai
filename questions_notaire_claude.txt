@@ -1,0 +1,115 @@
+Toutes les questions à poser au notaire pour la génération d'actes (extraites de schemas/questions_notaire.json) :
+
+1. Quelle est la date prévue de signature de l'acte ?
+2. Quel est le numéro de répertoire / référence interne ?
+3. Y a-t-il un notaire assistant l'acquéreur ? Si oui, son nom et lieu d'exercice.
+
+--- Identification du VENDEUR (répéter pour chaque vendeur) ---
+4. Civilité du vendeur ?
+5. Tous les prénoms du vendeur (dans l'ordre de l'état civil) ?
+6. Nom de famille du vendeur ?
+7. Nom de naissance (si différent) ?
+8. Profession du vendeur ?
+9. Numéro et voie de l'adresse du vendeur ?
+10. Code postal du vendeur ?
+11. Ville du vendeur ?
+12. Date de naissance du vendeur ?
+13. Lieu de naissance (ville et département/pays) ?
+14. Nationalité du vendeur ?
+15. Situation matrimoniale du vendeur ?
+  - Si marié(e) :
+    a. Quel est le régime matrimonial ?
+    b. Y a-t-il eu un contrat de mariage ?
+    c. Si oui, quel notaire l'a reçu ?
+    d. Date du contrat de mariage ?
+    e. Lieu de réception du contrat de mariage ?
+    f. Le conjoint intervient-il à l'acte ?
+  - Si pacsé(e) :
+    a. Date du PACS ?
+    b. Lieu d'enregistrement du PACS (mairie ou notaire) ?
+    c. Régime du PACS ?
+  - Si divorcé(e) :
+    a. Quel tribunal a prononcé le divorce ?
+    b. Date du jugement de divorce ?
+  - Si veuf/veuve :
+    a. Nom du conjoint décédé ?
+
+--- Identification de l'ACQUÉREUR (mêmes questions que vendeur + spécifiques) ---
+16. L'acquéreur est-il primo-accédant ?
+
+--- Quotités de propriété ---
+17. Comment se répartissent les quotités vendues entre les vendeurs ?
+18. Comment se répartissent les quotités acquises entre les acquéreurs ?
+
+--- Désignation du bien ---
+19. Numéro et voie de l'adresse du bien ?
+20. Code postal du bien ?
+21. Ville du bien ?
+22. Nom de la résidence/copropriété (si applicable) ?
+23. Section cadastrale ?
+24. Numéro de parcelle cadastrale ?
+25. Lieudit cadastral ?
+26. Surface cadastrale (format: 00 ha 28 a 21 ca) ?
+
+--- Lots de copropriété (répéter pour chaque lot) ---
+27. Numéro du lot ?
+28. Type du lot ?
+29. Description détaillée du lot ?
+30. Étage ?
+31. Escalier/Bâtiment (si applicable) ?
+32. Tantièmes des parties communes générales ?
+33. Total des tantièmes de la copropriété ?
+34. Superficie loi Carrez (en m²) ?
+
+--- Prix et paiement ---
+35. Prix de vente total (en euros) ?
+36. Montant attribué au mobilier inclus (si applicable) ?
+37. Mode de paiement ?
+38. Montant payé comptant (si applicable) ?
+
+--- Prêts bancaires (si applicable, répéter pour chaque prêt) ---
+39. Nom de la banque prêteuse ?
+40. Montant du prêt (en euros) ?
+41. Durée du prêt (en mois) ?
+42. Taux d'intérêt nominal (en %) ?
+43. Type de prêt ?
+
+--- Informations sur la copropriété ---
+44. Nom du syndic de copropriété ?
+45. Adresse du syndic ?
+46. Numéro d'immatriculation de la copropriété ?
+47. Montant de la quote-part du fonds de travaux ?
+48. Y a-t-il un emprunt collectif en cours ?
+49. Si oui, montant du solde restant dû ?
+
+--- Origine de propriété ---
+50. Comment le vendeur a-t-il acquis le bien ?
+51. Date de l'acte d'acquisition précédent ?
+52. Notaire ayant reçu l'acte précédent ?
+53. Lieu de réception de l'acte précédent ?
+54. Références de publication (SPF, volume, numéro) ?
+
+--- État descriptif de division ---
+55. Date de l'état descriptif de division ?
+56. Notaire l'ayant reçu ?
+57. Y a-t-il eu des modificatifs ?
+58. Si oui, détails des modificatifs (date, notaire, objet) ?
+
+--- Sections optionnelles ---
+59. Des meubles sont-ils inclus dans la vente ?
+60. Si oui, liste et valeur des meubles ?
+61. Le vendeur a-t-il réalisé des travaux depuis moins de 10 ans ?
+62. Si oui, liste des travaux avec factures ?
+63. Un agent immobilier est-il intervenu ?
+64. Nom de l'agence ?
+65. Montant des honoraires ?
+66. À la charge de qui ?
+
+--- Usage du bien ---
+67. Usage actuel du bien ?
+68. L'acquéreur compte-t-il conserver cet usage ?
+69. Si non, quel nouvel usage ?
+
+(Questions conditionnelles et sous-questions incluses dans la structure ci-dessus)
+
+Fichier généré automatiquement pour usage ClaudeAI.
