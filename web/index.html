@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotaireAI - Formulaire Vendeur</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ NotaireAI</h1>
+            <p class="subtitle">Formulaire de collecte des informations du vendeur</p>
+        </header>
+
+        <form id="vendeurForm">
+            <!-- Identité -->
+            <section class="form-section">
+                <h2>👤 Identité du vendeur</h2>
+
+                <div class="form-group">
+                    <label for="civilite">Civilité *</label>
+                    <select id="civilite" name="civilite" required>
+                        <option value="">Sélectionner</option>
+                        <option value="M">Monsieur</option>
+                        <option value="Mme">Madame</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="nom">Nom de naissance *</label>
+                    <input type="text" id="nom" name="nom" required placeholder="DUPONT">
+                </div>
+
+                <div class="form-group">
+                    <label for="nom_usage">Nom d'usage</label>
+                    <input type="text" id="nom_usage" name="nom_usage" placeholder="Si différent du nom de naissance">
+                </div>
+
+                <div class="form-group">
+                    <label for="prenoms">Prénoms (dans l'ordre de l'acte de naissance) *</label>
+                    <input type="text" id="prenoms" name="prenoms" required placeholder="Jean, Pierre, Marie">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_naissance">Date de naissance *</label>
+                        <input type="date" id="date_naissance" name="date_naissance" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lieu_naissance">Lieu de naissance *</label>
+                        <input type="text" id="lieu_naissance" name="lieu_naissance" required placeholder="Paris (75)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nationalite">Nationalité *</label>
+                    <input type="text" id="nationalite" name="nationalite" required value="Française">
+                </div>
+
+                <div class="form-group">
+                    <label for="profession">Profession</label>
+                    <input type="text" id="profession" name="profession" placeholder="Ingénieur, Retraité, etc.">
+                </div>
+            </section>
+
+            <!-- Adresse -->
+            <section class="form-section">
+                <h2>📍 Adresse actuelle</h2>
+
+                <div class="form-group">
+                    <label for="adresse">Adresse complète *</label>
+                    <input type="text" id="adresse" name="adresse" required placeholder="12 rue de la République">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="code_postal">Code postal *</label>
+                        <input type="text" id="code_postal" name="code_postal" required placeholder="75001">
+                    </div>
+                    <div class="form-group">
+                        <label for="ville">Ville *</label>
+                        <input type="text" id="ville" name="ville" required placeholder="Paris">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Situation matrimoniale -->
+            <section class="form-section">
+                <h2>💑 Situation matrimoniale</h2>
+
+                <div class="form-group">
+                    <label for="regime_matrimonial">Régime matrimonial *</label>
+                    <select id="regime_matrimonial" name="regime_matrimonial" required>
+                        <option value="">Sélectionner</option>
+                        <option value="celibataire">Célibataire</option>
+                        <option value="marie">Marié(e)</option>
+                        <option value="pacs">Pacsé(e)</option>
+                        <option value="divorce">Divorcé(e)</option>
+                        <option value="veuf">Veuf(ve)</option>
+                        <option value="separe">Séparé(e) de corps</option>
+                    </select>
+                </div>
+
+                <div id="conjoint_section" class="hidden">
+                    <h3>Informations du conjoint / partenaire</h3>
+
+                    <div class="form-group">
+                        <label for="conjoint_nom">Nom *</label>
+                        <input type="text" id="conjoint_nom" name="conjoint_nom" placeholder="MARTIN">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="conjoint_prenoms">Prénoms *</label>
+                        <input type="text" id="conjoint_prenoms" name="conjoint_prenoms" placeholder="Sophie, Marie">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_mariage">Date de mariage / PACS *</label>
+                        <input type="date" id="date_mariage" name="date_mariage">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lieu_mariage">Lieu de mariage / PACS *</label>
+                        <input type="text" id="lieu_mariage" name="lieu_mariage" placeholder="Lyon (69)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type_regime">Type de régime *</label>
+                        <select id="type_regime" name="type_regime">
+                            <option value="">Sélectionner</option>
+                            <option value="communaute_legale">Communauté légale (défaut)</option>
+                            <option value="communaute_universelle">Communauté universelle</option>
+                            <option value="separation_biens">Séparation de biens</option>
+                            <option value="participation_acquets">Participation aux acquêts</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="conjoint_intervient" name="conjoint_intervient">
+                            Le conjoint/partenaire intervient à l'acte
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pièces justificatives -->
+            <section class="form-section">
+                <h2>📄 Pièces justificatives</h2>
+
+                <div class="form-group">
+                    <label for="cni_numero">Numéro de carte d'identité *</label>
+                    <input type="text" id="cni_numero" name="cni_numero" required placeholder="123456789012">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cni_date_emission">Date d'émission *</label>
+                        <input type="date" id="cni_date_emission" name="cni_date_emission" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cni_date_expiration">Date d'expiration *</label>
+                        <input type="date" id="cni_date_expiration" name="cni_date_expiration" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cni_autorite">Autorité émettrice *</label>
+                    <input type="text" id="cni_autorite" name="cni_autorite" required placeholder="Préfecture de Paris">
+                </div>
+            </section>
+
+            <!-- Coordonnées bancaires -->
+            <section class="form-section">
+                <h2>🏦 Coordonnées bancaires (pour le versement du prix)</h2>
+
+                <div class="form-group">
+                    <label for="iban">IBAN *</label>
+                    <input type="text" id="iban" name="iban" required placeholder="FR76 1234 5678 9012 3456 7890 123">
+                </div>
+
+                <div class="form-group">
+                    <label for="bic">BIC *</label>
+                    <input type="text" id="bic" name="bic" required placeholder="BNPAFRPPXXX">
+                </div>
+
+                <div class="form-group">
+                    <label for="banque">Nom de la banque *</label>
+                    <input type="text" id="banque" name="banque" required placeholder="BNP Paribas">
+                </div>
+            </section>
+
+            <!-- Contact -->
+            <section class="form-section">
+                <h2>📞 Coordonnées de contact</h2>
+
+                <div class="form-group">
+                    <label for="telephone">Téléphone *</label>
+                    <input type="tel" id="telephone" name="telephone" required placeholder="06 12 34 56 78">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="jean.dupont@email.com">
+                </div>
+            </section>
+
+            <!-- Buttons -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">Réinitialiser</button>
+                <button type="button" class="btn btn-secondary" onclick="fillExample()">Remplir avec exemple</button>
+                <button type="submit" class="btn btn-primary">Enregistrer les informations</button>
+            </div>
+        </form>
+
+        <div id="result" class="result hidden">
+            <h3>✅ Données collectées</h3>
+            <pre id="resultJson"></pre>
+            <button class="btn btn-primary" onclick="downloadJson()">Télécharger JSON</button>
+            <button class="btn btn-secondary" onclick="copyJson()">Copier JSON</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

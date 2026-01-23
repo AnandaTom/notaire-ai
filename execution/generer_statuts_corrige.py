@@ -1,25 +1,45 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-generer_statuts.py
-==================
+generer_statuts_corrige.py
+===========================
 
-Génère les statuts constitutifs en copiant l'original avec ajustements de mise en page.
+Génère les statuts avec corrections:
+1. Ajoute fond bleu au tableau STATUTS (perdu lors conversion PDF→DOCX)
+2. Supprime paragraphes vides qui créent page blanche entre page 1 et 2
 """
 
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 from pathlib import Path
 from docx import Document
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
+from docx.shared import Pt
 import comtypes.client
 import pythoncom
 
 
-def generer_statuts():
-    """Génère le document Statuts en copiant l'original et ajustant la mise en page."""
+def set_cell_background(cell, color):
+    """Définit la couleur de fond d'une cellule."""
+    tc = cell._tc
+    tcPr = tc.get_or_add_tcPr()
+
+    # Supprimer ancien shd si existe
+    for shd in tcPr.findall(qn('w:shd')):
+        tcPr.remove(shd)
+
+    # Créer nouveau shd
+    shd = OxmlElement('w:shd')
+    shd.set(qn('w:fill'), color)
+    tcPr.append(shd)
+
+
+def generer_statuts_corrige():
+    """Génère le document Statuts avec corrections."""
 
     print('=' * 80)
-    print('GENERATION STATUTS OFFICIEL')
+    print('GENERATION STATUTS - VERSION CORRIGEE')
     print('=' * 80)
 
     # Charger le document original
@@ -127,24 +147,79 @@ def generer_statuts():
 
     print(f'   {count_table} modifications')
 
-    # Ajuster la mise en page pour éviter page blanche
-    print('\n4. Ajustement mise en page...')
+    # CORRECTION 1: Ajouter fond bleu au tableau "STATUTS"
+    print('\n4. Correction formatage tableau STATUTS...')
+    table_statuts = doc.tables[1]  # Table "STATUTS"
+    cell_statuts = table_statuts.cell(0, 0)
+    set_cell_background(cell_statuts, '001f5f')
+    print('   ✅ Fond bleu 001f5f ajouté au tableau STATUTS')
 
-    # Réduire l'espacement du paragraphe 1 pour tenir sur 1 page
-    # Original: 2730500 (7.6cm) → Réduire à ~4.5cm pour tenir avec le tableau STATUTS
-    from docx.shared import Pt
-    doc.paragraphs[1].paragraph_format.space_after = Pt(127)  # ~4.5cm
+    # CORRECTION 2: Supprimer paragraphes vides et forcer saut de page
+    print('\n5. Correction mise en page...')
 
-    # Supprimer les paragraphes vides 2-6 qui créent trop d'espace
-    # On les remplace par un seul paragraphe avec espacement contrôlé
-    for i in range(5, 1, -1):  # Supprimer de la fin vers le début
+    # Structure originale (dans le body XML):
+    # - Para 0: vide
+    # - Para 1: Header
+    # - Table 0: STATUTS CONSTITUTIFS
+    # - Para 2: vide
+    # - Table 1: STATUTS
+    # - Para 3-6: vides (4 paragraphes à supprimer)
+    # - Table 2: LES SOUSSIGNÉS ← Doit commencer page 2!
+
+    # Supprimer les paragraphes 3, 4, 5, 6 (de la fin vers le début)
+    for i in range(6, 2, -1):
         p = doc.paragraphs[i]._element
         p.getparent().remove(p)
 
-    print('   Espacement ajusté pour 20 pages')
+    # Après suppression, la structure est:
+    # - Para 0: vide
+    # - Para 1: Header
+    # - Table 0: STATUTS CONSTITUTIFS
+    # - Para 2: vide
+    # - Table 1: STATUTS
+    # - Table 2: LES SOUSSIGNÉS
+
+    # Forcer saut de page sur le premier paragraphe qui vient APRÈS le tableau STATUTS
+    # Après suppression, la structure dans doc.paragraphs est:
+    # Para 0: vide
+    # Para 1: Header
+    # Para 2: vide (entre STATUTS CONSTITUTIFS et STATUTS)
+    # Para 3 et suivants: contenu après les tableaux
+
+    # On cherche le premier paragraphe après le tableau LES SOUSSIGNÉS
+    # Ce sera le paragraphe "1. Monsieur..."
+    # Il faut trouver son index
+
+    # La structure body contient tableaux ET paragraphes mélangés
+    # Après suppression para 3-6, il reste:
+    # Body: Para0, Para1, Table0(STATUTS CONST), Para2, Table1(STATUTS), Table2(LES SOUSS), Para3(1.Monsieur)...
+
+    # On va simplement mettre le saut de page sur Para 2 (celui entre les 2 tableaux de page 1)
+    # NON! Ça va mettre Para 2 en page 2
+
+    # Solution: insérer un paragraphe vide JUSTE AVANT Table2, avec page_break
+    body = doc.element.body
+    table_soussignes_elem = doc.tables[2]._element
+
+    # Créer paragraphe avec saut de page
+    from docx.oxml import OxmlElement
+    new_para = OxmlElement('w:p')
+    pPr = OxmlElement('w:pPr')
+
+    # Le paragraphe lui-même sera vide mais causera un saut de page
+    pageBreak = OxmlElement('w:pageBreakBefore')
+    pPr.append(pageBreak)
+    new_para.append(pPr)
+
+    # Insérer JUSTE AVANT le tableau LES SOUSSIGNÉS
+    table_souss_index = body.index(table_soussignes_elem)
+    body.insert(table_souss_index, new_para)
+
+    print('   ✅ Paragraphes vides 3-6 supprimés')
+    print('   ✅ Saut de page inséré avant LES SOUSSIGNÉS')
 
     # Sauvegarder
-    print('\n5. Sauvegarde...')
+    print('\n6. Sauvegarde...')
     output_dir = Path('outputs')
     output_dir.mkdir(exist_ok=True)
 
@@ -153,7 +228,7 @@ def generer_statuts():
     print(f'   OK - {docx_path}')
 
     # Convertir en PDF
-    print('\n6. Conversion PDF...')
+    print('\n7. Conversion PDF...')
     pdf_path = output_dir / 'officiel statuts.pdf'
 
     pythoncom.CoInitialize()
@@ -186,7 +261,6 @@ def generer_statuts():
     print(f'\nStructure:')
     print(f'  Paragraphes: {len(doc_verif.paragraphs)}')
     print(f'  Tableaux: {len(doc_verif.tables)}')
-    print(f'  Sections: {len(doc_verif.sections)}')
     print(f'  Pages PDF: {nb_pages}')
 
     # Vérifier variables
@@ -195,26 +269,44 @@ def generer_statuts():
     trouves = [x for x in interdits if x in texte]
 
     if trouves:
-        print(f'\n! Valeurs spécifiques restantes: {trouves}')
+        print(f'\n❌ Valeurs spécifiques restantes: {trouves}')
     else:
         print(f'\n✅ Toutes variables génériques')
 
+    # Vérifier le fond du tableau STATUTS
+    print('\nVérification tableau STATUTS:')
+    table_verif = doc_verif.tables[1]
+    cell_verif = table_verif.cell(0, 0)
+    tc = cell_verif._tc
+    tcPr = tc.get_or_add_tcPr()
+    shd = tcPr.find(qn('w:shd'))
+
+    if shd is not None:
+        fill = shd.get(qn('w:fill'))
+        if fill == '001f5f':
+            print(f'  ✅ Fond bleu 001f5f confirmé')
+        else:
+            print(f'  ❌ Fond: {fill}')
+    else:
+        print(f'  ❌ Pas de fond')
+
     # Vérifier pages 1 et 2 du PDF
-    print('\n Vérification PDF:')
+    print('\nVérification PDF:')
     with open(str(pdf_path), 'rb') as f:
         pdf = PyPDF2.PdfReader(f)
+
         page1 = pdf.pages[0].extract_text()
         page2 = pdf.pages[1].extract_text()
 
         if 'STATUTS' in page1:
-            print('  ✅ Page 1: STATUTS présent')
+            print('  ✅ Page 1: "STATUTS" présent')
         else:
-            print('  ❌ Page 1: STATUTS manquant')
+            print('  ❌ Page 1: "STATUTS" manquant')
 
         if 'SOUSSIGN' in page2:
-            print('  ✅ Page 2: LES SOUSSIGNÉS présent')
+            print('  ✅ Page 2: "LES SOUSSIGNÉS" présent')
         else:
-            print('  ❌ Page 2: LES SOUSSIGNÉS manquant')
+            print('  ❌ Page 2: "LES SOUSSIGNÉS" manquant')
 
     print('\n' + '=' * 80)
     print('TERMINE')
@@ -222,4 +314,4 @@ def generer_statuts():
 
 
 if __name__ == '__main__':
-    generer_statuts()
+    generer_statuts_corrige()
