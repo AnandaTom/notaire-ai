@@ -9,6 +9,9 @@ token.json
 .tmp/
 *.tmp
 *.log
+*.backup
+*.bak
+*.test.ps1
 
 # Python
 __pycache__/
