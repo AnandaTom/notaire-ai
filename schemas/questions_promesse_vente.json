@@ -816,7 +816,7 @@
           "id": "origine_type",
           "question": "Type d'acquisition par le promettant ?",
           "type": "choix",
-          "options": ["Acquisition", "Succession", "Donation", "Licitation", "Partage", "Adjudication"],
+          "options": ["Acquisition", "Succession", "Donation", "Licitation", "Partage", "Adjudication", "VEFA"],
           "obligatoire": true,
           "variable": "origine_propriete[].type"
         },

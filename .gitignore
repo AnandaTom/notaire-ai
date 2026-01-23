@@ -72,6 +72,7 @@ wkhtmltox*
 
 # Claude
 .claude/
+.mcp.json
 
 # Null file
 nul
