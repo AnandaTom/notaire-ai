@@ -730,6 +730,213 @@
             pointer-events: none;
             opacity: 0.5;
         }
+
+        /* Capabilities Grid */
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .capability-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .capability-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .capability-card.active {
+            border-left: 3px solid var(--accent-success);
+        }
+
+        .capability-icon {
+            font-size: 1.5rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+        }
+
+        .capability-info {
+            flex: 1;
+        }
+
+        .capability-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .capability-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Tasks Section */
+        .tasks-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .tasks-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tasks-column {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .tasks-header {
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .tasks-header.todo {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+        }
+
+        .tasks-header.in-progress {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent);
+        }
+
+        .tasks-header.done {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
+        }
+
+        .tasks-icon {
+            font-size: 1rem;
+        }
+
+        .tasks-count {
+            margin-left: auto;
+            background: var(--border-subtle);
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .tasks-list {
+            padding: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-left-color: var(--accent-primary);
+        }
+
+        .task-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Pipeline Section */
+        .pipeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .pipeline-step.highlight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
+            border-color: var(--accent-primary);
+        }
+
+        .pipeline-icon {
+            font-size: 1.25rem;
+        }
+
+        .pipeline-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .pipeline-time {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pipeline-arrow {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            animation: arrow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrow-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; color: var(--accent-primary); }
+        }
+
+        @media (max-width: 768px) {
+            .pipeline-container {
+                flex-direction: column;
+            }
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -913,16 +1120,16 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-card-header">
-                        <div class="stat-card-icon purple">📄</div>
-                        <span class="stat-card-trend">+2</span>
+                        <div class="stat-card-icon purple">📝</div>
+                        <span class="stat-card-trend">+3</span>
                     </div>
-                    <div class="stat-card-value">4</div>
-                    <div class="stat-card-label">Templates disponibles</div>
+                    <div class="stat-card-value">12</div>
+                    <div class="stat-card-label">Actes generes</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div class="stat-card-icon green">✓</div>
-                        <span class="stat-card-trend">PROD</span>
+                        <span class="stat-card-trend">3 PROD</span>
                     </div>
                     <div class="stat-card-value">80.8%</div>
                     <div class="stat-card-label">Conformite moyenne</div>
@@ -930,7 +1137,7 @@
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div class="stat-card-icon cyan">⚡</div>
-                        <span class="stat-card-trend">-0.3s</span>
+                        <span class="stat-card-trend">8 p/s</span>
                     </div>
                     <div class="stat-card-value">5.7s</div>
                     <div class="stat-card-label">Temps de generation</div>
@@ -938,10 +1145,85 @@
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div class="stat-card-icon pink">⚙️</div>
-                        <span class="stat-card-trend">+12</span>
+                        <span class="stat-card-trend">15 schemas</span>
                     </div>
                     <div class="stat-card-value">66</div>
                     <div class="stat-card-label">Scripts Python</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Capabilities Section -->
+        <section class="capabilities-section">
+            <h2 class="section-title">Capacites de l'Agent</h2>
+            <div class="capabilities-grid" id="capabilitiesGrid"></div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section class="tasks-section">
+            <h2 class="section-title">Progression du Projet</h2>
+            <div class="tasks-container">
+                <div class="tasks-column" id="tasksTodo">
+                    <div class="tasks-header todo">
+                        <span class="tasks-icon">📋</span>
+                        <span>A faire</span>
+                        <span class="tasks-count" id="todoCount">0</span>
+                    </div>
+                    <div class="tasks-list" id="todoList"></div>
+                </div>
+                <div class="tasks-column" id="tasksInProgress">
+                    <div class="tasks-header in-progress">
+                        <span class="tasks-icon">🔄</span>
+                        <span>En cours</span>
+                        <span class="tasks-count" id="inProgressCount">0</span>
+                    </div>
+                    <div class="tasks-list" id="inProgressList"></div>
+                </div>
+                <div class="tasks-column" id="tasksDone">
+                    <div class="tasks-header done">
+                        <span class="tasks-icon">✅</span>
+                        <span>Termine</span>
+                        <span class="tasks-count" id="doneCount">0</span>
+                    </div>
+                    <div class="tasks-list" id="doneList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline Section -->
+        <section class="pipeline-section">
+            <h2 class="section-title">Pipeline de Generation</h2>
+            <div class="pipeline-container">
+                <div class="pipeline-step">
+                    <div class="pipeline-icon">📝</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Assemblage Jinja2</div>
+                        <div class="pipeline-time">1.5s</div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon">📄</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Export DOCX</div>
+                        <div class="pipeline-time">3.5s</div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon">✓</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Verification</div>
+                        <div class="pipeline-time">0.7s</div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step highlight">
+                    <div class="pipeline-icon">🎯</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Total</div>
+                        <div class="pipeline-time">5.7s</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -962,9 +1244,10 @@
     <!-- Footer -->
     <footer class="footer">
         <p class="footer-text">
-            Notomai Dashboard v2.0 |
+            Notomai v1.2.0 | Dashboard v2.1 |
             <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
-            Maitre Charlotte Diaz
+            Maitre Charlotte Diaz |
+            <span id="lastUpdate">2026-01-24</span>
         </p>
     </footer>
 
@@ -992,16 +1275,52 @@
         function loadData() {
             const data = {
                 templates: [
-                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 37 },
-                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 21 },
-                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 22 },
-                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 12 }
+                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 32, lastGeneration: "2026-01-23" },
+                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 127, lastGeneration: "2026-01-20" },
+                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 111, lastGeneration: "2026-01-19" },
+                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 13, lastGeneration: "2026-01-19" }
                 ],
                 team: [
-                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev" },
-                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend" },
-                    { name: "Payoss", branch: "payoss/dev", status: "active", role: "Backend" }
-                ]
+                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev / Templates" },
+                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend / Formulaires" },
+                    { name: "Payoss", branch: "payoss/dev", status: "active", role: "Backend / Scripts" }
+                ],
+                capabilities: [
+                    { icon: "📄", name: "Generer actes", description: "DOCX/PDF fideles aux trames", status: "active" },
+                    { icon: "💬", name: "Dialogue notaire", description: "Collecte interactive 100+ questions", status: "active" },
+                    { icon: "✅", name: "Validation", description: "Coherence et completude", status: "active" },
+                    { icon: "🔍", name: "Detection auto", description: "Type d'acte automatique", status: "active" },
+                    { icon: "💡", name: "Suggestions", description: "Clauses contextuelles", status: "active" },
+                    { icon: "📊", name: "Conformite", description: "Score automatique vs trame", status: "active" },
+                    { icon: "🗄️", name: "Historique", description: "Supabase + mode offline", status: "active" },
+                    { icon: "⚡", name: "Pipeline rapide", description: "~6 secondes / acte", status: "active" }
+                ],
+                tasks: {
+                    todo: [
+                        "Enrichir template promesse de vente (24 titres)",
+                        "Integrer extraction titre de propriete",
+                        "Ajouter validation Carrez automatique",
+                        "Creer template donation-partage",
+                        "Tests automatises pytest"
+                    ],
+                    inProgress: [
+                        "Dashboard temps reel",
+                        "Workflow collaboratif 3 devs",
+                        "Formulaires web vendeur/acquereur"
+                    ],
+                    done: [
+                        "Template vente 85% conformite",
+                        "Scripts START_DAY/END_DAY",
+                        "Auto-sync v2 (30min commits)",
+                        "Integration Supabase MCP",
+                        "Integration Stripe MCP",
+                        "Pipeline generation 5.7s",
+                        "Securisation cles API",
+                        "Documentation complete",
+                        "Morning sync semi-auto",
+                        "Troubleshooting guide"
+                    ]
+                }
             };
 
             // Templates
@@ -1010,7 +1329,7 @@
                     <div class="template-header">
                         <div>
                             <div class="template-name">${t.name}</div>
-                            <div class="template-meta">${t.bookmarks} bookmarks · ${t.sections} sections</div>
+                            <div class="template-meta">${t.bookmarks} bookmarks · ${t.sections} sections · ${t.lastGeneration}</div>
                         </div>
                         <span class="template-badge badge-${t.status}">${t.status === 'prod' ? 'Production' : 'Dev'}</span>
                     </div>
@@ -1037,6 +1356,30 @@
                 </div>
             `).join('');
             document.getElementById('teamGrid').innerHTML = teamHtml;
+
+            // Capabilities
+            const capabilitiesHtml = data.capabilities.map(c => `
+                <div class="capability-card ${c.status}">
+                    <div class="capability-icon">${c.icon}</div>
+                    <div class="capability-info">
+                        <div class="capability-name">${c.name}</div>
+                        <div class="capability-desc">${c.description}</div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('capabilitiesGrid').innerHTML = capabilitiesHtml;
+
+            // Tasks
+            const renderTasks = (tasks) => tasks.map(t => `<div class="task-item">${t}</div>`).join('');
+
+            document.getElementById('todoList').innerHTML = renderTasks(data.tasks.todo);
+            document.getElementById('todoCount').textContent = data.tasks.todo.length;
+
+            document.getElementById('inProgressList').innerHTML = renderTasks(data.tasks.inProgress);
+            document.getElementById('inProgressCount').textContent = data.tasks.inProgress.length;
+
+            document.getElementById('doneList').innerHTML = renderTasks(data.tasks.done);
+            document.getElementById('doneCount').textContent = data.tasks.done.length;
         }
 
         // Initialize
