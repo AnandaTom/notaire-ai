@@ -3,41 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notomai | Tableau de Bord</title>
+    <title>Notomai | Agent IA Notarial</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* Notarial Color Palette */
-            --ink-black: #0a1628;
-            --ink-deep: #1a2744;
-            --ink-medium: #2d3f5f;
-            --gold-primary: #c9a962;
-            --gold-light: #e8d5a3;
-            --gold-dark: #9a7b3a;
-            --parchment: #f8f5ef;
-            --parchment-dark: #e8e2d6;
-            --cream: #fffcf5;
-            --seal-red: #8b3a3a;
-            --success: #4a7c59;
-            --warning: #b8860b;
-
-            /* Typography */
-            --font-display: 'Cormorant Garamond', Georgia, serif;
-            --font-body: 'DM Sans', -apple-system, sans-serif;
-
-            /* Spacing */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            --space-3xl: 4rem;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #252542;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #ec4899;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-subtle: rgba(255,255,255,0.08);
+            --glow-primary: rgba(99, 102, 241, 0.4);
+            --glow-secondary: rgba(139, 92, 246, 0.3);
         }
 
         * {
@@ -47,158 +36,347 @@
         }
 
         body {
-            font-family: var(--font-body);
-            background: var(--parchment);
-            color: var(--ink-black);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
         }
 
-        /* Parchment texture overlay */
-        body::before {
-            content: '';
+        /* Animated background */
+        .bg-gradient {
             position: fixed;
             inset: 0;
             background:
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
             pointer-events: none;
-            z-index: 1000;
+            z-index: 0;
         }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, var(--ink-black) 0%, var(--ink-deep) 100%);
-            padding: var(--space-xl) var(--space-2xl);
+            position: relative;
+            z-index: 10;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            backdrop-filter: blur(20px);
+            background: rgba(15, 15, 26, 0.8);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 8px 32px var(--glow-primary);
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main content */
+        .main {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 2px;
+        }
+
+        /* Mind Map Container */
+        .mindmap-section {
+            margin-bottom: 3rem;
+        }
+
+        .mindmap-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            padding: 2rem;
+            min-height: 600px;
             position: relative;
             overflow: hidden;
         }
 
-        .header::before {
+        .mindmap-container::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
+            pointer-events: none;
         }
 
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold-primary) 30%, var(--gold-primary) 70%, transparent);
-        }
-
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* Mind Map Tree */
+        .mindmap {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
-        }
-
-        .seal {
-            width: 64px;
-            height: 64px;
-            border: 2px solid var(--gold-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: flex-start;
             position: relative;
-            animation: seal-glow 3s ease-in-out infinite;
+            padding-top: 1rem;
         }
 
-        @keyframes seal-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(201, 169, 98, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(201, 169, 98, 0.5); }
+        /* Central Node */
+        .central-node {
+            position: relative;
+            z-index: 10;
         }
 
-        .seal-inner {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
-            border-radius: 50%;
+        .node {
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .node:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .node.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        .node.primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            padding: 1.5rem 2rem;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 20px 60px var(--glow-primary);
+        }
+
+        .node.primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 25px 80px var(--glow-primary);
+        }
+
+        .node-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .node-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        .node.primary .node-subtitle {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Branches Container */
+        .branches-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        /* Branch */
+        .branch {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .branch::before {
+            content: '';
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            width: 2px;
+            height: 2rem;
+            background: linear-gradient(180deg, var(--accent-primary), var(--border-subtle));
+        }
+
+        .branch-node {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            min-width: 180px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .branch-node:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.15);
+        }
+
+        .branch-node.expanded {
+            border-color: var(--accent-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .branch-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .branch-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--ink-black);
+            font-size: 1.25rem;
         }
 
-        .brand h1 {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
+        .branch-icon.purple { background: rgba(139, 92, 246, 0.2); }
+        .branch-icon.cyan { background: rgba(6, 182, 212, 0.2); }
+        .branch-icon.pink { background: rgba(236, 72, 153, 0.2); }
+        .branch-icon.green { background: rgba(16, 185, 129, 0.2); }
+        .branch-icon.orange { background: rgba(245, 158, 11, 0.2); }
+        .branch-icon.blue { background: rgba(99, 102, 241, 0.2); }
+
+        .branch-title {
             font-weight: 600;
-            color: var(--cream);
-            letter-spacing: 0.05em;
+            font-size: 0.9rem;
         }
 
-        .brand p {
-            font-size: 0.85rem;
-            color: var(--gold-light);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            margin-top: var(--space-xs);
-        }
-
-        .header-meta {
-            text-align: right;
-            color: var(--parchment-dark);
-        }
-
-        .header-meta .label {
+        .branch-count {
             font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--gold-primary);
-            margin-bottom: var(--space-xs);
+            color: var(--text-muted);
+            margin-top: 2px;
         }
 
-        .header-meta .value {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            color: var(--cream);
+        .expand-indicator {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
         }
 
-        /* Main Content */
-        .main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--space-2xl);
+        .branch-node:hover .expand-indicator {
+            background: var(--accent-primary);
+            color: white;
         }
 
-        /* Section Styling */
-        .section {
-            margin-bottom: var(--space-3xl);
-            animation: fadeInUp 0.6s ease-out backwards;
+        .branch-node.expanded .expand-indicator {
+            transform: translateY(-50%) rotate(45deg);
         }
 
-        .section:nth-child(1) { animation-delay: 0.1s; }
-        .section:nth-child(2) { animation-delay: 0.2s; }
-        .section:nth-child(3) { animation-delay: 0.3s; }
-        .section:nth-child(4) { animation-delay: 0.4s; }
-        .section:nth-child(5) { animation-delay: 0.5s; }
+        /* Sub-branches */
+        .sub-branches {
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border-subtle);
+            animation: slideDown 0.3s ease;
+        }
 
-        @keyframes fadeInUp {
+        .branch-node.expanded + .sub-branches,
+        .branch-node.expanded .sub-branches {
+            display: flex;
+        }
+
+        @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(-10px);
             }
             to {
                 opacity: 1;
@@ -206,556 +384,113 @@
             }
         }
 
-        .section-header {
+        .sub-branch {
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-md);
-            border-bottom: 1px solid var(--parchment-dark);
-            position: relative;
-        }
-
-        .section-header::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: var(--gold-primary);
-        }
-
-        .section-number {
-            width: 36px;
-            height: 36px;
-            background: var(--ink-black);
-            color: var(--gold-primary);
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-        }
-
-        .section-title {
-            font-family: var(--font-display);
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--ink-black);
-            letter-spacing: 0.02em;
-        }
-
-        /* Architecture Diagram - Enhanced */
-        .architecture-container {
-            background: var(--cream);
-            border: 1px solid var(--parchment-dark);
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
             border-radius: 8px;
-            padding: var(--space-xl);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .architecture-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(201, 169, 98, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(201, 169, 98, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        /* 3-Layer Architecture Title */
-        .arch-title {
-            text-align: center;
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-md);
-            border-bottom: 1px solid var(--parchment-dark);
-        }
-
-        .arch-title h3 {
-            font-family: var(--font-display);
-            font-size: 1.3rem;
-            color: var(--ink-black);
-            margin-bottom: var(--space-xs);
-        }
-
-        .arch-title p {
-            font-size: 0.85rem;
-            color: var(--ink-medium);
-        }
-
-        /* Layer System */
-        .arch-layers {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-lg);
-        }
-
-        .arch-layer {
-            background: var(--parchment);
-            border-radius: 12px;
-            padding: var(--space-lg);
-            position: relative;
-            border-left: 4px solid var(--ink-medium);
-        }
-
-        .arch-layer.layer-1 {
-            border-left-color: var(--gold-primary);
-            background: linear-gradient(135deg, rgba(201, 169, 98, 0.08), rgba(201, 169, 98, 0.02));
-        }
-
-        .arch-layer.layer-2 {
-            border-left-color: var(--ink-black);
-            background: linear-gradient(135deg, rgba(10, 22, 40, 0.06), rgba(10, 22, 40, 0.02));
-        }
-
-        .arch-layer.layer-3 {
-            border-left-color: var(--success);
-            background: linear-gradient(135deg, rgba(74, 124, 89, 0.08), rgba(74, 124, 89, 0.02));
-        }
-
-        .layer-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .layer-number {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .layer-1 .layer-number {
-            background: var(--gold-primary);
-            color: var(--ink-black);
-        }
-
-        .layer-2 .layer-number {
-            background: var(--ink-black);
-            color: var(--gold-primary);
-        }
-
-        .layer-3 .layer-number {
-            background: var(--success);
-            color: white;
-        }
-
-        .layer-info h4 {
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--ink-black);
-        }
-
-        .layer-info p {
-            font-size: 0.75rem;
-            color: var(--ink-medium);
-            margin-top: 2px;
-        }
-
-        .layer-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-        }
-
-        /* Node Cards */
-        .arch-node {
-            background: var(--cream);
-            border: 2px solid var(--parchment-dark);
-            border-radius: 10px;
-            padding: var(--space-md);
-            min-width: 140px;
-            flex: 1;
-            max-width: 200px;
-            position: relative;
-            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
             cursor: pointer;
         }
 
-        .arch-node:hover {
-            transform: translateY(-3px);
-            border-color: var(--gold-primary);
-            box-shadow: 0 8px 25px rgba(10, 22, 40, 0.12);
+        .sub-branch:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--text-primary);
+            padding-left: 1.25rem;
         }
 
-        .arch-node.primary {
-            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
-            border-color: var(--gold-primary);
-            color: var(--cream);
-            min-width: 280px;
-            max-width: 320px;
-        }
-
-        .arch-node.mcp {
-            border-style: dashed;
-            border-color: var(--ink-medium);
-        }
-
-        .arch-node.mcp:hover {
-            border-color: var(--gold-primary);
-        }
-
-        .node-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-sm);
-        }
-
-        .node-icon {
-            font-size: 1.5rem;
-        }
-
-        .node-title {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .node-description {
-            font-size: 0.75rem;
-            color: var(--ink-medium);
-            margin-bottom: var(--space-sm);
-            line-height: 1.4;
-        }
-
-        .arch-node.primary .node-description {
-            color: var(--gold-light);
-        }
-
-        .node-details {
-            display: none;
-            margin-top: var(--space-sm);
-            padding-top: var(--space-sm);
-            border-top: 1px dashed var(--parchment-dark);
-        }
-
-        .arch-node.expanded .node-details {
-            display: block;
-        }
-
-        .arch-node.primary .node-details {
-            border-top-color: var(--ink-medium);
-        }
-
-        .node-detail-item {
-            font-size: 0.7rem;
-            color: var(--ink-medium);
-            padding: 3px 0;
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-        }
-
-        .arch-node.primary .node-detail-item {
-            color: var(--gold-light);
-        }
-
-        .node-detail-item::before {
-            content: '';
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: var(--gold-primary);
-        }
-
-        .node-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: var(--space-sm);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .status-connected {
-            background: rgba(74, 124, 89, 0.15);
-            color: var(--success);
-        }
-
-        .status-connected::before {
-            content: '';
+        .sub-branch-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: var(--success);
-            animation: pulse 2s infinite;
+            background: var(--accent-primary);
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .node-expand {
-            position: absolute;
-            top: var(--space-sm);
-            right: var(--space-sm);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--parchment-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            color: var(--ink-medium);
-            transition: all 0.2s ease;
-        }
-
-        .arch-node:hover .node-expand {
-            background: var(--gold-primary);
-            color: var(--ink-black);
-        }
-
-        .arch-node.primary .node-expand {
-            background: var(--ink-medium);
-            color: var(--gold-primary);
-        }
-
-        .arch-node.expanded .node-expand {
-            transform: rotate(45deg);
-        }
-
-        /* Pipeline Flow */
-        .pipeline-section {
-            margin-top: var(--space-xl);
-            padding: var(--space-lg);
-            background: var(--parchment);
-            border-radius: 12px;
-        }
-
-        .pipeline-title {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--ink-black);
-            margin-bottom: var(--space-md);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .pipeline-flow {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: var(--space-sm);
-            overflow-x: auto;
-            padding: var(--space-sm) 0;
-        }
-
-        .pipeline-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            min-width: 100px;
-        }
-
-        .pipeline-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--cream);
-            border: 2px solid var(--ink-medium);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            margin-bottom: var(--space-sm);
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
             transition: all 0.3s ease;
         }
 
-        .pipeline-step:hover .pipeline-icon {
-            border-color: var(--gold-primary);
-            transform: scale(1.1);
+        .stat-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
         }
 
-        .pipeline-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--ink-black);
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
         }
 
-        .pipeline-time {
-            font-size: 0.65rem;
-            color: var(--ink-medium);
-            margin-top: 2px;
-        }
-
-        .pipeline-arrow {
-            color: var(--gold-primary);
-            font-size: 1.2rem;
-            animation: arrow-pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes arrow-pulse {
-            0%, 100% { opacity: 0.4; transform: translateX(0); }
-            50% { opacity: 1; transform: translateX(3px); }
-        }
-
-        /* MCP Details Panel */
-        .mcp-details {
-            margin-top: var(--space-xl);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .mcp-card {
-            background: var(--cream);
-            border: 1px solid var(--parchment-dark);
-            border-radius: 10px;
-            padding: var(--space-md);
-        }
-
-        .mcp-card-header {
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-md);
-            padding-bottom: var(--space-sm);
-            border-bottom: 1px solid var(--parchment-dark);
-        }
-
-        .mcp-card-icon {
+            justify-content: center;
             font-size: 1.5rem;
         }
 
-        .mcp-card-title {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-        }
+        .stat-card-icon.purple { background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2)); }
+        .stat-card-icon.green { background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2)); }
+        .stat-card-icon.cyan { background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.2)); }
+        .stat-card-icon.pink { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2)); }
 
-        .mcp-card-status {
-            margin-left: auto;
-            font-size: 0.65rem;
-            padding: 3px 8px;
-            border-radius: 10px;
-            background: rgba(74, 124, 89, 0.15);
-            color: var(--success);
-        }
-
-        .mcp-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-xs);
-        }
-
-        .mcp-item {
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            background: var(--parchment);
-            border-radius: 4px;
-            color: var(--ink-medium);
-            font-family: 'SF Mono', Monaco, monospace;
-        }
-
-        /* Scripts Categories */
-        .scripts-grid {
-            margin-top: var(--space-xl);
-        }
-
-        .scripts-title {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--ink-black);
-            margin-bottom: var(--space-md);
-        }
-
-        .scripts-categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .script-category {
-            background: var(--cream);
-            border: 1px solid var(--parchment-dark);
-            border-radius: 8px;
-            padding: var(--space-md);
-        }
-
-        .script-category-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-sm);
-        }
-
-        .script-category-icon {
-            font-size: 1.2rem;
-        }
-
-        .script-category-name {
-            font-family: var(--font-display);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .script-category-count {
-            margin-left: auto;
-            font-size: 0.75rem;
+        .stat-card-value {
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--gold-dark);
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .script-list {
-            font-size: 0.7rem;
-            color: var(--ink-medium);
-            line-height: 1.6;
+        .stat-card-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
         }
 
-        .script-list code {
-            font-family: 'SF Mono', Monaco, monospace;
-            background: var(--parchment);
-            padding: 1px 4px;
-            border-radius: 3px;
+        .stat-card-trend {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
         }
 
-        /* Templates Grid */
+        /* Templates Section */
         .templates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-lg);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .template-card {
-            background: var(--cream);
-            border: 1px solid var(--parchment-dark);
-            border-radius: 8px;
-            padding: var(--space-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .template-card:hover {
-            border-color: var(--gold-primary);
-            box-shadow: 0 8px 30px rgba(10, 22, 40, 0.1);
         }
 
         .template-card::before {
@@ -765,1187 +500,559 @@
             left: 0;
             width: 4px;
             height: 100%;
-            background: var(--ink-medium);
-            transition: background 0.3s ease;
+            background: var(--accent-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .template-card:hover::before {
+            opacity: 1;
         }
 
         .template-card.prod::before {
-            background: var(--success);
+            background: var(--accent-success);
+            opacity: 1;
         }
 
         .template-card.dev::before {
-            background: var(--warning);
+            background: var(--accent-warning);
+            opacity: 1;
         }
 
         .template-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: var(--space-md);
+            margin-bottom: 1rem;
         }
 
         .template-name {
-            font-family: var(--font-display);
-            font-size: 1.2rem;
             font-weight: 600;
-            color: var(--ink-black);
+            font-size: 1rem;
         }
 
         .template-meta {
-            font-size: 0.8rem;
-            color: var(--ink-medium);
-            margin-top: var(--space-xs);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
         }
 
         .template-badge {
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: 4px;
             font-size: 0.65rem;
-            font-weight: 700;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .badge-prod {
-            background: rgba(74, 124, 89, 0.15);
-            color: var(--success);
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
         }
 
         .badge-dev {
-            background: rgba(184, 134, 11, 0.15);
-            color: var(--warning);
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
         }
 
-        .conformity-bar {
-            margin-top: var(--space-md);
-        }
-
-        .conformity-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--ink-medium);
-            margin-bottom: var(--space-xs);
-        }
-
-        .conformity-value {
-            font-weight: 700;
-            color: var(--ink-black);
-        }
-
-        .conformity-track {
-            height: 8px;
-            background: var(--parchment-dark);
-            border-radius: 4px;
+        .progress-bar {
+            height: 6px;
+            background: var(--border-subtle);
+            border-radius: 3px;
             overflow: hidden;
+            margin-top: 1rem;
         }
 
-        .conformity-fill {
+        .progress-fill {
             height: 100%;
-            border-radius: 4px;
-            transition: width 1s ease-out;
-            position: relative;
+            border-radius: 3px;
+            transition: width 1s ease;
         }
 
-        .conformity-fill.high {
-            background: linear-gradient(90deg, var(--success), #5a9c6a);
+        .progress-fill.high {
+            background: linear-gradient(90deg, var(--accent-success), var(--accent-cyan));
         }
 
-        .conformity-fill.medium {
-            background: linear-gradient(90deg, var(--warning), #d4a017);
+        .progress-fill.medium {
+            background: linear-gradient(90deg, var(--accent-warning), var(--accent-tertiary));
         }
 
-        /* Tasks Kanban */
-        .kanban {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-lg);
-        }
-
-        @media (max-width: 900px) {
-            .kanban {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .kanban-column {
-            background: var(--cream);
-            border: 1px solid var(--parchment-dark);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .kanban-header {
-            padding: var(--space-md) var(--space-lg);
+        .progress-label {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--parchment-dark);
-        }
-
-        .kanban-header.todo {
-            background: var(--parchment);
-        }
-
-        .kanban-header.progress {
-            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
-            color: var(--cream);
-        }
-
-        .kanban-header.done {
-            background: rgba(74, 124, 89, 0.1);
-        }
-
-        .kanban-title {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .kanban-count {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--parchment-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-size: 0.75rem;
-            font-weight: 700;
-            font-family: var(--font-body);
-        }
-
-        .kanban-header.progress .kanban-count {
-            background: var(--gold-primary);
-            color: var(--ink-black);
-        }
-
-        .kanban-header.done .kanban-count {
-            background: var(--success);
-            color: var(--cream);
-        }
-
-        .kanban-body {
-            padding: var(--space-md);
-            min-height: 200px;
-            max-height: 350px;
-            overflow-y: auto;
-        }
-
-        .task-item {
-            padding: var(--space-sm) var(--space-md);
-            margin-bottom: var(--space-sm);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            border-left: 3px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .task-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .kanban-column:nth-child(1) .task-item {
-            background: var(--parchment);
-            border-left-color: var(--ink-medium);
-        }
-
-        .kanban-column:nth-child(2) .task-item {
-            background: rgba(201, 169, 98, 0.1);
-            border-left-color: var(--gold-primary);
-        }
-
-        .kanban-column:nth-child(3) .task-item {
-            background: rgba(74, 124, 89, 0.08);
-            border-left-color: var(--success);
-            color: var(--ink-medium);
+            color: var(--text-muted);
+            margin-top: 0.5rem;
         }
 
         /* Team Section */
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-lg);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
         }
 
         .team-card {
-            background: var(--cream);
-            border: 1px solid var(--parchment-dark);
-            border-radius: 8px;
-            padding: var(--space-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
             display: flex;
-            gap: var(--space-md);
+            align-items: center;
+            gap: 1rem;
             transition: all 0.3s ease;
         }
 
         .team-card:hover {
-            border-color: var(--gold-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(10, 22, 40, 0.1);
+            border-color: var(--accent-primary);
+            transform: translateX(4px);
         }
 
         .team-avatar {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
-            border-radius: 50%;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: var(--font-display);
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--gold-primary);
-            flex-shrink: 0;
             position: relative;
         }
 
         .team-avatar::after {
             content: '';
             position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 12px;
-            height: 12px;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            border: 2px solid var(--cream);
+            border: 2px solid var(--bg-card);
         }
 
-        .team-avatar.active::after {
-            background: var(--success);
+        .team-card.active .team-avatar::after {
+            background: var(--accent-success);
         }
 
-        .team-avatar.setup::after {
-            background: var(--warning);
+        .team-card.setup .team-avatar::after {
+            background: var(--accent-warning);
         }
 
         .team-info {
             flex: 1;
-            min-width: 0;
         }
 
         .team-name {
-            font-family: var(--font-display);
-            font-size: 1.2rem;
             font-weight: 600;
-            color: var(--ink-black);
+            font-size: 1rem;
         }
 
         .team-role {
             font-size: 0.75rem;
-            color: var(--gold-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: var(--space-xs);
+            color: var(--accent-primary);
+            margin-top: 0.125rem;
         }
 
         .team-branch {
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 0.8rem;
-            color: var(--ink-medium);
-            background: var(--parchment);
-            padding: var(--space-xs) var(--space-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: var(--border-subtle);
+            padding: 0.25rem 0.5rem;
             border-radius: 4px;
-            margin-top: var(--space-sm);
+            margin-top: 0.5rem;
             display: inline-block;
-        }
-
-        .team-commit {
-            font-size: 0.75rem;
-            color: var(--ink-medium);
-            margin-top: var(--space-sm);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Capabilities */
-        .capabilities-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .capability-item {
-            background: var(--cream);
-            border: 1px solid var(--parchment-dark);
-            border-radius: 8px;
-            padding: var(--space-lg);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .capability-item:hover {
-            border-color: var(--gold-primary);
-            transform: translateY(-2px);
-        }
-
-        .capability-icon {
-            font-size: 2rem;
-            margin-bottom: var(--space-sm);
-            display: block;
-        }
-
-        .capability-name {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--ink-black);
-            margin-bottom: var(--space-xs);
-        }
-
-        .capability-desc {
-            font-size: 0.75rem;
-            color: var(--ink-medium);
         }
 
         /* Footer */
         .footer {
-            background: var(--ink-black);
-            padding: var(--space-xl) var(--space-2xl);
-            margin-top: var(--space-3xl);
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 2rem;
         }
 
         .footer-text {
-            color: var(--ink-medium);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
-        .footer-text span {
-            color: var(--gold-primary);
-        }
-
-        .footer-link {
-            color: var(--gold-primary);
+        .footer-text a {
+            color: var(--accent-primary);
             text-decoration: none;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            transition: color 0.2s ease;
         }
 
-        .footer-link:hover {
-            color: var(--gold-light);
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-stats {
+                gap: 1rem;
+            }
+
+            .branches-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .branch::before {
+                display: none;
+            }
         }
 
-        /* Metrics Bar */
-        .metrics-bar {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-2xl);
-            padding: var(--space-lg);
-            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
-            border-radius: 8px;
-            margin-bottom: var(--space-2xl);
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        .metric-item {
-            text-align: center;
+        .node.primary {
+            animation: float 6s ease-in-out infinite;
         }
 
-        .metric-value {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gold-primary);
-        }
-
-        .metric-label {
-            font-size: 0.7rem;
-            color: var(--parchment-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: var(--space-xs);
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--parchment);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--ink-medium);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--gold-primary);
+        /* Glow effect */
+        .glow {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--glow-primary), transparent 70%);
+            pointer-events: none;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
+    <div class="bg-gradient"></div>
+
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <div class="seal">
-                    <div class="seal-inner">N</div>
-                </div>
-                <div class="brand">
-                    <h1>Notomai</h1>
-                    <p>Agent Intelligent pour Actes Notariaux</p>
-                </div>
+        <div class="logo">
+            <div class="logo-icon">N</div>
+            <div class="logo-text">
+                <h1>Notomai</h1>
+                <p>Agent IA Notarial</p>
             </div>
-            <div class="header-meta">
-                <div class="label">Derniere mise a jour</div>
-                <div class="value" id="lastUpdate">-</div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Templates</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">80%</div>
+                <div class="stat-label">Conformite</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5.7s</div>
+                <div class="stat-label">Generation</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Devs</div>
             </div>
         </div>
     </header>
 
     <main class="main">
-        <!-- Metrics Bar -->
-        <div class="metrics-bar">
-            <div class="metric-item">
-                <div class="metric-value" id="metricTemplates">4</div>
-                <div class="metric-label">Templates</div>
-            </div>
-            <div class="metric-item">
-                <div class="metric-value" id="metricConformity">80.8%</div>
-                <div class="metric-label">Conformite</div>
-            </div>
-            <div class="metric-item">
-                <div class="metric-value" id="metricScripts">66</div>
-                <div class="metric-label">Scripts</div>
-            </div>
-            <div class="metric-item">
-                <div class="metric-value" id="metricSpeed">5.7s</div>
-                <div class="metric-label">Generation</div>
-            </div>
-            <div class="metric-item">
-                <div class="metric-value" id="metricTeam">3</div>
-                <div class="metric-label">Developpeurs</div>
-            </div>
-        </div>
-
-        <!-- Section 1: Architecture -->
-        <section class="section">
-            <div class="section-header">
-                <span class="section-number">I</span>
-                <h2 class="section-title">Architecture de l'Agent</h2>
-            </div>
-            <div class="architecture-container">
-                <!-- Title -->
-                <div class="arch-title">
-                    <h3>Architecture 3 Couches</h3>
-                    <p>Separation des responsabilites pour maximiser fiabilite et maintenabilite</p>
-                </div>
-
-                <!-- 3-Layer Architecture -->
-                <div class="arch-layers">
-                    <!-- Layer 1: Directives -->
-                    <div class="arch-layer layer-1">
-                        <div class="layer-header">
-                            <span class="layer-number">1</span>
-                            <div class="layer-info">
-                                <h4>Couche Directive</h4>
-                                <p>QUOI FAIRE - Instructions en langage naturel (Markdown)</p>
-                            </div>
-                        </div>
-                        <div class="layer-content">
-                            <div class="arch-node" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">📋</span>
-                                    <span class="node-title">Directives</span>
-                                </div>
-                                <p class="node-description">SOPs en Markdown definissant les workflows</p>
-                                <div class="node-details">
-                                    <div class="node-detail-item">creer_acte.md</div>
-                                    <div class="node-detail-item">creer_promesse_vente.md</div>
-                                    <div class="node-detail-item">workflow_notaire.md</div>
-                                    <div class="node-detail-item">collecte_informations.md</div>
-                                    <div class="node-detail-item">pipeline_generation.md</div>
-                                </div>
-                            </div>
-                            <div class="arch-node" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">📚</span>
-                                    <span class="node-title">Catalogues</span>
-                                </div>
-                                <p class="node-description">Clauses, annexes et questions reutilisables</p>
-                                <div class="node-details">
-                                    <div class="node-detail-item">clauses_catalogue.json (45+ clauses)</div>
-                                    <div class="node-detail-item">annexes_catalogue.json (28+ types)</div>
-                                    <div class="node-detail-item">sections_catalogue.json</div>
-                                </div>
-                            </div>
-                            <div class="arch-node" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">❓</span>
-                                    <span class="node-title">Questions</span>
-                                </div>
-                                <p class="node-description">100+ questions structurees par type d'acte</p>
-                                <div class="node-details">
-                                    <div class="node-detail-item">questions_notaire.json (vente)</div>
-                                    <div class="node-detail-item">questions_promesse_vente.json</div>
-                                    <div class="node-detail-item">questions_reglement_copro.json</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Layer 2: Orchestration -->
-                    <div class="arch-layer layer-2">
-                        <div class="layer-header">
-                            <span class="layer-number">2</span>
-                            <div class="layer-info">
-                                <h4>Couche Orchestration</h4>
-                                <p>DECISION - Agent IA + Serveurs MCP connectes</p>
-                            </div>
-                        </div>
-                        <div class="layer-content">
-                            <div class="arch-node primary" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">🤖</span>
-                                    <span class="node-title">Claude Code (Opus 4.5)</span>
-                                </div>
-                                <p class="node-description">Agent principal - Routage intelligent, lecture directives, appel scripts, gestion erreurs, enrichissement continu</p>
-                                <div class="node-details">
-                                    <div class="node-detail-item">Lit et suit les directives</div>
-                                    <div class="node-detail-item">Appelle les scripts d'execution</div>
-                                    <div class="node-detail-item">Dialogue avec le notaire</div>
-                                    <div class="node-detail-item">Self-anneal: corrige et documente</div>
-                                    <div class="node-detail-item">Enrichit les catalogues</div>
-                                </div>
-                            </div>
-                            <div class="arch-node mcp" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">🗄️</span>
-                                    <span class="node-title">Supabase MCP</span>
-                                </div>
-                                <p class="node-description">Base PostgreSQL pour clients et historique</p>
-                                <span class="node-status status-connected">Connecte</span>
-                                <div class="node-details" id="supabaseDetails"></div>
-                            </div>
-                            <div class="arch-node mcp" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">💳</span>
-                                    <span class="node-title">Stripe MCP</span>
-                                </div>
-                                <p class="node-description">Facturation et abonnements</p>
-                                <span class="node-status status-connected">Mode Test</span>
-                                <div class="node-details" id="stripeDetails"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Layer 3: Execution -->
-                    <div class="arch-layer layer-3">
-                        <div class="layer-header">
-                            <span class="layer-number">3</span>
-                            <div class="layer-info">
-                                <h4>Couche Execution</h4>
-                                <p>FAIRE LE TRAVAIL - Scripts Python deterministes et testables</p>
-                            </div>
-                        </div>
-                        <div class="layer-content">
-                            <div class="arch-node" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">📄</span>
-                                    <span class="node-title">Templates</span>
-                                </div>
-                                <p class="node-description">4 templates Jinja2 (Markdown)</p>
-                                <div class="node-details" id="templatesDetails"></div>
-                            </div>
-                            <div class="arch-node" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">📋</span>
-                                    <span class="node-title">Schemas</span>
-                                </div>
-                                <p class="node-description">15 schemas JSON de validation</p>
-                                <div class="node-details">
-                                    <div class="node-detail-item">variables_vente.json (361 vars)</div>
-                                    <div class="node-detail-item">variables_promesse.json (298 vars)</div>
-                                    <div class="node-detail-item">variables_reglement.json (116 vars)</div>
-                                    <div class="node-detail-item">variables_modificatif.json (60 vars)</div>
-                                </div>
-                            </div>
-                            <div class="arch-node" onclick="toggleNode(this)">
-                                <span class="node-expand">+</span>
-                                <div class="node-header">
-                                    <span class="node-icon">⚙️</span>
-                                    <span class="node-title">Scripts</span>
-                                </div>
-                                <p class="node-description" id="scriptsCount">66 scripts Python</p>
-                                <div class="node-details" id="scriptsDetails"></div>
-                            </div>
+        <!-- Mind Map Section -->
+        <section class="mindmap-section">
+            <h2 class="section-title">Architecture de l'Agent</h2>
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <!-- Central Node -->
+                    <div class="central-node">
+                        <div class="node primary" onclick="toggleAllBranches()">
+                            <div class="node-icon">🤖</div>
+                            <div class="node-title">Claude Code</div>
+                            <div class="node-subtitle">Opus 4.5 - Agent Principal</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pipeline Flow -->
-                <div class="pipeline-section">
-                    <div class="pipeline-title">
-                        <span>⚡</span> Pipeline de Generation (~5.7s total)
-                    </div>
-                    <div class="pipeline-flow">
-                        <div class="pipeline-step">
-                            <div class="pipeline-icon">💬</div>
-                            <span class="pipeline-label">Collecte</span>
-                            <span class="pipeline-time">Dialogue</span>
-                        </div>
-                        <span class="pipeline-arrow">→</span>
-                        <div class="pipeline-step">
-                            <div class="pipeline-icon">✓</div>
-                            <span class="pipeline-label">Validation</span>
-                            <span class="pipeline-time">0.2s</span>
-                        </div>
-                        <span class="pipeline-arrow">→</span>
-                        <div class="pipeline-step">
-                            <div class="pipeline-icon">🔧</div>
-                            <span class="pipeline-label">Assemblage</span>
-                            <span class="pipeline-time">1.5s</span>
-                        </div>
-                        <span class="pipeline-arrow">→</span>
-                        <div class="pipeline-step">
-                            <div class="pipeline-icon">📄</div>
-                            <span class="pipeline-label">Export DOCX</span>
-                            <span class="pipeline-time">3.5s</span>
-                        </div>
-                        <span class="pipeline-arrow">→</span>
-                        <div class="pipeline-step">
-                            <div class="pipeline-icon">📊</div>
-                            <span class="pipeline-label">Verification</span>
-                            <span class="pipeline-time">0.5s</span>
+                <!-- Branches -->
+                <div class="branches-container">
+                    <!-- Branch 1: Directives -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon purple">📋</div>
+                                <div>
+                                    <div class="branch-title">Directives</div>
+                                    <div class="branch-count">12 fichiers MD</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>creer_acte.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>creer_promesse_vente.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>workflow_notaire.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>collecte_informations.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>pipeline_generation.md</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- MCP Details -->
-                <div class="mcp-details" id="mcpDetails"></div>
+                    <!-- Branch 2: Templates -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon cyan">📄</div>
+                                <div>
+                                    <div class="branch-title">Templates</div>
+                                    <div class="branch-count">4 types d'actes</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Vente (85.1%)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Promesse (60.9%)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Reglement copro (85.5%)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Modificatif EDD (91.7%)</div>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Scripts Categories -->
-                <div class="scripts-grid">
-                    <div class="scripts-title">Categories de Scripts</div>
-                    <div class="scripts-categories" id="scriptsCategories"></div>
+                    <!-- Branch 3: Scripts -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon green">⚙️</div>
+                                <div>
+                                    <div class="branch-title">Scripts</div>
+                                    <div class="branch-count">66 scripts Python</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>assembler_acte.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>exporter_docx.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>valider_acte.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>workflow_rapide.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>+ 62 autres...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 4: MCP Supabase -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon pink">🗄️</div>
+                                <div>
+                                    <div class="branch-title">Supabase</div>
+                                    <div class="branch-count">5 tables</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>clients</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>actes</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>historique</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>variables</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>templates</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 5: MCP Stripe -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon orange">💳</div>
+                                <div>
+                                    <div class="branch-title">Stripe</div>
+                                    <div class="branch-count">3 produits</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Paiements uniques</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Abonnements</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Factures</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 6: Schemas -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon blue">📊</div>
+                                <div>
+                                    <div class="branch-title">Schemas</div>
+                                    <div class="branch-count">15 fichiers JSON</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>variables_vente.json (361)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>variables_promesse.json (298)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>clauses_catalogue.json (45+)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>questions_notaire.json (100+)</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: Templates -->
-        <section class="section">
-            <div class="section-header">
-                <span class="section-number">II</span>
-                <h2 class="section-title">Etat des Templates</h2>
+        <!-- Stats Grid -->
+        <section class="stats-section">
+            <h2 class="section-title">Metriques</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon purple">📄</div>
+                        <span class="stat-card-trend">+2</span>
+                    </div>
+                    <div class="stat-card-value">4</div>
+                    <div class="stat-card-label">Templates disponibles</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon green">✓</div>
+                        <span class="stat-card-trend">PROD</span>
+                    </div>
+                    <div class="stat-card-value">80.8%</div>
+                    <div class="stat-card-label">Conformite moyenne</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon cyan">⚡</div>
+                        <span class="stat-card-trend">-0.3s</span>
+                    </div>
+                    <div class="stat-card-value">5.7s</div>
+                    <div class="stat-card-label">Temps de generation</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon pink">⚙️</div>
+                        <span class="stat-card-trend">+12</span>
+                    </div>
+                    <div class="stat-card-value">66</div>
+                    <div class="stat-card-label">Scripts Python</div>
+                </div>
             </div>
+        </section>
+
+        <!-- Templates Section -->
+        <section class="templates-section">
+            <h2 class="section-title">Etat des Templates</h2>
             <div class="templates-grid" id="templatesGrid"></div>
         </section>
 
-        <!-- Section 3: Tasks -->
-        <section class="section">
-            <div class="section-header">
-                <span class="section-number">III</span>
-                <h2 class="section-title">Suivi des Taches</h2>
-            </div>
-            <div class="kanban">
-                <div class="kanban-column">
-                    <div class="kanban-header todo">
-                        <span class="kanban-title">A Faire</span>
-                        <span class="kanban-count" id="todoCount">0</span>
-                    </div>
-                    <div class="kanban-body" id="todoList"></div>
-                </div>
-                <div class="kanban-column">
-                    <div class="kanban-header progress">
-                        <span class="kanban-title">En Cours</span>
-                        <span class="kanban-count" id="progressCount">0</span>
-                    </div>
-                    <div class="kanban-body" id="progressList"></div>
-                </div>
-                <div class="kanban-column">
-                    <div class="kanban-header done">
-                        <span class="kanban-title">Termine</span>
-                        <span class="kanban-count" id="doneCount">0</span>
-                    </div>
-                    <div class="kanban-body" id="doneList"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 4: Team -->
-        <section class="section">
-            <div class="section-header">
-                <span class="section-number">IV</span>
-                <h2 class="section-title">Equipe & Branches</h2>
-            </div>
+        <!-- Team Section -->
+        <section class="team-section">
+            <h2 class="section-title">Equipe</h2>
             <div class="team-grid" id="teamGrid"></div>
-        </section>
-
-        <!-- Section 5: Capabilities -->
-        <section class="section">
-            <div class="section-header">
-                <span class="section-number">V</span>
-                <h2 class="section-title">Capacites de l'Agent</h2>
-            </div>
-            <div class="capabilities-grid" id="capabilitiesGrid"></div>
-        </section>
-
-        <!-- Section 6: Security & Compliance -->
-        <section class="section">
-            <div class="section-header">
-                <span class="section-number">VI</span>
-                <h2 class="section-title">Securite & Conformite</h2>
-            </div>
-
-            <!-- Overall Score -->
-            <div class="metrics-bar" style="margin-bottom: var(--space-lg);">
-                <div class="metric-item">
-                    <div class="metric-value" style="color: #4a7c59;">95%</div>
-                    <div class="metric-label">Securite</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-value" style="color: #4a7c59;">95%</div>
-                    <div class="metric-label">RGPD</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-value" style="color: #b8860b;">60%</div>
-                    <div class="metric-label">Juridique</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-value" style="color: #4a7c59;">85%</div>
-                    <div class="metric-label">Global</div>
-                </div>
-            </div>
-
-            <!-- Security Grid -->
-            <div class="templates-grid">
-                <!-- Technical Security -->
-                <div class="template-card prod">
-                    <div class="template-header">
-                        <div>
-                            <div class="template-name">🔒 Securite Technique</div>
-                            <div class="template-meta">Infrastructure Supabase EU</div>
-                        </div>
-                        <span class="template-badge badge-prod">Conforme</span>
-                    </div>
-                    <div style="margin-top: var(--space-md); font-size: 0.8rem; color: var(--ink-medium);">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Chiffrement AES-256 au repos
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> TLS 1.3 en transit
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Multi-tenant RLS
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> API keys hashees SHA-256
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #4a7c59;">✓</span> Audit logs complets
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RGPD Compliance -->
-                <div class="template-card prod">
-                    <div class="template-header">
-                        <div>
-                            <div class="template-name">📋 Conformite RGPD</div>
-                            <div class="template-meta">Article 30 + DPA</div>
-                        </div>
-                        <span class="template-badge badge-prod">Conforme</span>
-                    </div>
-                    <div style="margin-top: var(--space-md); font-size: 0.8rem; color: var(--ink-medium);">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Registre des traitements
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Politique de confidentialite
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Bases legales documentees
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> DPA Supabase signe (24/01/2026)
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #4a7c59;">✓</span> DPO: ADNOV (mutualise)
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Legal -->
-                <div class="template-card dev">
-                    <div class="template-header">
-                        <div>
-                            <div class="template-name">⚖️ Juridique</div>
-                            <div class="template-meta">CGU + Assurance</div>
-                        </div>
-                        <span class="template-badge badge-dev">A completer</span>
-                    </div>
-                    <div style="margin-top: var(--space-md); font-size: 0.8rem; color: var(--ink-medium);">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Positionnement "assistant"
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Validation notaire obligatoire
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #b8860b;">⚠</span> CGU a rediger (~2000€)
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #b8860b;">⚠</span> Assurance RC Pro (~2000€/an)
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Notary Standards -->
-                <div class="template-card prod">
-                    <div class="template-header">
-                        <div>
-                            <div class="template-name">🏛️ Standards Notaires</div>
-                            <div class="template-meta">CSN / ADSN</div>
-                        </div>
-                        <span class="template-badge badge-prod">Compatible</span>
-                    </div>
-                    <div style="margin-top: var(--space-md); font-size: 0.8rem; color: var(--ink-medium);">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Stockage donnees EU
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Secret professionnel protege
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <span style="color: #4a7c59;">✓</span> Isolation par etude
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #4a7c59;">✓</span> Tracabilite complete
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Company Info -->
-            <div style="margin-top: var(--space-xl); padding: var(--space-lg); background: var(--cream); border: 1px solid var(--parchment-dark); border-radius: 8px;">
-                <div style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; margin-bottom: var(--space-md);">📍 Coordonnees Notomai</div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md); font-size: 0.85rem;">
-                    <div>
-                        <div style="color: var(--ink-medium); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px;">Adresse</div>
-                        <div>2B chemin des Garennes<br>69260 Charbonnieres-les-Bains</div>
-                    </div>
-                    <div>
-                        <div style="color: var(--ink-medium); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px;">Contact</div>
-                        <div>contact@notomai.fr</div>
-                    </div>
-                    <div>
-                        <div style="color: var(--ink-medium); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px;">DPO Notariat</div>
-                        <div>ADNOV - dpo@groupeadsn.fr<br>95 Av. des Logissons, 13770 Venelles</div>
-                    </div>
-                    <div>
-                        <div style="color: var(--ink-medium); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px;">Representant</div>
-                        <div>Tom Randeau, Co-Founder</div>
-                    </div>
-                </div>
-            </div>
         </section>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-text">
-                Notomai Dashboard v1.0 | <span>Maitre Charlotte Diaz</span>
-            </div>
-            <a href="https://github.com/AnandaTom/notaire-ai" target="_blank" class="footer-link">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-                Repository
-            </a>
-        </div>
+        <p class="footer-text">
+            Notomai Dashboard v2.0 |
+            <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
+            Maitre Charlotte Diaz
+        </p>
     </footer>
 
     <script>
-        // Toggle node expansion
-        function toggleNode(element) {
+        // Toggle single branch
+        function toggleBranch(element) {
             element.classList.toggle('expanded');
         }
 
-        async function loadData() {
-            try {
-                const response = await fetch('data/status.json');
-                const data = await response.json();
-                updateDashboard(data);
-            } catch (error) {
-                console.log('Loading default data...');
-                updateDashboard(getDefaultData());
-            }
+        // Toggle all branches
+        function toggleAllBranches() {
+            const branches = document.querySelectorAll('.branch-node');
+            const anyExpanded = Array.from(branches).some(b => b.classList.contains('expanded'));
+
+            branches.forEach(branch => {
+                if (anyExpanded) {
+                    branch.classList.remove('expanded');
+                } else {
+                    branch.classList.add('expanded');
+                }
+            });
         }
 
-        function getDefaultData() {
-            return {
-                lastUpdate: new Date().toISOString(),
+        // Load data and populate
+        function loadData() {
+            const data = {
                 templates: [
-                    { name: "Vente lots copropriete", file: "vente_lots_copropriete.md", conformity: 85.1, status: "prod", bookmarks: 361, sections: 37 },
-                    { name: "Promesse de vente", file: "promesse_vente_lots_copropriete.md", conformity: 60.9, status: "dev", bookmarks: 298, sections: 21 },
-                    { name: "Reglement copropriete", file: "reglement_copropriete_edd.md", conformity: 85.5, status: "prod", bookmarks: 116, sections: 22 },
-                    { name: "Modificatif EDD", file: "modificatif_edd.md", conformity: 91.7, status: "prod", bookmarks: 60, sections: 12 }
+                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 37 },
+                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 21 },
+                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 22 },
+                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 12 }
                 ],
-                tasks: {
-                    todo: ["Enrichir template promesse", "Extraction titre propriete"],
-                    inProgress: ["Dashboard temps reel", "Workflow 3 devs"],
-                    done: ["Template vente 85%", "Auto-sync v2", "Integration Supabase"]
-                },
                 team: [
-                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev", lastCommit: "docs: guides" },
-                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend", lastCommit: "feat: formulaires" },
-                    { name: "Payoss", branch: "payoss/dev", status: "setup", role: "Backend", lastCommit: "Initial setup" }
-                ],
-                capabilities: [
-                    { icon: "📄", name: "Generer actes", description: "DOCX/PDF fideles" },
-                    { icon: "💬", name: "Dialogue", description: "Collecte interactive" },
-                    { icon: "✅", name: "Validation", description: "Coherence donnees" },
-                    { icon: "🔍", name: "Detection", description: "Type automatique" },
-                    { icon: "💡", name: "Suggestions", description: "Clauses contextuelles" },
-                    { icon: "📊", name: "Conformite", description: "Score automatique" },
-                    { icon: "🗄️", name: "Historique", description: "Supabase + offline" },
-                    { icon: "⚡", name: "Rapide", description: "~6 secondes" }
-                ],
-                metrics: { conformiteMoyenne: 80.8, scriptsCount: 66, tempsGenerationMoyen: "5.7s", schemasCount: 15 },
-                mcpServers: {
-                    supabase: { status: "connected", projectRef: "wcklvjckzktijtgakdrk", tables: ["clients", "actes", "historique", "variables", "templates"] },
-                    stripe: { status: "connected", mode: "test", products: 3 }
-                }
+                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev" },
+                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend" },
+                    { name: "Payoss", branch: "payoss/dev", status: "active", role: "Backend" }
+                ]
             };
-        }
-
-        function updateDashboard(data) {
-            // Update timestamp
-            document.getElementById('lastUpdate').textContent =
-                new Date(data.lastUpdate).toLocaleString('fr-FR');
-
-            // Update metrics
-            if (data.metrics) {
-                document.getElementById('metricConformity').textContent = data.metrics.conformiteMoyenne + '%';
-                document.getElementById('metricScripts').textContent = data.metrics.scriptsCount;
-                document.getElementById('metricSpeed').textContent = data.metrics.tempsGenerationMoyen;
-                document.getElementById('scriptsCount').textContent = data.metrics.scriptsCount + ' scripts Python';
-            }
-
-            // Update MCP Details
-            if (data.mcpServers) {
-                const mcpHtml = `
-                    <div class="mcp-card">
-                        <div class="mcp-card-header">
-                            <span class="mcp-card-icon">🗄️</span>
-                            <span class="mcp-card-title">Supabase</span>
-                            <span class="mcp-card-status">${data.mcpServers.supabase.status}</span>
-                        </div>
-                        <div class="mcp-items">
-                            ${data.mcpServers.supabase.tables.map(t => `<span class="mcp-item">${t}</span>`).join('')}
-                        </div>
-                    </div>
-                    <div class="mcp-card">
-                        <div class="mcp-card-header">
-                            <span class="mcp-card-icon">💳</span>
-                            <span class="mcp-card-title">Stripe</span>
-                            <span class="mcp-card-status">${data.mcpServers.stripe.mode}</span>
-                        </div>
-                        <div class="mcp-items">
-                            <span class="mcp-item">${data.mcpServers.stripe.products} produits</span>
-                            <span class="mcp-item">Paiements</span>
-                            <span class="mcp-item">Abonnements</span>
-                            <span class="mcp-item">Factures</span>
-                        </div>
-                    </div>
-                    <div class="mcp-card">
-                        <div class="mcp-card-header">
-                            <span class="mcp-card-icon">📁</span>
-                            <span class="mcp-card-title">File System</span>
-                            <span class="mcp-card-status">actif</span>
-                        </div>
-                        <div class="mcp-items">
-                            <span class="mcp-item">templates/</span>
-                            <span class="mcp-item">schemas/</span>
-                            <span class="mcp-item">execution/</span>
-                            <span class="mcp-item">directives/</span>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('mcpDetails').innerHTML = mcpHtml;
-
-                // Update Supabase details in architecture
-                const supabaseDetails = document.getElementById('supabaseDetails');
-                if (supabaseDetails) {
-                    supabaseDetails.innerHTML = data.mcpServers.supabase.tables.map(t =>
-                        `<div class="node-detail-item">${t}</div>`
-                    ).join('');
-                }
-
-                // Update Stripe details in architecture
-                const stripeDetails = document.getElementById('stripeDetails');
-                if (stripeDetails) {
-                    stripeDetails.innerHTML = `
-                        <div class="node-detail-item">${data.mcpServers.stripe.products} produits configures</div>
-                        <div class="node-detail-item">Mode: ${data.mcpServers.stripe.mode}</div>
-                        <div class="node-detail-item">Paiements uniques</div>
-                        <div class="node-detail-item">Abonnements mensuels</div>
-                    `;
-                }
-            }
-
-            // Update Templates details in architecture
-            const templatesDetails = document.getElementById('templatesDetails');
-            if (templatesDetails && data.templates) {
-                templatesDetails.innerHTML = data.templates.map(t =>
-                    `<div class="node-detail-item">${t.file || t.name} (${t.conformity}%)</div>`
-                ).join('');
-            }
-
-            // Update Scripts details in architecture
-            const scriptsDetails = document.getElementById('scriptsDetails');
-            if (scriptsDetails) {
-                scriptsDetails.innerHTML = `
-                    <div class="node-detail-item">assembler_acte.py</div>
-                    <div class="node-detail-item">exporter_docx.py</div>
-                    <div class="node-detail-item">valider_acte.py</div>
-                    <div class="node-detail-item">workflow_rapide.py</div>
-                    <div class="node-detail-item">comparer_documents.py</div>
-                `;
-            }
-
-            // Scripts categories
-            const scriptsCategoriesHtml = `
-                <div class="script-category">
-                    <div class="script-category-header">
-                        <span class="script-category-icon">📄</span>
-                        <span class="script-category-name">Generation</span>
-                        <span class="script-category-count">8</span>
-                    </div>
-                    <div class="script-list">
-                        <code>assembler_acte.py</code>, <code>exporter_docx.py</code>, <code>exporter_pdf.py</code>, <code>workflow_rapide.py</code>
-                    </div>
-                </div>
-                <div class="script-category">
-                    <div class="script-category-header">
-                        <span class="script-category-icon">✅</span>
-                        <span class="script-category-name">Validation</span>
-                        <span class="script-category-count">6</span>
-                    </div>
-                    <div class="script-list">
-                        <code>valider_acte.py</code>, <code>comparer_documents.py</code>, <code>test_fiabilite.py</code>
-                    </div>
-                </div>
-                <div class="script-category">
-                    <div class="script-category-header">
-                        <span class="script-category-icon">🔍</span>
-                        <span class="script-category-name">Analyse</span>
-                        <span class="script-category-count">5</span>
-                    </div>
-                    <div class="script-list">
-                        <code>extraire_bookmarks.py</code>, <code>detecter_type_acte.py</code>, <code>suggerer_clauses.py</code>
-                    </div>
-                </div>
-                <div class="script-category">
-                    <div class="script-category-header">
-                        <span class="script-category-icon">💾</span>
-                        <span class="script-category-name">Donnees</span>
-                        <span class="script-category-count">7</span>
-                    </div>
-                    <div class="script-list">
-                        <code>generer_donnees_test.py</code>, <code>historique_supabase.py</code>, <code>collecter_informations.py</code>
-                    </div>
-                </div>
-                <div class="script-category">
-                    <div class="script-category-header">
-                        <span class="script-category-icon">🔧</span>
-                        <span class="script-category-name">Utilitaires</span>
-                        <span class="script-category-count">10</span>
-                    </div>
-                    <div class="script-list">
-                        <code>update_dashboard.py</code>, <code>enrichir_prets.py</code>, <code>generer_donnees_minimales.py</code>
-                    </div>
-                </div>
-            `;
-            document.getElementById('scriptsCategories').innerHTML = scriptsCategoriesHtml;
 
             // Templates
-            const templatesHtml = data.templates.map((t, i) => `
-                <div class="template-card ${t.status}" style="animation-delay: ${i * 0.1}s">
+            const templatesHtml = data.templates.map(t => `
+                <div class="template-card ${t.status}">
                     <div class="template-header">
                         <div>
                             <div class="template-name">${t.name}</div>
                             <div class="template-meta">${t.bookmarks} bookmarks · ${t.sections} sections</div>
                         </div>
-                        <span class="template-badge badge-${t.status}">${t.status === 'prod' ? 'Production' : 'Developpement'}</span>
+                        <span class="template-badge badge-${t.status}">${t.status === 'prod' ? 'Production' : 'Dev'}</span>
                     </div>
-                    <div class="conformity-bar">
-                        <div class="conformity-label">
-                            <span>Conformite</span>
-                            <span class="conformity-value">${t.conformity}%</span>
-                        </div>
-                        <div class="conformity-track">
-                            <div class="conformity-fill ${t.conformity >= 80 ? 'high' : 'medium'}" style="width: ${t.conformity}%"></div>
-                        </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${t.conformity >= 80 ? 'high' : 'medium'}" style="width: ${t.conformity}%"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>Conformite</span>
+                        <span>${t.conformity}%</span>
                     </div>
                 </div>
             `).join('');
             document.getElementById('templatesGrid').innerHTML = templatesHtml;
 
-            // Tasks
-            const createTask = (task) => `<div class="task-item">${task}</div>`;
-
-            document.getElementById('todoList').innerHTML = data.tasks.todo.map(createTask).join('');
-            document.getElementById('progressList').innerHTML = data.tasks.inProgress.map(createTask).join('');
-            document.getElementById('doneList').innerHTML = data.tasks.done.map(createTask).join('');
-
-            document.getElementById('todoCount').textContent = data.tasks.todo.length;
-            document.getElementById('progressCount').textContent = data.tasks.inProgress.length;
-            document.getElementById('doneCount').textContent = data.tasks.done.length;
-
             // Team
-            const teamHtml = data.team.map(member => `
-                <div class="team-card">
-                    <div class="team-avatar ${member.status}">${member.name[0]}</div>
+            const teamHtml = data.team.map(m => `
+                <div class="team-card ${m.status}">
+                    <div class="team-avatar">${m.name[0]}</div>
                     <div class="team-info">
-                        <div class="team-name">${member.name}</div>
-                        <div class="team-role">${member.role}</div>
-                        <div class="team-branch">${member.branch}</div>
-                        <div class="team-commit">${member.lastCommit}</div>
+                        <div class="team-name">${m.name}</div>
+                        <div class="team-role">${m.role}</div>
+                        <span class="team-branch">${m.branch}</span>
                     </div>
                 </div>
             `).join('');
             document.getElementById('teamGrid').innerHTML = teamHtml;
-
-            // Capabilities
-            const capabilitiesHtml = data.capabilities.map(cap => `
-                <div class="capability-item">
-                    <span class="capability-icon">${cap.icon}</span>
-                    <div class="capability-name">${cap.name}</div>
-                    <div class="capability-desc">${cap.description}</div>
-                </div>
-            `).join('');
-            document.getElementById('capabilitiesGrid').innerHTML = capabilitiesHtml;
         }
 
-        // Load and auto-refresh
+        // Initialize
         loadData();
-        setInterval(loadData, 30000);
+
+        // Add hover glow effect
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.branch-node, .stat-card, .template-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
     </script>
 </body>
 </html>
