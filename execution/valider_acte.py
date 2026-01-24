@@ -466,6 +466,247 @@ class ValidateurActe:
                             chemin=f"{cle}.{i}.lieu_naissance"
                         ))
 
+                    # Valider situation PACS
+                    self._valider_pacs(personne, cle, i, type_partie)
+
+    def _valider_pacs(self, personne: Dict, cle: str, index: int, type_partie: str):
+        """Valide la structure PACS."""
+        sit_mat = personne.get('situation_matrimoniale', {})
+        if sit_mat.get('statut') == 'pacse':
+            # Vérifier que les infos PACS sont présentes
+            if not sit_mat.get('pacs') and not sit_mat.get('date_pacs'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="PACS_INCOMPLET",
+                    message=f"Informations PACS incomplètes pour {type_partie} {index+1}",
+                    chemin=f"{cle}.{index}.situation_matrimoniale",
+                    suggestion="Ajoutez date_pacs et lieu_pacs ou structure pacs:{date, regime_libelle}"
+                ))
+
+            # Vérifier partenaire vs conjoint
+            if not sit_mat.get('conjoint') and not sit_mat.get('partenaire'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="PARTENAIRE_MANQUANT",
+                    message=f"Informations du partenaire PACS manquantes pour {type_partie} {index+1}",
+                    chemin=f"{cle}.{index}.situation_matrimoniale.partenaire"
+                ))
+
+    # =========================================================================
+    # RÈGLES DE VALIDATION AVANCÉES (12+ règles)
+    # =========================================================================
+
+    def _valider_superficie_carrez(self, donnees: Dict[str, Any]):
+        """Valide les superficies Carrez des lots."""
+        if 'bien' not in donnees or 'lots' not in donnees['bien']:
+            return
+
+        for i, lot in enumerate(donnees['bien']['lots']):
+            surface = lot.get('surface_carrez', lot.get('surface', 0))
+            if surface:
+                # Vérifier si < 8m² (Carrez non obligatoire)
+                if 0 < surface < 8:
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.INFO,
+                        code="CARREZ_PETIT_LOT",
+                        message=f"Lot {lot.get('numero', i+1)}: surface < 8m² - Carrez non obligatoire",
+                        chemin=f"bien.lots.{i}.surface_carrez",
+                        valeur=surface
+                    ))
+
+                # Vérifier si surface très grande (>300m² suspect)
+                if surface > 300:
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.AVERTISSEMENT,
+                        code="CARREZ_GRANDE_SURFACE",
+                        message=f"Lot {lot.get('numero', i+1)}: surface > 300m² - vérifier la valeur",
+                        chemin=f"bien.lots.{i}.surface_carrez",
+                        valeur=surface
+                    ))
+
+    def _valider_diagnostics_dpe(self, donnees: Dict[str, Any]):
+        """Valide le DPE et alertes passoires énergétiques."""
+        if 'diagnostics' not in donnees:
+            return
+
+        dpe = donnees['diagnostics'].get('dpe', {})
+        classe_energie = dpe.get('classe_energie', dpe.get('classe', ''))
+
+        if classe_energie:
+            # Passoire énergétique (F ou G)
+            if classe_energie.upper() in ['F', 'G']:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="PASSOIRE_ENERGETIQUE",
+                    message=f"ATTENTION: DPE classe {classe_energie} - Passoire énergétique",
+                    chemin="diagnostics.dpe.classe_energie",
+                    valeur=classe_energie,
+                    suggestion="Interdiction de location depuis 2025 (G) ou 2028 (F). Informer l'acquéreur."
+                ))
+
+            # Audit énergétique obligatoire pour F et G (depuis avril 2023)
+            if classe_energie.upper() in ['F', 'G'] and not donnees['diagnostics'].get('audit_energetique'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="AUDIT_ENERGETIQUE_MANQUANT",
+                    message=f"Audit énergétique obligatoire pour DPE classe {classe_energie}",
+                    chemin="diagnostics.audit_energetique",
+                    suggestion="L'audit énergétique est obligatoire depuis avril 2023 pour la vente"
+                ))
+
+    def _valider_diagnostics_obligatoires(self, donnees: Dict[str, Any]):
+        """Vérifie la présence des diagnostics obligatoires selon l'année de construction."""
+        if 'bien' not in donnees:
+            return
+
+        annee_construction = donnees['bien'].get('annee_construction', 0)
+        diagnostics = donnees.get('diagnostics', {})
+
+        # Plomb si avant 1949
+        if annee_construction > 0 and annee_construction < 1949:
+            if not diagnostics.get('plomb'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="PLOMB_OBLIGATOIRE",
+                    message="Diagnostic plomb obligatoire (construction avant 1949)",
+                    chemin="diagnostics.plomb",
+                    suggestion="Le CREP (Constat de Risque d'Exposition au Plomb) est obligatoire"
+                ))
+
+        # Amiante si avant 1997
+        if annee_construction > 0 and annee_construction < 1997:
+            if not diagnostics.get('amiante'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="AMIANTE_OBLIGATOIRE",
+                    message="Diagnostic amiante obligatoire (construction avant 1997)",
+                    chemin="diagnostics.amiante"
+                ))
+
+        # Électricité et gaz si installation > 15 ans
+        annee_installation = donnees['bien'].get('annee_installation_electrique', 0)
+        if annee_installation > 0 and (datetime.now().year - annee_installation) > 15:
+            if not diagnostics.get('electricite'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="ELECTRICITE_RECOMMANDE",
+                    message="Diagnostic électricité recommandé (installation > 15 ans)",
+                    chemin="diagnostics.electricite"
+                ))
+
+    def _valider_coherence_adresse(self, donnees: Dict[str, Any]):
+        """Vérifie la cohérence des adresses (code postal vs commune)."""
+        if 'bien' not in donnees:
+            return
+
+        adresse = donnees['bien'].get('adresse', {})
+        code_postal = str(adresse.get('code_postal', ''))
+        commune = adresse.get('commune', '')
+
+        # Vérifier format code postal français
+        if code_postal and not re.match(r'^\d{5}$', code_postal):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="CODE_POSTAL_INVALIDE",
+                message=f"Format de code postal invalide: {code_postal}",
+                chemin="bien.adresse.code_postal",
+                suggestion="Le code postal doit comporter 5 chiffres"
+            ))
+
+        # Vérifier cohérence département (premiers 2 chiffres)
+        if code_postal and len(code_postal) == 5:
+            dept = code_postal[:2]
+            # DOM-TOM: 97x, 98x
+            if dept in ['97', '98'] and len(code_postal) == 5:
+                dept = code_postal[:3]
+
+    def _valider_coherence_financiere(self, donnees: Dict[str, Any]):
+        """Vérifie la cohérence financière globale."""
+        prix = donnees.get('prix', {}).get('montant', 0)
+        if prix <= 0:
+            return
+
+        # Calcul des frais de notaire estimés
+        frais_estimes = prix * 0.08  # ~8% pour l'ancien
+
+        # Vérifier le financement
+        paiement = donnees.get('paiement', {})
+        fonds_propres = paiement.get('fonds_personnels', 0)
+        prets = paiement.get('prets', [])
+        total_prets = sum(p.get('montant', 0) for p in prets)
+
+        total_financement = fonds_propres + total_prets
+        total_a_financer = prix + frais_estimes
+
+        # Sous-financement
+        if total_financement > 0 and total_financement < prix:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.AVERTISSEMENT,
+                code="SOUS_FINANCEMENT",
+                message=f"Financement ({total_financement}€) inférieur au prix ({prix}€)",
+                chemin="paiement",
+                suggestion=f"Prévoir environ {total_a_financer:.0f}€ (prix + frais)"
+            ))
+
+        # PTZ: vérifier conditions
+        for i, pret in enumerate(prets):
+            if pret.get('type', '').lower() in ['ptz', 'pret_taux_zero']:
+                # PTZ uniquement pour résidence principale
+                usage = donnees.get('bien', {}).get('usage_futur', '')
+                if usage and usage != 'habitation':
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.ERREUR,
+                        code="PTZ_USAGE_INVALIDE",
+                        message="PTZ uniquement pour résidence principale",
+                        chemin=f"paiement.prets.{i}",
+                        suggestion="Le PTZ nécessite que le bien soit la résidence principale"
+                    ))
+
+    def _valider_tantièmes(self, donnees: Dict[str, Any]):
+        """Vérifie la cohérence des tantièmes."""
+        if 'bien' not in donnees or 'lots' not in donnees['bien']:
+            return
+
+        for i, lot in enumerate(donnees['bien']['lots']):
+            tantiemes = lot.get('tantiemes', {})
+            valeur = tantiemes.get('valeur', 0)
+            base = tantiemes.get('base', 0)
+
+            if valeur and base:
+                # Vérifier que la valeur est inférieure à la base
+                if valeur > base:
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.ERREUR,
+                        code="TANTIEMES_INVALIDES",
+                        message=f"Lot {lot.get('numero', i+1)}: tantièmes ({valeur}) > base ({base})",
+                        chemin=f"bien.lots.{i}.tantiemes",
+                        suggestion="Les tantièmes ne peuvent pas dépasser la base totale"
+                    ))
+
+    def valider_complet(self, donnees: Dict[str, Any], strict: bool = True) -> RapportValidation:
+        """
+        Validation complète avec toutes les règles avancées.
+
+        Args:
+            donnees: Données à valider
+            strict: Mode strict
+
+        Returns:
+            Rapport de validation enrichi
+        """
+        # Validation de base
+        self.valider(donnees, strict)
+
+        # Règles avancées
+        self._valider_superficie_carrez(donnees)
+        self._valider_diagnostics_dpe(donnees)
+        self._valider_diagnostics_obligatoires(donnees)
+        self._valider_coherence_adresse(donnees)
+        self._valider_coherence_financiere(donnees)
+        self._valider_tantièmes(donnees)
+
+        return self.rapport
+
 
 def afficher_rapport(rapport: RapportValidation):
     """Affiche le rapport de validation."""

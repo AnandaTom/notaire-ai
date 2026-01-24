@@ -465,7 +465,42 @@
     "radon": {
       "zone": 1,
       "zone_libelle": "faible"
+    },
+    "carnet_information_logement": {
+      "existe": true,
+      "transmission_prevue": true
+    },
+    "audit_energetique": {
+      "requis": false,
+      "existe": false
+    },
+    "zone_bruit_aeroport": {
+      "dans_zone": false
+    },
+    "assainissement": {
+      "type": "collectif",
+      "conforme": true
+    },
+    "erp": {
+      "date": "22 mai 2025",
+      "zone_sismicite": 2,
+      "radon": 1,
+      "ppr_applicable": false,
+      "retrait_gonflement_argile": 1
     }
+  },
+
+  "situation_environnementale": {
+    "basias": {
+      "present": false
+    },
+    "basol": {
+      "present": false
+    },
+    "sis": {
+      "present": false
+    },
+    "sites_identifies": []
   },
 
   "urbanisme": {
