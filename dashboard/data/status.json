@@ -1,0 +1,181 @@
+{
+  "lastUpdate": "2026-01-24T11:23:23.287145",
+  "version": "1.2.0",
+  "templates": [
+    {
+      "name": "Vente lots copropriete",
+      "file": "vente_lots_copropriete.md",
+      "conformity": 85.1,
+      "status": "prod",
+      "bookmarks": 361,
+      "sections": 32,
+      "lastGeneration": "2026-01-23"
+    },
+    {
+      "name": "Promesse de vente",
+      "file": "promesse_vente_lots_copropriete.md",
+      "conformity": 60.9,
+      "status": "dev",
+      "bookmarks": 298,
+      "sections": 127,
+      "lastGeneration": "2026-01-20"
+    },
+    {
+      "name": "Reglement copropriete",
+      "file": "reglement_copropriete_edd.md",
+      "conformity": 85.5,
+      "status": "prod",
+      "bookmarks": 116,
+      "sections": 111,
+      "lastGeneration": "2026-01-19"
+    },
+    {
+      "name": "Modificatif EDD",
+      "file": "modificatif_edd.md",
+      "conformity": 91.7,
+      "status": "prod",
+      "bookmarks": 60,
+      "sections": 13,
+      "lastGeneration": "2026-01-19"
+    }
+  ],
+  "tasks": {
+    "todo": [
+      "Enrichir template promesse de vente (24 titres)",
+      "Integrer extraction titre de propriete",
+      "Ajouter validation Carrez automatique",
+      "Creer template donation-partage",
+      "Tests automatises pytest"
+    ],
+    "inProgress": [
+      "Dashboard temps reel",
+      "Workflow collaboratif 3 devs",
+      "Formulaires web vendeur/acquereur"
+    ],
+    "done": [
+      "Template vente 85% conformite",
+      "Scripts START_DAY/END_DAY",
+      "Auto-sync v2 (30min commits)",
+      "Integration Supabase MCP",
+      "Integration Stripe MCP",
+      "Pipeline generation 5.7s",
+      "Securisation cles API",
+      "Documentation complete",
+      "Morning sync semi-auto",
+      "Troubleshooting guide"
+    ]
+  },
+  "team": [
+    {
+      "name": "Tom",
+      "github": "AnandaTom",
+      "branch": "tom/dev",
+      "role": "Lead Dev / Templates",
+      "lastCommit": "Merge augustin/dev: ajout formulaire web vendeur e...",
+      "status": "active",
+      "lastActivity": "2026-01-23T19:42:42+01:00"
+    },
+    {
+      "name": "Augustin",
+      "github": "augustinfrance-aico",
+      "branch": "augustin/dev",
+      "role": "Frontend / Formulaires",
+      "lastCommit": "Merge augustin/dev: ajout formulaire web vendeur e...",
+      "status": "active",
+      "lastActivity": "2026-01-23T19:42:42+01:00"
+    },
+    {
+      "name": "Payoss",
+      "github": "Payoss",
+      "branch": "payoss/dev",
+      "role": "Backend / Scripts",
+      "lastCommit": "merge: Integration des nouveautes de master dans p...",
+      "status": "active",
+      "lastActivity": "2026-01-23T20:19:26+01:00"
+    }
+  ],
+  "capabilities": [
+    {
+      "icon": "📄",
+      "name": "Generer actes",
+      "description": "DOCX/PDF fideles aux trames",
+      "status": "active"
+    },
+    {
+      "icon": "💬",
+      "name": "Dialogue notaire",
+      "description": "Collecte interactive 100+ questions",
+      "status": "active"
+    },
+    {
+      "icon": "✅",
+      "name": "Validation",
+      "description": "Coherence et completude",
+      "status": "active"
+    },
+    {
+      "icon": "🔍",
+      "name": "Detection auto",
+      "description": "Type d'acte automatique",
+      "status": "active"
+    },
+    {
+      "icon": "💡",
+      "name": "Suggestions",
+      "description": "Clauses contextuelles",
+      "status": "active"
+    },
+    {
+      "icon": "📊",
+      "name": "Conformite",
+      "description": "Score automatique vs trame",
+      "status": "active"
+    },
+    {
+      "icon": "🗄️",
+      "name": "Historique",
+      "description": "Supabase + mode offline",
+      "status": "active"
+    },
+    {
+      "icon": "⚡",
+      "name": "Pipeline rapide",
+      "description": "~6 secondes / acte",
+      "status": "active"
+    }
+  ],
+  "mcpServers": {
+    "supabase": {
+      "status": "connected",
+      "projectRef": "wcklvjckzktijtgakdrk",
+      "tables": [
+        "clients",
+        "actes",
+        "historique",
+        "variables",
+        "templates"
+      ]
+    },
+    "stripe": {
+      "status": "connected",
+      "mode": "test",
+      "products": 3
+    }
+  },
+  "metrics": {
+    "totalActesGeneres": 12,
+    "tempsGenerationMoyen": "5.7s",
+    "conformiteMoyenne": 80.8,
+    "templatesProduction": 3,
+    "templatesDev": 1,
+    "scriptsCount": 66,
+    "schemasCount": 15
+  },
+  "pipeline": {
+    "assemblageJinja": "1.5s",
+    "exportDocx": "3.5s",
+    "verification": "0.7s",
+    "total": "5.7s",
+    "pagesParSeconde": 8
+  }
+}
