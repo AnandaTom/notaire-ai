@@ -261,11 +261,15 @@ def afficher_resultat(result, output: str):
     """Affiche le résultat de la génération."""
     if RICH_AVAILABLE:
         if result.statut == "succes":
-            panel = Panel(
+            message = (
                 f"[bold green]GÉNÉRATION RÉUSSIE[/bold green]\n\n"
                 f"[bold]Fichier:[/bold] {output}\n"
-                f"[bold]Durée:[/bold] {result.duree_totale_ms / 1000:.1f}s\n"
-                f"[bold]Conformité:[/bold] {result.score_conformite:.0%}" if result.score_conformite else "",
+                f"[bold]Durée:[/bold] {result.duree_totale_ms / 1000:.1f}s"
+            )
+            if result.score_conformite:
+                message += f"\n[bold]Conformité:[/bold] {result.score_conformite:.0%}"
+            panel = Panel(
+                message,
                 title="Résultat",
                 border_style="green"
             )

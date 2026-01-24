@@ -1,4 +1,4 @@
-# Politique de Confidentialité - NotaireAI
+# Politique de Confidentialité - Notomai
 
 > **Information sur le traitement des données personnelles**
 > Conformément au Règlement (UE) 2016/679 (RGPD)
@@ -13,13 +13,15 @@
 
 Le responsable du traitement de vos données personnelles est l'**étude notariale** que vous avez contactée pour votre dossier.
 
-NotaireAI agit en qualité de **sous-traitant technique** pour le compte de l'étude notariale.
+Notomai agit en qualité de **sous-traitant technique** pour le compte de l'étude notariale.
 
 | Information | Détail |
 |-------------|--------|
-| Sous-traitant | NotaireAI - Agence IA Automatisation |
+| Sous-traitant | Notomai - Agence IA Automatisation |
 | Représentant | Tom Randeau, Co-Founder |
-| DPO du notariat | ADNOV - dpo@adnov.fr |
+| Adresse | 2B chemin des Garennes, 69260 Charbonnières-les-Bains |
+| Contact | contact@notomai.fr |
+| DPO du notariat | ADNOV - 95 Avenue des Logissons, 13770 VENELLES - dpo@groupeadsn.fr |
 
 ---
 
@@ -89,7 +91,7 @@ Vos données peuvent être communiquées à :
 
 | Sous-traitant | Rôle | Localisation |
 |---------------|------|--------------|
-| NotaireAI | Assistance à la rédaction d'actes | France/UE |
+| Notomai | Assistance à la rédaction d'actes | France/UE |
 | Supabase | Hébergement sécurisé des données | Union Européenne (Francfort) |
 
 Tous les sous-traitants sont contractuellement tenus aux mêmes obligations de protection des données.
@@ -192,7 +194,7 @@ Si vous estimez que vos droits ne sont pas respectés, vous pouvez introduire un
 
 ## 10. Cookies et Traceurs
 
-L'application NotaireAI n'utilise **pas de cookies** ni de traceurs publicitaires.
+L'application Notomai n'utilise **pas de cookies** ni de traceurs publicitaires.
 
 Seuls des cookies techniques strictement nécessaires au fonctionnement peuvent être utilisés (session, authentification).
 
@@ -216,7 +218,7 @@ Pour toute question relative à cette politique :
 
 - **Votre notaire** : Premier interlocuteur pour votre dossier
 - **DPO notariat** : dpo@adnov.fr
-- **Support technique NotaireAI** : [Contact à compléter]
+- **Support technique Notomai** : contact@notomai.fr
 
 ---
 

@@ -3,7 +3,7 @@
 > **Article 30 du RGPD** - Document obligatoire
 >
 > Responsable de traitement : Chaque étude notariale cliente
-> Sous-traitant technique : NotaireAI (Tom Randeau - Agence IA Automatisation)
+> Sous-traitant technique : Notomai (Tom Randeau - Agence IA Automatisation)
 >
 > Date de création : 24 janvier 2026
 > Dernière mise à jour : 24 janvier 2026
@@ -24,10 +24,10 @@
 
 | Champ | Valeur |
 |-------|--------|
-| **Dénomination** | NotaireAI - Agence IA Automatisation |
+| **Dénomination** | Notomai - Agence IA Automatisation |
 | **Représentant** | Tom Randeau, Co-Founder |
-| **Adresse** | [À compléter] |
-| **Contact** | [À compléter] |
+| **Adresse** | 2B chemin des Garennes, 69260 Charbonnières-les-Bains |
+| **Contact** | contact@notomai.fr |
 | **DPA signé** | Oui - Supabase (Ref: MS59U-GUISY-UMPBD-VCVJH, 24/01/2026) |
 
 ---
@@ -282,8 +282,8 @@ Une AIPD est **requise** car le traitement :
 ### B. Contact DPO
 
 Pour toute question relative à la protection des données :
-- **DPO notariat** : ADNOV - dpo@adnov.fr
-- **Support technique** : [Contact NotaireAI à compléter]
+- **DPO notariat** : ADNOV - 95 Avenue des Logissons, 13770 VENELLES - dpo@groupeadsn.fr
+- **Support technique** : Notomai - contact@notomai.fr
 
 ---
 

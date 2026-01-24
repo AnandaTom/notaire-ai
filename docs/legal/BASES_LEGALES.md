@@ -1,4 +1,4 @@
-# Bases Légales des Traitements - NotaireAI
+# Bases Légales des Traitements - Notomai
 
 > **Article 6 du RGPD** - Licéité du traitement
 >

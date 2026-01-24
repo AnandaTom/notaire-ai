@@ -940,7 +940,7 @@ Les conclusions sont les suivantes :
 {% if diagnostics.carnet_logement or diagnostics.carnet_information_logement %}
 ### **Carnet d'information du logement**
 
-Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement {% if diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe %}a été établi et est communiqué{% else %}sera établi et communiqué{% endif %} au **BENEFICIAIRE**.
+Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement {% if diagnostics.carnet_logement or (diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe) %}a été établi et est communiqué{% else %}sera établi et communiqué{% endif %} au **BENEFICIAIRE**.
 
 Le **PROMETTANT** s'engage à transmettre au **BENEFICIAIRE** une copie de ce carnet d'information au plus tard à la date de signature de l'acte authentique de vente.
 
@@ -982,7 +982,6 @@ Toutefois, s'agissant des éléments installés en remplacement ou par adjonctio
 La garantie décennale s'applique au professionnel qui a réalisé les travaux d'installation, lequel en garantit le maître d'ouvrage, personne pour le compte de laquelle les travaux sont exécutés (article 1792-1 du Code civil).
 
 Le **PROMETTANT** fournira au **BENEFICIAIRE**, lors de la réitération de la vente, la documentation technique afférente à ces équipements, ainsi que les garanties et assurances y attachées.
-{% endif %}
 
 {% if diagnostics.radon %}
 ### **Radon**
