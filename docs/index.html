@@ -937,6 +937,212 @@
                 transform: rotate(90deg);
             }
         }
+
+        /* Security Section */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .security-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .security-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .security-card.secure::before {
+            background: linear-gradient(90deg, var(--accent-success), var(--accent-cyan));
+        }
+
+        .security-card.warning::before {
+            background: linear-gradient(90deg, var(--accent-warning), var(--accent-tertiary));
+        }
+
+        .security-card.info::before {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .security-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .security-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .security-icon.green { background: rgba(16, 185, 129, 0.15); }
+        .security-icon.yellow { background: rgba(245, 158, 11, 0.15); }
+        .security-icon.blue { background: rgba(99, 102, 241, 0.15); }
+        .security-icon.red { background: rgba(239, 68, 68, 0.15); }
+
+        .security-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .security-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .status-secure {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+        }
+
+        .status-info {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .security-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .security-item-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .security-item-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .security-item-value.ok { color: var(--accent-success); }
+        .security-item-value.warn { color: var(--accent-warning); }
+        .security-item-value.error { color: #ef4444; }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-connected {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
+
+        .badge-test {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+        }
+
+        .badge-protected {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+        }
+
+        /* MCP Servers Grid */
+        .mcp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mcp-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .mcp-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .mcp-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .mcp-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mcp-details {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .mcp-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .pulse-dot.green { background: var(--accent-success); }
+        .pulse-dot.yellow { background: var(--accent-warning); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
     </style>
 </head>
 <body>
@@ -1228,6 +1434,144 @@
             </div>
         </section>
 
+        <!-- Security Section -->
+        <section class="security-section">
+            <h2 class="section-title">Securite & Integrations</h2>
+            <div class="security-grid">
+                <!-- API Keys Card -->
+                <div class="security-card secure">
+                    <div class="security-header">
+                        <div class="security-icon green">🔐</div>
+                        <div>
+                            <div class="security-title">Cles API</div>
+                            <span class="security-status status-secure">Securise</span>
+                        </div>
+                    </div>
+                    <div class="security-items">
+                        <div class="security-item">
+                            <span class="security-item-label">🔑 SUPABASE_KEY</span>
+                            <span class="security-item-value ok">.env protege</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔑 STRIPE_KEY</span>
+                            <span class="security-item-value ok">.env protege</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔑 ANTHROPIC_KEY</span>
+                            <span class="security-item-value ok">.env protege</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">📁 .gitignore</span>
+                            <span class="security-item-value ok">Configure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Protection Card -->
+                <div class="security-card secure">
+                    <div class="security-header">
+                        <div class="security-icon green">🛡️</div>
+                        <div>
+                            <div class="security-title">Protection Donnees</div>
+                            <span class="security-status status-secure">RGPD Ready</span>
+                        </div>
+                    </div>
+                    <div class="security-items">
+                        <div class="security-item">
+                            <span class="security-item-label">📂 Donnees clients</span>
+                            <span class="security-item-value ok">Chiffrees</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🗄️ Supabase RLS</span>
+                            <span class="security-item-value ok">Active</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">📋 Logs d'audit</span>
+                            <span class="security-item-value ok">Actives</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔒 HTTPS</span>
+                            <span class="security-item-value ok">Force</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MCP Servers Card -->
+                <div class="security-card info">
+                    <div class="security-header">
+                        <div class="security-icon blue">🔌</div>
+                        <div>
+                            <div class="security-title">Serveurs MCP</div>
+                            <span class="security-status status-info">2 connectes</span>
+                        </div>
+                    </div>
+                    <div class="mcp-grid">
+                        <div class="mcp-card">
+                            <div class="mcp-header">
+                                <span class="mcp-name"><span class="pulse-dot green"></span> Supabase</span>
+                                <span class="security-badge badge-connected">Connected</span>
+                            </div>
+                            <div class="mcp-details">
+                                <div class="mcp-detail">
+                                    <span>Project</span>
+                                    <span>wcklvjckzkti...</span>
+                                </div>
+                                <div class="mcp-detail">
+                                    <span>Tables</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mcp-card">
+                            <div class="mcp-header">
+                                <span class="mcp-name"><span class="pulse-dot yellow"></span> Stripe</span>
+                                <span class="security-badge badge-test">Test Mode</span>
+                            </div>
+                            <div class="mcp-details">
+                                <div class="mcp-detail">
+                                    <span>Mode</span>
+                                    <span>test</span>
+                                </div>
+                                <div class="mcp-detail">
+                                    <span>Produits</span>
+                                    <span>3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Access Control Card -->
+                <div class="security-card secure">
+                    <div class="security-header">
+                        <div class="security-icon green">👥</div>
+                        <div>
+                            <div class="security-title">Controle d'Acces</div>
+                            <span class="security-status status-secure">Restreint</span>
+                        </div>
+                    </div>
+                    <div class="security-items">
+                        <div class="security-item">
+                            <span class="security-item-label">👤 Developpeurs</span>
+                            <span class="security-item-value ok">3 autorises</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔀 Branches</span>
+                            <span class="security-item-value ok">Protegees</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">✅ Code Review</span>
+                            <span class="security-item-value ok">Obligatoire</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🚀 Deploy</span>
+                            <span class="security-item-value ok">GitHub Pages</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Templates Section -->
         <section class="templates-section">
             <h2 class="section-title">Etat des Templates</h2>
@@ -1244,7 +1588,7 @@
     <!-- Footer -->
     <footer class="footer">
         <p class="footer-text">
-            Notomai v1.2.0 | Dashboard v2.1 |
+            Notomai v1.2.0 | Dashboard v2.2 |
             <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
             Maitre Charlotte Diaz |
             <span id="lastUpdate">2026-01-24</span>
