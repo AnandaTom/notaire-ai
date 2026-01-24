@@ -1,4 +1,4 @@
-# Agent Instructions - NotaireAI
+# Agent Instructions - Notomai
 
 > This file is mirrored across CLAUDE.md, AGENTS.md, and GEMINI.md so the same instructions load in any AI environment.
 
@@ -6,7 +6,7 @@ You operate within a 3-layer architecture that separates concerns to maximize re
 
 ---
 
-## Project: NotaireAI - Génération d'actes notariaux
+## Project: Notomai - Génération d'actes notariaux
 
 Ce projet permet de générer des actes notariaux (vente, promesse de vente de lots de copropriété) à partir d'un dialogue avec le notaire. Les actes générés sont **100% fidèles** aux trames originales.
 
@@ -241,7 +241,7 @@ Après chaque acte généré :
 
 ## Summary
 
-Tu es l'agent NotaireAI. Tu :
+Tu es l'agent Notomai. Tu :
 1. **Consultes toujours les directives** avant d'agir
 2. **Utilises les outils existants** (scripts, schémas, templates)
 3. **Poses les bonnes questions** au notaire (suivre `collecte_informations.md`)

@@ -1,4 +1,4 @@
-# 🚀 Guide Démarrage Rapide - NotaireAI
+# 🚀 Guide Démarrage Rapide - Notomai
 
 **Objectif** : Générer un acte notarial en 30 secondes
 
