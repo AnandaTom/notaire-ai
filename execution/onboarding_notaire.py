@@ -36,6 +36,8 @@ try:
     from dotenv import load_dotenv
     load_dotenv(Path(__file__).parent.parent / ".env")
 except ImportError:
+    # dotenv est optionnel : si non installé, on suppose que les variables d'environnement
+    # nécessaires sont déjà définies dans l'environnement du processus.
     pass
 
 # Import Supabase
