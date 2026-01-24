@@ -56,6 +56,13 @@ UNITES = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'n
 DIZAINES = ['', '', 'vingt', 'trente', 'quarante', 'cinquante',
             'soixante', 'soixante', 'quatre-vingt', 'quatre-vingt']
 
+# Constantes des mois (optimisation: évite redéfinition dans chaque fonction)
+MOIS_NOMS = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+             'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+MOIS_NOMS_UPPER = ['', 'JANVIER', 'FÉVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN',
+                   'JUILLET', 'AOÛT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DÉCEMBRE']
+JOURS_SEMAINE = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+
 
 def nombre_en_lettres(n: int) -> str:
     """
@@ -184,9 +191,6 @@ def date_en_lettres(date_str: str) -> str:
     Returns:
         Date en toutes lettres
     """
-    mois_noms = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-                 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
-
     try:
         if '-' in date_str:
             annee, mois, jour = date_str.split('-')
@@ -199,7 +203,7 @@ def date_en_lettres(date_str: str) -> str:
 
         jour_lettres = nombre_en_lettres(jour) if jour != 1 else 'premier'
 
-        return f"le {jour_lettres} {mois_noms[mois]} {nombre_en_lettres(annee)}"
+        return f"le {jour_lettres} {MOIS_NOMS[mois]} {nombre_en_lettres(annee)}"
     except (ValueError, IndexError):
         return date_str
 
@@ -240,10 +244,8 @@ def mois_en_lettres(mois: int) -> str:
     Returns:
         Nom du mois (ex: janvier)
     """
-    mois_noms = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-                 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
     if 1 <= mois <= 12:
-        return mois_noms[mois]
+        return MOIS_NOMS[mois]
     return str(mois)
 
 
@@ -273,9 +275,6 @@ def format_date(date_str: str, format: str = "long") -> str:
     Returns:
         Date formatee
     """
-    mois_noms = ['', 'janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin',
-                 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre']
-
     if not date_str:
         return ''
 
@@ -293,9 +292,9 @@ def format_date(date_str: str, format: str = "long") -> str:
             return f"{jour:02d}/{mois:02d}/{annee}"
         elif format == "lettres":
             jour_lettres = nombre_en_lettres(jour) if jour != 1 else 'premier'
-            return f"le {jour_lettres} {mois_noms[mois]} {nombre_en_lettres(annee)}"
+            return f"le {jour_lettres} {MOIS_NOMS[mois]} {nombre_en_lettres(annee)}"
         else:  # long
-            return f"{jour} {mois_noms[mois]} {annee}"
+            return f"{jour} {MOIS_NOMS[mois]} {annee}"
     except (ValueError, IndexError, AttributeError):
         return str(date_str)
 
@@ -445,11 +444,8 @@ class AssembleurActe:
                 mois = date_obj.get('mois', 1)
                 annee = date_obj.get('annee', 2025)
 
-                mois_noms = ['', 'JANVIER', 'FÉVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN',
-                            'JUILLET', 'AOÛT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DÉCEMBRE']
-
-                date_obj['en_lettres'] = f"le {nombre_en_lettres(jour) if jour != 1 else 'premier'} {mois_noms[mois].lower()} {nombre_en_lettres(annee)}"
-                date_obj['jour_mois_lettres'] = f"{nombre_en_lettres(jour) if jour != 1 else 'premier'} {mois_noms[mois]}"
+                date_obj['en_lettres'] = f"le {nombre_en_lettres(jour) if jour != 1 else 'premier'} {MOIS_NOMS[mois]} {nombre_en_lettres(annee)}"
+                date_obj['jour_mois_lettres'] = f"{nombre_en_lettres(jour) if jour != 1 else 'premier'} {MOIS_NOMS_UPPER[mois]}"
                 date_obj['annee_lettres'] = annee_en_lettres(annee)
 
         # Générer les numéros de lots en lettres

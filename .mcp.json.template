@@ -1,4 +1,10 @@
 {
+  "_comment": "Template MCP pour NotaireAI - Copier vers .mcp.json et configurer",
+  "_instructions": [
+    "1. Copier ce fichier vers .mcp.json",
+    "2. Remplacer <YOUR_SUPABASE_ACCESS_TOKEN> par votre token personnel",
+    "3. Obtenir token Supabase: https://supabase.com/dashboard/account/tokens"
+  ],
   "mcpServers": {
     "supabase": {
       "command": "npx",
@@ -8,8 +14,22 @@
         "--project-ref=wcklvjckzktijtgakdrk"
       ],
       "env": {
-        "SUPABASE_ACCESS_TOKEN": "<YOUR_PERSONAL_ACCESS_TOKEN>"
+        "SUPABASE_ACCESS_TOKEN": "<YOUR_SUPABASE_ACCESS_TOKEN>"
       }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking@latest"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
     }
   }
 }

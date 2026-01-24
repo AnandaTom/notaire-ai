@@ -248,7 +248,7 @@
             letter-spacing: 0.02em;
         }
 
-        /* Architecture Diagram */
+        /* Architecture Diagram - Enhanced */
         .architecture-container {
             background: var(--cream);
             border: 1px solid var(--parchment-dark);
@@ -271,85 +271,216 @@
             pointer-events: none;
         }
 
-        .architecture {
-            display: grid;
-            grid-template-rows: auto auto auto;
-            gap: var(--space-2xl);
-            position: relative;
-            min-height: 400px;
+        /* 3-Layer Architecture Title */
+        .arch-title {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--parchment-dark);
         }
 
-        /* Architecture Nodes */
-        .arch-row {
+        .arch-title h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--ink-black);
+            margin-bottom: var(--space-xs);
+        }
+
+        .arch-title p {
+            font-size: 0.85rem;
+            color: var(--ink-medium);
+        }
+
+        /* Layer System */
+        .arch-layers {
             display: flex;
-            justify-content: center;
-            gap: var(--space-xl);
+            flex-direction: column;
+            gap: var(--space-lg);
         }
 
-        .arch-node {
-            background: var(--cream);
-            border: 2px solid var(--ink-medium);
+        .arch-layer {
+            background: var(--parchment);
             border-radius: 12px;
             padding: var(--space-lg);
-            text-align: center;
-            min-width: 160px;
             position: relative;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid var(--ink-medium);
+        }
+
+        .arch-layer.layer-1 {
+            border-left-color: var(--gold-primary);
+            background: linear-gradient(135deg, rgba(201, 169, 98, 0.08), rgba(201, 169, 98, 0.02));
+        }
+
+        .arch-layer.layer-2 {
+            border-left-color: var(--ink-black);
+            background: linear-gradient(135deg, rgba(10, 22, 40, 0.06), rgba(10, 22, 40, 0.02));
+        }
+
+        .arch-layer.layer-3 {
+            border-left-color: var(--success);
+            background: linear-gradient(135deg, rgba(74, 124, 89, 0.08), rgba(74, 124, 89, 0.02));
+        }
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .layer-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .layer-1 .layer-number {
+            background: var(--gold-primary);
+            color: var(--ink-black);
+        }
+
+        .layer-2 .layer-number {
+            background: var(--ink-black);
+            color: var(--gold-primary);
+        }
+
+        .layer-3 .layer-number {
+            background: var(--success);
+            color: white;
+        }
+
+        .layer-info h4 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+
+        .layer-info p {
+            font-size: 0.75rem;
+            color: var(--ink-medium);
+            margin-top: 2px;
+        }
+
+        .layer-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+        }
+
+        /* Node Cards */
+        .arch-node {
+            background: var(--cream);
+            border: 2px solid var(--parchment-dark);
+            border-radius: 10px;
+            padding: var(--space-md);
+            min-width: 140px;
+            flex: 1;
+            max-width: 200px;
+            position: relative;
+            transition: all 0.3s ease;
             cursor: pointer;
         }
 
         .arch-node:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             border-color: var(--gold-primary);
-            box-shadow: 0 12px 40px rgba(10, 22, 40, 0.15);
+            box-shadow: 0 8px 25px rgba(10, 22, 40, 0.12);
         }
 
         .arch-node.primary {
             background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
             border-color: var(--gold-primary);
             color: var(--cream);
-        }
-
-        .arch-node.primary .node-icon {
-            color: var(--gold-primary);
+            min-width: 280px;
+            max-width: 320px;
         }
 
         .arch-node.mcp {
             border-style: dashed;
+            border-color: var(--ink-medium);
         }
 
-        .arch-node.data {
-            background: linear-gradient(135deg, var(--parchment), var(--cream));
+        .arch-node.mcp:hover {
+            border-color: var(--gold-primary);
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
         }
 
         .node-icon {
-            font-size: 2rem;
-            margin-bottom: var(--space-sm);
-            display: block;
+            font-size: 1.5rem;
         }
 
         .node-title {
             font-family: var(--font-display);
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: var(--space-xs);
         }
 
-        .node-subtitle {
+        .node-description {
             font-size: 0.75rem;
             color: var(--ink-medium);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            margin-bottom: var(--space-sm);
+            line-height: 1.4;
         }
 
-        .arch-node.primary .node-subtitle {
+        .arch-node.primary .node-description {
             color: var(--gold-light);
         }
 
-        .node-status {
-            display: inline-block;
+        .node-details {
+            display: none;
             margin-top: var(--space-sm);
-            padding: var(--space-xs) var(--space-sm);
+            padding-top: var(--space-sm);
+            border-top: 1px dashed var(--parchment-dark);
+        }
+
+        .arch-node.expanded .node-details {
+            display: block;
+        }
+
+        .arch-node.primary .node-details {
+            border-top-color: var(--ink-medium);
+        }
+
+        .node-detail-item {
+            font-size: 0.7rem;
+            color: var(--ink-medium);
+            padding: 3px 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .arch-node.primary .node-detail-item {
+            color: var(--gold-light);
+        }
+
+        .node-detail-item::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--gold-primary);
+        }
+
+        .node-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: var(--space-sm);
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.65rem;
             font-weight: 600;
@@ -362,25 +493,247 @@
             color: var(--success);
         }
 
-        /* Connection Lines (SVG) */
-        .connections {
+        .status-connected::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .node-expand {
             position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--parchment-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--ink-medium);
+            transition: all 0.2s ease;
         }
 
-        .connection-line {
-            stroke: var(--gold-primary);
-            stroke-width: 1.5;
-            fill: none;
-            opacity: 0.4;
-            stroke-dasharray: 6 4;
-            animation: flow 2s linear infinite;
+        .arch-node:hover .node-expand {
+            background: var(--gold-primary);
+            color: var(--ink-black);
         }
 
-        @keyframes flow {
-            to { stroke-dashoffset: -20; }
+        .arch-node.primary .node-expand {
+            background: var(--ink-medium);
+            color: var(--gold-primary);
+        }
+
+        .arch-node.expanded .node-expand {
+            transform: rotate(45deg);
+        }
+
+        /* Pipeline Flow */
+        .pipeline-section {
+            margin-top: var(--space-xl);
+            padding: var(--space-lg);
+            background: var(--parchment);
+            border-radius: 12px;
+        }
+
+        .pipeline-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-sm);
+            overflow-x: auto;
+            padding: var(--space-sm) 0;
+        }
+
+        .pipeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .pipeline-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--cream);
+            border: 2px solid var(--ink-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: var(--space-sm);
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step:hover .pipeline-icon {
+            border-color: var(--gold-primary);
+            transform: scale(1.1);
+        }
+
+        .pipeline-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+
+        .pipeline-time {
+            font-size: 0.65rem;
+            color: var(--ink-medium);
+            margin-top: 2px;
+        }
+
+        .pipeline-arrow {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            animation: arrow-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes arrow-pulse {
+            0%, 100% { opacity: 0.4; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(3px); }
+        }
+
+        /* MCP Details Panel */
+        .mcp-details {
+            margin-top: var(--space-xl);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .mcp-card {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 10px;
+            padding: var(--space-md);
+        }
+
+        .mcp-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--parchment-dark);
+        }
+
+        .mcp-card-icon {
+            font-size: 1.5rem;
+        }
+
+        .mcp-card-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .mcp-card-status {
+            margin-left: auto;
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: rgba(74, 124, 89, 0.15);
+            color: var(--success);
+        }
+
+        .mcp-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .mcp-item {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            background: var(--parchment);
+            border-radius: 4px;
+            color: var(--ink-medium);
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        /* Scripts Categories */
+        .scripts-grid {
+            margin-top: var(--space-xl);
+        }
+
+        .scripts-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-md);
+        }
+
+        .scripts-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .script-category {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 8px;
+            padding: var(--space-md);
+        }
+
+        .script-category-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+
+        .script-category-icon {
+            font-size: 1.2rem;
+        }
+
+        .script-category-name {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .script-category-count {
+            margin-left: auto;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+        }
+
+        .script-list {
+            font-size: 0.7rem;
+            color: var(--ink-medium);
+            line-height: 1.6;
+        }
+
+        .script-list code {
+            font-family: 'SF Mono', Monaco, monospace;
+            background: var(--parchment);
+            padding: 1px 4px;
+            border-radius: 3px;
         }
 
         /* Templates Grid */
@@ -888,56 +1241,207 @@
                 <h2 class="section-title">Architecture de l'Agent</h2>
             </div>
             <div class="architecture-container">
-                <div class="architecture">
-                    <!-- Row 1: Main Agent -->
-                    <div class="arch-row">
-                        <div class="arch-node primary">
-                            <span class="node-icon">🤖</span>
-                            <div class="node-title">Claude Code</div>
-                            <div class="node-subtitle">Agent Principal</div>
+                <!-- Title -->
+                <div class="arch-title">
+                    <h3>Architecture 3 Couches</h3>
+                    <p>Separation des responsabilites pour maximiser fiabilite et maintenabilite</p>
+                </div>
+
+                <!-- 3-Layer Architecture -->
+                <div class="arch-layers">
+                    <!-- Layer 1: Directives -->
+                    <div class="arch-layer layer-1">
+                        <div class="layer-header">
+                            <span class="layer-number">1</span>
+                            <div class="layer-info">
+                                <h4>Couche Directive</h4>
+                                <p>QUOI FAIRE - Instructions en langage naturel (Markdown)</p>
+                            </div>
+                        </div>
+                        <div class="layer-content">
+                            <div class="arch-node" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">📋</span>
+                                    <span class="node-title">Directives</span>
+                                </div>
+                                <p class="node-description">SOPs en Markdown definissant les workflows</p>
+                                <div class="node-details">
+                                    <div class="node-detail-item">creer_acte.md</div>
+                                    <div class="node-detail-item">creer_promesse_vente.md</div>
+                                    <div class="node-detail-item">workflow_notaire.md</div>
+                                    <div class="node-detail-item">collecte_informations.md</div>
+                                    <div class="node-detail-item">pipeline_generation.md</div>
+                                </div>
+                            </div>
+                            <div class="arch-node" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">📚</span>
+                                    <span class="node-title">Catalogues</span>
+                                </div>
+                                <p class="node-description">Clauses, annexes et questions reutilisables</p>
+                                <div class="node-details">
+                                    <div class="node-detail-item">clauses_catalogue.json (45+ clauses)</div>
+                                    <div class="node-detail-item">annexes_catalogue.json (28+ types)</div>
+                                    <div class="node-detail-item">sections_catalogue.json</div>
+                                </div>
+                            </div>
+                            <div class="arch-node" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">❓</span>
+                                    <span class="node-title">Questions</span>
+                                </div>
+                                <p class="node-description">100+ questions structurees par type d'acte</p>
+                                <div class="node-details">
+                                    <div class="node-detail-item">questions_notaire.json (vente)</div>
+                                    <div class="node-detail-item">questions_promesse_vente.json</div>
+                                    <div class="node-detail-item">questions_reglement_copro.json</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Row 2: MCP Servers -->
-                    <div class="arch-row">
-                        <div class="arch-node mcp">
-                            <span class="node-icon">🗄️</span>
-                            <div class="node-title">Supabase</div>
-                            <div class="node-subtitle">Base de donnees</div>
-                            <span class="node-status status-connected">Connecte</span>
+                    <!-- Layer 2: Orchestration -->
+                    <div class="arch-layer layer-2">
+                        <div class="layer-header">
+                            <span class="layer-number">2</span>
+                            <div class="layer-info">
+                                <h4>Couche Orchestration</h4>
+                                <p>DECISION - Agent IA + Serveurs MCP connectes</p>
+                            </div>
                         </div>
-                        <div class="arch-node mcp">
-                            <span class="node-icon">💳</span>
-                            <div class="node-title">Stripe</div>
-                            <div class="node-subtitle">Paiements</div>
-                            <span class="node-status status-connected">Connecte</span>
-                        </div>
-                        <div class="arch-node mcp">
-                            <span class="node-icon">📁</span>
-                            <div class="node-title">File System</div>
-                            <div class="node-subtitle">Fichiers locaux</div>
-                            <span class="node-status status-connected">Actif</span>
+                        <div class="layer-content">
+                            <div class="arch-node primary" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">🤖</span>
+                                    <span class="node-title">Claude Code (Opus 4.5)</span>
+                                </div>
+                                <p class="node-description">Agent principal - Routage intelligent, lecture directives, appel scripts, gestion erreurs, enrichissement continu</p>
+                                <div class="node-details">
+                                    <div class="node-detail-item">Lit et suit les directives</div>
+                                    <div class="node-detail-item">Appelle les scripts d'execution</div>
+                                    <div class="node-detail-item">Dialogue avec le notaire</div>
+                                    <div class="node-detail-item">Self-anneal: corrige et documente</div>
+                                    <div class="node-detail-item">Enrichit les catalogues</div>
+                                </div>
+                            </div>
+                            <div class="arch-node mcp" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">🗄️</span>
+                                    <span class="node-title">Supabase MCP</span>
+                                </div>
+                                <p class="node-description">Base PostgreSQL pour clients et historique</p>
+                                <span class="node-status status-connected">Connecte</span>
+                                <div class="node-details" id="supabaseDetails"></div>
+                            </div>
+                            <div class="arch-node mcp" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">💳</span>
+                                    <span class="node-title">Stripe MCP</span>
+                                </div>
+                                <p class="node-description">Facturation et abonnements</p>
+                                <span class="node-status status-connected">Mode Test</span>
+                                <div class="node-details" id="stripeDetails"></div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Row 3: Data Layer -->
-                    <div class="arch-row">
-                        <div class="arch-node data">
-                            <span class="node-icon">📄</span>
-                            <div class="node-title">Templates</div>
-                            <div class="node-subtitle">4 types d'actes</div>
+                    <!-- Layer 3: Execution -->
+                    <div class="arch-layer layer-3">
+                        <div class="layer-header">
+                            <span class="layer-number">3</span>
+                            <div class="layer-info">
+                                <h4>Couche Execution</h4>
+                                <p>FAIRE LE TRAVAIL - Scripts Python deterministes et testables</p>
+                            </div>
                         </div>
-                        <div class="arch-node data">
-                            <span class="node-icon">📋</span>
-                            <div class="node-title">Schemas</div>
-                            <div class="node-subtitle">15 fichiers JSON</div>
-                        </div>
-                        <div class="arch-node data">
-                            <span class="node-icon">⚙️</span>
-                            <div class="node-title">Scripts</div>
-                            <div class="node-subtitle">66 scripts Python</div>
+                        <div class="layer-content">
+                            <div class="arch-node" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">📄</span>
+                                    <span class="node-title">Templates</span>
+                                </div>
+                                <p class="node-description">4 templates Jinja2 (Markdown)</p>
+                                <div class="node-details" id="templatesDetails"></div>
+                            </div>
+                            <div class="arch-node" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">📋</span>
+                                    <span class="node-title">Schemas</span>
+                                </div>
+                                <p class="node-description">15 schemas JSON de validation</p>
+                                <div class="node-details">
+                                    <div class="node-detail-item">variables_vente.json (361 vars)</div>
+                                    <div class="node-detail-item">variables_promesse.json (298 vars)</div>
+                                    <div class="node-detail-item">variables_reglement.json (116 vars)</div>
+                                    <div class="node-detail-item">variables_modificatif.json (60 vars)</div>
+                                </div>
+                            </div>
+                            <div class="arch-node" onclick="toggleNode(this)">
+                                <span class="node-expand">+</span>
+                                <div class="node-header">
+                                    <span class="node-icon">⚙️</span>
+                                    <span class="node-title">Scripts</span>
+                                </div>
+                                <p class="node-description" id="scriptsCount">66 scripts Python</p>
+                                <div class="node-details" id="scriptsDetails"></div>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Pipeline Flow -->
+                <div class="pipeline-section">
+                    <div class="pipeline-title">
+                        <span>⚡</span> Pipeline de Generation (~5.7s total)
+                    </div>
+                    <div class="pipeline-flow">
+                        <div class="pipeline-step">
+                            <div class="pipeline-icon">💬</div>
+                            <span class="pipeline-label">Collecte</span>
+                            <span class="pipeline-time">Dialogue</span>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-step">
+                            <div class="pipeline-icon">✓</div>
+                            <span class="pipeline-label">Validation</span>
+                            <span class="pipeline-time">0.2s</span>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-step">
+                            <div class="pipeline-icon">🔧</div>
+                            <span class="pipeline-label">Assemblage</span>
+                            <span class="pipeline-time">1.5s</span>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-step">
+                            <div class="pipeline-icon">📄</div>
+                            <span class="pipeline-label">Export DOCX</span>
+                            <span class="pipeline-time">3.5s</span>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-step">
+                            <div class="pipeline-icon">📊</div>
+                            <span class="pipeline-label">Verification</span>
+                            <span class="pipeline-time">0.5s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MCP Details -->
+                <div class="mcp-details" id="mcpDetails"></div>
+
+                <!-- Scripts Categories -->
+                <div class="scripts-grid">
+                    <div class="scripts-title">Categories de Scripts</div>
+                    <div class="scripts-categories" id="scriptsCategories"></div>
                 </div>
             </div>
         </section>
@@ -1017,6 +1521,11 @@
     </footer>
 
     <script>
+        // Toggle node expansion
+        function toggleNode(element) {
+            element.classList.toggle('expanded');
+        }
+
         async function loadData() {
             try {
                 const response = await fetch('data/status.json');
@@ -1032,10 +1541,10 @@
             return {
                 lastUpdate: new Date().toISOString(),
                 templates: [
-                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 37 },
-                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 21 },
-                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 22 },
-                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 12 }
+                    { name: "Vente lots copropriete", file: "vente_lots_copropriete.md", conformity: 85.1, status: "prod", bookmarks: 361, sections: 37 },
+                    { name: "Promesse de vente", file: "promesse_vente_lots_copropriete.md", conformity: 60.9, status: "dev", bookmarks: 298, sections: 21 },
+                    { name: "Reglement copropriete", file: "reglement_copropriete_edd.md", conformity: 85.5, status: "prod", bookmarks: 116, sections: 22 },
+                    { name: "Modificatif EDD", file: "modificatif_edd.md", conformity: 91.7, status: "prod", bookmarks: 60, sections: 12 }
                 ],
                 tasks: {
                     todo: ["Enrichir template promesse", "Extraction titre propriete"],
@@ -1057,7 +1566,11 @@
                     { icon: "🗄️", name: "Historique", description: "Supabase + offline" },
                     { icon: "⚡", name: "Rapide", description: "~6 secondes" }
                 ],
-                metrics: { conformiteMoyenne: 80.8, scriptsCount: 66, tempsGenerationMoyen: "5.7s" }
+                metrics: { conformiteMoyenne: 80.8, scriptsCount: 66, tempsGenerationMoyen: "5.7s", schemasCount: 15 },
+                mcpServers: {
+                    supabase: { status: "connected", projectRef: "wcklvjckzktijtgakdrk", tables: ["clients", "actes", "historique", "variables", "templates"] },
+                    stripe: { status: "connected", mode: "test", products: 3 }
+                }
             };
         }
 
@@ -1071,7 +1584,145 @@
                 document.getElementById('metricConformity').textContent = data.metrics.conformiteMoyenne + '%';
                 document.getElementById('metricScripts').textContent = data.metrics.scriptsCount;
                 document.getElementById('metricSpeed').textContent = data.metrics.tempsGenerationMoyen;
+                document.getElementById('scriptsCount').textContent = data.metrics.scriptsCount + ' scripts Python';
             }
+
+            // Update MCP Details
+            if (data.mcpServers) {
+                const mcpHtml = `
+                    <div class="mcp-card">
+                        <div class="mcp-card-header">
+                            <span class="mcp-card-icon">🗄️</span>
+                            <span class="mcp-card-title">Supabase</span>
+                            <span class="mcp-card-status">${data.mcpServers.supabase.status}</span>
+                        </div>
+                        <div class="mcp-items">
+                            ${data.mcpServers.supabase.tables.map(t => `<span class="mcp-item">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="mcp-card">
+                        <div class="mcp-card-header">
+                            <span class="mcp-card-icon">💳</span>
+                            <span class="mcp-card-title">Stripe</span>
+                            <span class="mcp-card-status">${data.mcpServers.stripe.mode}</span>
+                        </div>
+                        <div class="mcp-items">
+                            <span class="mcp-item">${data.mcpServers.stripe.products} produits</span>
+                            <span class="mcp-item">Paiements</span>
+                            <span class="mcp-item">Abonnements</span>
+                            <span class="mcp-item">Factures</span>
+                        </div>
+                    </div>
+                    <div class="mcp-card">
+                        <div class="mcp-card-header">
+                            <span class="mcp-card-icon">📁</span>
+                            <span class="mcp-card-title">File System</span>
+                            <span class="mcp-card-status">actif</span>
+                        </div>
+                        <div class="mcp-items">
+                            <span class="mcp-item">templates/</span>
+                            <span class="mcp-item">schemas/</span>
+                            <span class="mcp-item">execution/</span>
+                            <span class="mcp-item">directives/</span>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('mcpDetails').innerHTML = mcpHtml;
+
+                // Update Supabase details in architecture
+                const supabaseDetails = document.getElementById('supabaseDetails');
+                if (supabaseDetails) {
+                    supabaseDetails.innerHTML = data.mcpServers.supabase.tables.map(t =>
+                        `<div class="node-detail-item">${t}</div>`
+                    ).join('');
+                }
+
+                // Update Stripe details in architecture
+                const stripeDetails = document.getElementById('stripeDetails');
+                if (stripeDetails) {
+                    stripeDetails.innerHTML = `
+                        <div class="node-detail-item">${data.mcpServers.stripe.products} produits configures</div>
+                        <div class="node-detail-item">Mode: ${data.mcpServers.stripe.mode}</div>
+                        <div class="node-detail-item">Paiements uniques</div>
+                        <div class="node-detail-item">Abonnements mensuels</div>
+                    `;
+                }
+            }
+
+            // Update Templates details in architecture
+            const templatesDetails = document.getElementById('templatesDetails');
+            if (templatesDetails && data.templates) {
+                templatesDetails.innerHTML = data.templates.map(t =>
+                    `<div class="node-detail-item">${t.file || t.name} (${t.conformity}%)</div>`
+                ).join('');
+            }
+
+            // Update Scripts details in architecture
+            const scriptsDetails = document.getElementById('scriptsDetails');
+            if (scriptsDetails) {
+                scriptsDetails.innerHTML = `
+                    <div class="node-detail-item">assembler_acte.py</div>
+                    <div class="node-detail-item">exporter_docx.py</div>
+                    <div class="node-detail-item">valider_acte.py</div>
+                    <div class="node-detail-item">workflow_rapide.py</div>
+                    <div class="node-detail-item">comparer_documents.py</div>
+                `;
+            }
+
+            // Scripts categories
+            const scriptsCategoriesHtml = `
+                <div class="script-category">
+                    <div class="script-category-header">
+                        <span class="script-category-icon">📄</span>
+                        <span class="script-category-name">Generation</span>
+                        <span class="script-category-count">8</span>
+                    </div>
+                    <div class="script-list">
+                        <code>assembler_acte.py</code>, <code>exporter_docx.py</code>, <code>exporter_pdf.py</code>, <code>workflow_rapide.py</code>
+                    </div>
+                </div>
+                <div class="script-category">
+                    <div class="script-category-header">
+                        <span class="script-category-icon">✅</span>
+                        <span class="script-category-name">Validation</span>
+                        <span class="script-category-count">6</span>
+                    </div>
+                    <div class="script-list">
+                        <code>valider_acte.py</code>, <code>comparer_documents.py</code>, <code>test_fiabilite.py</code>
+                    </div>
+                </div>
+                <div class="script-category">
+                    <div class="script-category-header">
+                        <span class="script-category-icon">🔍</span>
+                        <span class="script-category-name">Analyse</span>
+                        <span class="script-category-count">5</span>
+                    </div>
+                    <div class="script-list">
+                        <code>extraire_bookmarks.py</code>, <code>detecter_type_acte.py</code>, <code>suggerer_clauses.py</code>
+                    </div>
+                </div>
+                <div class="script-category">
+                    <div class="script-category-header">
+                        <span class="script-category-icon">💾</span>
+                        <span class="script-category-name">Donnees</span>
+                        <span class="script-category-count">7</span>
+                    </div>
+                    <div class="script-list">
+                        <code>generer_donnees_test.py</code>, <code>historique_supabase.py</code>, <code>collecter_informations.py</code>
+                    </div>
+                </div>
+                <div class="script-category">
+                    <div class="script-category-header">
+                        <span class="script-category-icon">🔧</span>
+                        <span class="script-category-name">Utilitaires</span>
+                        <span class="script-category-count">10</span>
+                    </div>
+                    <div class="script-list">
+                        <code>update_dashboard.py</code>, <code>enrichir_prets.py</code>, <code>generer_donnees_minimales.py</code>
+                    </div>
+                </div>
+            `;
+            document.getElementById('scriptsCategories').innerHTML = scriptsCategoriesHtml;
 
             // Templates
             const templatesHtml = data.templates.map((t, i) => `
