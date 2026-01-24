@@ -940,7 +940,7 @@ Les conclusions sont les suivantes :
 {% if diagnostics.carnet_logement or diagnostics.carnet_information_logement %}
 ### **Carnet d'information du logement**
 
-Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement {% if diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe %}a été établi et est communiqué{% else %}sera établi et communiqué{% endif %} au **BENEFICIAIRE**.
+Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement {% if diagnostics.carnet_logement or (diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe) %}a été établi et est communiqué{% else %}sera établi et communiqué{% endif %} au **BENEFICIAIRE**.
 
 Le **PROMETTANT** s'engage à transmettre au **BENEFICIAIRE** une copie de ce carnet d'information au plus tard à la date de signature de l'acte authentique de vente.
 
