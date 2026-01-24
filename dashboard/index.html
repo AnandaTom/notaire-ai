@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotaireAI | Tableau de Bord</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Notarial Color Palette */
+            --ink-black: #0a1628;
+            --ink-deep: #1a2744;
+            --ink-medium: #2d3f5f;
+            --gold-primary: #c9a962;
+            --gold-light: #e8d5a3;
+            --gold-dark: #9a7b3a;
+            --parchment: #f8f5ef;
+            --parchment-dark: #e8e2d6;
+            --cream: #fffcf5;
+            --seal-red: #8b3a3a;
+            --success: #4a7c59;
+            --warning: #b8860b;
+
+            /* Typography */
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--parchment);
+            color: var(--ink-black);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Parchment texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--ink-black) 0%, var(--ink-deep) 100%);
+            padding: var(--space-xl) var(--space-2xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary) 30%, var(--gold-primary) 70%, transparent);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+
+        .seal {
+            width: 64px;
+            height: 64px;
+            border: 2px solid var(--gold-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: seal-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes seal-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(201, 169, 98, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(201, 169, 98, 0.5); }
+        }
+
+        .seal-inner {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ink-black);
+        }
+
+        .brand h1 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--cream);
+            letter-spacing: 0.05em;
+        }
+
+        .brand p {
+            font-size: 0.85rem;
+            color: var(--gold-light);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: var(--space-xs);
+        }
+
+        .header-meta {
+            text-align: right;
+            color: var(--parchment-dark);
+        }
+
+        .header-meta .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gold-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .header-meta .value {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--cream);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-2xl);
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: var(--space-3xl);
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        .section:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--parchment-dark);
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--gold-primary);
+        }
+
+        .section-number {
+            width: 36px;
+            height: 36px;
+            background: var(--ink-black);
+            color: var(--gold-primary);
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            letter-spacing: 0.02em;
+        }
+
+        /* Architecture Diagram */
+        .architecture-container {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 8px;
+            padding: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .architecture-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(201, 169, 98, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(201, 169, 98, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .architecture {
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: var(--space-2xl);
+            position: relative;
+            min-height: 400px;
+        }
+
+        /* Architecture Nodes */
+        .arch-row {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+        }
+
+        .arch-node {
+            background: var(--cream);
+            border: 2px solid var(--ink-medium);
+            border-radius: 12px;
+            padding: var(--space-lg);
+            text-align: center;
+            min-width: 160px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .arch-node:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold-primary);
+            box-shadow: 0 12px 40px rgba(10, 22, 40, 0.15);
+        }
+
+        .arch-node.primary {
+            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
+            border-color: var(--gold-primary);
+            color: var(--cream);
+        }
+
+        .arch-node.primary .node-icon {
+            color: var(--gold-primary);
+        }
+
+        .arch-node.mcp {
+            border-style: dashed;
+        }
+
+        .arch-node.data {
+            background: linear-gradient(135deg, var(--parchment), var(--cream));
+        }
+
+        .node-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+            display: block;
+        }
+
+        .node-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .node-subtitle {
+            font-size: 0.75rem;
+            color: var(--ink-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .arch-node.primary .node-subtitle {
+            color: var(--gold-light);
+        }
+
+        .node-status {
+            display: inline-block;
+            margin-top: var(--space-sm);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-connected {
+            background: rgba(74, 124, 89, 0.15);
+            color: var(--success);
+        }
+
+        /* Connection Lines (SVG) */
+        .connections {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .connection-line {
+            stroke: var(--gold-primary);
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0.4;
+            stroke-dasharray: 6 4;
+            animation: flow 2s linear infinite;
+        }
+
+        @keyframes flow {
+            to { stroke-dashoffset: -20; }
+        }
+
+        /* Templates Grid */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .template-card {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 8px 30px rgba(10, 22, 40, 0.1);
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--ink-medium);
+            transition: background 0.3s ease;
+        }
+
+        .template-card.prod::before {
+            background: var(--success);
+        }
+
+        .template-card.dev::before {
+            background: var(--warning);
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .template-name {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+
+        .template-meta {
+            font-size: 0.8rem;
+            color: var(--ink-medium);
+            margin-top: var(--space-xs);
+        }
+
+        .template-badge {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-prod {
+            background: rgba(74, 124, 89, 0.15);
+            color: var(--success);
+        }
+
+        .badge-dev {
+            background: rgba(184, 134, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .conformity-bar {
+            margin-top: var(--space-md);
+        }
+
+        .conformity-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--ink-medium);
+            margin-bottom: var(--space-xs);
+        }
+
+        .conformity-value {
+            font-weight: 700;
+            color: var(--ink-black);
+        }
+
+        .conformity-track {
+            height: 8px;
+            background: var(--parchment-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .conformity-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+            position: relative;
+        }
+
+        .conformity-fill.high {
+            background: linear-gradient(90deg, var(--success), #5a9c6a);
+        }
+
+        .conformity-fill.medium {
+            background: linear-gradient(90deg, var(--warning), #d4a017);
+        }
+
+        /* Tasks Kanban */
+        .kanban {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        @media (max-width: 900px) {
+            .kanban {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .kanban-column {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .kanban-header {
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--parchment-dark);
+        }
+
+        .kanban-header.todo {
+            background: var(--parchment);
+        }
+
+        .kanban-header.progress {
+            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
+            color: var(--cream);
+        }
+
+        .kanban-header.done {
+            background: rgba(74, 124, 89, 0.1);
+        }
+
+        .kanban-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .kanban-count {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--parchment-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: var(--font-body);
+        }
+
+        .kanban-header.progress .kanban-count {
+            background: var(--gold-primary);
+            color: var(--ink-black);
+        }
+
+        .kanban-header.done .kanban-count {
+            background: var(--success);
+            color: var(--cream);
+        }
+
+        .kanban-body {
+            padding: var(--space-md);
+            min-height: 200px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-sm);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .kanban-column:nth-child(1) .task-item {
+            background: var(--parchment);
+            border-left-color: var(--ink-medium);
+        }
+
+        .kanban-column:nth-child(2) .task-item {
+            background: rgba(201, 169, 98, 0.1);
+            border-left-color: var(--gold-primary);
+        }
+
+        .kanban-column:nth-child(3) .task-item {
+            background: rgba(74, 124, 89, 0.08);
+            border-left-color: var(--success);
+            color: var(--ink-medium);
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .team-card {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            display: flex;
+            gap: var(--space-md);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            border-color: var(--gold-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(10, 22, 40, 0.1);
+        }
+
+        .team-avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .team-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--cream);
+        }
+
+        .team-avatar.active::after {
+            background: var(--success);
+        }
+
+        .team-avatar.setup::after {
+            background: var(--warning);
+        }
+
+        .team-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .team-name {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+
+        .team-role {
+            font-size: 0.75rem;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: var(--space-xs);
+        }
+
+        .team-branch {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.8rem;
+            color: var(--ink-medium);
+            background: var(--parchment);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 4px;
+            margin-top: var(--space-sm);
+            display: inline-block;
+        }
+
+        .team-commit {
+            font-size: 0.75rem;
+            color: var(--ink-medium);
+            margin-top: var(--space-sm);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Capabilities */
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .capability-item {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .capability-item:hover {
+            border-color: var(--gold-primary);
+            transform: translateY(-2px);
+        }
+
+        .capability-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+            display: block;
+        }
+
+        .capability-name {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-xs);
+        }
+
+        .capability-desc {
+            font-size: 0.75rem;
+            color: var(--ink-medium);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--ink-black);
+            padding: var(--space-xl) var(--space-2xl);
+            margin-top: var(--space-3xl);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            color: var(--ink-medium);
+            font-size: 0.85rem;
+        }
+
+        .footer-text span {
+            color: var(--gold-primary);
+        }
+
+        .footer-link {
+            color: var(--gold-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--gold-light);
+        }
+
+        /* Metrics Bar */
+        .metrics-bar {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2xl);
+            padding: var(--space-lg);
+            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
+            border-radius: 8px;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--parchment-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: var(--space-xs);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--parchment);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--ink-medium);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="seal">
+                    <div class="seal-inner">N</div>
+                </div>
+                <div class="brand">
+                    <h1>NotaireAI</h1>
+                    <p>Agent Intelligent pour Actes Notariaux</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div class="label">Derniere mise a jour</div>
+                <div class="value" id="lastUpdate">-</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Metrics Bar -->
+        <div class="metrics-bar">
+            <div class="metric-item">
+                <div class="metric-value" id="metricTemplates">4</div>
+                <div class="metric-label">Templates</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="metricConformity">80.8%</div>
+                <div class="metric-label">Conformite</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="metricScripts">66</div>
+                <div class="metric-label">Scripts</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="metricSpeed">5.7s</div>
+                <div class="metric-label">Generation</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="metricTeam">3</div>
+                <div class="metric-label">Developpeurs</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Architecture -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-number">I</span>
+                <h2 class="section-title">Architecture de l'Agent</h2>
+            </div>
+            <div class="architecture-container">
+                <div class="architecture">
+                    <!-- Row 1: Main Agent -->
+                    <div class="arch-row">
+                        <div class="arch-node primary">
+                            <span class="node-icon">🤖</span>
+                            <div class="node-title">Claude Code</div>
+                            <div class="node-subtitle">Agent Principal</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: MCP Servers -->
+                    <div class="arch-row">
+                        <div class="arch-node mcp">
+                            <span class="node-icon">🗄️</span>
+                            <div class="node-title">Supabase</div>
+                            <div class="node-subtitle">Base de donnees</div>
+                            <span class="node-status status-connected">Connecte</span>
+                        </div>
+                        <div class="arch-node mcp">
+                            <span class="node-icon">💳</span>
+                            <div class="node-title">Stripe</div>
+                            <div class="node-subtitle">Paiements</div>
+                            <span class="node-status status-connected">Connecte</span>
+                        </div>
+                        <div class="arch-node mcp">
+                            <span class="node-icon">📁</span>
+                            <div class="node-title">File System</div>
+                            <div class="node-subtitle">Fichiers locaux</div>
+                            <span class="node-status status-connected">Actif</span>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Data Layer -->
+                    <div class="arch-row">
+                        <div class="arch-node data">
+                            <span class="node-icon">📄</span>
+                            <div class="node-title">Templates</div>
+                            <div class="node-subtitle">4 types d'actes</div>
+                        </div>
+                        <div class="arch-node data">
+                            <span class="node-icon">📋</span>
+                            <div class="node-title">Schemas</div>
+                            <div class="node-subtitle">15 fichiers JSON</div>
+                        </div>
+                        <div class="arch-node data">
+                            <span class="node-icon">⚙️</span>
+                            <div class="node-title">Scripts</div>
+                            <div class="node-subtitle">66 scripts Python</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Templates -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-number">II</span>
+                <h2 class="section-title">Etat des Templates</h2>
+            </div>
+            <div class="templates-grid" id="templatesGrid"></div>
+        </section>
+
+        <!-- Section 3: Tasks -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-number">III</span>
+                <h2 class="section-title">Suivi des Taches</h2>
+            </div>
+            <div class="kanban">
+                <div class="kanban-column">
+                    <div class="kanban-header todo">
+                        <span class="kanban-title">A Faire</span>
+                        <span class="kanban-count" id="todoCount">0</span>
+                    </div>
+                    <div class="kanban-body" id="todoList"></div>
+                </div>
+                <div class="kanban-column">
+                    <div class="kanban-header progress">
+                        <span class="kanban-title">En Cours</span>
+                        <span class="kanban-count" id="progressCount">0</span>
+                    </div>
+                    <div class="kanban-body" id="progressList"></div>
+                </div>
+                <div class="kanban-column">
+                    <div class="kanban-header done">
+                        <span class="kanban-title">Termine</span>
+                        <span class="kanban-count" id="doneCount">0</span>
+                    </div>
+                    <div class="kanban-body" id="doneList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Team -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-number">IV</span>
+                <h2 class="section-title">Equipe & Branches</h2>
+            </div>
+            <div class="team-grid" id="teamGrid"></div>
+        </section>
+
+        <!-- Section 5: Capabilities -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-number">V</span>
+                <h2 class="section-title">Capacites de l'Agent</h2>
+            </div>
+            <div class="capabilities-grid" id="capabilitiesGrid"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                NotaireAI Dashboard v1.0 | <span>Maitre Charlotte Diaz</span>
+            </div>
+            <a href="https://github.com/AnandaTom/notaire-ai" target="_blank" class="footer-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                Repository
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        async function loadData() {
+            try {
+                const response = await fetch('data/status.json');
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.log('Loading default data...');
+                updateDashboard(getDefaultData());
+            }
+        }
+
+        function getDefaultData() {
+            return {
+                lastUpdate: new Date().toISOString(),
+                templates: [
+                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 37 },
+                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 21 },
+                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 22 },
+                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 12 }
+                ],
+                tasks: {
+                    todo: ["Enrichir template promesse", "Extraction titre propriete"],
+                    inProgress: ["Dashboard temps reel", "Workflow 3 devs"],
+                    done: ["Template vente 85%", "Auto-sync v2", "Integration Supabase"]
+                },
+                team: [
+                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev", lastCommit: "docs: guides" },
+                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend", lastCommit: "feat: formulaires" },
+                    { name: "Payoss", branch: "payoss/dev", status: "setup", role: "Backend", lastCommit: "Initial setup" }
+                ],
+                capabilities: [
+                    { icon: "📄", name: "Generer actes", description: "DOCX/PDF fideles" },
+                    { icon: "💬", name: "Dialogue", description: "Collecte interactive" },
+                    { icon: "✅", name: "Validation", description: "Coherence donnees" },
+                    { icon: "🔍", name: "Detection", description: "Type automatique" },
+                    { icon: "💡", name: "Suggestions", description: "Clauses contextuelles" },
+                    { icon: "📊", name: "Conformite", description: "Score automatique" },
+                    { icon: "🗄️", name: "Historique", description: "Supabase + offline" },
+                    { icon: "⚡", name: "Rapide", description: "~6 secondes" }
+                ],
+                metrics: { conformiteMoyenne: 80.8, scriptsCount: 66, tempsGenerationMoyen: "5.7s" }
+            };
+        }
+
+        function updateDashboard(data) {
+            // Update timestamp
+            document.getElementById('lastUpdate').textContent =
+                new Date(data.lastUpdate).toLocaleString('fr-FR');
+
+            // Update metrics
+            if (data.metrics) {
+                document.getElementById('metricConformity').textContent = data.metrics.conformiteMoyenne + '%';
+                document.getElementById('metricScripts').textContent = data.metrics.scriptsCount;
+                document.getElementById('metricSpeed').textContent = data.metrics.tempsGenerationMoyen;
+            }
+
+            // Templates
+            const templatesHtml = data.templates.map((t, i) => `
+                <div class="template-card ${t.status}" style="animation-delay: ${i * 0.1}s">
+                    <div class="template-header">
+                        <div>
+                            <div class="template-name">${t.name}</div>
+                            <div class="template-meta">${t.bookmarks} bookmarks · ${t.sections} sections</div>
+                        </div>
+                        <span class="template-badge badge-${t.status}">${t.status === 'prod' ? 'Production' : 'Developpement'}</span>
+                    </div>
+                    <div class="conformity-bar">
+                        <div class="conformity-label">
+                            <span>Conformite</span>
+                            <span class="conformity-value">${t.conformity}%</span>
+                        </div>
+                        <div class="conformity-track">
+                            <div class="conformity-fill ${t.conformity >= 80 ? 'high' : 'medium'}" style="width: ${t.conformity}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('templatesGrid').innerHTML = templatesHtml;
+
+            // Tasks
+            const createTask = (task) => `<div class="task-item">${task}</div>`;
+
+            document.getElementById('todoList').innerHTML = data.tasks.todo.map(createTask).join('');
+            document.getElementById('progressList').innerHTML = data.tasks.inProgress.map(createTask).join('');
+            document.getElementById('doneList').innerHTML = data.tasks.done.map(createTask).join('');
+
+            document.getElementById('todoCount').textContent = data.tasks.todo.length;
+            document.getElementById('progressCount').textContent = data.tasks.inProgress.length;
+            document.getElementById('doneCount').textContent = data.tasks.done.length;
+
+            // Team
+            const teamHtml = data.team.map(member => `
+                <div class="team-card">
+                    <div class="team-avatar ${member.status}">${member.name[0]}</div>
+                    <div class="team-info">
+                        <div class="team-name">${member.name}</div>
+                        <div class="team-role">${member.role}</div>
+                        <div class="team-branch">${member.branch}</div>
+                        <div class="team-commit">${member.lastCommit}</div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('teamGrid').innerHTML = teamHtml;
+
+            // Capabilities
+            const capabilitiesHtml = data.capabilities.map(cap => `
+                <div class="capability-item">
+                    <span class="capability-icon">${cap.icon}</span>
+                    <div class="capability-name">${cap.name}</div>
+                    <div class="capability-desc">${cap.description}</div>
+                </div>
+            `).join('');
+            document.getElementById('capabilitiesGrid').innerHTML = capabilitiesHtml;
+        }
+
+        // Load and auto-refresh
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
