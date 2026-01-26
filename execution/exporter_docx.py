@@ -40,7 +40,8 @@ from docx.oxml import OxmlElement
 # =============================================================================
 
 # Option pour conserver les zones grisees sur les variables remplies
-ZONES_GRISEES_ACTIVES = False
+# TOUJOURS actif pour correspondre aux trames originales des notaires
+ZONES_GRISEES_ACTIVES = True
 
 # Marqueurs pour identifier les variables remplies (inseres par assembler_acte.py)
 # Format: <<<VAR_START>>>valeur<<<VAR_END>>>
@@ -1232,6 +1233,82 @@ def ajouter_pagination(doc: Document):
         run._r.append(fld_char_end)
 
 
+def configurer_header_premiere_page(doc: Document, lignes_vides: int = 20):
+    """
+    Configure le header de la premiere page avec des paragraphes vides.
+
+    Cette technique est utilisee dans les documents originaux pour creer
+    l'espace vide d'environ 50% en haut de la premiere page.
+    Le contenu (reference, initiales, date) sera ajoute ensuite.
+
+    Args:
+        doc: Document Word
+        lignes_vides: Nombre de paragraphes vides (defaut: 20, comme l'original)
+    """
+    for section in doc.sections:
+        # Acceder au header de premiere page
+        first_header = section.first_page_header
+        first_header.is_linked_to_previous = False
+
+        # Ajouter les paragraphes vides pour creer l'espace
+        for i in range(lignes_vides):
+            para = first_header.add_paragraph()
+            para.paragraph_format.space_after = Pt(0)
+            para.paragraph_format.space_before = Pt(0)
+            # Chaque paragraphe vide fait environ 11pt de hauteur (taille police)
+            # 20 * 11pt = 220pt = environ 77mm, plus les marges = ~50% de la page
+
+
+def ajouter_contenu_header_premiere_page(doc: Document, reference: str, initiales: str, date_str: str):
+    """
+    Ajoute le contenu (reference, initiales, date) au header de premiere page.
+
+    Args:
+        doc: Document Word
+        reference: Numero de reference (ex: "100546101")
+        initiales: Initiales du notaire (ex: "CDI/ALG/")
+        date_str: Date formatee (ex: "Le 4 août 2025")
+    """
+    for section in doc.sections:
+        first_header = section.first_page_header
+
+        # Reference - centree
+        if reference:
+            para = first_header.add_paragraph()
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            para.paragraph_format.space_after = Pt(0)
+            para.paragraph_format.space_before = Pt(0)
+            run = para.add_run(reference)
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(11)
+
+        # Initiales - centrees
+        if initiales:
+            para = first_header.add_paragraph()
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            para.paragraph_format.space_after = Pt(0)
+            para.paragraph_format.space_before = Pt(0)
+            run = para.add_run(initiales)
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(11)
+
+        # Ligne vide
+        para = first_header.add_paragraph()
+        para.paragraph_format.space_after = Pt(0)
+        para.paragraph_format.space_before = Pt(0)
+
+        # Date - centree, bold
+        if date_str:
+            para = first_header.add_paragraph()
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            para.paragraph_format.space_after = Pt(0)
+            para.paragraph_format.space_before = Pt(0)
+            run = para.add_run(date_str)
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(11)
+            run.bold = True
+
+
 # =============================================================================
 # FORMATAGE MARKDOWN
 # =============================================================================
@@ -1499,6 +1576,7 @@ def convertir_contenu_vers_docx(contenu: str, doc: Document):
     in_html_block = False
     in_first_page_header = False
     first_page_header_started = False
+    first_page_header_content = []  # Collecter le contenu du header premiere page
     in_box = False
     box_table = None
 
@@ -1526,30 +1604,33 @@ def convertir_contenu_vers_docx(contenu: str, doc: Document):
         if '{FIRST_PAGE_HEADER_START}' in ligne_strip:
             in_first_page_header = True
             first_page_header_started = True
-            # Ajouter un grand espace en haut de la premiere page (environ 10cm)
-            para_espace = doc.add_paragraph()
-            para_espace.paragraph_format.space_before = Mm(100)  # 10 cm d'espace avant
-            para_espace.paragraph_format.space_after = Pt(0)
+            first_page_header_content = []  # Reset le buffer
             i += 1
             continue
         if '{FIRST_PAGE_HEADER_END}' in ligne_strip:
             in_first_page_header = False
-            # Ajouter un espace après le header (environ 1cm)
-            para_espace_apres = doc.add_paragraph()
-            para_espace_apres.paragraph_format.space_after = Mm(10)
+            # Analyser le contenu collecte et l'ajouter au vrai header Word
+            # Format attendu: reference (ligne 1), initiales (ligne 2), date (ligne 3+)
+            reference = ""
+            initiales = ""
+            date_str = ""
+            for idx, line in enumerate(first_page_header_content):
+                if idx == 0:
+                    reference = line
+                elif idx == 1:
+                    initiales = line
+                else:
+                    date_str = line
+                    break
+            # Configurer le header de premiere page avec l'espace vide + contenu
+            configurer_header_premiere_page(doc, lignes_vides=20)
+            ajouter_contenu_header_premiere_page(doc, reference, initiales, date_str)
             i += 1
             continue
 
-        # Traiter ligne header de premiere page (reference, initiales, date)
+        # Collecter ligne header de premiere page (reference, initiales, date)
         if in_first_page_header and ligne_strip:
-            para = doc.add_paragraph()
-            para.alignment = WD_ALIGN_PARAGRAPH.CENTER  # Centré comme dans l'original
-            para.paragraph_format.space_after = Pt(0)
-            para.paragraph_format.space_before = Pt(0)
-            para.paragraph_format.first_line_indent = Mm(0)  # Pas de retrait
-            para.paragraph_format.left_indent = Mm(0)  # Pas d'indentation
-            run = para.add_run(ligne_strip)
-            appliquer_police(run)
+            first_page_header_content.append(ligne_strip)
             i += 1
             continue
 

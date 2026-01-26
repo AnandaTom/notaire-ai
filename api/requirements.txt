@@ -1,0 +1,21 @@
+# Dépendances API NotaireAI
+# Installation: pip install -r api/requirements.txt
+
+# Framework web
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Modèles
+pydantic>=2.5.0
+
+# Supabase
+supabase>=2.0.0
+
+# Les dépendances du projet principal sont aussi requises:
+# python-docx>=1.1.0
+# jinja2>=3.1.2
+# pdfplumber>=0.10.0
+
+# Pour Modal (optionnel)
+# modal>=0.55.0

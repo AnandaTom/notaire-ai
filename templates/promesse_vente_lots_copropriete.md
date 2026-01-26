@@ -1,7 +1,9 @@
+{FIRST_PAGE_HEADER_START}
 {{ acte.numero_repertoire }}
 {{ acte.reference_interne }}
 
-**Le {{ acte.date.jour }} {{ acte.date.mois | mois_en_lettres }} {{ acte.date.annee }}**
+Le {{ acte.date.jour }} {{ acte.date.mois | mois_en_lettres }} {{ acte.date.annee }}
+{FIRST_PAGE_HEADER_END}
 **PROMESSE UNILATERALE DE VENTE**
 **Par {% for promettant in promettants %}{{ promettant.civilite }} {{ promettant.nom }}{% if not loop.last %} et {% endif %}{% endfor %}**
 **Au profit de {% for beneficiaire in beneficiaires %}{{ beneficiaire.civilite }} {{ beneficiaire.nom }}{% if not loop.last %} et {% endif %}{% endfor %}**
@@ -19,7 +21,7 @@
 
 **A RECU le présent acte contenant PROMESSE DE VENTE à la requête de :**
 
-# **PROMETTANT**
+# PROMETTANT
 
 {% for promettant in promettants %}
 {{ promettant.civilite }} {{ promettant.prenoms }} {{ promettant.nom }}, {{ promettant.profession }}, demeurant à {{ promettant.adresse }}, {{ promettant.code_postal }} {{ promettant.ville }}.
@@ -40,15 +42,16 @@ De nationalité {{ promettant.nationalite }}.
 {% if promettant.resident_fiscal %}{% if promettant.civilite == "Madame" %}Résidente{% else %}Résident{% endif %} au sens de la réglementation fiscale.{% endif %}
 
 {% if promettant.coordonnees %}
-**Coordonnées :**
-{{ promettant.civilite }} {{ promettant.nom }}
+**<u>Coordonnées :</u>**
+
+<u>{{ promettant.civilite }} {{ promettant.nom }}</u>
 {% if promettant.coordonnees.telephone %}Téléphone mobile : {{ promettant.coordonnees.telephone }}{% endif %}
 {% if promettant.coordonnees.courriel %}Courriel : {{ promettant.coordonnees.courriel }}{% endif %}
 {% endif %}
 
 {% endfor %}
 
-# **BENEFICIAIRE**
+# BENEFICIAIRE
 
 {% for beneficiaire in beneficiaires %}
 {{ beneficiaire.civilite }} {{ beneficiaire.prenoms }} {{ beneficiaire.nom }}, {{ beneficiaire.profession }}, demeurant à {{ beneficiaire.adresse }}, {{ beneficiaire.code_postal }} {{ beneficiaire.ville }}.
@@ -69,15 +72,16 @@ De nationalité {{ beneficiaire.nationalite }}.
 {% if beneficiaire.resident_fiscal %}{% if beneficiaire.civilite == "Madame" %}Résidente{% else %}Résident{% endif %} au sens de la réglementation fiscale.{% endif %}
 
 {% if beneficiaire.coordonnees %}
-**Coordonnées :**
-{{ beneficiaire.civilite }} {{ beneficiaire.nom }}
+**<u>Coordonnées :</u>**
+
+<u>{{ beneficiaire.civilite }} {{ beneficiaire.nom }}</u>
 {% if beneficiaire.coordonnees.telephone %}Téléphone mobile : {{ beneficiaire.coordonnees.telephone }}{% endif %}
 {% if beneficiaire.coordonnees.courriel %}Courriel : {{ beneficiaire.coordonnees.courriel }}{% endif %}
 {% endif %}
 
 {% endfor %}
 
-# **Quotités acquises**
+# Quotités acquises
 
 {% if quotites_a_determiner %}
 {% for beneficiaire in beneficiaires %}{{ beneficiaire.civilite }} {{ beneficiaire.nom }}{% if not loop.last %} et {% endif %}{% endfor %} feront l'acquisition de la pleine propriété indivise du **BIEN** dans des quotités à déterminer au plus tard lors de la réitération des présentes.
@@ -87,8 +91,7 @@ De nationalité {{ beneficiaire.nationalite }}.
 {% endfor %}
 {% endif %}
 
-# **Déclarations des parties sur leur capacité**
-
+# Déclarations des parties sur leur capacité
 Les parties, et le cas échéant leurs représentants, attestent que rien ne peut limiter leur capacité pour l'exécution des engagements qu'elles prennent aux présentes, et elles déclarent notamment :
 
 * que leur état civil et leurs qualités indiqués en tête des présentes sont exacts,
@@ -100,8 +103,7 @@ Les parties, et le cas échéant leurs représentants, attestent que rien ne peu
 * par aucune des dispositions du Code de la consommation sur le règlement des situations de surendettement, sauf là aussi ce qui peut être spécifié aux présentes,
 * et pour le **BENEFICIAIRE** spécialement qu'il n'est, ni à titre personnel, ni en tant qu'associé ou mandataire social, soumis à l'interdiction d'acquérir prévue par l'article 225-26 du Code pénal.
 
-# **Documents relatifs à la capacité et à la qualité des parties**
-
+# Documents relatifs à la capacité et à la qualité des parties
 Les pièces suivantes ont été portées à la connaissance du rédacteur des présentes à l'appui des déclarations des parties :
 
 {% for promettant in promettants %}
@@ -121,8 +123,7 @@ Les pièces suivantes ont été portées à la connaissance du rédacteur des pr
 
 Ces documents ne révèlent aucun empêchement des parties à la signature des présentes.
 
-# **Présence - représentation**
-
+# Présence - représentation
 {% for promettant in promettants %}
 - {{ promettant.civilite }} {{ promettant.nom }} est {% if promettant.civilite == "Madame" %}présente{% else %}présent{% endif %} à l'acte.
 {% endfor %}
@@ -130,12 +131,10 @@ Ces documents ne révèlent aucun empêchement des parties à la signature des p
 - {{ beneficiaire.civilite }} {{ beneficiaire.nom }} est {% if beneficiaire.civilite == "Madame" %}présente{% else %}présent{% endif %} à l'acte.
 {% endfor %}
 
-# **CONCLUSION DU CONTRAT**
-
+# CONCLUSION DU CONTRAT
 Les parties déclarent que les dispositions de ce contrat ont été, en respect des règles impératives de l'article 1104 du Code civil, négociées de bonne foi. Elles affirment qu'il reflète l'équilibre voulu par chacune d'elles.
 
-# **DEVOIR D'INFORMATION RECIPROQUE**
-
+# DEVOIR D'INFORMATION RECIPROQUE
 En application de l'article 1112-1 du Code civil qui impose aux parties un devoir précontractuel d'information, qui ne saurait toutefois porter sur le prix, le **PROMETTANT** déclare avoir porté à la connaissance du **BENEFICIAIRE** l'ensemble des informations dont il dispose ayant un lien direct et nécessaire avec le contenu du présent contrat et dont l'importance pourrait être déterminante de son consentement.
 Ce devoir s'applique à toute information sur les caractéristiques juridiques, matérielles et environnementales relatives au bien, ainsi qu'à son usage, dont il a personnellement connaissance par lui-même et par des tiers, sans que ces informations puissent être limitées dans le temps.
 Le **PROMETTANT** reconnaît être informé qu'un manquement à ce devoir serait sanctionné par la mise en œuvre de sa responsabilité, avec possibilité d'annulation du contrat s'il a vicié le consentement du **BENEFICIAIRE**.
@@ -144,23 +143,19 @@ Le devoir d'information est donc réciproque.
 En outre, conformément aux dispositions de l'article 1602 du Code civil, le **PROMETTANT** est tenu d'expliquer clairement ce à quoi il s'oblige, tout pacte obscur ou ambigu s'interprétant contre lui.
 Les **PARTIES** attestent que les informations déterminantes connues d'elles, données et reçues, sont rapportées aux présentes.
 
-# **OBJET DU CONTRAT** **PROMESSE UNILATERALE DE VENTE**
-
+# OBJET DU CONTRAT** **PROMESSE UNILATERALE DE VENTE
 Le **PROMETTANT** confère au **BENEFICIAIRE** la faculté d'acquérir, les **BIENS** ci-dessous identifiés.
 Le **PROMETTANT** prend cet engagement pour lui-même ou ses ayants droit même protégés.
 Le **BENEFICIAIRE** accepte la présente promesse de vente en tant que promesse, mais se réserve la faculté d'en demander ou non la réalisation.
 
-# **TERMINOLOGIE**
-
+# TERMINOLOGIE
 Pour la compréhension de certains termes aux présentes, il est préalablement expliqué ce qui suit :
 **-** Le **"PROMETTANT"** et le **"BENEFICIAIRE"** désigneront respectivement le ou les promettants et le ou les bénéficiaires, qui, en cas de pluralité, contracteront les obligations respectivement mises à leur charge solidairement entre eux, sans que cette solidarité soit rappelée chaque fois,
 **-** Les **"BIENS"** désigneront les biens et droits immobiliers objet de la présente promesse de vente, l'**"ENSEMBLE IMMOBILIER"** désignera l'immeuble dans lequel se trouvent les **"BIENS"**.
 **-** Les **"MEUBLES"** désigneront les meubles et objets mobiliers, s'il en existe.
 
-# **Identification du bien**
-
-## **Désignation**
-
+# Identification du bien
+## Désignation
 **Dans un ensemble immobilier soumis au régime de la copropriété situé à {{ bien.adresse.ville }} ({{ bien.adresse.departement }}) {{ bien.adresse.code_postal }} {{ bien.adresse.numero }} {{ bien.adresse.voie }}.**
 
 {{ bien.description_ensemble }}
@@ -186,8 +181,7 @@ De cette division sont issues les parcelles cadastrées {{ bien.division_cadastr
 Le document modificatif du parcellaire cadastral, créant cette division, a fait l'objet d'une publication au service de la publicité foncière de {{ bien.division_cadastrale.publication.service }}, le {{ bien.division_cadastrale.publication.date }}, volume {{ bien.division_cadastrale.publication.volume }}, numéro {{ bien.division_cadastrale.publication.numero }}.
 {% endif %}
 
-### **Les lots de copropriété suivants :**
-
+### Les lots de copropriété suivants :
 {% for lot in bien.lots %}
 **Lot numéro {{ lot.numero_lettres | default(lot.numero | nombre_en_lettres) }} ({{ lot.numero }})**
 {% if lot.type == "appartement" %}
@@ -205,8 +199,7 @@ Et les {{ lot.tantiemes.valeur | nombre_en_lettres }} {{ lot.tantiemes.base_unit
 
 Tel que le **BIEN** existe, avec tous droits y attachés, sans aucune exception ni réserve.
 
-### **Plans des lots**
-
+### Plans des lots
 Demeurent annexées aux présentes :
 - Une copie du plan de l'étage courant ;
 {% for lot in bien.lots %}
@@ -219,8 +212,7 @@ Demeurent annexées aux présentes :
 
 **Annexe n°2 : Plans des lots et plan de masse**
 
-## **Mention de la superficie de la partie privative – Application**
-
+## Mention de la superficie de la partie privative – Application
 La superficie de la partie privative des lots de copropriété soumis aux dispositions de l'article 46 de la loi du 10 juillet 1965, est de **{{ bien.superficie_carrez.superficie_m2 }} m².**
 
 Ainsi qu'il résulte d'une attestation établie le {{ bien.superficie_carrez.date_mesurage | format_date }} par le cabinet {{ bien.superficie_carrez.diagnostiqueur }}, demeurant annexée aux présentes.
@@ -232,8 +224,7 @@ Ces dispositions ne sont pas applicables aux caves, garages, emplacements de sta
 
 **Annexe n°3 : Diagnostic carrez**
 
-## **État descriptif de division – Règlement de copropriété**
-
+## État descriptif de division – Règlement de copropriété
 L'ensemble immobilier sus-désigné a fait l'objet d'un état descriptif de division et règlement de copropriété établi aux termes d'un acte reçu par {{ copropriete.reglement.notaire_origine }} le {{ copropriete.reglement.date_origine }} publié au service de la publicité foncière de {{ copropriete.reglement.publication }}.
 
 {% for modificatif in copropriete.reglement.modificatifs %}
@@ -242,8 +233,7 @@ L'état descriptif de division - règlement de copropriété a été modifié au
 
 <!-- SECTION: meubles | CONDITIONNEL: meubles.inclus -->
 {% if meubles and meubles.inclus %}
-# **MEUBLES ET OBJETS MOBILIERS**
-
+# MEUBLES ET OBJETS MOBILIERS
 Les parties déclarent que la promesse comprendra le mobilier suivant{% if not meubles.valeur %} non valorisé{% endif %} :
 
 {% for meuble in meubles.liste %}
@@ -254,8 +244,7 @@ Les parties déclarent que la promesse comprendra le mobilier suivant{% if not m
 La valeur de ces meubles est fixée à {{ meubles.valeur | montant_en_lettres }} ({{ meubles.valeur | format_nombre }} EUR).
 {% endif %}
 {% else %}
-# **ABSENCE DE MEUBLES ET OBJETS MOBILIERS**
-
+# ABSENCE DE MEUBLES ET OBJETS MOBILIERS
 Les parties déclarent qu'aucun meuble ou objet mobilier n'est inclus dans la présente promesse.
 {% endif %}
 
@@ -310,20 +299,17 @@ Le **BENEFICIAIRE,** informé de cette situation, déclare prendre le **BIEN** e
 Le **PROMETTANT** déclare que le système de chauffage est {{ bien.chauffage.type }} {% if bien.chauffage.collectif %}collective{% else %}individuelle{% endif %} au {{ bien.chauffage.energie }}{% if bien.chauffage.entretien %} dont l'entretien est assuré par {{ bien.chauffage.entretien }}{% endif %}.
 {% endif %}
 
-# **Usage du bien**
-
+# Usage du bien
 Le **PROMETTANT** déclare que le **BIEN** est actuellement à usage {{ bien.usage_actuel }}.
 Le **BENEFICIAIRE** entend conserver cet usage{% if bien.usage_futur == "residence_principale" %} et vouloir en faire sa résidence principale{% endif %}.
 
 Le **BENEFICIAIRE** déclare ne pas envisager d'opération de modification du **BIEN** qui nécessiterait soit un arrêté de non-opposition à déclaration préalable de travaux soit un permis de construire, et dont l'obtention préalable à la vente serait pour lui constitutive d'une condition suspensive.
 
-# **ORIGINE DE PROPRIÉTÉ**
-
+# ORIGINE DE PROPRIÉTÉ
 Le **PROMETTANT** déclare être propriétaire des biens et droits immobiliers objet des présentes, en vertu des titres ci-après relatés.
 
 {% for origine in origine_propriete %}
-## **Concernant {% if origine.lots_concernes | length > 1 %}les lots numéros {% else %}le lot numéro {% endif %}{{ origine.lots_concernes | join(", ") }}**
-
+## Concernant {% if origine.lots_concernes | length > 1 %}les lots numéros {% else %}le lot numéro {% endif %}{{ origine.lots_concernes | join(", ") }}
 ### Origine immédiate
 
 Le **PROMETTANT** est devenu propriétaire {{ origine.modalite_detention | default('en pleine propriété') }} des biens ci-dessus désignés par suite de {{ origine.origine_immediate.type | lower }} qu'il en a faite :
@@ -416,22 +402,18 @@ Suivant acte reçu par {{ origine.titre_originaire.acte.notaire }}, notaire{% if
 
 {% endfor %}
 
-# **Effet relatif**
-
+# Effet relatif
 Les titres de propriété antérieurs, les pièces d'urbanisme ou autres, ne doivent pas révéler de servitudes, de charges, ni de vices non indiqués aux présentes pouvant grever l'immeuble et en diminuer sensiblement la valeur ou le rendre impropre à la destination que le **BENEFICIAIRE** entend lui donner. Le **PROMETTANT** devra justifier d'une origine de propriété régulière remontant à un titre translatif d'au moins trente ans.
 
-# **Caractéristiques**
-
+# Caractéristiques
 Les parties conviennent entre elles d'établir les présentes sous la forme d'une promesse unilatérale dans les termes du second alinéa de l'article 1106 du Code civil. Dans la commune intention des parties, et pendant toute la durée du contrat, celle-ci obéira aux dispositions qui suivent.
 
-# **Information préalable**
-
+# Information préalable
 Les parties ont été informées par le rédacteur des présentes que la forme sous signature privée ne leur permet pas de faire publier un acte au service de la publicité foncière.
 En conséquence, et dans cette hypothèse, si l'une d'entre elles refusait ou devenait incapable de réaliser ou de réitérer la convention par acte authentique, l'autre partie ne pourrait pas faire inscrire les présentes directement au fichier immobilier afin de conserver son droit et de le rendre opposable aux tiers, préalablement à toute décision de justice.
 Les parties ainsi averties de cette situation déclarent vouloir opter expressément pour la conclusion entre elles d'un acte authentique.
 
-# **Délai**
-
+# Délai
 La promesse de vente est consentie pour une durée expirant :
 
 ---
@@ -446,8 +428,7 @@ En cas de carence du **PROMETTANT** pour la réalisation de la vente, ce dernier
 Les parties sont informées que la date mentionnée ci-dessus ne constitue pas la date précise du rendez-vous de signature de l'acte de vente. Il leur appartiendra de se rapprocher préalablement de leur notaire afin de fixer une date de signature.
 Par conséquent, leur attention est attirée sur les risques encourus en prenant des engagements personnels tels que donner congé à son bailleur, réserver définitivement un déménageur, commander des travaux, commander et faire livrer du mobilier, réinvestir le prix de vente et dont l'exécution serait basée sur la signature de l'acte de vente à cette date précise.
 
-# **RÉALISATION**
-
+# RÉALISATION
 La réalisation de la promesse aura lieu :
 
 * Soit par la signature de l'acte authentique constatant le caractère définitif de la vente, accompagnée du versement par virement sur le compte du notaire chargé de recevoir l'acte authentique de vente d'une somme correspondant :
@@ -466,8 +447,7 @@ L'attention du **BENEFICIAIRE** est particulièrement attirée sur les points su
 * L'obligation de paiement par virement et non par chèque même s'il est de banque résulte des dispositions de l'article L 112-6-1 du Code monétaire et financier.
 * Il lui sera imposé de fournir une attestation émanant de la banque qui aura émis le virement et justifiant de l'origine des fonds sauf si ces fonds résultent d'un ou plusieurs prêts constatés dans l'acte authentique de vente ou dans un acte authentique séparé.
 
-# **Rédacteur de l'acte authentique de vente**
-
+# Rédacteur de l'acte authentique de vente
 L'acte authentique constatant la réalisation de la vente sera reçu par {{ acte.notaire.civilite }} {{ acte.notaire.prenom }} {{ acte.notaire.nom }}, notaire soussigné{% if acte.notaire_beneficiaire %} avec la participation de {{ acte.notaire_beneficiaire.civilite }} {{ acte.notaire_beneficiaire.prenom }} {{ acte.notaire_beneficiaire.nom }}, notaire à {{ acte.notaire_beneficiaire.ville }}{% endif %}.
 En toute hypothèse, le transfert de propriété est reporté au jour de la constatation de la vente en la forme authentique et du paiement du prix tel que convenu et des frais, même si l'échange de consentement nécessaire à la formation de la convention est antérieur.
 
@@ -475,8 +455,7 @@ En toute hypothèse, le transfert de propriété est reporté au jour de la cons
 
 Les parties conviennent expressément, que pour le cas où un avenant deviendrait nécessaire concernant des modifications dans leur convention ou sa prorogation (report de la date de signature de l'acte authentique ou de levée d'option par exemple), cet avenant pourra être rédigé sous forme d'acte sous seing privé, sous forme d'un acte authentique, ou pourra résulter de tout document attestant de leur volonté respective comme un simple mail ou courrier.
 
-# **CARENCE**
-
+# CARENCE
 La carence s'entend ici du manquement fautif par l'une des parties, du fait de sa volonté ou de sa négligence, à une ou plusieurs de ses obligations aux présentes, ce manquement empêchant l'exécution de la vente.
 
 **En l'absence de levée d'option ou de signature de l'acte de vente dans le délai**
@@ -497,8 +476,7 @@ En cas de défaut du **BENEFICIAIRE** qui ne viendrait ou ne voudrait pas signer
 * Soit faire part de son intention de poursuivre l'exécution de la vente.
 * Soit encore faire constater que la vente n'est pas exécutée, cette constatation résultant du défaut prononcé contre le **BENEFICIAIRE** dans le procès-verbal, et déclarer sa volonté de considérer la vente comme résolue de plein droit. Le **PROMETTANT** reprendra alors purement et simplement sa liberté indépendamment de son droit de réclamer le versement de la pénalité compensatoire ci-après visée dans l'acte au titre de l'indemnisation de son préjudice.
 
-# **Force exécutoire de la promesse**
-
+# Force exécutoire de la promesse
 Il est entendu entre les parties qu'en raison de l'acceptation par le **BENEFICIAIRE** de la promesse faite par le **PROMETTANT**, en tant que simple promesse, il s'est formé entre elles un contrat dans les termes de l'article 1124 du Code civil. En conséquence, et pendant toute la durée du contrat, celui-ci ne pourra être révoqué que par leur consentement mutuel. Il en résulte notamment que :
 
 * Le **PROMETTANT** a, pour sa part, définitivement consenti à la vente et qu'il est d'ores et déjà débiteur de l'obligation de transférer la propriété au profit du **BENEFICIAIRE** aux conditions des présentes. Le **PROMETTANT** ne peut plus, par suite, pendant toute la durée de la présente promesse, conférer une autre promesse à un tiers ni aucun droit réel ni charge quelconque sur le **BIEN**, consentir aucun bail, location ou prorogation de bail. Il ne pourra non plus apporter aucune modification matérielle, si ce n'est avec le consentement du **BENEFICIAIRE**, ni détérioration au **BIEN**. Il en ira de même si la charge ou la détérioration n'était pas le fait direct du **PROMETTANT**. Le non-respect de cette obligation entraînera l'extinction des présentes si bon semble au **BENEFICIAIRE**.
@@ -506,25 +484,20 @@ Il est entendu entre les parties qu'en raison de l'acceptation par le **BENEFICI
 * Toute révocation ou rétractation unilatérale de la volonté du **PROMETTANT** sera de plein droit dépourvue de tout effet sur le contrat promis du fait de l'acceptation de la présente promesse en tant que telle par le **BENEFICIAIRE**. En outre, le **PROMETTANT** ne pourra pas se prévaloir des dispositions de l'article 1590 du Code civil en offrant de restituer le double de la somme le cas échéant versée au titre de l'indemnité d'immobilisation.
 * En tant que de besoin, le **PROMETTANT** se soumet à l'exécution en nature prévue par l'article 1221 du Code civil si le **BENEFICIAIRE** venait à la demander. Le tout sauf si ce mode d'exécution est soit devenu impossible soit d'une disproportion manifeste entre son coût pour le débiteur de bonne foi et son intérêt pour le créancier.
 
-# **Propriété jouissance**
-
+# Propriété jouissance
 Le **BENEFICIAIRE** sera propriétaire des **BIENS** objet de la promesse le jour de la constatation de la vente en la forme authentique et il en aura la jouissance à compter du même jour par la prise de possession réelle, les **BIENS** devant être impérativement, à cette même date, libres de toute location ou occupation.
 Le **PROMETTANT** déclare que les **BIENS** n'ont pas, avant ce jour, fait l'objet d'un congé pouvant donner lieu à l'exercice d'un droit de préemption.
 
-# **PRIX - CONDITIONS FINANCIERES**
-
-# **PRIX**
-
+# PRIX - CONDITIONS FINANCIERES
+# PRIX
 La vente, en cas de réalisation, aura lieu moyennant le prix de **{{ prix.montant | montant_en_lettres | upper }} ({{ prix.montant | format_nombre }} {{ prix.devise | default("EUR") }})**, qui sera payable comptant le jour de la constatation authentique de la réalisation de la promesse.
 
-# **Frais**
-
+# Frais
 Les frais, droits et émoluments de la vente seront à la charge du **BENEFICIAIRE**.
 
 <!-- SECTION: negociation | CONDITIONNEL: negociation.existe -->
 {% if negociation and negociation.existe %}
-# **Négociation**
-
+# Négociation
 Les parties reconnaissent que le prix a été négocié par **{{ negociation.agent.nom }}** titulaire d'un mandat donné par **{{ negociation.agent.mandant }}** sous le numéro {{ negociation.agent.mandat_numero }} en date du {{ negociation.agent.mandat_date }} non encore expiré, ainsi déclaré.
 En conséquence, **{{ negociation.a_charge_de }}** qui en a seul la charge aux termes du mandat, doit à l'agence une rémunération de **{{ negociation.honoraires | format_nombre }} EUR**, taxe sur la valeur ajoutée incluse.
 Cette rémunération sera payée le jour de la constatation authentique de la réalisation des présentes.
@@ -556,8 +529,7 @@ A titre indicatif, le coût et le financement de l'opération sont les suivants 
 |  |  |
 | **Ensemble**  | **...** |
 
-# **Indemnité d'immobilisation**
-
+# Indemnité d'immobilisation
 En considération de la promesse formelle conférée au **BENEFICIAIRE** par le **PROMETTANT**, dans les conditions ci-dessus prévues, les parties conviennent de fixer le montant de l'indemnité d'immobilisation à la somme forfaitaire de **{{ indemnite_immobilisation.montant | montant_en_lettres }}** (représentant {{ indemnite_immobilisation.pourcentage }}% du prix de vente) et indépendamment de la durée de la promesse de vente.
 Pour la bonne compréhension des présentes, il est ici précisé que cette indemnité d'immobilisation constituant le seul prix de l'exclusivité conférée au **BENEFICIAIRE**, ne pourra être modifiée par le juge, les dispositions de l'article 1231-5 du Code civil lui étant inapplicable.
 
@@ -594,20 +566,16 @@ En cas d'aliénation à un tiers du bien objet de la présente promesse, comme p
 Ce dernier sera redevable envers le **BENEFICIAIRE** de dommages et intérêts fixés à titre de clause pénale à la somme de **{{ clause_penale.pourcentage | default(10) | nombre_en_lettres | upper }} POUR CENT ({{ clause_penale.pourcentage | default(10) }} %)** du montant du prix de vente.
 La présente clause pénale ne peut priver, dans la même hypothèse, le **BENEFICIAIRE** de poursuivre le **PROMETTANT** en exécution forcée de la vente ainsi qu'il a été prévu ci-dessus.
 
-# **Réserves et conditions suspensives**
-
+# Réserves et conditions suspensives
 Les effets des présentes sont soumis à la levée des réserves et à l'accomplissement des conditions suspensives suivantes.
 
-## **Réserves**
-
-### **Réserve du droit de préemption**
-
+## Réserves
+### Réserve du droit de préemption
 La promesse sera notifiée à tous les titulaires d'un droit de préemption institué en vertu de l'article L211-1 du Code de l'urbanisme ou de tout autre Code.
 L'exercice de ce droit par son titulaire obligera le **PROMETTANT** aux mêmes charges et conditions convenues aux présentes.
 Par cet exercice les présentes ne produiront pas leurs effets entre les parties et ce même en cas d'annulation de la préemption ou de renonciation ultérieure à l'exercice de ce droit de la part de son bénéficiaire.
 
-## **Conditions suspensives**
-
+## Conditions suspensives
 Les présentes sont soumises à l'accomplissement de conditions suspensives indiquées ci-après.
 Conformément aux dispositions de l'article 1304-6 du Code civil, à partir de cet accomplissement les obligations contractées produisent leurs effets.
 La non réalisation d'une seule de ces conditions, pouvant être invoquée par les deux parties, entraîne la caducité des présentes, qui sont alors réputées n'avoir jamais existé.
@@ -617,18 +585,15 @@ Dans ce cas, cette renonciation doit intervenir par courrier recommandé, adress
 
 En toutes hypothèses, jusqu'à la réitération authentique des présentes, le **PROMETTANT** conserve l'administration, les revenus et la gestion des risques portant sur le **BIEN**.
 
-### **Conditions suspensives de droit commun**
-
+### Conditions suspensives de droit commun
 Les présentes sont soumises à l'accomplissement des conditions suspensives de droit commun stipulées en la faveur du **BENEFICIAIRE**, qui sera seul à pouvoir s'en prévaloir.
 Les titres de propriété antérieurs, les pièces d'urbanisme ou autres, ne doivent pas révéler de servitudes, de charges, ni de vices non indiqués aux présentes pouvant grever l'immeuble et en diminuer sensiblement la valeur ou le rendre impropre à la destination que le **BENEFICIAIRE** entend donner. Le **PROMETTANT** devra justifier d'une origine de propriété régulière remontant à un titre translatif d'au moins trente ans.
 L'état hypothécaire ne doit pas révéler de saisies ou d'inscriptions dont le solde des créances inscrites augmenté du coût des radiations à effectuer serait supérieur au prix disponible.
 
-### **Conditions suspensives particulières**
-
+### Conditions suspensives particulières
 <!-- SECTION: condition_suspensive_pret | CONDITIONNEL: condition_suspensive_pret.existe -->
 {% if condition_suspensive_pret and condition_suspensive_pret.existe %}
-#### **Condition suspensive d'obtention de prêt**
-
+#### Condition suspensive d'obtention de prêt
 Le **BENEFICIAIRE** déclare avoir l'intention de recourir pour le paiement du prix de cette acquisition, à un ou plusieurs prêts rentrant dans le champ d'application de l'article L 313-40 du Code de la consommation, et répondant aux caractéristiques suivantes :
 
 Montant maximal de la somme empruntée : **{{ condition_suspensive_pret.montant_maximal | format_nombre }} euros**
@@ -662,10 +627,8 @@ Jusqu'à l'expiration du délai de huit jours susvisé, le **BENEFICIAIRE** pour
 Le **BENEFICIAIRE** s'engage, en cas de non-obtention du financement demandé, à justifier de {{ condition_suspensive_pret.nombre_refus_requis | default(2) | nombre_en_lettres }} refus de prêt répondant aux caractéristiques ci-dessus. En conséquence, le **BENEFICIAIRE** s'engage à déposer {{ condition_suspensive_pret.nombre_refus_requis | default(2) | nombre_en_lettres }} demandes de prêt.
 {% endif %}
 
-# **Conditions et déclarations générales**
-
-## **Garantie contre le risque d'éviction**
-
+# Conditions et déclarations générales
+## Garantie contre le risque d'éviction
 Le **PROMETTANT** garantira le **BENEFICIAIRE** contre le risque d'éviction conformément aux dispositions de l'article 1626 du Code civil.
 
 A ce sujet le **PROMETTANT** déclare :
@@ -679,16 +642,13 @@ A ce sujet le **PROMETTANT** déclare :
 * qu'il n'a conféré à personne d'autre que le **BENEFICIAIRE** un droit quelconque sur le **BIEN** pouvant empêcher la vente,
 * subroger le **BENEFICIAIRE** dans tous ses droits et actions relatifs au **BIEN**.
 
-## **Garantie de jouissance**
-
+## Garantie de jouissance
 Le **PROMETTANT** déclare qu'il n'a pas délivré de congé à un ancien locataire lui permettant d'exercer un droit de préemption.
 
-## **Garantie hypothécaire**
-
+## Garantie hypothécaire
 Le **PROMETTANT** s'obligera, s'il existe un ou plusieurs créanciers hypothécaires inscrits, à régler l'intégralité des sommes pouvant leur être encore dues, à rapporter à ses frais les certificats de radiation des inscriptions.
 
-## **Servitudes**
-
+## Servitudes
 Le **BENEFICIAIRE** profitera ou supportera les servitudes ou les droits de jouissance spéciale, s'il en existe.
 
 Le **PROMETTANT** déclare :
@@ -697,8 +657,7 @@ Le **PROMETTANT** déclare :
 * qu'à sa connaissance, il n'existe pas d'autres servitudes ou droits de jouissance spéciale que celles ou ceux résultant, le cas échéant, de l'acte, de la situation naturelle et environnementale des lieux, de l'urbanisme et du règlement de copropriété et de ses modificatifs,
 * ne pas avoir connaissance de faits ou actes tels qu'ils seraient de nature à remettre en cause l'exercice de servitude relatée aux présentes.
 
-## **Etat du bien**
-
+## Etat du bien
 Le **BENEFICIAIRE** prendra le **BIEN** dans l'état où il se trouve à ce jour, tel qu'il l'a vu et visité, le **PROMETTANT** s'interdisant formellement d'y apporter des modifications matérielles ou juridiques.
 Il déclare que la désignation du **BIEN** figurant aux présentes correspond à ce qu'il a pu constater lors de ses visites.
 
@@ -714,14 +673,11 @@ S'agissant des vices cachés, il est précisé que cette exonération de garanti
 
 Toutefois, le **PROMETTANT** est avisé que, s'agissant des travaux qu'il a pu exécuter par lui-même, la jurisprudence tend à écarter toute efficacité de la clause d'exonération de garantie des vices cachés.
 
-## **Contenance du terrain d'assiette**
-
+## Contenance du terrain d'assiette
 Le **PROMETTANT** ne confère aucune garantie de contenance du terrain d'assiette de l'ensemble immobilier.
 
-## **Impôts et taxes**
-
-### **Impôts locaux**
-
+## Impôts et taxes
+### Impôts locaux
 Le **PROMETTANT** déclare être à jour des mises en recouvrement des impôts locaux.
 Le **BENEFICIAIRE** sera redevable à compter du jour de la signature de l'acte authentique des impôts et contributions.
 La taxe d'habitation, si elle est exigible, est due pour l'année entière par l'occupant au premier jour du mois de janvier.
@@ -730,16 +686,13 @@ La taxe foncière, ainsi que la taxe d'enlèvement des ordures ménagères si el
 Le **BENEFICIAIRE** règlera directement au **PROMETTANT**, le jour de la signature de l'acte authentique de vente, le prorata de taxe foncière et, le cas échéant, de taxe d'enlèvement des ordures ménagères, déterminé par convention entre les parties sur le montant de la dernière imposition.
 Ce règlement sera définitif entre les parties, éteignant toute créance ou dette l'une vis-à-vis de l'autre à ce sujet, quelle que soit la modification éventuelle de la taxe foncière pour l'année en cours.
 
-### **Avantage fiscal lié à un engagement de location**
-
+### Avantage fiscal lié à un engagement de location
 Le **PROMETTANT** déclare ne pas souscrire actuellement à l'un des régimes fiscaux lui permettant de bénéficier de la déduction des amortissements en échange de l'obligation de louer à certaines conditions.
 
-### **Agence nationale de l'habitat**
-
+### Agence nationale de l'habitat
 Le **PROMETTANT** déclare ne pas avoir conclu de convention avec l'agence nationale de l'habitat.
 
-### **Obligation déclarative du propriétaire de bien à usage d'habitation**
-
+### Obligation déclarative du propriétaire de bien à usage d'habitation
 Conformément à la loi de finances n° 2019-1479 du 28 décembre 2019, une nouvelle obligation déclarative, en vigueur à partir du 1er janvier 2023, a été mise en place à l'égard des propriétaires de biens immobiliers à usage d'habitation, afin de pouvoir déterminer ceux qui sont encore redevables de la taxe d'habitation (pour les résidences secondaires ou logements locatifs) ou de la taxe sur les logements vacants.
 Ainsi, à compter du 1er janvier et jusqu'au 30 juin inclus de chaque année, tous les propriétaires, particuliers ou personnes morales, d'une résidence principale ou secondaire ou d'un bien locatif ou vacant, doivent impérativement déclarer à l'administration fiscale :
 
@@ -752,29 +705,23 @@ Cette déclaration peut s'opérer :
 * via le service en ligne "Gérer mes biens immobiliers", accessible depuis le portail impots.gouv.fr,
 * ou via les autres moyens mis à disposition par l'administration.
 
-## **Contrats de distribution et de fourniture**
-
+## Contrats de distribution et de fourniture
 Le **BENEFICIAIRE** fera son affaire personnelle, dès son entrée en jouissance, de la continuation ou de la résiliation de tous contrats de distribution et de fourniture souscrits par le **PROMETTANT**.
 Les parties déclarent avoir été averties de la nécessité d'établir entre elles un relevé des compteurs faisant l'objet d'un comptage individuel.
 Le **PROMETTANT** déclare être à jour des factures mises en recouvrement liées à ses contrats de distribution et de fourniture.
 
-## **Assurance**
-
+## Assurance
 Le **BENEFICIAIRE**, tout en étant informé de l'obligation immédiate de souscription, ne continuera pas les polices d'assurance actuelles garantissant le **BIEN** et confèrera à cet effet mandat au **PROMETTANT**, qui accepte, de résilier les contrats lorsqu'il avertira son assureur de la signature de l'acte authentique.
 L'ensemble immobilier dans lequel se trouve le **BIEN** étant assuré par une police souscrite par le syndicat des copropriétaires, le **BENEFICIAIRE** devra se conformer à toutes les décisions du syndicat la concernant.
 Il est rappelé au **BENEFICIAIRE** l'obligation pour chaque copropriétaire de s'assurer contre les risques de responsabilité civile dont il doit répondre en sa qualité soit de copropriétaire occupant, soit de copropriétaire non-occupant.
 
-## **Contrat d'affichage**
-
+## Contrat d'affichage
 Le **PROMETTANT** déclare qu'il n'a pas été conclu de contrat d'affichage.
 
-# **DISPOSITIONS RELATIVES A L'URBANISME**
-
-## **Urbanisme**
-
+# DISPOSITIONS RELATIVES A L'URBANISME
+## Urbanisme
 {% if urbanisme and urbanisme.note_urbanisme %}
-#### **Note d'urbanisme**
-
+#### Note d'urbanisme
 La commune a répondu le {{ urbanisme.note_urbanisme.date }} à une demande de note d'urbanisme. Cette réponse est annexée.
 **Annexe n°4 : Note d'urbanisme**
 
@@ -789,26 +736,22 @@ La note d'urbanisme révèle :
 {% endif %}
 
 {% if urbanisme and urbanisme.note_voirie %}
-#### **Note de voirie**
-
+#### Note de voirie
 Une note de renseignements de voirie annexée a été délivrée par l'autorité compétente le {{ urbanisme.note_voirie.date }}. {{ urbanisme.note_voirie.resultat }}
 **Annexe n°5 : Note de voirie**
 {% endif %}
 
 {% if urbanisme and urbanisme.certificat_non_peril %}
-#### **Certificat de non-péril**
-
+#### Certificat de non-péril
 Il résulte d'un certificat délivré par l'autorité compétente le {{ urbanisme.certificat_non_peril.date }}, annexé, que l'immeuble {{ urbanisme.certificat_non_peril.resultat }}
 
 **Annexe n°6 : Certificat de non-péril**
 {% endif %}
 
-# **Dispositions relatives à la construction**
-
+# Dispositions relatives à la construction
 <!-- SECTION: travaux_recents | CONDITIONNEL: travaux_recents.existe -->
 {% if travaux_recents and travaux_recents.existe %}
-## **Existence de travaux**
-
+## Existence de travaux
 Le **PROMETTANT** déclare être informé des dispositions des articles L 241-1 et L 242-1 du Code des assurances imposant à tout propriétaire de souscrire avant toute ouverture de chantier de construction et/ou travaux de gros œuvre ou de second œuvre, une assurance garantissant le paiement des travaux de réparation des dommages relevant de la garantie décennale, ainsi qu'une assurance couvrant sa responsabilité au cas où il interviendrait dans la construction en tant que concepteur, entrepreneur ou maître d'œuvre.
 
 Depuis son acquisition, le **PROMETTANT** déclare que les travaux ci-après indiqués ont été effectués :
@@ -823,27 +766,22 @@ Les travaux, compte tenu de la description faite par le **PROMETTANT**, ne néce
 Le **PROMETTANT** déclare **{% if travaux_recents.assurance_dommages_ouvrage %}qu'une police d'assurance dommages ouvrage a été souscrite{% else %}qu'aucune police d'assurance dommages ouvrage{% endif %}** ni d'assurance de responsabilité décennale "constructeurs non réalisateur" n'a été souscrite pour la réalisation des rénovations.
 Les parties reconnaissent avoir reçu du notaire soussigné toutes explications utiles concernant les conséquences pouvant résulter des garanties et responsabilité du vendeur attachées à ces constructions, et de l'absence de souscription de telles polices d'assurances.
 {% else %}
-## **Absence d'opération de construction ou de rénovation depuis dix ans**
-
+## Absence d'opération de construction ou de rénovation depuis dix ans
 Le **PROMETTANT** déclare qu'à sa connaissance :
 
 1. aucune construction ou rénovation n'a été effectuée dans les dix dernières années,
 2. aucun élément constitutif d'ouvrage ou équipement indissociable de l'ouvrage au sens de l'article 1792 du Code civil n'a été réalisé dans ce délai.
 {% endif %}
 
-# **Diagnostics**
-
-## **Dossier de diagnostics techniques**
-
+# Diagnostics
+## Dossier de diagnostics techniques
 Pour l'information des parties a été dressé ci-après le tableau du dossier de diagnostics techniques tel que prévu par les articles L 271-4 à L 271-6 du Code de la construction et de l'habitation.
 
 Conformément aux dispositions de l'article L 271-6 du Code de la construction et de l'habitation, le dossier de diagnostic technique a été établi par **{{ diagnostics.diagnostiqueur.nom }}**, diagnostiqueur immobilier certifié par un organisme spécialisé accrédité.
 
-## **Diagnostics techniques**
-
+## Diagnostics techniques
 {% if diagnostics.plomb %}
-### **Plomb**
-
+### Plomb
 {% if diagnostics.plomb.requis %}
 Un constat de risque d'exposition au plomb établi le {{ diagnostics.plomb.date }} est annexé. {{ diagnostics.plomb.resultat }}
 {% else %}
@@ -852,8 +790,7 @@ L'**ENSEMBLE** **IMMOBILIER** a été construit depuis le 1er janvier 1949, en c
 {% endif %}
 
 {% if diagnostics.amiante_parties_privatives %}
-### **Amiante**
-
+### Amiante
 **Pour les parties privatives**
 Un état établi par {{ diagnostics.amiante_parties_privatives.diagnostiqueur }} le {{ diagnostics.amiante_parties_privatives.date }}, accompagné de la certification de compétence, est annexé.
 **{{ diagnostics.amiante_parties_privatives.resultat }}**
@@ -870,8 +807,7 @@ Les conclusions sont les suivantes : ***"{{ diagnostics.amiante_parties_communes
 {% endif %}
 
 {% if diagnostics.termites %}
-### **Termites**
-
+### Termites
 {% if diagnostics.termites.zone_concernee %}
 Un état relatif à la présence de termites établi le {{ diagnostics.termites.date }} est annexé. {{ diagnostics.termites.resultat }}
 {% else %}
@@ -885,8 +821,7 @@ Le **PROMETTANT** déclare :
 {% endif %}
 
 {% if diagnostics.merules %}
-### **Mérules**
-
+### Mérules
 {% if diagnostics.merules.zone_concernee %}
 Le **BIEN** se trouve dans une zone de présence d'un risque de mérule délimitée par un arrêté préfectoral.
 {% else %}
@@ -896,8 +831,7 @@ Le **PROMETTANT** déclare ne pas avoir constaté l'existence de zones de conden
 {% endif %}
 
 {% if diagnostics.gaz %}
-### **Contrôle de l'installation de gaz**
-
+### Contrôle de l'installation de gaz
 {% if diagnostics.gaz.requis %}
 Le **BIEN** dispose d'une installation intérieure de gaz de plus de quinze ans.
 Le **PROMETTANT** a fait établir un état de celle-ci le {{ diagnostics.gaz.date }}, annexé.
@@ -910,8 +844,7 @@ Les parties déclarent que le **BIEN** ne possède pas d'installation intérieur
 {% endif %}
 
 {% if diagnostics.electricite %}
-### **Contrôle de l'installation intérieure d'électricité**
-
+### Contrôle de l'installation intérieure d'électricité
 {% if diagnostics.electricite.requis %}
 Le **BIEN** dispose d'une installation intérieure électrique au moins pour partie de plus de quinze ans.
 Le **PROMETTANT** a fait établir un état de celle-ci par {{ diagnostics.electricite.diagnostiqueur }} le {{ diagnostics.electricite.date }}, annexé.
@@ -924,8 +857,7 @@ Il est rappelé au **BENEFICIAIRE** qu'en cas d'accidents électriques consécut
 {% endif %}
 
 {% if diagnostics.dpe %}
-### **Diagnostic de performance énergétique**
-
+### Diagnostic de performance énergétique
 Un diagnostic établi par {{ diagnostics.dpe.diagnostiqueur }} le {{ diagnostics.dpe.date }}, est annexé.
 
 **Annexe n°11 : Diagnostic de performances énergétiques**
@@ -938,8 +870,7 @@ Les conclusions sont les suivantes :
 {% endif %}
 
 {% if diagnostics.carnet_logement or diagnostics.carnet_information_logement %}
-### **Carnet d'information du logement**
-
+### Carnet d'information du logement
 Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement {% if diagnostics.carnet_logement or (diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe) %}a été établi et est communiqué{% else %}sera établi et communiqué{% endif %} au **BENEFICIAIRE**.
 
 Le **PROMETTANT** s'engage à transmettre au **BENEFICIAIRE** une copie de ce carnet d'information au plus tard à la date de signature de l'acte authentique de vente.
@@ -950,8 +881,7 @@ Le nouveau propriétaire est informé qu'il devra mettre à jour ce carnet en ca
 {% endif %}
 
 {% if diagnostics.audit_energetique %}
-### **Audit énergétique**
-
+### Audit énergétique
 Le **BIEN** objet des présentes relevant de la loi n° 65-557 du 10 juillet 1965 fixant le statut de la copropriété des immeubles bâtis, un audit énergétique <<<VAR_START>>>{% if diagnostics.audit_energetique.existe %}a été réalisé{% else %}n'est pas requis{% endif %}<<<VAR_END>>>.
 
 {% if diagnostics.audit_energetique.existe %}
@@ -959,8 +889,7 @@ Le **BIEN** objet des présentes relevant de la loi n° 65-557 du 10 juillet 196
 {% endif %}
 {% endif %}
 
-### **Zone de bruit - Plan d'exposition au bruit des aérodromes**
-
+### Zone de bruit - Plan d'exposition au bruit des aérodromes
 {% if diagnostics.zone_bruit and diagnostics.zone_bruit.concerne %}
 Le bien est situé dans le périmètre d'un plan d'exposition au bruit des aérodromes.
 
@@ -973,8 +902,7 @@ Le bien est situé dans le périmètre d'un plan d'exposition au bruit des aéro
 Le bien **n'est pas** situé dans le périmètre d'un plan d'exposition au bruit des aérodromes.
 {% endif %}
 
-### **Information du bénéficiaire sur les éléments d'équipement**
-
+### Information du bénéficiaire sur les éléments d'équipement
 Le **BENEFICIAIRE** est informé que les désordres affectant les éléments d'équipement qu'ils soient individuels ou communs demeurent soumis aux garanties visées aux articles 1792 et suivants, articles 1646-1 et 1648 al. 1er du Code civil ainsi qu'à l'article L 111-13 du Code de la construction et de l'habitation.
 
 Toutefois, s'agissant des éléments installés en remplacement ou par adjonction à l'existant, cette garantie ne s'applique qu'à ces seuls éléments dont l'installation ou le remplacement sont par ailleurs soumis au régime de garantie décennale de l'article 1792 du Code civil.
@@ -984,8 +912,7 @@ La garantie décennale s'applique au professionnel qui a réalisé les travaux d
 Le **PROMETTANT** fournira au **BENEFICIAIRE**, lors de la réitération de la vente, la documentation technique afférente à ces équipements, ainsi que les garanties et assurances y attachées.
 
 {% if diagnostics.radon %}
-### **Radon**
-
+### Radon
 {% if diagnostics.radon.zone == 3 %}
 La commune se trouve **en zone 3 (potentiel significatif)**, l'obligation d'information s'impose.
 {% else %}
@@ -994,8 +921,7 @@ La commune se trouvant **en zone {{ diagnostics.radon.zone }} ({{ diagnostics.ra
 {% endif %}
 
 {% if diagnostics.assainissement %}
-### **Assainissement**
-
+### Assainissement
 En ce qui concerne l'installation de l'ensemble immobilier dont dépendent les biens objet des présentes :
 
 {% if diagnostics.assainissement.type == "collectif" %}
@@ -1015,8 +941,7 @@ Le **PROMETTANT** informe le **BENEFICIAIRE**, qu'à sa connaissance, les ouvrag
 {% endif %}
 
 {% if diagnostics.etat_risques %}
-### **Etat des risques**
-
+### Etat des risques
 Un état des risques en date du {{ diagnostics.etat_risques.date }} est annexé.
 
 **Annexe n°12 : Etat des risques**
@@ -1025,10 +950,8 @@ Un état des risques en date du {{ diagnostics.etat_risques.date }} est annexé.
 Le **PROMETTANT** déclare qu'à sa connaissance l'immeuble {% if diagnostics.etat_risques.sinistres_indemnises %}a{% else %}n'a pas{% endif %} subi de sinistres ayant donné lieu au versement d'une indemnité en application de l'article L 125-2 ou de l'article L 128-2 du Code des assurances.
 {% endif %}
 
-# **Situation environnementale**
-
-## **État des Risques et Pollutions (ERP)**
-
+# Situation environnementale
+## État des Risques et Pollutions (ERP)
 Conformément aux dispositions des articles L. 125-5 et R. 125-23 à R. 125-27 du Code de l'environnement, un État des Risques et Pollutions (ERP) a été établi.
 
 {% if diagnostics.erp %}
@@ -1065,8 +988,7 @@ Cet état est valable six mois à compter de sa date d'établissement.
 L'État des Risques et Pollutions sera établi préalablement à la réitération des présentes.
 {% endif %}
 
-## **Consultation de bases de données environnementales**
-
+## Consultation de bases de données environnementales
 Les bases de données suivantes ont été consultées :
 
 * La base de données relative aux anciens sites industriels et activités de service (BASIAS).
@@ -1076,8 +998,7 @@ Les bases de données suivantes ont été consultées :
 * Géorisques.
 * ERRIAL (l'état des risques réglementés pour l'information des acquéreurs et des locataires).
 
-### **Inventaire BASIAS**
-
+### Inventaire BASIAS
 {% if situation_environnementale and situation_environnementale.basias %}
 {% if situation_environnementale.basias.present %}
 Le terrain d'assiette du bien figure dans l'inventaire BASIAS des anciens sites industriels et activités de service.
@@ -1093,8 +1014,7 @@ Le terrain d'assiette du bien ne figure pas dans l'inventaire BASIAS.
 Le terrain d'assiette du bien ne figure pas dans l'inventaire BASIAS.
 {% endif %}
 
-### **Inventaire BASOL**
-
+### Inventaire BASOL
 {% if situation_environnementale and situation_environnementale.basol %}
 {% if situation_environnementale.basol.present %}
 Le terrain d'assiette du bien figure dans l'inventaire BASOL des sites et sols pollués appelant une action des pouvoirs publics.
@@ -1110,8 +1030,7 @@ Le terrain d'assiette du bien ne figure pas dans l'inventaire BASOL.
 Le terrain d'assiette du bien ne figure pas dans l'inventaire BASOL.
 {% endif %}
 
-### **Secteur d'Information sur les Sols (SIS)**
-
+### Secteur d'Information sur les Sols (SIS)
 {% if situation_environnementale and situation_environnementale.sis %}
 {% if situation_environnementale.sis.present %}
 Le bien est situé dans un Secteur d'Information sur les Sols (SIS) au sens de l'article L. 125-6 du Code de l'environnement.
@@ -1128,8 +1047,7 @@ Le bien n'est pas situé dans un Secteur d'Information sur les Sols (SIS).
 Le bien n'est pas situé dans un Secteur d'Information sur les Sols (SIS).
 {% endif %}
 
-### **Sites identifiés**
-
+### Sites identifiés
 {% if situation_environnementale and situation_environnementale.sites_identifies %}
 Les consultations ont révélé {{ situation_environnementale.sites_identifies | length }} site(s) d'activités recensé(s) :
 
@@ -1140,8 +1058,7 @@ Les consultations ont révélé {{ situation_environnementale.sites_identifies |
 Les consultations n'ont révélé aucun site d'activités recensé à proximité immédiate du bien.
 {% endif %}
 
-## **Sinistres avec indemnisation**
-
+## Sinistres avec indemnisation
 {% if situation_environnementale and situation_environnementale.sinistres %}
 {% if situation_environnementale.sinistres.declares %}
 Le **PROMETTANT** déclare que le bien a fait l'objet d'un ou plusieurs sinistres ayant donné lieu à indemnisation au titre des catastrophes naturelles ou technologiques en application des articles L. 125-5 ou L. 128-2 du Code des assurances :
@@ -1158,56 +1075,45 @@ Le **PROMETTANT** déclare qu'à sa connaissance, le bien n'a fait l'objet d'auc
 
 Le **BENEFICIAIRE** reconnaît avoir été parfaitement informé de l'ensemble des risques environnementaux et des sinistres éventuellement survenus sur le bien.
 
-# **Règlementations spécifiques à la copropriété**
-
-## **Immatriculation du syndicat des copropriétaires**
-
+# Règlementations spécifiques à la copropriété
+## Immatriculation du syndicat des copropriétaires
 Le syndicat des copropriétaires est immatriculé sous le numéro **{{ copropriete.immatriculation }}**.
 
 **Annexe n°14 : Attestation de mise à jour annuelle**
 
-## **Carnet d'entretien de l'ensemble immobilier**
-
+## Carnet d'entretien de l'ensemble immobilier
 Un carnet d'entretien de l'ensemble immobilier doit être tenu par le syndic.
 
 **Annexe n°15 : Carnet d'entretien**
 
-## **Diagnostic technique global**
-
+## Diagnostic technique global
 Le promettant déclare **{% if copropriete.diagnostic_technique_global %}qu'il existe{% else %}qu'il n'existe pas{% endif %}** de diagnostic technique global.
 
-## **Plan pluriannuel de travaux**
-
+## Plan pluriannuel de travaux
 Le promettant déclare **{% if copropriete.plan_pluriannuel_travaux %}qu'il existe{% else %}qu'il n'existe pas{% endif %}** de plan pluriannuel de travaux.
 
 {% if copropriete.fiche_synthetique %}
-## **Fiche synthétique**
-
+## Fiche synthétique
 La fiche synthétique **a été établie** le {{ copropriete.fiche_synthetique.date }} dont une copie est annexée.
 
 **Annexe n°16 : Fiche synthétique**
 {% endif %}
 
 {% if copropriete.emprunt_collectif and not copropriete.emprunt_collectif.existe %}
-## **Emprunt collectif**
-
+## Emprunt collectif
 **L'état délivré par le syndic ne révèle pas l'existence d'un emprunt collectif.**
 {% endif %}
 
 {% if copropriete.fonds_travaux and copropriete.fonds_travaux.existe %}
-## **Fonds de travaux**
-
+## Fonds de travaux
 **L'immeuble entre dans le champ d'application de l'obligation de créer un fonds de travaux.**
 {% endif %}
 
-## **Statut de la copropriété**
-
-### **Syndic de copropriété**
-
+## Statut de la copropriété
+### Syndic de copropriété
 Le syndic est **{{ copropriete.syndic.nom }} – {{ copropriete.syndic.adresse }} – {{ copropriete.syndic.code_postal }} {{ copropriete.syndic.ville }}**
 
-### **Respect du règlement de copropriété**
-
+### Respect du règlement de copropriété
 Le **BENEFICIAIRE** devra respecter les stipulations du règlement de copropriété, de ses modificatifs éventuels visés ci-dessus, ainsi que les dispositions des lois et décrets postérieurs régissant la copropriété.
 
 {% if copropriete.derniere_ag %}
@@ -1220,19 +1126,16 @@ Les copies dématérialisées des procès-verbaux des assemblées générales de
 **Annexe n°17 : Procès-verbaux des assemblées générales des trois dernières années**
 {% endif %}
 
-### **Convention des parties sur les charges de copropriété**
-
+### Convention des parties sur les charges de copropriété
 Le **PROMETTANT** paiera au syndic de la copropriété toutes les charges mises en recouvrement par ce dernier au jour de l'entrée en jouissance.
 Le **BENEFICIAIRE** supportera les charges de copropriété à compter du jour de l'entrée en jouissance.
 
-### **Convention des parties sur les travaux**
-
+### Convention des parties sur les travaux
 **Le PROMETTANT conservera à sa charge le paiement des travaux votés par l'assemblée des copropriétaires jusqu'à ce jour, que ces travaux soient exécutés ou non, le BENEFICIAIRE supportant seul le coût des travaux qui seront votés postérieurement à ce jour.**
 
 **Annexe n°18 : Pré état-daté**
 
-### **Répartition des budgets de la copropriété**
-
+### Répartition des budgets de la copropriété
 Les charges de copropriété se répartissent selon les modalités définies dans le règlement de copropriété et ses annexes.
 
 {% if copropriete.budgets %}
@@ -1242,8 +1145,7 @@ Les budgets actuels de la copropriété sont les suivants :
 * Travaux votés non encore appelés : <<<VAR_START>>>{{ copropriete.budgets.travaux_votes | montant_en_lettres }} euros<<<VAR_END>>>
 {% endif %}
 
-### **Convention des parties sur les procédures**
-
+### Convention des parties sur les procédures
 Le **BENEFICIAIRE** sera subrogé dans tous les droits et obligations du **PROMETTANT** découlant des procédures en cours impliquant le syndicat des copropriétaires.
 
 {% if copropriete.procedures_en_cours %}
@@ -1256,20 +1158,17 @@ Les procédures suivantes sont en cours :
 Aucune procédure en cours n'a été portée à la connaissance du **PROMETTANT**.
 {% endif %}
 
-### **Travaux urgents décidés par le syndic (article 18 de la loi du 10 juillet 1965)**
-
+### Travaux urgents décidés par le syndic (article 18 de la loi du 10 juillet 1965)
 Au cas où, avant la signature de l'acte de vente, le syndic fait procéder de sa propre initiative à des travaux urgents nécessaires à la sauvegarde de l'immeuble, le coût de ces travaux sera supporté selon la répartition prévue par le règlement de copropriété.
 
-### **Convention de règlement entre les parties**
-
+### Convention de règlement entre les parties
 Le **BENEFICIAIRE** versera au **PROMETTANT**, le jour de la constatation authentique de la vente, outre le prix de vente proprement dit, une somme égale au montant des charges de copropriété et de toutes impositions restant dues au jour de la prise de jouissance au prorata des tantièmes de copropriété afférents au bien vendu.
 
 Par suite, les parties conviennent d'effectuer directement entre elles le remboursement des provisions versées au syndic par le **PROMETTANT** pour l'année en cours.
 
 En outre, dans l'hypothèse où l'état du syndic qui sera annexé à l'acte authentique ferait apparaître une dette du **PROMETTANT** envers la copropriété supérieure au montant de la provision à régulariser, le **BENEFICIAIRE** versera le complément directement au syndic.
 
-### **Information financière sur la copropriété**
-
+### Information financière sur la copropriété
 Les informations financières suivantes sont annexées :
 
 * Le montant des charges courantes du budget prévisionnel et des charges hors budget prévisionnel payées par le **PROMETTANT** au titre des deux exercices comptables précédant la vente.
@@ -1284,16 +1183,14 @@ Les informations financières suivantes sont annexées :
 * Sommes dues par le vendeur : <<<VAR_START>>>{{ copropriete.informations_financieres.sommes_dues | montant_en_lettres }} euros<<<VAR_END>>>
 {% endif %}
 
-### **Décomptes et conventions**
-
+### Décomptes et conventions
 Une copie du pré-état délivré par le syndic est annexée aux présentes.
 
 **Annexe n°19 : Pré état-daté (copie)**
 
 Etant précisé que les sommes indiquées dans ledit document le sont sous réserve de l'apurement des comptes de l'exercice en cours et des régularisations à intervenir ultérieurement.
 
-## **Information du bénéficiaire sur sa situation**
-
+## Information du bénéficiaire sur sa situation
 En application de l'article 20 II de la loi n° 65-557 du 10 juillet 1965, le **BENEFICIAIRE** déclare, tenant compte de la situation qui sera la sienne à la réalisation de la vente :
 
 {% if beneficiaire_situation and beneficiaire_situation.deja_proprietaire %}
@@ -1302,10 +1199,8 @@ En application de l'article 20 II de la loi n° 65-557 du 10 juillet 1965, le **
 * Il n'est pas déjà propriétaire d'un lot dans l'ensemble immobilier dont il s'agit.
 {% endif %}
 
-# **FISCALITE**
-
-## **Régime fiscal de la vente**
-
+# FISCALITE
+## Régime fiscal de la vente
 Le **PROMETTANT** et le **BENEFICIAIRE** indiquent ne pas agir aux présentes en qualité d'assujettis en tant que tels à la taxe sur la valeur ajoutée au sens de l'article 256 du Code général des impôts.
 
 Les présentes seront soumises au tarif de droit commun en matière immobilière tel que prévu par l'article 1594D du Code général des impôts.
@@ -1319,8 +1214,7 @@ Le **BENEFICIAIRE** :
 En conséquence, le taux relevé par le conseil départemental ne s'appliquera pas à l'acte authentique de réitération des présentes.
 {% endif %}
 
-# **Plus-values**
-
+# Plus-values
 {% for origine in origine_propriete %}
 **Concernant {% if origine.lots_concernes | length > 1 %}les lots numéros {% else %}le lot numéro {% endif %}{{ origine.lots_concernes | join(", ") }}**
 {{ origine.origine_immediate.type | capitalize }} suivant acte reçu par {{ origine.origine_immediate.notaire }} le {{ origine.origine_immediate.date }}, publié au service de la publicité foncière de {{ origine.origine_immediate.publication.service }}.
@@ -1333,22 +1227,18 @@ Il s'engage à produire tout élément précis et circonstancié quant à l'effe
 Par suite, il bénéficiera de l'exonération de l'impôt sur les plus-values conformément aux dispositions de l'article 150 U II 1° du Code général des impôts.
 {% endif %}
 
-# **ABSENCE DE FACULTE DE SUBSTITUTION**
-
+# ABSENCE DE FACULTE DE SUBSTITUTION
 {% if faculte_substitution %}
 Le **BENEFICIAIRE** pourra substituer toute personne physique ou morale dans le bénéfice de la présente promesse.
 {% else %}
 Le **BENEFICIAIRE** ne pourra substituer aucune personne physique ou morale dans le bénéfice de la présente promesse.
 {% endif %}
 
-# **Dispositions transitoires**
-
-## **Obligation de garde du promettant**
-
+# Dispositions transitoires
+## Obligation de garde du promettant
 Entre la date des présentes et la date d'entrée en jouissance du **BENEFICIAIRE**, le **BIEN**, et le cas échéant les **MEUBLES**, tels qu'ils sont sus-désignés demeureront sous la garde et possession du **PROMETTANT** qui s'y oblige.
 
-### **Eléments d'équipement**
-
+### Eléments d'équipement
 Le **PROMETTANT** s'engage à laisser dans le **BIEN** tout ce qui est immeuble par destination ainsi que, sans que cette liste soit limitative et sous la seule réserve que les éléments ci-après désignés existent :
 
 * les plaques de cheminées scellées, les inserts ;
@@ -1366,8 +1256,7 @@ Le **PROMETTANT** s'engage à laisser dans le **BIEN** tout ce qui est immeuble 
 * tous les carreaux et vitrages sans cassures ni fêlures ;
 * les volets, persiennes, stores-bannes et leurs motorisations.
 
-### **Entretien, réparation**
-
+### Entretien, réparation
 Jusqu'à l'entrée en jouissance du **BENEFICIAIRE**, le **PROMETTANT** s'engage à :
 
 * ne pas apporter de modification quelconque ;
@@ -1379,15 +1268,13 @@ Jusqu'à l'entrée en jouissance du **BENEFICIAIRE**, le **PROMETTANT** s'engage
 * mettre hors-gel les installations en saison froide ;
 * réparer les dégâts survenus depuis la visite.
 
-## **Sinistre pendant la durée de validité de la promesse**
-
+## Sinistre pendant la durée de validité de la promesse
 Si un sinistre quelconque frappait le **BIEN** durant la durée de validité des présentes, les parties conviennent que le **BENEFICIAIRE** aura la faculté :
 
 * Soit de renoncer purement et simplement à la vente et de se voir immédiatement remboursé de toute somme avancée par lui le cas échéant.
 * Soit de maintenir l'acquisition du **BIEN** alors sinistré totalement ou partiellement et de se voir attribuer les indemnités susceptibles d'être versées par la ou les compagnies d'assurances concernées.
 
-# **Condition de survie du bénéficiaire**
-
+# Condition de survie du bénéficiaire
 {% if condition_survie and condition_survie.applicable %}
 Les parties conviennent expressément que la présente promesse de vente comporte une condition de survie du **BENEFICIAIRE** jusqu'à la date de réalisation de la vente.
 
@@ -1404,8 +1291,7 @@ Par dérogation à ce qui précède, les parties conviennent que les héritiers 
 Les parties conviennent que la présente promesse de vente ne comporte pas de condition de survie. En cas de décès du **BENEFICIAIRE** avant la réitération de la vente, ses héritiers seront tenus de poursuivre l'exécution de la promesse ou d'en subir les conséquences telles que prévues aux présentes.
 {% endif %}
 
-# **Conventions particulières – Visites – Information des parties**
-
+# Conventions particulières – Visites – Information des parties
 {% if conventions_particulieres %}
 {% for convention in conventions_particulieres %}
 ## {{ convention.titre }}
@@ -1415,8 +1301,7 @@ Les parties conviennent que la présente promesse de vente ne comporte pas de co
 {% endfor %}
 {% endif %}
 
-## **Visites préalables**
-
+## Visites préalables
 Le **BENEFICIAIRE** déclare avoir visité le **BIEN** préalablement à la signature des présentes et l'avoir trouvé conforme à ses attentes.
 
 {% if visites and visites.nombre > 1 %}
@@ -1425,8 +1310,7 @@ Le **BENEFICIAIRE** déclare avoir effectué {{ visites.nombre | nombre_en_lettr
 
 Le **BENEFICIAIRE** reconnaît avoir été parfaitement informé de l'état du **BIEN**, de ses équipements, de son environnement et de la conformité des installations aux normes en vigueur, dans la limite des informations détenues par le **PROMETTANT** et des diagnostics réalisés.
 
-## **Information sur les diagnostics et risques**
-
+## Information sur les diagnostics et risques
 Les parties reconnaissent avoir été parfaitement informées de l'ensemble des dispositions légales applicables à la présente promesse de vente, notamment :
 
 * Les dispositions relatives aux diagnostics techniques obligatoires (DPE, plomb, amiante, termites, gaz, électricité, ERP, etc.).
@@ -1434,12 +1318,10 @@ Les parties reconnaissent avoir été parfaitement informées de l'ensemble des 
 * Les dispositions relatives au droit de rétractation de l'acquéreur non professionnel.
 * Les dispositions relatives aux conditions suspensives légales et conventionnelles.
 
-## **Information sur le marché immobilier**
-
+## Information sur le marché immobilier
 Le **BENEFICIAIRE** reconnaît avoir été informé que le notaire rédacteur ne saurait se porter garant de la valeur vénale du **BIEN**, ni de l'évolution future du marché immobilier. Le prix convenu entre les parties résulte de leur libre négociation.
 
-## **Exclusivité**
-
+## Exclusivité
 {% if exclusivite %}
 Le **PROMETTANT** s'engage, pendant toute la durée de validité de la présente promesse, à ne pas :
 * Vendre, promettre de vendre ou consentir une quelconque option d'achat sur le **BIEN** à toute autre personne.
@@ -1448,31 +1330,26 @@ Le **PROMETTANT** s'engage, pendant toute la durée de validité de la présente
 La présente promesse ne comporte pas de clause d'exclusivité particulière.
 {% endif %}
 
-# **PROVISION SUR LES FRAIS DE LA VENTE**
-
+# PROVISION SUR LES FRAIS DE LA VENTE
 {% if provision_frais %}
 A titre de provision sur frais, le **BENEFICIAIRE** versera **dans les {{ delais.delai_provision_frais_jours | default(15) | nombre_en_lettres | upper }} ({{ delais.delai_provision_frais_jours | default(15) }}) JOURS des présentes** au compte de l'office notarial dénommé en tête des présentes, la somme de **{{ provision_frais | montant_en_lettres }}**.
 {% endif %}
 
-# **Paiement sur état - publicité foncière - information**
-
+# Paiement sur état - publicité foncière - information
 L'acte est soumis au droit d'enregistrement sur état de CENT VINGT-CINQ EUROS (125,00 EUR).
 Le **BENEFICIAIRE** dispense le notaire soussigné de faire publier l'acte au service de la publicité foncière{% if not publication.demandee %}, se contentant de requérir ultérieurement à cette publication, s'il le juge utile, à ses frais{% endif %}.
 
-# **POUVOIRS**
-
+# POUVOIRS
 Les parties confèrent à tout clerc ou collaborateur de l'office notarial dénommé en tête des présentes tous pouvoirs nécessaires à l'effet :
 
 * de signer toutes demandes de pièces, demandes de renseignements, et lettres de purge de droit de préemption préalables à la vente ;
 * de dresser et signer tous actes qui se révéleraient nécessaires en vue de l'accomplissement des formalités de publicité foncière.
 
-# **ELECTION DE DOMICILE**
-
+# ELECTION DE DOMICILE
 Pour l'exécution des présentes, les parties font élection de domicile en leur demeure ou siège social respectif.
 En outre, et à défaut d'accord amiable entre les parties, toutes les contestations qui pourront résulter des présentes seront soumises au tribunal judiciaire de la situation du **BIEN**.
 
-# **FACULTE DE RETRACTATION**
-
+# FACULTE DE RETRACTATION
 En vertu des dispositions de l'article L 271-1 du Code de la construction et de l'habitation, le **BIEN** étant à usage d'habitation et le **BENEFICIAIRE** étant un non-professionnel de l'immobilier, ce dernier bénéficie de la faculté de se rétracter.
 A cet effet, une copie du présent acte avec ses annexes lui sera notifiée par lettre recommandée avec accusé de réception. Dans un délai de dix jours à compter du lendemain de la première présentation de la lettre de notification, le **BENEFICIAIRE** pourra exercer la faculté de rétractation, et ce par lettre recommandée avec accusé de réception ou exploit extrajudiciaire, à son choix exclusif.
 
@@ -1487,12 +1364,10 @@ Il est ici précisé au **BENEFICIAIRE** que :
 * En vertu de l'article 642 du Code de procédure civile, le délai expirant un samedi, un dimanche, un jour férié ou chômé, est prorogé jusqu'au premier jour ouvrable suivant.
 * En cas de pluralité de bénéficiaires, il est expressément convenu que la rétractation d'un seul d'entre eux emportera automatiquement résolution des présentes.
 
-# **COMMUNICATION DES PIECES ET DOCUMENTS**
-
+# COMMUNICATION DES PIECES ET DOCUMENTS
 Le **BENEFICIAIRE** pourra prendre connaissance de toutes les pièces et documents ci-dessus mentionnés dans le délai de rétractation auprès du notaire rédacteur des présentes.
 
-## **Notification par envoi électronique**
-
+## Notification par envoi électronique
 Le **BENEFICIAIRE** donne son accord pour que toute notification lui soit faite par lettre recommandée par voie électronique permettant d'établir de manière certaine la date de réception.
 
 Il bénéficie en contrepartie de la faculté d'effectuer, dans le cadre des présentes, toute notification par lettre recommandée électronique.
@@ -1509,8 +1384,7 @@ Afin de procéder à l'envoi de documents par lettre recommandée électronique,
 * **{{ beneficiaire.civilite }} {{ beneficiaire.nom }}** : <<<VAR_START>>>{{ beneficiaire.coordonnees.courriel }}<<<VAR_END>>>
 {% endfor %}
 
-# **Envoi electronique**
-
+# Envoi electronique
 Chacune des parties donne son accord pour que l'envoi d'une lettre recommandée, lorsque la loi permet une telle modalité d'envoi, soit réalisé par lettre recommandée électronique selon le dispositif légal de l'article L. 100 du Code des postes et des communications électroniques.
 
 Elle reconnait et garantit qu'elle dispose de la maîtrise exclusive de la boîte aux lettres électronique dont l'adresse est indiquée ci-après et qu'elle s'assurera de consulter régulièrement.
@@ -1519,8 +1393,7 @@ Il est précisé que le prestataire chargé de la remise est AR24. Ce prestatair
 
 Chacune des parties déclare faire élection de domicile électronique à l'adresse déjà mentionnée ci-dessus.
 
-# **ADRESSES electroniqueS**
-
+# ADRESSES electroniqueS
 Afin de procéder à l'envoi de documents par voie électronique, les parties confirment les adresses électroniques suivantes :
 
 {% for promettant in promettants %}
@@ -1531,32 +1404,25 @@ Afin de procéder à l'envoi de documents par voie électronique, les parties co
 * **{{ beneficiaire.civilite }} {{ beneficiaire.nom }}** : <<<VAR_START>>>{{ beneficiaire.coordonnees.courriel }}<<<VAR_END>>>
 {% endfor %}
 
-# **NOTIFICATIONS – POUVOIRS RECIPROQUES**
-
+# NOTIFICATIONS – POUVOIRS RECIPROQUES
 Les bénéficiaires se donnent pouvoir réciproquement et à l'effet de signer tout avenant ou rectification au présent contrat que les circonstances ultérieures pourraient rendre nécessaire.
 
-# **Médiation**
-
+# Médiation
 Les parties sont informées qu'en cas de litige entre elles ou avec un tiers, elles pourront, préalablement à toute instance judiciaire, le soumettre à un médiateur qui sera désigné et missionné par le Centre de médiation notariale.
 
-# **Affirmation de sincérité**
-
+# Affirmation de sincérité
 Les parties affirment, sous les peines édictées par l'article 1837 du Code général des impôts, que le présent acte exprime l'intégralité du prix ; elles reconnaissent avoir été informées par le rédacteur des présentes des sanctions fiscales et des peines correctionnelles encourues en cas d'inexactitude de cette affirmation.
 
-# **Renonciation à l'imprévision**
-
+# Renonciation à l'imprévision
 Les parties écartent de leur contrat les dispositions de l'article 1195 du Code civil permettant la révision du contrat pour imprévision.
 
-# **Mention sur la protection des données personnelles**
-
+# Mention sur la protection des données personnelles
 L'Office notarial traite des données personnelles concernant les personnes mentionnées aux présentes, pour l'accomplissement des activités notariales, notamment de formalités d'actes.
 
-# **Certification d'identité**
-
+# Certification d'identité
 Le notaire soussigné certifie que l'identité complète des parties dénommées dans le présent document telle qu'elle est indiquée en tête des présentes à la suite de leur nom ou dénomination lui a été régulièrement justifiée.
 
-# **LISTE DES ANNEXES**
-
+# LISTE DES ANNEXES
 Les annexes suivantes font partie intégrante de la présente promesse de vente :
 
 | N° | Désignation | Obligatoire | Observations |
@@ -1564,33 +1430,77 @@ Les annexes suivantes font partie intégrante de la présente promesse de vente 
 | 1 | Plans cadastral et géoportail | Oui | Identification du bien |
 | 2 | Plans des lots et plan de masse | Oui | Description des lots |
 | 3 | Attestation de mesurage Carrez | Oui | Article 46 loi du 10 juillet 1965 |
-{% if diagnostics.dpe %}| 4 | Diagnostic de performance énergétique (DPE) | Oui | Classe {{ diagnostics.dpe.classe_energie | default('NC') }} |{% endif %}
-{% if diagnostics.erp or diagnostics.etat_risques %}| 5 | État des risques et pollutions (ERP) | Oui | Article L. 125-5 Code environnement |{% endif %}
-{% if diagnostics.plomb %}| 6 | Constat de risque d'exposition au plomb (CREP) | {% if diagnostics.plomb.requis %}Oui{% else %}Non{% endif %} | Immeuble construit avant 1949 |{% endif %}
-{% if diagnostics.amiante_parties_privatives %}| 7 | Diagnostic amiante parties privatives | {% if diagnostics.amiante_parties_privatives.requis %}Oui{% else %}Non{% endif %} | Permis de construire avant 01/07/1997 |{% endif %}
-{% if diagnostics.amiante_parties_communes %}| 8 | Diagnostic amiante parties communes | {% if diagnostics.amiante_parties_communes.requis %}Oui{% else %}Non{% endif %} | DTA copropriété |{% endif %}
-{% if diagnostics.termites %}| 9 | État relatif aux termites | {% if diagnostics.termites.requis %}Oui{% else %}Non{% endif %} | Zone de protection |{% endif %}
-{% if diagnostics.gaz %}| 10 | État de l'installation intérieure de gaz | {% if diagnostics.gaz.requis %}Oui{% else %}Non{% endif %} | Installation > 15 ans |{% endif %}
-{% if diagnostics.electricite %}| 11 | État de l'installation intérieure d'électricité | {% if diagnostics.electricite.requis %}Oui{% else %}Non{% endif %} | Installation > 15 ans |{% endif %}
-{% if diagnostics.assainissement %}| 12 | Diagnostic assainissement | {% if diagnostics.assainissement.requis %}Oui{% else %}Non{% endif %} | Assainissement non collectif |{% endif %}
-{% if diagnostics.audit_energetique and diagnostics.audit_energetique.requis %}| 13 | Audit énergétique | Oui | Classe F ou G |{% endif %}
-{% if diagnostics.zone_bruit_aeroport and diagnostics.zone_bruit_aeroport.dans_zone %}| 14 | Plan d'exposition au bruit des aérodromes | Oui | Zone concernée |{% endif %}
-{% if diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe %}| 15 | Carnet d'information du logement | Non | Remis si existant |{% endif %}
+{% if diagnostics.dpe -%}
+| 4 | Diagnostic de performance énergétique (DPE) | Oui | Classe {{ diagnostics.dpe.classe_energie | default('NC') }} |
+{% endif -%}
+{% if diagnostics.erp or diagnostics.etat_risques -%}
+| 5 | État des risques et pollutions (ERP) | Oui | Article L. 125-5 Code environnement |
+{% endif -%}
+{% if diagnostics.plomb -%}
+| 6 | Constat de risque d'exposition au plomb (CREP) | {% if diagnostics.plomb.requis %}Oui{% else %}Non{% endif %} | Immeuble construit avant 1949 |
+{% endif -%}
+{% if diagnostics.amiante_parties_privatives -%}
+| 7 | Diagnostic amiante parties privatives | {% if diagnostics.amiante_parties_privatives.requis %}Oui{% else %}Non{% endif %} | Permis de construire avant 01/07/1997 |
+{% endif -%}
+{% if diagnostics.amiante_parties_communes -%}
+| 8 | Diagnostic amiante parties communes | {% if diagnostics.amiante_parties_communes.requis %}Oui{% else %}Non{% endif %} | DTA copropriété |
+{% endif -%}
+{% if diagnostics.termites -%}
+| 9 | État relatif aux termites | {% if diagnostics.termites.requis %}Oui{% else %}Non{% endif %} | Zone de protection |
+{% endif -%}
+{% if diagnostics.gaz -%}
+| 10 | État de l'installation intérieure de gaz | {% if diagnostics.gaz.requis %}Oui{% else %}Non{% endif %} | Installation > 15 ans |
+{% endif -%}
+{% if diagnostics.electricite -%}
+| 11 | État de l'installation intérieure d'électricité | {% if diagnostics.electricite.requis %}Oui{% else %}Non{% endif %} | Installation > 15 ans |
+{% endif -%}
+{% if diagnostics.assainissement -%}
+| 12 | Diagnostic assainissement | {% if diagnostics.assainissement.requis %}Oui{% else %}Non{% endif %} | Assainissement non collectif |
+{% endif -%}
+{% if diagnostics.audit_energetique and diagnostics.audit_energetique.requis -%}
+| 13 | Audit énergétique | Oui | Classe F ou G |
+{% endif -%}
+{% if diagnostics.zone_bruit_aeroport and diagnostics.zone_bruit_aeroport.dans_zone -%}
+| 14 | Plan d'exposition au bruit des aérodromes | Oui | Zone concernée |
+{% endif -%}
+{% if diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe -%}
+| 15 | Carnet d'information du logement | Non | Remis si existant |
+{% endif -%}
 | 16 | Note d'urbanisme | Oui | Situation du bien |
 | 17 | Note de voirie | Oui | Desserte et accès |
-{% if urbanisme.certificat_non_peril %}| 18 | Certificat de non-péril | Oui | État de l'immeuble |{% endif %}
+{% if urbanisme.certificat_non_peril -%}
+| 18 | Certificat de non-péril | Oui | État de l'immeuble |
+{% endif -%}
 | 19 | Règlement de copropriété et ses modificatifs | Oui | Applicable au bien |
 | 20 | État descriptif de division | Oui | Identification des lots |
-{% if copropriete.immatriculation %}| 21 | Attestation d'immatriculation au RNC | Oui | N° {{ copropriete.immatriculation }} |{% endif %}
-{% if copropriete.carnet_entretien %}| 22 | Carnet d'entretien de l'immeuble | Oui | Article L. 721-2 CCH |{% endif %}
-{% if copropriete.fiche_synthetique %}| 23 | Fiche synthétique de la copropriété | Oui | Article L. 711-2 CCH |{% endif %}
-{% if copropriete.derniere_ag %}| 24 | Procès-verbaux des AG (3 dernières années) | Oui | Information acquéreur |{% endif %}
+{% if copropriete.immatriculation -%}
+| 21 | Attestation d'immatriculation au RNC | Oui | N° {{ copropriete.immatriculation }} |
+{% endif -%}
+{% if copropriete.carnet_entretien -%}
+| 22 | Carnet d'entretien de l'immeuble | Oui | Article L. 721-2 CCH |
+{% endif -%}
+{% if copropriete.fiche_synthetique -%}
+| 23 | Fiche synthétique de la copropriété | Oui | Article L. 711-2 CCH |
+{% endif -%}
+{% if copropriete.derniere_ag -%}
+| 24 | Procès-verbaux des AG (3 dernières années) | Oui | Information acquéreur |
+{% endif -%}
 | 25 | Pré état-daté | Oui | Article 10-1 loi du 10 juillet 1965 |
-{% if copropriete.diagnostic_technique_global and copropriete.diagnostic_technique_global.existe %}| 26 | Diagnostic technique global (DTG) | Oui | Article L. 731-1 CCH |{% endif %}
-{% if copropriete.plan_pluriannuel_travaux and copropriete.plan_pluriannuel_travaux.existe %}| 27 | Plan pluriannuel de travaux (PPT) | Oui | Si adopté |{% endif %}
-{% if travaux and travaux.travaux_realises %}| 28 | Factures et attestations décennales | Oui | Travaux des 10 dernières années |{% endif %}
-{% if negociation and negociation.avec_agent %}| 29 | Mandat de négociation | Oui | Agent immobilier |{% endif %}
-{% if conditions_suspensives and conditions_suspensives.pret and conditions_suspensives.pret.applicable %}| 30 | Justificatifs de financement prévisionnel | Non | Information préalable |{% endif %}
+{% if copropriete.diagnostic_technique_global and copropriete.diagnostic_technique_global.existe -%}
+| 26 | Diagnostic technique global (DTG) | Oui | Article L. 731-1 CCH |
+{% endif -%}
+{% if copropriete.plan_pluriannuel_travaux and copropriete.plan_pluriannuel_travaux.existe -%}
+| 27 | Plan pluriannuel de travaux (PPT) | Oui | Si adopté |
+{% endif -%}
+{% if travaux and travaux.travaux_realises -%}
+| 28 | Factures et attestations décennales | Oui | Travaux des 10 dernières années |
+{% endif -%}
+{% if negociation and negociation.avec_agent -%}
+| 29 | Mandat de négociation | Oui | Agent immobilier |
+{% endif -%}
+{% if conditions_suspensives and conditions_suspensives.pret and conditions_suspensives.pret.applicable -%}
+| 30 | Justificatifs de financement prévisionnel | Non | Information préalable |
+{% endif -%}
 
 {% if annexes_supplementaires %}
 **Annexes complémentaires :**
@@ -1601,10 +1511,17 @@ Les annexes suivantes font partie intégrante de la présente promesse de vente 
 
 Le **BENEFICIAIRE** reconnaît avoir reçu l'ensemble des documents et annexes ci-dessus listés préalablement à la signature des présentes. Ces documents lui ont été remis ou mis à disposition sur l'espace sécurisé mis à sa disposition par l'office notarial.
 
-# **Formalisme lié aux annexes**
-
+# Formalisme lié aux annexes
 Les annexes, s'il en existe, font partie intégrante de la minute.
 Si l'acte est établi sur support électronique, la signature du notaire en fin d'acte vaut également pour ses annexes.
+
+{# ============================================================================
+   PARTIE DÉVELOPPÉE SPÉCIFIQUE PROMESSE DE VENTE
+   Inclut : conditions suspensives, délais, indemnité, substitution
+   puis la partie développée commune (garanties, diagnostics, etc.)
+   ============================================================================ #}
+
+{% include 'sections/partie_developpee_promesse.md' %}
 
 **DONT ACTE sans renvoi**
 Généré en l'office notarial et visualisé sur support électronique aux lieu, jour, mois et an indiqués en en-tête du présent acte.

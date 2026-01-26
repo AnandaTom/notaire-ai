@@ -45,6 +45,14 @@ USAGE:
 
 COMMANDES PRINCIPALES:
 
+  🤖 AGENT AUTONOME (NOUVEAU!)
+    agent "<demande>"               Exécuter une demande en langage naturel
+        Exemples:
+          agent "Crée une promesse Martin→Dupont, appart 67m² Paris, 450000€"
+          agent "Modifie le prix à 460000€ dans le dossier 2026-001"
+          agent "Liste les actes récents"
+          agent                     Mode interactif
+
   📄 EXTRACTION
     extraire <fichier>              Extraire un titre de propriété
         -o, --output <fichier>      Sauvegarder en JSON
@@ -218,6 +226,42 @@ def main():
     # =========================================================================
     elif commande == 'status':
         orch.afficher_statut()
+
+    # =========================================================================
+    # Commande: agent (NOUVEAU - Mode agent autonome)
+    # =========================================================================
+    elif commande == 'agent':
+        from execution.agent_autonome import AgentNotaire
+
+        agent = AgentNotaire()
+
+        if len(sys.argv) > 2:
+            # Mode commande directe
+            demande = ' '.join(sys.argv[2:])
+            agent.executer(demande)
+        else:
+            # Mode interactif
+            print("\n🤖 Agent NotaireAI - Mode interactif")
+            print("   Tapez 'aide' pour voir les commandes, 'q' pour quitter\n")
+
+            while True:
+                try:
+                    demande = input(">>> ").strip()
+
+                    if demande.lower() in ('q', 'quit', 'exit'):
+                        print("Au revoir!")
+                        break
+
+                    if not demande:
+                        continue
+
+                    agent.executer(demande)
+
+                except KeyboardInterrupt:
+                    print("\nAu revoir!")
+                    break
+                except EOFError:
+                    break
 
     # =========================================================================
     # Commande inconnue
