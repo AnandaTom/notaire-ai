@@ -66,23 +66,88 @@ class AgentDB:
 
     Gère automatiquement:
     - Connexion à Supabase via variables d'environnement
+    - Authentification par clé API (NOTAIRE_API_KEY)
+    - Isolation des données par étude (multi-tenant)
     - Mode offline si Supabase non disponible
     - Hachage des noms pour recherche sécurisée
+
+    Configuration:
+        # Option 1: Clé API spécifique notaire (recommandé pour production)
+        NOTAIRE_API_KEY=nai_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+        # Option 2: Credentials Supabase directs + etude_id
+        SUPABASE_URL=https://xxx.supabase.co
+        SUPABASE_SERVICE_KEY=eyJhbG...
+        NOTAIRE_ETUDE_ID=uuid-de-l-etude
     """
 
-    def __init__(self):
-        """Initialise la connexion à Supabase."""
+    def __init__(self, api_key: str = None, etude_id: str = None):
+        """
+        Initialise la connexion à Supabase.
+
+        Args:
+            api_key: Clé API notaire (optionnel, sinon utilise env)
+            etude_id: ID de l'étude (optionnel, sinon déduit de la clé API)
+        """
         self.url = os.getenv("SUPABASE_URL")
         self.key = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_KEY")
         self.client: Optional[Client] = None
         self._offline = True
+        self._etude_id: Optional[str] = None
+        self._permissions: Dict = {"read": True, "write": True, "delete": False}
+        self._rate_limit: int = 60
+
+        # Clé API notaire (prioritaire)
+        self._api_key = api_key or os.getenv("NOTAIRE_API_KEY")
 
         if SUPABASE_AVAILABLE and self.url and self.key:
             try:
                 self.client = create_client(self.url, self.key)
                 self._offline = False
+
+                # Valider la clé API et récupérer l'etude_id
+                if self._api_key:
+                    self._validate_api_key()
+                elif etude_id:
+                    self._etude_id = etude_id
+                else:
+                    self._etude_id = os.getenv("NOTAIRE_ETUDE_ID")
+
             except Exception as e:
                 print(f"WARN: Connexion Supabase échouée: {e}")
+
+    def _validate_api_key(self) -> bool:
+        """Valide la clé API et récupère les permissions."""
+        if not self._api_key or not self.client:
+            return False
+
+        try:
+            result = self.client.rpc(
+                "validate_agent_api_key",
+                {"api_key": self._api_key}
+            ).execute()
+
+            if result.data and len(result.data) > 0:
+                self._etude_id = result.data[0]["etude_id"]
+                self._permissions = result.data[0]["permissions"]
+                self._rate_limit = result.data[0]["rate_limit"]
+                return True
+            else:
+                print("WARN: Clé API invalide ou expirée")
+                return False
+        except Exception as e:
+            print(f"WARN: Erreur validation clé API: {e}")
+            return False
+
+    @property
+    def etude_id(self) -> Optional[str]:
+        """Retourne l'ID de l'étude courante."""
+        return self._etude_id
+
+    @property
+    def permissions(self) -> Dict:
+        """Retourne les permissions de l'agent."""
+        return self._permissions
 
     @property
     def is_connected(self) -> bool:
@@ -96,7 +161,7 @@ class AgentDB:
     def search_client(
         self,
         nom: str,
-        etude_id: str,
+        etude_id: str = None,
         limit: int = 10
     ) -> List[Dict]:
         """
@@ -104,13 +169,19 @@ class AgentDB:
 
         Args:
             nom: Nom à rechercher
-            etude_id: ID de l'étude
+            etude_id: ID de l'étude (optionnel, utilise celui de la clé API)
             limit: Nombre max de résultats
 
         Returns:
             Liste de clients correspondants
         """
         if self._offline:
+            return []
+
+        # Utilise l'etude_id de la clé API si non fourni
+        etude_id = etude_id or self._etude_id
+        if not etude_id:
+            print("ERREUR: etude_id requis (via clé API ou paramètre)")
             return []
 
         # Hash du nom pour recherche
@@ -149,9 +220,14 @@ class AgentDB:
             print(f"ERREUR get_client: {e}")
             return None
 
-    def get_all_clients(self, etude_id: str, limit: int = 100) -> List[Dict]:
+    def get_all_clients(self, etude_id: str = None, limit: int = 100) -> List[Dict]:
         """Récupère tous les clients actifs d'une étude."""
         if self._offline:
+            return []
+
+        etude_id = etude_id or self._etude_id
+        if not etude_id:
+            print("ERREUR: etude_id requis")
             return []
 
         try:
@@ -218,9 +294,14 @@ class AgentDB:
             print(f"ERREUR get_dossier: {e}")
             return None
 
-    def get_dossier_by_numero(self, etude_id: str, numero: str) -> Optional[Dict]:
+    def get_dossier_by_numero(self, numero: str, etude_id: str = None) -> Optional[Dict]:
         """Récupère un dossier par son numéro."""
         if self._offline:
+            return None
+
+        etude_id = etude_id or self._etude_id
+        if not etude_id:
+            print("ERREUR: etude_id requis")
             return None
 
         try:
@@ -238,12 +319,17 @@ class AgentDB:
 
     def get_all_dossiers(
         self,
-        etude_id: str,
+        etude_id: str = None,
         statut: str = None,
         limit: int = 50
     ) -> List[Dict]:
         """Récupère les dossiers d'une étude."""
         if self._offline:
+            return []
+
+        etude_id = etude_id or self._etude_id
+        if not etude_id:
+            print("ERREUR: etude_id requis")
             return []
 
         try:
@@ -265,26 +351,31 @@ class AgentDB:
 
     def create_dossier(
         self,
-        etude_id: str,
         numero: str,
         type_acte: str,
         parties: List[Dict] = None,
-        donnees_metier: Dict = None
+        donnees_metier: Dict = None,
+        etude_id: str = None
     ) -> Optional[str]:
         """
         Crée un nouveau dossier.
 
         Args:
-            etude_id: ID de l'étude
             numero: Numéro du dossier (ex: "VTE-2026-001")
             type_acte: Type d'acte (vente, promesse, etc.)
             parties: Liste des parties [{client_id, role}]
             donnees_metier: Données métier du dossier
+            etude_id: ID de l'étude (optionnel, utilise celui de la clé API)
 
         Returns:
             ID du dossier créé ou None
         """
         if self._offline:
+            return None
+
+        etude_id = etude_id or self._etude_id
+        if not etude_id:
+            print("ERREUR: etude_id requis")
             return None
 
         try:
@@ -397,17 +488,39 @@ class AgentDB:
 # =============================================================================
 
 if __name__ == "__main__":
-    print("Test AgentDB...")
-    print(f"SUPABASE_URL: {os.getenv('SUPABASE_URL', 'NON CONFIGURÉ')}")
+    print("=" * 60)
+    print("  Test AgentDB - Multi-tenant")
+    print("=" * 60)
+
+    print(f"\nSUPABASE_URL: {os.getenv('SUPABASE_URL', 'NON CONFIGURÉ')}")
+    print(f"NOTAIRE_API_KEY: {'Configuré' if os.getenv('NOTAIRE_API_KEY') else 'Non configuré'}")
+    print(f"NOTAIRE_ETUDE_ID: {os.getenv('NOTAIRE_ETUDE_ID', 'Non configuré')}")
 
     db = AgentDB()
-    print(f"Connecté: {db.is_connected}")
+
+    print(f"\nConnecté: {db.is_connected}")
+    print(f"Étude ID: {db.etude_id or 'Non défini'}")
+    print(f"Permissions: {db.permissions}")
 
     if db.is_connected:
-        # Test récupération études
-        etudes = db.get_all_etudes()
-        print(f"Études trouvées: {len(etudes)}")
+        if db.etude_id:
+            # Test avec étude spécifique
+            print(f"\n--- Test avec étude {db.etude_id} ---")
+            dossiers = db.get_all_dossiers(limit=5)
+            print(f"Dossiers trouvés: {len(dossiers)}")
+
+            clients = db.get_all_clients(limit=5)
+            print(f"Clients trouvés: {len(clients)}")
+        else:
+            # Mode admin - liste toutes les études
+            print("\n--- Mode Admin (pas de clé API) ---")
+            etudes = db.get_all_etudes()
+            print(f"Études trouvées: {len(etudes)}")
+            for etude in etudes[:3]:
+                print(f"  - {etude['nom']} ({etude['id'][:8]}...)")
 
         print("\n✓ AgentDB prêt pour la production!")
     else:
         print("\n⚠ Mode offline - configurez les variables d'environnement")
+        print("  Option 1: NOTAIRE_API_KEY=nai_xxx...")
+        print("  Option 2: SUPABASE_URL + SUPABASE_SERVICE_KEY + NOTAIRE_ETUDE_ID")

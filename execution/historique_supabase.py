@@ -40,8 +40,9 @@ except ImportError:
 
 try:
     from supabase import create_client, Client
-except ImportError:
-    print("Avertissement: supabase n'est pas installé. Exécutez: pip install supabase")
+except (ImportError, AttributeError, Exception) as e:
+    # Python 3.14+ peut causer des erreurs dans httpcore/supabase
+    print(f"Avertissement: supabase non disponible ({type(e).__name__}). Mode offline activé.")
     create_client = None
     Client = None
 

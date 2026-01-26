@@ -317,13 +317,108 @@ Le **BENEFICIAIRE** entend conserver cet usage{% if bien.usage_futur == "residen
 
 Le **BENEFICIAIRE** déclare ne pas envisager d'opération de modification du **BIEN** qui nécessiterait soit un arrêté de non-opposition à déclaration préalable de travaux soit un permis de construire, et dont l'obtention préalable à la vente serait pour lui constitutive d'une condition suspensive.
 
-# **Effet relatif**
+# **ORIGINE DE PROPRIÉTÉ**
+
+Le **PROMETTANT** déclare être propriétaire des biens et droits immobiliers objet des présentes, en vertu des titres ci-après relatés.
 
 {% for origine in origine_propriete %}
-**Concernant {% if origine.lots_concernes | length > 1 %}les lots numéros {% else %}le lot numéro {% endif %}{{ origine.lots_concernes | join(", ") }}**
-{{ origine.origine_immediate.type | capitalize }} suivant acte reçu par {{ origine.origine_immediate.notaire }} le {{ origine.origine_immediate.date }}, publié au service de la publicité foncière de {{ origine.origine_immediate.publication.service }}{% if origine.origine_immediate.publication.date %} le {{ origine.origine_immediate.publication.date }}, volume {{ origine.origine_immediate.publication.volume }}, numéro {{ origine.origine_immediate.publication.numero }}{% endif %}.
+## **Concernant {% if origine.lots_concernes | length > 1 %}les lots numéros {% else %}le lot numéro {% endif %}{{ origine.lots_concernes | join(", ") }}**
+
+### Origine immédiate
+
+Le **PROMETTANT** est devenu propriétaire {{ origine.modalite_detention | default('en pleine propriété') }} des biens ci-dessus désignés par suite de {{ origine.origine_immediate.type | lower }} qu'il en a faite :
+
+{% if origine.origine_immediate.cedants %}
+{% for cedant in origine.origine_immediate.cedants %}
+**De {{ cedant.civilite }} {{ cedant.prenoms | default(cedant.prenom) }} {{ cedant.nom | upper }}**{% if cedant.profession %}, {{ cedant.profession }}{% endif %}{% if cedant.adresse %}, demeurant à {{ cedant.adresse }}{% endif %}.
+{% if cedant.date_naissance %}Né(e) à {{ cedant.lieu_naissance | default('[lieu de naissance]') }} le {{ cedant.date_naissance | format_date }}.{% endif %}
+
+{% if cedant.situation_matrimoniale %}
+{% if cedant.situation_matrimoniale.statut == 'marie' %}
+Marié(e) sous le régime de {{ cedant.situation_matrimoniale.regime_matrimonial | default('la communauté légale') }}.
+{% elif cedant.situation_matrimoniale.statut == 'celibataire' %}
+Célibataire.
+{% elif cedant.situation_matrimoniale.statut == 'divorce' %}
+Divorcé(e).
+{% elif cedant.situation_matrimoniale.statut == 'veuf' %}
+Veuf(ve).
+{% endif %}
+{% endif %}
+{% endfor %}
+{% else %}
+**De {{ origine.origine_immediate.vendeur_precedent | default('[Vendeur précédent à préciser]') }}**
+{% endif %}
+
+Suivant acte {{ origine.origine_immediate.type_libelle | default('de vente') | lower }} reçu par **{{ origine.origine_immediate.notaire }}**, notaire{% if origine.origine_immediate.ville_notaire %} à {{ origine.origine_immediate.ville_notaire }}{% endif %}, le **{{ origine.origine_immediate.date | format_date }}**.
+
+{% if origine.origine_immediate.prix %}
+Le prix a été payé {{ origine.origine_immediate.modalite_paiement | default('comptant') }} et quittancé audit acte.
+{% endif %}
+
+Cet acte a été publié au **service de la publicité foncière de {{ origine.origine_immediate.publication.service }}**{% if origine.origine_immediate.publication.date %} le {{ origine.origine_immediate.publication.date | format_date }}, volume {{ origine.origine_immediate.publication.volume }}, numéro {{ origine.origine_immediate.publication.numero }}{% endif %}.
+
+{% if origine.origine_immediate.inscriptions %}
+### Inscriptions grevant le bien
+
+Le bien est grevé des inscriptions suivantes :
+
+{% for inscription in origine.origine_immediate.inscriptions %}
+* **{{ inscription.type }}** : {{ inscription.description }}
+  - Bénéficiaire : {{ inscription.beneficiaire }}
+  - Date : {{ inscription.date | format_date }}
+  {% if inscription.montant %}- Montant : {{ inscription.montant | format_nombre }} EUR{% endif %}
+{% endfor %}
+
+Le **PROMETTANT** s'engage à faire radier ou réduire toutes inscriptions grevant le bien, pour ce qui pourrait rester dû, de sorte que celui-ci soit libre de toutes inscriptions le jour de la réitération par acte authentique.
+{% endif %}
+
+{% if origine.origines_anterieures and origine.origines_anterieures | length > 0 %}
+### Origine antérieure
+
+L'origine de propriété antérieure est ci-après relatée telle qu'elle résulte de l'acte susvisé :
+
+{% for origine_ant in origine.origines_anterieures %}
+{% if origine_ant.type == 'acquisition' %}
+{{ origine_ant.beneficiaire | default('Le propriétaire précédent') }} avait acquis le bien de {{ origine_ant.cedant }} suivant acte reçu par {{ origine_ant.notaire }}, notaire{% if origine_ant.ville_notaire %} à {{ origine_ant.ville_notaire }}{% endif %}, le {{ origine_ant.date | format_date }}.
+{% if origine_ant.publication %}Publié au service de la publicité foncière de {{ origine_ant.publication.service }} le {{ origine_ant.publication.date | format_date }}.{% endif %}
+
+{% elif origine_ant.type == 'succession' %}
+Le bien était échu au propriétaire précédent par suite du décès de {{ origine_ant.defunt.civilite }} {{ origine_ant.defunt.nom }}, survenu le {{ origine_ant.defunt.date_deces | format_date }}{% if origine_ant.defunt.lieu_deces %} à {{ origine_ant.defunt.lieu_deces }}{% endif %}.
+{% if origine_ant.acte_notoriete %}Aux termes d'un acte de notoriété reçu par {{ origine_ant.acte_notoriete.notaire }} le {{ origine_ant.acte_notoriete.date | format_date }}.{% endif %}
+{% if origine_ant.attestation_propriete %}Attestation de propriété reçue par {{ origine_ant.attestation_propriete.notaire }} le {{ origine_ant.attestation_propriete.date | format_date }}.{% endif %}
+
+{% elif origine_ant.type == 'licitation' or origine_ant.type == 'partage' %}
+Le bien a été attribué au propriétaire précédent par suite de {{ origine_ant.type }} suivant acte reçu par {{ origine_ant.notaire }} le {{ origine_ant.date | format_date }}.
+{% if origine_ant.publication %}Publié au service de la publicité foncière de {{ origine_ant.publication.service }} le {{ origine_ant.publication.date | format_date }}.{% endif %}
+
+{% elif origine_ant.type == 'donation' %}
+Le bien avait été donné au propriétaire précédent par {{ origine_ant.donateur }} suivant acte reçu par {{ origine_ant.notaire }} le {{ origine_ant.date | format_date }}.
+{% if origine_ant.publication %}Publié au service de la publicité foncière de {{ origine_ant.publication.service }} le {{ origine_ant.publication.date | format_date }}.{% endif %}
+
+{% else %}
+{{ origine_ant.description | default('Origine antérieure non détaillée') }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if origine.titre_originaire %}
+### Titre originaire
+
+ORIGINAIREMENT, lesdits biens et droits immobiliers appartenaient à {{ origine.titre_originaire.proprietaire }} par suite de {{ origine.titre_originaire.mode_acquisition }}.
+
+{% if origine.titre_originaire.details %}{{ origine.titre_originaire.details }}{% endif %}
+
+{% if origine.titre_originaire.acte %}
+Suivant acte reçu par {{ origine.titre_originaire.acte.notaire }}, notaire{% if origine.titre_originaire.acte.lieu %} à {{ origine.titre_originaire.acte.lieu }}{% endif %}, le {{ origine.titre_originaire.acte.date | format_date }}.
+{% if origine.titre_originaire.acte.publication %}Publié au service de la publicité foncière de {{ origine.titre_originaire.acte.publication.service }} le {{ origine.titre_originaire.acte.publication.date | format_date }}.{% endif %}
+{% endif %}
+{% endif %}
 
 {% endfor %}
+
+# **Effet relatif**
+
+Les titres de propriété antérieurs, les pièces d'urbanisme ou autres, ne doivent pas révéler de servitudes, de charges, ni de vices non indiqués aux présentes pouvant grever l'immeuble et en diminuer sensiblement la valeur ou le rendre impropre à la destination que le **BENEFICIAIRE** entend lui donner. Le **PROMETTANT** devra justifier d'une origine de propriété régulière remontant à un titre translatif d'au moins trente ans.
 
 # **Caractéristiques**
 
@@ -842,10 +937,10 @@ Les conclusions sont les suivantes :
 * Numéro d'enregistrement ADEME : {{ diagnostics.dpe.numero_ademe }}
 {% endif %}
 
-{% if diagnostics.carnet_logement %}
+{% if diagnostics.carnet_logement or diagnostics.carnet_information_logement %}
 ### **Carnet d'information du logement**
 
-Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement a été établi et est communiqué au **BENEFICIAIRE**.
+Conformément aux dispositions des articles L 126-35-2 à L 126-35-11 et R 126-32 à R 126-34 du Code de la construction et de l'habitation, le carnet d'information du logement {% if diagnostics.carnet_logement or (diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe) %}a été établi et est communiqué{% else %}sera établi et communiqué{% endif %} au **BENEFICIAIRE**.
 
 Le **PROMETTANT** s'engage à transmettre au **BENEFICIAIRE** une copie de ce carnet d'information au plus tard à la date de signature de l'acte authentique de vente.
 
@@ -864,19 +959,20 @@ Le **BIEN** objet des présentes relevant de la loi n° 65-557 du 10 juillet 196
 {% endif %}
 {% endif %}
 
-{% if diagnostics.zone_bruit %}
 ### **Zone de bruit - Plan d'exposition au bruit des aérodromes**
 
-{% if diagnostics.zone_bruit.concerne %}
-Le bien est situé <<<VAR_START>>>dans le périmètre d'un plan d'exposition au bruit des aérodromes<<<VAR_END>>>.
+{% if diagnostics.zone_bruit and diagnostics.zone_bruit.concerne %}
+Le bien est situé dans le périmètre d'un plan d'exposition au bruit des aérodromes.
+
+**Annexe n°15 : Plan d'exposition au bruit**
+{% elif diagnostics.zone_bruit_aeroport and diagnostics.zone_bruit_aeroport.dans_zone %}
+Le bien est situé dans le périmètre d'un plan d'exposition au bruit des aérodromes.
 
 **Annexe n°15 : Plan d'exposition au bruit**
 {% else %}
 Le bien **n'est pas** situé dans le périmètre d'un plan d'exposition au bruit des aérodromes.
 {% endif %}
-{% endif %}
 
-{% if diagnostics.elements_equipement %}
 ### **Information du bénéficiaire sur les éléments d'équipement**
 
 Le **BENEFICIAIRE** est informé que les désordres affectant les éléments d'équipement qu'ils soient individuels ou communs demeurent soumis aux garanties visées aux articles 1792 et suivants, articles 1646-1 et 1648 al. 1er du Code civil ainsi qu'à l'article L 111-13 du Code de la construction et de l'habitation.
@@ -886,7 +982,6 @@ Toutefois, s'agissant des éléments installés en remplacement ou par adjonctio
 La garantie décennale s'applique au professionnel qui a réalisé les travaux d'installation, lequel en garantit le maître d'ouvrage, personne pour le compte de laquelle les travaux sont exécutés (article 1792-1 du Code civil).
 
 Le **PROMETTANT** fournira au **BENEFICIAIRE**, lors de la réitération de la vente, la documentation technique afférente à ces équipements, ainsi que les garanties et assurances y attachées.
-{% endif %}
 
 {% if diagnostics.radon %}
 ### **Radon**
@@ -932,6 +1027,44 @@ Le **PROMETTANT** déclare qu'à sa connaissance l'immeuble {% if diagnostics.et
 
 # **Situation environnementale**
 
+## **État des Risques et Pollutions (ERP)**
+
+Conformément aux dispositions des articles L. 125-5 et R. 125-23 à R. 125-27 du Code de l'environnement, un État des Risques et Pollutions (ERP) a été établi.
+
+{% if diagnostics.erp %}
+**Date d'établissement** : {{ diagnostics.erp.date | default('[Date à compléter]') }}
+
+{% if diagnostics.erp.zone_sismicite %}
+**Zone de sismicité** : {{ diagnostics.erp.zone_sismicite }} ({% if diagnostics.erp.zone_sismicite == 1 %}très faible{% elif diagnostics.erp.zone_sismicite == 2 %}faible{% elif diagnostics.erp.zone_sismicite == 3 %}modérée{% elif diagnostics.erp.zone_sismicite == 4 %}moyenne{% elif diagnostics.erp.zone_sismicite == 5 %}forte{% endif %})
+{% endif %}
+
+{% if diagnostics.erp.radon %}
+**Potentiel radon** : Catégorie {{ diagnostics.erp.radon }} ({% if diagnostics.erp.radon == 1 %}faible{% elif diagnostics.erp.radon == 2 %}moyen{% elif diagnostics.erp.radon == 3 %}significatif{% endif %})
+{% endif %}
+
+{% if diagnostics.erp.ppr %}
+**Plan de Prévention des Risques (PPR)** : {{ diagnostics.erp.ppr }}
+{% else %}
+Le bien {% if diagnostics.erp.ppr_applicable %}est{% else %}n'est pas{% endif %} situé dans le périmètre d'un Plan de Prévention des Risques.
+{% endif %}
+
+{% if diagnostics.erp.inondation %}
+**Risque inondation** : {% if diagnostics.erp.inondation.present %}Zone inondable{% if diagnostics.erp.inondation.type %} - {{ diagnostics.erp.inondation.type }}{% endif %}{% else %}Non concerné{% endif %}
+{% endif %}
+
+{% if diagnostics.erp.mouvement_terrain %}
+**Risque mouvement de terrain** : {% if diagnostics.erp.mouvement_terrain.present %}Zone à risque{% if diagnostics.erp.mouvement_terrain.type %} - {{ diagnostics.erp.mouvement_terrain.type }}{% endif %}{% else %}Non concerné{% endif %}
+{% endif %}
+
+{% if diagnostics.erp.retrait_gonflement_argile %}
+**Retrait-gonflement des argiles** : Aléa {% if diagnostics.erp.retrait_gonflement_argile == 1 %}faible{% elif diagnostics.erp.retrait_gonflement_argile == 2 %}moyen{% elif diagnostics.erp.retrait_gonflement_argile == 3 %}fort{% else %}{{ diagnostics.erp.retrait_gonflement_argile }}{% endif %}
+{% endif %}
+
+Cet état est valable six mois à compter de sa date d'établissement.
+{% else %}
+L'État des Risques et Pollutions sera établi préalablement à la réitération des présentes.
+{% endif %}
+
 ## **Consultation de bases de données environnementales**
 
 Les bases de données suivantes ont été consultées :
@@ -943,15 +1076,87 @@ Les bases de données suivantes ont été consultées :
 * Géorisques.
 * ERRIAL (l'état des risques réglementés pour l'information des acquéreurs et des locataires).
 
+### **Inventaire BASIAS**
+
+{% if situation_environnementale and situation_environnementale.basias %}
+{% if situation_environnementale.basias.present %}
+Le terrain d'assiette du bien figure dans l'inventaire BASIAS des anciens sites industriels et activités de service.
+
+{% if situation_environnementale.basias.reference %}**Référence BASIAS** : {{ situation_environnementale.basias.reference }}{% endif %}
+{% if situation_environnementale.basias.activite %}**Activité recensée** : {{ situation_environnementale.basias.activite }}{% endif %}
+{% if situation_environnementale.basias.periode %}**Période d'activité** : {{ situation_environnementale.basias.periode }}{% endif %}
+{% if situation_environnementale.basias.commentaire %}{{ situation_environnementale.basias.commentaire }}{% endif %}
+{% else %}
+Le terrain d'assiette du bien ne figure pas dans l'inventaire BASIAS.
+{% endif %}
+{% else %}
+Le terrain d'assiette du bien ne figure pas dans l'inventaire BASIAS.
+{% endif %}
+
+### **Inventaire BASOL**
+
+{% if situation_environnementale and situation_environnementale.basol %}
+{% if situation_environnementale.basol.present %}
+Le terrain d'assiette du bien figure dans l'inventaire BASOL des sites et sols pollués appelant une action des pouvoirs publics.
+
+{% if situation_environnementale.basol.reference %}**Référence BASOL** : {{ situation_environnementale.basol.reference }}{% endif %}
+{% if situation_environnementale.basol.origine %}**Origine de la pollution** : {{ situation_environnementale.basol.origine }}{% endif %}
+{% if situation_environnementale.basol.statut %}**Statut du site** : {{ situation_environnementale.basol.statut }}{% endif %}
+{% if situation_environnementale.basol.mesures %}**Mesures prises ou à prendre** : {{ situation_environnementale.basol.mesures }}{% endif %}
+{% else %}
+Le terrain d'assiette du bien ne figure pas dans l'inventaire BASOL.
+{% endif %}
+{% else %}
+Le terrain d'assiette du bien ne figure pas dans l'inventaire BASOL.
+{% endif %}
+
+### **Secteur d'Information sur les Sols (SIS)**
+
+{% if situation_environnementale and situation_environnementale.sis %}
+{% if situation_environnementale.sis.present %}
+Le bien est situé dans un Secteur d'Information sur les Sols (SIS) au sens de l'article L. 125-6 du Code de l'environnement.
+
+{% if situation_environnementale.sis.reference %}**Référence SIS** : {{ situation_environnementale.sis.reference }}{% endif %}
+{% if situation_environnementale.sis.description %}**Description** : {{ situation_environnementale.sis.description }}{% endif %}
+{% if situation_environnementale.sis.usage_restrictions %}**Restrictions d'usage** : {{ situation_environnementale.sis.usage_restrictions }}{% endif %}
+
+Conformément à la réglementation en vigueur, le **BENEFICIAIRE** a été informé de cette inscription et de ses conséquences éventuelles sur l'usage du bien.
+{% else %}
+Le bien n'est pas situé dans un Secteur d'Information sur les Sols (SIS).
+{% endif %}
+{% else %}
+Le bien n'est pas situé dans un Secteur d'Information sur les Sols (SIS).
+{% endif %}
+
+### **Sites identifiés**
+
 {% if situation_environnementale and situation_environnementale.sites_identifies %}
-Les consultations ont révélé <<<VAR_START>>>{{ situation_environnementale.sites_identifies | length }}<<<VAR_END>>> site(s) d'activités recensé(s) :
+Les consultations ont révélé {{ situation_environnementale.sites_identifies | length }} site(s) d'activités recensé(s) :
 
 {% for site in situation_environnementale.sites_identifies %}
-* **Site {{ loop.index }}** : <<<VAR_START>>>{{ site.nom }}<<<VAR_END>>> - Activité: <<<VAR_START>>>{{ site.activite }}<<<VAR_END>>> - État: <<<VAR_START>>>{{ site.etat }}<<<VAR_END>>>
+* **Site {{ loop.index }}** : {{ site.nom }} - Activité: {{ site.activite }} - État: {{ site.etat }}
 {% endfor %}
 {% else %}
-Les consultations n'ont révélé aucun site d'activités recensé.
+Les consultations n'ont révélé aucun site d'activités recensé à proximité immédiate du bien.
 {% endif %}
+
+## **Sinistres avec indemnisation**
+
+{% if situation_environnementale and situation_environnementale.sinistres %}
+{% if situation_environnementale.sinistres.declares %}
+Le **PROMETTANT** déclare que le bien a fait l'objet d'un ou plusieurs sinistres ayant donné lieu à indemnisation au titre des catastrophes naturelles ou technologiques en application des articles L. 125-5 ou L. 128-2 du Code des assurances :
+
+{% for sinistre in situation_environnementale.sinistres.liste %}
+* **{{ sinistre.date }}** : {{ sinistre.type }} {% if sinistre.montant_indemnise %}- Indemnisé : {{ sinistre.montant_indemnise | format_nombre }} EUR{% endif %}
+{% endfor %}
+{% else %}
+Le **PROMETTANT** déclare qu'à sa connaissance, le bien n'a fait l'objet d'aucun sinistre ayant donné lieu à indemnisation au titre des catastrophes naturelles ou technologiques.
+{% endif %}
+{% else %}
+Le **PROMETTANT** déclare qu'à sa connaissance, le bien n'a fait l'objet d'aucun sinistre ayant donné lieu à indemnisation au titre des catastrophes naturelles ou technologiques en application des articles L. 125-5 ou L. 128-2 du Code des assurances.
+{% endif %}
+
+Le **BENEFICIAIRE** reconnaît avoir été parfaitement informé de l'ensemble des risques environnementaux et des sinistres éventuellement survenus sur le bien.
 
 # **Règlementations spécifiques à la copropriété**
 
@@ -1181,6 +1386,68 @@ Si un sinistre quelconque frappait le **BIEN** durant la durée de validité des
 * Soit de renoncer purement et simplement à la vente et de se voir immédiatement remboursé de toute somme avancée par lui le cas échéant.
 * Soit de maintenir l'acquisition du **BIEN** alors sinistré totalement ou partiellement et de se voir attribuer les indemnités susceptibles d'être versées par la ou les compagnies d'assurances concernées.
 
+# **Condition de survie du bénéficiaire**
+
+{% if condition_survie and condition_survie.applicable %}
+Les parties conviennent expressément que la présente promesse de vente comporte une condition de survie du **BENEFICIAIRE** jusqu'à la date de réalisation de la vente.
+
+En conséquence, si le **BENEFICIAIRE** venait à décéder avant la réitération de la vente par acte authentique, la présente promesse deviendrait caduque de plein droit, sans indemnité de part et d'autre.
+
+Dans cette hypothèse :
+* L'indemnité d'immobilisation éventuellement versée serait restituée aux ayants droit du **BENEFICIAIRE**.
+* Le **PROMETTANT** retrouverait sa pleine et entière liberté de disposer du **BIEN**.
+
+{% if condition_survie.heritiers_substitution %}
+Par dérogation à ce qui précède, les parties conviennent que les héritiers du **BENEFICIAIRE** pourront, s'ils le souhaitent, se substituer à ce dernier pour la réalisation de la vente, dans un délai de {{ condition_survie.delai_substitution | default(30) }} jours à compter du décès. Cette faculté devra être exercée par notification au **PROMETTANT** et au notaire rédacteur.
+{% endif %}
+{% else %}
+Les parties conviennent que la présente promesse de vente ne comporte pas de condition de survie. En cas de décès du **BENEFICIAIRE** avant la réitération de la vente, ses héritiers seront tenus de poursuivre l'exécution de la promesse ou d'en subir les conséquences telles que prévues aux présentes.
+{% endif %}
+
+# **Conventions particulières – Visites – Information des parties**
+
+{% if conventions_particulieres %}
+{% for convention in conventions_particulieres %}
+## {{ convention.titre }}
+
+{{ convention.texte }}
+
+{% endfor %}
+{% endif %}
+
+## **Visites préalables**
+
+Le **BENEFICIAIRE** déclare avoir visité le **BIEN** préalablement à la signature des présentes et l'avoir trouvé conforme à ses attentes.
+
+{% if visites and visites.nombre > 1 %}
+Le **BENEFICIAIRE** déclare avoir effectué {{ visites.nombre | nombre_en_lettres }} ({{ visites.nombre }}) visites du **BIEN**, respectivement les {{ visites.dates | join(', ') }}.
+{% endif %}
+
+Le **BENEFICIAIRE** reconnaît avoir été parfaitement informé de l'état du **BIEN**, de ses équipements, de son environnement et de la conformité des installations aux normes en vigueur, dans la limite des informations détenues par le **PROMETTANT** et des diagnostics réalisés.
+
+## **Information sur les diagnostics et risques**
+
+Les parties reconnaissent avoir été parfaitement informées de l'ensemble des dispositions légales applicables à la présente promesse de vente, notamment :
+
+* Les dispositions relatives aux diagnostics techniques obligatoires (DPE, plomb, amiante, termites, gaz, électricité, ERP, etc.).
+* Les dispositions relatives à la garantie des vices cachés.
+* Les dispositions relatives au droit de rétractation de l'acquéreur non professionnel.
+* Les dispositions relatives aux conditions suspensives légales et conventionnelles.
+
+## **Information sur le marché immobilier**
+
+Le **BENEFICIAIRE** reconnaît avoir été informé que le notaire rédacteur ne saurait se porter garant de la valeur vénale du **BIEN**, ni de l'évolution future du marché immobilier. Le prix convenu entre les parties résulte de leur libre négociation.
+
+## **Exclusivité**
+
+{% if exclusivite %}
+Le **PROMETTANT** s'engage, pendant toute la durée de validité de la présente promesse, à ne pas :
+* Vendre, promettre de vendre ou consentir une quelconque option d'achat sur le **BIEN** à toute autre personne.
+* Retirer du marché ou modifier de quelque manière que ce soit les caractéristiques du **BIEN** telles que décrites aux présentes.
+{% else %}
+La présente promesse ne comporte pas de clause d'exclusivité particulière.
+{% endif %}
+
 # **PROVISION SUR LES FRAIS DE LA VENTE**
 
 {% if provision_frais %}
@@ -1287,6 +1554,52 @@ L'Office notarial traite des données personnelles concernant les personnes ment
 # **Certification d'identité**
 
 Le notaire soussigné certifie que l'identité complète des parties dénommées dans le présent document telle qu'elle est indiquée en tête des présentes à la suite de leur nom ou dénomination lui a été régulièrement justifiée.
+
+# **LISTE DES ANNEXES**
+
+Les annexes suivantes font partie intégrante de la présente promesse de vente :
+
+| N° | Désignation | Obligatoire | Observations |
+| :---: | :---- | :---: | :---- |
+| 1 | Plans cadastral et géoportail | Oui | Identification du bien |
+| 2 | Plans des lots et plan de masse | Oui | Description des lots |
+| 3 | Attestation de mesurage Carrez | Oui | Article 46 loi du 10 juillet 1965 |
+{% if diagnostics.dpe %}| 4 | Diagnostic de performance énergétique (DPE) | Oui | Classe {{ diagnostics.dpe.classe_energie | default('NC') }} |{% endif %}
+{% if diagnostics.erp or diagnostics.etat_risques %}| 5 | État des risques et pollutions (ERP) | Oui | Article L. 125-5 Code environnement |{% endif %}
+{% if diagnostics.plomb %}| 6 | Constat de risque d'exposition au plomb (CREP) | {% if diagnostics.plomb.requis %}Oui{% else %}Non{% endif %} | Immeuble construit avant 1949 |{% endif %}
+{% if diagnostics.amiante_parties_privatives %}| 7 | Diagnostic amiante parties privatives | {% if diagnostics.amiante_parties_privatives.requis %}Oui{% else %}Non{% endif %} | Permis de construire avant 01/07/1997 |{% endif %}
+{% if diagnostics.amiante_parties_communes %}| 8 | Diagnostic amiante parties communes | {% if diagnostics.amiante_parties_communes.requis %}Oui{% else %}Non{% endif %} | DTA copropriété |{% endif %}
+{% if diagnostics.termites %}| 9 | État relatif aux termites | {% if diagnostics.termites.requis %}Oui{% else %}Non{% endif %} | Zone de protection |{% endif %}
+{% if diagnostics.gaz %}| 10 | État de l'installation intérieure de gaz | {% if diagnostics.gaz.requis %}Oui{% else %}Non{% endif %} | Installation > 15 ans |{% endif %}
+{% if diagnostics.electricite %}| 11 | État de l'installation intérieure d'électricité | {% if diagnostics.electricite.requis %}Oui{% else %}Non{% endif %} | Installation > 15 ans |{% endif %}
+{% if diagnostics.assainissement %}| 12 | Diagnostic assainissement | {% if diagnostics.assainissement.requis %}Oui{% else %}Non{% endif %} | Assainissement non collectif |{% endif %}
+{% if diagnostics.audit_energetique and diagnostics.audit_energetique.requis %}| 13 | Audit énergétique | Oui | Classe F ou G |{% endif %}
+{% if diagnostics.zone_bruit_aeroport and diagnostics.zone_bruit_aeroport.dans_zone %}| 14 | Plan d'exposition au bruit des aérodromes | Oui | Zone concernée |{% endif %}
+{% if diagnostics.carnet_information_logement and diagnostics.carnet_information_logement.existe %}| 15 | Carnet d'information du logement | Non | Remis si existant |{% endif %}
+| 16 | Note d'urbanisme | Oui | Situation du bien |
+| 17 | Note de voirie | Oui | Desserte et accès |
+{% if urbanisme.certificat_non_peril %}| 18 | Certificat de non-péril | Oui | État de l'immeuble |{% endif %}
+| 19 | Règlement de copropriété et ses modificatifs | Oui | Applicable au bien |
+| 20 | État descriptif de division | Oui | Identification des lots |
+{% if copropriete.immatriculation %}| 21 | Attestation d'immatriculation au RNC | Oui | N° {{ copropriete.immatriculation }} |{% endif %}
+{% if copropriete.carnet_entretien %}| 22 | Carnet d'entretien de l'immeuble | Oui | Article L. 721-2 CCH |{% endif %}
+{% if copropriete.fiche_synthetique %}| 23 | Fiche synthétique de la copropriété | Oui | Article L. 711-2 CCH |{% endif %}
+{% if copropriete.derniere_ag %}| 24 | Procès-verbaux des AG (3 dernières années) | Oui | Information acquéreur |{% endif %}
+| 25 | Pré état-daté | Oui | Article 10-1 loi du 10 juillet 1965 |
+{% if copropriete.diagnostic_technique_global and copropriete.diagnostic_technique_global.existe %}| 26 | Diagnostic technique global (DTG) | Oui | Article L. 731-1 CCH |{% endif %}
+{% if copropriete.plan_pluriannuel_travaux and copropriete.plan_pluriannuel_travaux.existe %}| 27 | Plan pluriannuel de travaux (PPT) | Oui | Si adopté |{% endif %}
+{% if travaux and travaux.travaux_realises %}| 28 | Factures et attestations décennales | Oui | Travaux des 10 dernières années |{% endif %}
+{% if negociation and negociation.avec_agent %}| 29 | Mandat de négociation | Oui | Agent immobilier |{% endif %}
+{% if conditions_suspensives and conditions_suspensives.pret and conditions_suspensives.pret.applicable %}| 30 | Justificatifs de financement prévisionnel | Non | Information préalable |{% endif %}
+
+{% if annexes_supplementaires %}
+**Annexes complémentaires :**
+{% for annexe in annexes_supplementaires %}
+| {{ annexe.numero }} | {{ annexe.designation }} | {{ "Oui" if annexe.obligatoire else "Non" }} | {{ annexe.observations | default('') }} |
+{% endfor %}
+{% endif %}
+
+Le **BENEFICIAIRE** reconnaît avoir reçu l'ensemble des documents et annexes ci-dessus listés préalablement à la signature des présentes. Ces documents lui ont été remis ou mis à disposition sur l'espace sécurisé mis à sa disposition par l'office notarial.
 
 # **Formalisme lié aux annexes**
 

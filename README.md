@@ -1,4 +1,4 @@
-# NotaireAI - Génération Automatique d'Actes Notariaux
+# Notomai - Génération Automatique d'Actes Notariaux
 
 > Système intelligent de génération d'actes notariaux 100% conformes aux trames originales.
 
@@ -9,7 +9,7 @@
 
 ## 📋 Vue d'Ensemble
 
-NotaireAI est un système d'IA spécialisé dans la génération automatique d'actes notariaux. Il transforme un dialogue avec le notaire en documents DOCX conformes à 100% aux trames originales notariales.
+Notomai est un système d'IA spécialisé dans la génération automatique d'actes notariaux. Il transforme un dialogue avec le notaire en documents DOCX conformes à 100% aux trames originales notariales.
 
 ### ✨ Fonctionnalités Clés
 

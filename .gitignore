@@ -70,8 +70,17 @@ frontend/.env.local
 *.exe
 wkhtmltox*
 
-# Claude
-.claude/
+# Claude Code - Fichiers locaux (secrets, ne pas commiter)
+.claude/settings.local.json
+.claude/*.local.md
+
+# Claude Code - Fichiers partages (A COMMITER pour collaborateurs)
+# .claude/settings.json        -> Plugins et permissions equipe
+# .claude/commands/*.md        -> Skills personnalises
+# .claude/rules/*.md           -> Regles par type de fichier
+# .mcp.json.template           -> Template MCP pour collaborateurs
+
+# MCP avec tokens (chaque dev cree le sien depuis .mcp.json.template)
 .mcp.json
 
 # Null file

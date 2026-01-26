@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notomai | Agent IA Notarial</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #252542;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #ec4899;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-subtle: rgba(255,255,255,0.08);
+            --glow-primary: rgba(99, 102, 241, 0.4);
+            --glow-secondary: rgba(139, 92, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            z-index: 10;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            backdrop-filter: blur(20px);
+            background: rgba(15, 15, 26, 0.8);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 8px 32px var(--glow-primary);
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main content */
+        .main {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 2px;
+        }
+
+        /* Mind Map Container */
+        .mindmap-section {
+            margin-bottom: 3rem;
+        }
+
+        .mindmap-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            padding: 2rem;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mindmap-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        /* Mind Map Tree */
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            padding-top: 1rem;
+        }
+
+        /* Central Node */
+        .central-node {
+            position: relative;
+            z-index: 10;
+        }
+
+        .node {
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .node:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .node.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        .node.primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            padding: 1.5rem 2rem;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 20px 60px var(--glow-primary);
+        }
+
+        .node.primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 25px 80px var(--glow-primary);
+        }
+
+        .node-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .node-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        .node.primary .node-subtitle {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Branches Container */
+        .branches-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        /* Branch */
+        .branch {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .branch::before {
+            content: '';
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            width: 2px;
+            height: 2rem;
+            background: linear-gradient(180deg, var(--accent-primary), var(--border-subtle));
+        }
+
+        .branch-node {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            min-width: 180px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .branch-node:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.15);
+        }
+
+        .branch-node.expanded {
+            border-color: var(--accent-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .branch-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .branch-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .branch-icon.purple { background: rgba(139, 92, 246, 0.2); }
+        .branch-icon.cyan { background: rgba(6, 182, 212, 0.2); }
+        .branch-icon.pink { background: rgba(236, 72, 153, 0.2); }
+        .branch-icon.green { background: rgba(16, 185, 129, 0.2); }
+        .branch-icon.orange { background: rgba(245, 158, 11, 0.2); }
+        .branch-icon.blue { background: rgba(99, 102, 241, 0.2); }
+
+        .branch-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .branch-count {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .expand-indicator {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover .expand-indicator {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .branch-node.expanded .expand-indicator {
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        /* Sub-branches */
+        .sub-branches {
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border-subtle);
+            animation: slideDown 0.3s ease;
+        }
+
+        .branch-node.expanded + .sub-branches,
+        .branch-node.expanded .sub-branches {
+            display: flex;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sub-branch {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sub-branch:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--text-primary);
+            padding-left: 1.25rem;
+        }
+
+        .sub-branch-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-card-icon.purple { background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2)); }
+        .stat-card-icon.green { background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2)); }
+        .stat-card-icon.cyan { background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.2)); }
+        .stat-card-icon.pink { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2)); }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .stat-card-trend {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
+
+        /* Templates Section */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .template-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .template-card:hover::before {
+            opacity: 1;
+        }
+
+        .template-card.prod::before {
+            background: var(--accent-success);
+            opacity: 1;
+        }
+
+        .template-card.dev::before {
+            background: var(--accent-warning);
+            opacity: 1;
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .template-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .template-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .template-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-prod {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
+
+        .badge-dev {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--border-subtle);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        .progress-fill.high {
+            background: linear-gradient(90deg, var(--accent-success), var(--accent-cyan));
+        }
+
+        .progress-fill.medium {
+            background: linear-gradient(90deg, var(--accent-warning), var(--accent-tertiary));
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .team-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(4px);
+        }
+
+        .team-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .team-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+        }
+
+        .team-card.active .team-avatar::after {
+            background: var(--accent-success);
+        }
+
+        .team-card.setup .team-avatar::after {
+            background: var(--accent-warning);
+        }
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .team-role {
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            margin-top: 0.125rem;
+        }
+
+        .team-branch {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: var(--border-subtle);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 2rem;
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-text a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-stats {
+                gap: 1rem;
+            }
+
+            .branches-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .branch::before {
+                display: none;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .node.primary {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Glow effect */
+        .glow {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--glow-primary), transparent 70%);
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Capabilities Grid */
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .capability-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .capability-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .capability-card.active {
+            border-left: 3px solid var(--accent-success);
+        }
+
+        .capability-icon {
+            font-size: 1.5rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+        }
+
+        .capability-info {
+            flex: 1;
+        }
+
+        .capability-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .capability-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Tasks Section */
+        .tasks-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .tasks-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tasks-column {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .tasks-header {
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .tasks-header.todo {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+        }
+
+        .tasks-header.in-progress {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent);
+        }
+
+        .tasks-header.done {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
+        }
+
+        .tasks-icon {
+            font-size: 1rem;
+        }
+
+        .tasks-count {
+            margin-left: auto;
+            background: var(--border-subtle);
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .tasks-list {
+            padding: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-left-color: var(--accent-primary);
+        }
+
+        .task-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Pipeline Section */
+        .pipeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .pipeline-step.highlight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
+            border-color: var(--accent-primary);
+        }
+
+        .pipeline-icon {
+            font-size: 1.25rem;
+        }
+
+        .pipeline-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .pipeline-time {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pipeline-arrow {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            animation: arrow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrow-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; color: var(--accent-primary); }
+        }
+
+        @media (max-width: 768px) {
+            .pipeline-container {
+                flex-direction: column;
+            }
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Security Section */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .security-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .security-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .security-card.secure::before {
+            background: linear-gradient(90deg, var(--accent-success), var(--accent-cyan));
+        }
+
+        .security-card.warning::before {
+            background: linear-gradient(90deg, var(--accent-warning), var(--accent-tertiary));
+        }
+
+        .security-card.info::before {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .security-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .security-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .security-icon.green { background: rgba(16, 185, 129, 0.15); }
+        .security-icon.yellow { background: rgba(245, 158, 11, 0.15); }
+        .security-icon.blue { background: rgba(99, 102, 241, 0.15); }
+        .security-icon.red { background: rgba(239, 68, 68, 0.15); }
+
+        .security-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .security-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .status-secure {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+        }
+
+        .status-info {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .security-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .security-item-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .security-item-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .security-item-value.ok { color: var(--accent-success); }
+        .security-item-value.warn { color: var(--accent-warning); }
+        .security-item-value.error { color: #ef4444; }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-connected {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+        }
+
+        .badge-test {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-warning);
+        }
+
+        .badge-protected {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+        }
+
+        /* MCP Servers Grid */
+        .mcp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mcp-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .mcp-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .mcp-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .mcp-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mcp-details {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .mcp-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .pulse-dot.green { background: var(--accent-success); }
+        .pulse-dot.yellow { background: var(--accent-warning); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">N</div>
+            <div class="logo-text">
+                <h1>Notomai</h1>
+                <p>Agent IA Notarial</p>
+            </div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Templates</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">80%</div>
+                <div class="stat-label">Conformite</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5.7s</div>
+                <div class="stat-label">Generation</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Devs</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Mind Map Section -->
+        <section class="mindmap-section">
+            <h2 class="section-title">Architecture de l'Agent</h2>
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <!-- Central Node -->
+                    <div class="central-node">
+                        <div class="node primary" onclick="toggleAllBranches()">
+                            <div class="node-icon">🤖</div>
+                            <div class="node-title">Claude Code</div>
+                            <div class="node-subtitle">Opus 4.5 - Agent Principal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branches -->
+                <div class="branches-container">
+                    <!-- Branch 1: Directives -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon purple">📋</div>
+                                <div>
+                                    <div class="branch-title">Directives</div>
+                                    <div class="branch-count">12 fichiers MD</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>creer_acte.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>creer_promesse_vente.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>workflow_notaire.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>collecte_informations.md</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>pipeline_generation.md</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 2: Templates -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon cyan">📄</div>
+                                <div>
+                                    <div class="branch-title">Templates</div>
+                                    <div class="branch-count">4 types d'actes</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Vente (85.1%)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Promesse (60.9%)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Reglement copro (85.5%)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Modificatif EDD (91.7%)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 3: Scripts -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon green">⚙️</div>
+                                <div>
+                                    <div class="branch-title">Scripts</div>
+                                    <div class="branch-count">66 scripts Python</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>assembler_acte.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>exporter_docx.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>valider_acte.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>workflow_rapide.py</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>+ 62 autres...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 4: MCP Supabase -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon pink">🗄️</div>
+                                <div>
+                                    <div class="branch-title">Supabase</div>
+                                    <div class="branch-count">5 tables</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>clients</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>actes</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>historique</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>variables</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>templates</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 5: MCP Stripe -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon orange">💳</div>
+                                <div>
+                                    <div class="branch-title">Stripe</div>
+                                    <div class="branch-count">3 produits</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Paiements uniques</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Abonnements</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>Factures</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch 6: Schemas -->
+                    <div class="branch">
+                        <div class="branch-node" onclick="toggleBranch(this)">
+                            <div class="branch-header">
+                                <div class="branch-icon blue">📊</div>
+                                <div>
+                                    <div class="branch-title">Schemas</div>
+                                    <div class="branch-count">15 fichiers JSON</div>
+                                </div>
+                            </div>
+                            <span class="expand-indicator">+</span>
+                            <div class="sub-branches">
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>variables_vente.json (361)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>variables_promesse.json (298)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>clauses_catalogue.json (45+)</div>
+                                <div class="sub-branch"><span class="sub-branch-dot"></span>questions_notaire.json (100+)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="stats-section">
+            <h2 class="section-title">Metriques</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon purple">📝</div>
+                        <span class="stat-card-trend">+3</span>
+                    </div>
+                    <div class="stat-card-value">12</div>
+                    <div class="stat-card-label">Actes generes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon green">✓</div>
+                        <span class="stat-card-trend">3 PROD</span>
+                    </div>
+                    <div class="stat-card-value">80.8%</div>
+                    <div class="stat-card-label">Conformite moyenne</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon cyan">⚡</div>
+                        <span class="stat-card-trend">8 p/s</span>
+                    </div>
+                    <div class="stat-card-value">5.7s</div>
+                    <div class="stat-card-label">Temps de generation</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon pink">⚙️</div>
+                        <span class="stat-card-trend">15 schemas</span>
+                    </div>
+                    <div class="stat-card-value">66</div>
+                    <div class="stat-card-label">Scripts Python</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Capabilities Section -->
+        <section class="capabilities-section">
+            <h2 class="section-title">Capacites de l'Agent</h2>
+            <div class="capabilities-grid" id="capabilitiesGrid"></div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section class="tasks-section">
+            <h2 class="section-title">Progression du Projet</h2>
+            <div class="tasks-container">
+                <div class="tasks-column" id="tasksTodo">
+                    <div class="tasks-header todo">
+                        <span class="tasks-icon">📋</span>
+                        <span>A faire</span>
+                        <span class="tasks-count" id="todoCount">0</span>
+                    </div>
+                    <div class="tasks-list" id="todoList"></div>
+                </div>
+                <div class="tasks-column" id="tasksInProgress">
+                    <div class="tasks-header in-progress">
+                        <span class="tasks-icon">🔄</span>
+                        <span>En cours</span>
+                        <span class="tasks-count" id="inProgressCount">0</span>
+                    </div>
+                    <div class="tasks-list" id="inProgressList"></div>
+                </div>
+                <div class="tasks-column" id="tasksDone">
+                    <div class="tasks-header done">
+                        <span class="tasks-icon">✅</span>
+                        <span>Termine</span>
+                        <span class="tasks-count" id="doneCount">0</span>
+                    </div>
+                    <div class="tasks-list" id="doneList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline Section -->
+        <section class="pipeline-section">
+            <h2 class="section-title">Pipeline de Generation</h2>
+            <div class="pipeline-container">
+                <div class="pipeline-step">
+                    <div class="pipeline-icon">📝</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Assemblage Jinja2</div>
+                        <div class="pipeline-time">1.5s</div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon">📄</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Export DOCX</div>
+                        <div class="pipeline-time">3.5s</div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon">✓</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Verification</div>
+                        <div class="pipeline-time">0.7s</div>
+                    </div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step highlight">
+                    <div class="pipeline-icon">🎯</div>
+                    <div class="pipeline-info">
+                        <div class="pipeline-name">Total</div>
+                        <div class="pipeline-time">5.7s</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section class="security-section">
+            <h2 class="section-title">Securite & Integrations</h2>
+            <div class="security-grid">
+                <!-- API Keys Card -->
+                <div class="security-card secure">
+                    <div class="security-header">
+                        <div class="security-icon green">🔐</div>
+                        <div>
+                            <div class="security-title">Cles API</div>
+                            <span class="security-status status-secure">Securise</span>
+                        </div>
+                    </div>
+                    <div class="security-items">
+                        <div class="security-item">
+                            <span class="security-item-label">🔑 SUPABASE_KEY</span>
+                            <span class="security-item-value ok">.env protege</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔑 STRIPE_KEY</span>
+                            <span class="security-item-value ok">.env protege</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔑 ANTHROPIC_KEY</span>
+                            <span class="security-item-value ok">.env protege</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">📁 .gitignore</span>
+                            <span class="security-item-value ok">Configure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Protection Card -->
+                <div class="security-card secure">
+                    <div class="security-header">
+                        <div class="security-icon green">🛡️</div>
+                        <div>
+                            <div class="security-title">Protection Donnees</div>
+                            <span class="security-status status-secure">RGPD Ready</span>
+                        </div>
+                    </div>
+                    <div class="security-items">
+                        <div class="security-item">
+                            <span class="security-item-label">📂 Donnees clients</span>
+                            <span class="security-item-value ok">Chiffrees</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🗄️ Supabase RLS</span>
+                            <span class="security-item-value ok">Active</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">📋 Logs d'audit</span>
+                            <span class="security-item-value ok">Actives</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔒 HTTPS</span>
+                            <span class="security-item-value ok">Force</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MCP Servers Card -->
+                <div class="security-card info">
+                    <div class="security-header">
+                        <div class="security-icon blue">🔌</div>
+                        <div>
+                            <div class="security-title">Serveurs MCP</div>
+                            <span class="security-status status-info">2 connectes</span>
+                        </div>
+                    </div>
+                    <div class="mcp-grid">
+                        <div class="mcp-card">
+                            <div class="mcp-header">
+                                <span class="mcp-name"><span class="pulse-dot green"></span> Supabase</span>
+                                <span class="security-badge badge-connected">Connected</span>
+                            </div>
+                            <div class="mcp-details">
+                                <div class="mcp-detail">
+                                    <span>Project</span>
+                                    <span>wcklvjckzkti...</span>
+                                </div>
+                                <div class="mcp-detail">
+                                    <span>Tables</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mcp-card">
+                            <div class="mcp-header">
+                                <span class="mcp-name"><span class="pulse-dot yellow"></span> Stripe</span>
+                                <span class="security-badge badge-test">Test Mode</span>
+                            </div>
+                            <div class="mcp-details">
+                                <div class="mcp-detail">
+                                    <span>Mode</span>
+                                    <span>test</span>
+                                </div>
+                                <div class="mcp-detail">
+                                    <span>Produits</span>
+                                    <span>3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Access Control Card -->
+                <div class="security-card secure">
+                    <div class="security-header">
+                        <div class="security-icon green">👥</div>
+                        <div>
+                            <div class="security-title">Controle d'Acces</div>
+                            <span class="security-status status-secure">Restreint</span>
+                        </div>
+                    </div>
+                    <div class="security-items">
+                        <div class="security-item">
+                            <span class="security-item-label">👤 Developpeurs</span>
+                            <span class="security-item-value ok">3 autorises</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🔀 Branches</span>
+                            <span class="security-item-value ok">Protegees</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">✅ Code Review</span>
+                            <span class="security-item-value ok">Obligatoire</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-item-label">🚀 Deploy</span>
+                            <span class="security-item-value ok">GitHub Pages</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Templates Section -->
+        <section class="templates-section">
+            <h2 class="section-title">Etat des Templates</h2>
+            <div class="templates-grid" id="templatesGrid"></div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section">
+            <h2 class="section-title">Equipe</h2>
+            <div class="team-grid" id="teamGrid"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            Notomai v1.2.0 | Dashboard v2.2 |
+            <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
+            Maitre Charlotte Diaz |
+            <span id="lastUpdate">2026-01-24</span>
+        </p>
+    </footer>
+
+    <script>
+        // Toggle single branch
+        function toggleBranch(element) {
+            element.classList.toggle('expanded');
+        }
+
+        // Toggle all branches
+        function toggleAllBranches() {
+            const branches = document.querySelectorAll('.branch-node');
+            const anyExpanded = Array.from(branches).some(b => b.classList.contains('expanded'));
+
+            branches.forEach(branch => {
+                if (anyExpanded) {
+                    branch.classList.remove('expanded');
+                } else {
+                    branch.classList.add('expanded');
+                }
+            });
+        }
+
+        // Load data and populate
+        function loadData() {
+            const data = {
+                templates: [
+                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 32, lastGeneration: "2026-01-23" },
+                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 127, lastGeneration: "2026-01-20" },
+                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 111, lastGeneration: "2026-01-19" },
+                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 13, lastGeneration: "2026-01-19" }
+                ],
+                team: [
+                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev / Templates" },
+                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend / Formulaires" },
+                    { name: "Payoss", branch: "payoss/dev", status: "active", role: "Backend / Scripts" }
+                ],
+                capabilities: [
+                    { icon: "📄", name: "Generer actes", description: "DOCX/PDF fideles aux trames", status: "active" },
+                    { icon: "💬", name: "Dialogue notaire", description: "Collecte interactive 100+ questions", status: "active" },
+                    { icon: "✅", name: "Validation", description: "Coherence et completude", status: "active" },
+                    { icon: "🔍", name: "Detection auto", description: "Type d'acte automatique", status: "active" },
+                    { icon: "💡", name: "Suggestions", description: "Clauses contextuelles", status: "active" },
+                    { icon: "📊", name: "Conformite", description: "Score automatique vs trame", status: "active" },
+                    { icon: "🗄️", name: "Historique", description: "Supabase + mode offline", status: "active" },
+                    { icon: "⚡", name: "Pipeline rapide", description: "~6 secondes / acte", status: "active" }
+                ],
+                tasks: {
+                    todo: [
+                        "Enrichir template promesse de vente (24 titres)",
+                        "Integrer extraction titre de propriete",
+                        "Ajouter validation Carrez automatique",
+                        "Creer template donation-partage",
+                        "Tests automatises pytest"
+                    ],
+                    inProgress: [
+                        "Dashboard temps reel",
+                        "Workflow collaboratif 3 devs",
+                        "Formulaires web vendeur/acquereur"
+                    ],
+                    done: [
+                        "Template vente 85% conformite",
+                        "Scripts START_DAY/END_DAY",
+                        "Auto-sync v2 (30min commits)",
+                        "Integration Supabase MCP",
+                        "Integration Stripe MCP",
+                        "Pipeline generation 5.7s",
+                        "Securisation cles API",
+                        "Documentation complete",
+                        "Morning sync semi-auto",
+                        "Troubleshooting guide"
+                    ]
+                }
+            };
+
+            // Templates
+            const templatesHtml = data.templates.map(t => `
+                <div class="template-card ${t.status}">
+                    <div class="template-header">
+                        <div>
+                            <div class="template-name">${t.name}</div>
+                            <div class="template-meta">${t.bookmarks} bookmarks · ${t.sections} sections · ${t.lastGeneration}</div>
+                        </div>
+                        <span class="template-badge badge-${t.status}">${t.status === 'prod' ? 'Production' : 'Dev'}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${t.conformity >= 80 ? 'high' : 'medium'}" style="width: ${t.conformity}%"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>Conformite</span>
+                        <span>${t.conformity}%</span>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('templatesGrid').innerHTML = templatesHtml;
+
+            // Team
+            const teamHtml = data.team.map(m => `
+                <div class="team-card ${m.status}">
+                    <div class="team-avatar">${m.name[0]}</div>
+                    <div class="team-info">
+                        <div class="team-name">${m.name}</div>
+                        <div class="team-role">${m.role}</div>
+                        <span class="team-branch">${m.branch}</span>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('teamGrid').innerHTML = teamHtml;
+
+            // Capabilities
+            const capabilitiesHtml = data.capabilities.map(c => `
+                <div class="capability-card ${c.status}">
+                    <div class="capability-icon">${c.icon}</div>
+                    <div class="capability-info">
+                        <div class="capability-name">${c.name}</div>
+                        <div class="capability-desc">${c.description}</div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('capabilitiesGrid').innerHTML = capabilitiesHtml;
+
+            // Tasks
+            const renderTasks = (tasks) => tasks.map(t => `<div class="task-item">${t}</div>`).join('');
+
+            document.getElementById('todoList').innerHTML = renderTasks(data.tasks.todo);
+            document.getElementById('todoCount').textContent = data.tasks.todo.length;
+
+            document.getElementById('inProgressList').innerHTML = renderTasks(data.tasks.inProgress);
+            document.getElementById('inProgressCount').textContent = data.tasks.inProgress.length;
+
+            document.getElementById('doneList').innerHTML = renderTasks(data.tasks.done);
+            document.getElementById('doneCount').textContent = data.tasks.done.length;
+        }
+
+        // Initialize
+        loadData();
+
+        // Add hover glow effect
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.branch-node, .stat-card, .template-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+</html>
