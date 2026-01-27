@@ -25,7 +25,6 @@
       "ville": "LYON"
     }
   },
-
   "promettants": [
     {
       "civilite": "Madame",
@@ -68,7 +67,6 @@
       }
     }
   ],
-
   "beneficiaires": [
     {
       "civilite": "Monsieur",
@@ -133,9 +131,7 @@
       }
     }
   ],
-
   "quotites_a_determiner": true,
-
   "bien": {
     "adresse": {
       "numero": "170",
@@ -246,7 +242,6 @@
       "loggia_fermee": false
     }
   },
-
   "copropriete": {
     "reglement": {
       "notaire_origine": "Maître MARMEY, notaire à MEYZIEU",
@@ -283,7 +278,6 @@
     },
     "derniere_ag": "6 février 2025"
   },
-
   "meubles": {
     "inclus": true,
     "liste": [
@@ -295,12 +289,10 @@
     ],
     "valeur": null
   },
-
   "prix": {
     "montant": 245000,
     "devise": "EUR"
   },
-
   "delais": {
     "expiration_promesse": {
       "date": "2025-11-04",
@@ -309,18 +301,15 @@
     "delai_depot_garantie_jours": 15,
     "delai_provision_frais_jours": 15
   },
-
   "indemnite_immobilisation": {
     "montant": 24500,
     "pourcentage": 10,
     "depot_garantie": 24500,
     "surplus": null
   },
-
   "clause_penale": {
     "pourcentage": 10
   },
-
   "negociation": {
     "existe": true,
     "agent": {
@@ -333,13 +322,11 @@
     "a_charge_de": "le PROMETTANT",
     "inclus_dans_prix": true
   },
-
   "financement": {
     "mode": "mixte",
     "fonds_personnels": 45000,
     "fonds_empruntes": 249797
   },
-
   "condition_suspensive_pret": {
     "existe": true,
     "montant_maximal": 249797,
@@ -348,10 +335,12 @@
     "date_limite": "2025-10-06",
     "nombre_refus_requis": 2
   },
-
   "origine_propriete": [
     {
-      "lots_concernes": ["14", "29"],
+      "lots_concernes": [
+        "14",
+        "29"
+      ],
       "origine_immediate": {
         "type": "acquisition",
         "notaire": "Maître MARTIN, notaire à TASSIN",
@@ -365,7 +354,9 @@
       }
     },
     {
-      "lots_concernes": ["48"],
+      "lots_concernes": [
+        "48"
+      ],
       "origine_immediate": {
         "type": "acquisition",
         "notaire": "Maître DUPONT, notaire à LYON",
@@ -379,7 +370,6 @@
       }
     }
   ],
-
   "travaux_recents": {
     "existe": true,
     "liste": [
@@ -414,44 +404,49 @@
     ],
     "assurance_dommages_ouvrage": false
   },
-
   "diagnostics": {
     "diagnostiqueur": {
       "nom": "ACHIN DIAG EXPERT",
       "adresse": "147 Chemin de la crouze-Le Haut Marjon - 69510 Soucieu en Jarrest"
     },
     "plomb": {
-      "requis": false
+      "requis": false,
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
+      "date": "2026-01-15"
     },
     "amiante_parties_privatives": {
       "requis": true,
       "date": "29 mars 2015",
-      "diagnostiqueur": "ARLIANE LYON NORD - 203 montée de Choulans - 69005 LYON",
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
       "resultat": "Cet état ne révèle pas la présence d'amiante dans les matériaux et produits des listes A ou B"
     },
     "amiante_parties_communes": {
       "date": "15 mars 2016",
-      "diagnostiqueur": "AC ENVIRONNEMENT - 64 rue Clément Ader - 42153 RIORGES",
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
       "resultat": "Dans le cadre de la mission décrite en tête de rapport, il a été repéré des matériaux et produits contenant de l'amiante"
     },
     "termites": {
-      "zone_concernee": false
+      "zone_concernee": false,
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
+      "date": "2026-01-15"
     },
     "merules": {
       "zone_concernee": false
     },
     "gaz": {
-      "requis": false
+      "requis": false,
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
+      "date": "2026-01-15"
     },
     "electricite": {
       "requis": true,
       "date": "22 mai 2025",
-      "diagnostiqueur": "ACHIN DIAG EXPERT - 147 Chemin de la crouze-Le Haut Marjon - 69510 Soucieu en Jarrest",
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
       "resultat": "L'installation intérieure d'électricité comporte une ou des anomalies"
     },
     "dpe": {
       "date": "23 mai 2025",
-      "diagnostiqueur": "ACHIN DIAG EXPERT - 147 chemin de la Crouze- le haut Marjon - 69510 Soucieu en Jarrest",
+      "diagnostiqueur": "ACHIN DIAG EXPERT",
       "numero_ademe": "2569E1706974R",
       "consommation_energie": 174,
       "classe_energie": "D",
@@ -489,7 +484,6 @@
       "retrait_gonflement_argile": 1
     }
   },
-
   "situation_environnementale": {
     "basias": {
       "present": false
@@ -502,7 +496,6 @@
     },
     "sites_identifies": []
   },
-
   "urbanisme": {
     "note_urbanisme": {
       "date": "3 avril 2025",
@@ -522,7 +515,6 @@
       "resultat": "aucune procédure de péril et de sécurité relevant des pouvoirs de police spéciale du Président de la Métropole de Lyon n'a été ouverte depuis le 1er janvier 2015"
     }
   },
-
   "fiscalite": {
     "plus_value": {
       "exoneration": true,
@@ -530,13 +522,54 @@
     },
     "primo_accedant": true
   },
-
   "faculte_substitution": false,
-
   "provision_frais": 15000,
-
   "publication": {
     "demandee": false,
     "service_publicite_fonciere": "LYON 1"
+  },
+  "delai_realisation": {
+    "duree": "QUATRE",
+    "date_butoir": "2026-05-27",
+    "prorogation": true,
+    "prorogation_max": "TROIS"
+  },
+  "carence": true,
+  "avenant_eventuel": {
+    "frais_charge": "la partie qui en fera la demande"
+  },
+  "sequestre": true,
+  "propriete_jouissance": {
+    "libre": true,
+    "visites_autorisees": true
+  },
+  "communication_pieces": {
+    "delai": "QUINZE"
+  },
+  "conditions_suspensives": {
+    "pret": {
+      "applicable": true,
+      "montant": 360000,
+      "montant_lettres": "TROIS CENT SOIXANTE MILLE EUROS",
+      "duree_mois": 240,
+      "taux_max": 4.5,
+      "delai_depot": 15,
+      "delai_jours": 60,
+      "date_butoir": "2026-03-27",
+      "type": "immobilier"
+    },
+    "droit_preemption": {
+      "applicable": true,
+      "titulaires": [
+        "Commune de Paris"
+      ],
+      "delai": "DEUX"
+    }
+  },
+  "restitution": {
+    "delai": "un mois",
+    "duree_conservation": 5,
+    "garantie_bancaire": false,
+    "sequestre": true
   }
 }

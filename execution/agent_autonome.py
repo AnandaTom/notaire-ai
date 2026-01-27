@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Agent Autonome NotaireAI v1.0
+Agent Autonome NotaireAI v1.1
 
 Ce module implémente l'agent autonome capable de:
 - Parser des demandes en langage naturel
+- Support multi-parties: "Martin & Pierre → Dupont & Thomas" (NOUVEAU v1.1)
+- Validation intégrée avant génération (NOUVEAU v1.1)
+- Score de confiance détaillé avec suggestions (NOUVEAU v1.1)
 - Rechercher dans Supabase si un dossier existe
 - Générer ou modifier des actes en une seule commande
 - Sauvegarder l'historique dans Supabase
@@ -94,6 +97,79 @@ class DemandeAnalysee:
 
     # Champs manquants
     champs_manquants: List[str] = field(default_factory=list)
+
+    # Multi-parties (v1.1)
+    vendeurs_multiples: List[Dict[str, Any]] = field(default_factory=list)
+    acquereurs_multiples: List[Dict[str, Any]] = field(default_factory=list)
+
+
+@dataclass
+class ScoreConfianceDetaille:
+    """
+    Score de confiance détaillé avec breakdown par catégorie.
+
+    Permet de comprendre exactement pourquoi la confiance est haute ou basse.
+    """
+    score_global: float  # 0.0 à 1.0
+
+    # Breakdown par catégorie
+    score_vendeur: float = 0.0
+    score_acquereur: float = 0.0
+    score_bien: float = 0.0
+    score_prix: float = 0.0
+    score_type_acte: float = 0.0
+    score_intention: float = 0.0
+
+    # Détails
+    champs_detectes: List[str] = field(default_factory=list)
+    champs_manquants: List[str] = field(default_factory=list)
+    champs_optionnels_manquants: List[str] = field(default_factory=list)
+
+    # Suggestions
+    suggestions: List[str] = field(default_factory=list)
+
+    def explication(self) -> str:
+        """Génère une explication lisible du score."""
+        def indicateur(score: float) -> str:
+            if score >= 0.8:
+                return "✓"
+            elif score >= 0.5:
+                return "~"
+            else:
+                return "!"
+
+        lignes = [
+            f"Score global: {self.score_global:.0%}",
+            f"",
+            f"Détail par catégorie:",
+            f"  • Vendeur:    {self.score_vendeur:.0%} {indicateur(self.score_vendeur)}",
+            f"  • Acquéreur:  {self.score_acquereur:.0%} {indicateur(self.score_acquereur)}",
+            f"  • Bien:       {self.score_bien:.0%} {indicateur(self.score_bien)}",
+            f"  • Prix:       {self.score_prix:.0%} {indicateur(self.score_prix)}",
+            f"  • Type acte:  {self.score_type_acte:.0%} {indicateur(self.score_type_acte)}",
+        ]
+
+        if self.champs_manquants:
+            lignes.append(f"")
+            lignes.append(f"Champs manquants: {', '.join(self.champs_manquants)}")
+
+        if self.suggestions:
+            lignes.append(f"")
+            lignes.append(f"Suggestions:")
+            for s in self.suggestions[:3]:
+                lignes.append(f"  → {s}")
+
+        return "\n".join(lignes)
+
+
+@dataclass
+class ResultatValidation:
+    """Résultat de la validation des données."""
+    valide: bool
+    erreurs: List[str] = field(default_factory=list)
+    avertissements: List[str] = field(default_factory=list)
+    champs_manquants: List[str] = field(default_factory=list)
+    suggestions: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -186,9 +262,15 @@ class ParseurDemandeNL:
     # Patterns pour les entités
     # Prix: doit avoir €/euros OU être un grand nombre (>1000) sans unité de surface
     PATTERN_PRIX = re.compile(
-        r'(?P<montant>\d[\d\s]*(?:[.,]\d+)?)\s*(?P<devise>€|euros?|eur)\b'
+        r'(?P<montant>\d[\d\s]*(?:[.,]\d+)?)\s*(?P<multiplicateur>k|K)?\s*(?P<devise>€|euros?|eur)\b'
         r'|'
         r'(?P<montant2>\d{4,}[\d\s]*)\b(?!\s*m)',  # Grand nombre sans 'm' après
+        re.IGNORECASE
+    )
+
+    # Pattern pour "450k€" ou "1.2M€"
+    PATTERN_PRIX_COURT = re.compile(
+        r'(?P<montant>\d+(?:[.,]\d+)?)\s*(?P<mult>[kKmM])?\s*(?P<devise>€|euros?)',
         re.IGNORECASE
     )
 
@@ -207,6 +289,16 @@ class ParseurDemandeNL:
         r'(?:→|->|vers|à|pour)\s*'
         r'(?P<acquereur>[A-ZÀ-Ÿ][a-zà-ÿ]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ]+)?)',
         re.UNICODE
+    )
+
+    # Pattern multi-parties: "Martin & Pierre → Dupont & Thomas" ou "Martin et Pierre vers Dupont et Thomas"
+    PATTERN_FLECHE_MULTI = re.compile(
+        r'(?P<vendeurs>[A-ZÀ-Ÿ][a-zà-ÿ]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ]+)?'
+        r'(?:\s*(?:&|et)\s*[A-ZÀ-Ÿ][a-zà-ÿ]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ]+)?)*)\s*'
+        r'(?:→|->|vers|à|pour)\s*'
+        r'(?P<acquereurs>[A-ZÀ-Ÿ][a-zà-ÿ]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ]+)?'
+        r'(?:\s*(?:&|et)\s*[A-ZÀ-Ÿ][a-zà-ÿ]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ]+)?)*)',
+        re.UNICODE | re.IGNORECASE
     )
 
     PATTERN_VILLE = re.compile(
@@ -242,9 +334,11 @@ class ParseurDemandeNL:
         # Détecter le type d'acte
         type_acte = self._detecter_type_acte(texte_lower)
 
-        # Extraire les entités
-        vendeur = self._extraire_vendeur(texte)
-        acquereur = self._extraire_acquereur(texte)
+        # Extraire les entités (support multi-parties)
+        vendeurs_multiples = self._extraire_vendeurs_multiples(texte)
+        acquereurs_multiples = self._extraire_acquereurs_multiples(texte)
+        vendeur = vendeurs_multiples[0] if vendeurs_multiples else None
+        acquereur = acquereurs_multiples[0] if acquereurs_multiples else None
         bien = self._extraire_bien(texte)
         prix = self._extraire_prix(texte)
         reference = self._extraire_reference(texte)
@@ -271,7 +365,9 @@ class ParseurDemandeNL:
             reference_dossier=reference,
             modifications=modifications,
             texte_original=texte,
-            champs_manquants=champs_manquants
+            champs_manquants=champs_manquants,
+            vendeurs_multiples=vendeurs_multiples,
+            acquereurs_multiples=acquereurs_multiples
         )
 
     def _detecter_intention(self, texte: str) -> Tuple[IntentionAgent, float]:
@@ -295,12 +391,41 @@ class ParseurDemandeNL:
         return TypeActeAgent.AUTO
 
     def _extraire_vendeur(self, texte: str) -> Optional[Dict[str, Any]]:
-        """Extrait le vendeur de la demande."""
-        # Pattern flèche: Martin→Dupont
+        """Extrait le vendeur de la demande (premier vendeur si multiples)."""
+        vendeurs = self._extraire_vendeurs_multiples(texte)
+        return vendeurs[0] if vendeurs else None
+
+    def _extraire_acquereur(self, texte: str) -> Optional[Dict[str, Any]]:
+        """Extrait l'acquéreur de la demande (premier acquéreur si multiples)."""
+        acquereurs = self._extraire_acquereurs_multiples(texte)
+        return acquereurs[0] if acquereurs else None
+
+    def _extraire_vendeurs_multiples(self, texte: str) -> List[Dict[str, Any]]:
+        """
+        Extrait tous les vendeurs d'une demande.
+
+        Supporte:
+        - "Martin → Dupont" (un vendeur)
+        - "Martin & Pierre → Dupont" (deux vendeurs)
+        - "Martin et Pierre → Dupont et Thomas" (deux vendeurs)
+        """
+        vendeurs = []
+
+        # Essayer d'abord le pattern multi-parties
+        match = self.PATTERN_FLECHE_MULTI.search(texte)
+        if match:
+            vendeurs_str = match.group('vendeurs')
+            noms = self._parser_liste_noms(vendeurs_str)
+            for nom in noms:
+                vendeurs.append(self._creer_personne(nom, 'vendeur'))
+            return vendeurs
+
+        # Fallback: pattern simple
         match = self.PATTERN_FLECHE.search(texte)
         if match:
             nom = match.group('vendeur')
-            return self._creer_personne(nom, 'vendeur')
+            vendeurs.append(self._creer_personne(nom, 'vendeur'))
+            return vendeurs
 
         # Pattern explicite: vendeur Martin
         match = re.search(
@@ -308,17 +433,36 @@ class ParseurDemandeNL:
             texte, re.IGNORECASE | re.UNICODE
         )
         if match:
-            return self._creer_personne(match.group('nom'), 'vendeur')
+            vendeurs.append(self._creer_personne(match.group('nom'), 'vendeur'))
 
-        return None
+        return vendeurs
 
-    def _extraire_acquereur(self, texte: str) -> Optional[Dict[str, Any]]:
-        """Extrait l'acquéreur de la demande."""
-        # Pattern flèche: Martin→Dupont
+    def _extraire_acquereurs_multiples(self, texte: str) -> List[Dict[str, Any]]:
+        """
+        Extrait tous les acquéreurs d'une demande.
+
+        Supporte:
+        - "Martin → Dupont" (un acquéreur)
+        - "Martin → Dupont & Thomas" (deux acquéreurs)
+        - "Martin et Pierre → Dupont et Thomas" (deux acquéreurs)
+        """
+        acquereurs = []
+
+        # Essayer d'abord le pattern multi-parties
+        match = self.PATTERN_FLECHE_MULTI.search(texte)
+        if match:
+            acquereurs_str = match.group('acquereurs')
+            noms = self._parser_liste_noms(acquereurs_str)
+            for nom in noms:
+                acquereurs.append(self._creer_personne(nom, 'acquereur'))
+            return acquereurs
+
+        # Fallback: pattern simple
         match = self.PATTERN_FLECHE.search(texte)
         if match:
             nom = match.group('acquereur')
-            return self._creer_personne(nom, 'acquereur')
+            acquereurs.append(self._creer_personne(nom, 'acquereur'))
+            return acquereurs
 
         # Pattern explicite: acquéreur Dupont
         match = re.search(
@@ -327,9 +471,28 @@ class ParseurDemandeNL:
             texte, re.IGNORECASE | re.UNICODE
         )
         if match:
-            return self._creer_personne(match.group('nom'), 'acquereur')
+            acquereurs.append(self._creer_personne(match.group('nom'), 'acquereur'))
 
-        return None
+        return acquereurs
+
+    def _parser_liste_noms(self, texte: str) -> List[str]:
+        """
+        Parse une liste de noms séparés par '&' ou 'et'.
+
+        Args:
+            texte: "Martin & Pierre" ou "Martin et Pierre"
+
+        Returns:
+            ["Martin", "Pierre"]
+        """
+        # Remplacer 'et' par '&' pour uniformiser
+        texte_norm = re.sub(r'\s+et\s+', ' & ', texte, flags=re.IGNORECASE)
+
+        # Séparer par '&'
+        noms = [nom.strip() for nom in texte_norm.split('&')]
+
+        # Filtrer les noms vides
+        return [nom for nom in noms if nom]
 
     def _creer_personne(self, nom: str, role: str) -> Dict[str, Any]:
         """Crée une structure de personne à partir d'un nom."""
@@ -407,7 +570,31 @@ class ParseurDemandeNL:
 
     def _extraire_prix(self, texte: str) -> Optional[Dict[str, Any]]:
         """Extrait le prix de la demande."""
-        # Chercher les montants avec €/euros d'abord
+        # Essayer d'abord le pattern court (450k€, 1.2M€)
+        match_court = self.PATTERN_PRIX_COURT.search(texte)
+        if match_court:
+            try:
+                montant_str = match_court.group('montant').replace(' ', '').replace(',', '.')
+                montant = float(montant_str)
+
+                # Appliquer le multiplicateur
+                mult = match_court.group('mult')
+                if mult:
+                    mult = mult.lower()
+                    if mult == 'k':
+                        montant *= 1000
+                    elif mult == 'm':
+                        montant *= 1000000
+
+                return {
+                    "montant": int(montant),
+                    "devise": "EUR",
+                    "en_lettres": self._nombre_en_lettres(int(montant))
+                }
+            except (ValueError, AttributeError):
+                pass
+
+        # Chercher les montants avec €/euros (pattern standard)
         for match in self.PATTERN_PRIX.finditer(texte):
             # Priorité: groupe avec devise explicite
             montant_str = match.group('montant') or match.group('montant2')
@@ -420,6 +607,14 @@ class ParseurDemandeNL:
 
             try:
                 montant = float(montant_str)
+
+                # Appliquer multiplicateur k/K si présent
+                try:
+                    mult = match.group('multiplicateur')
+                    if mult and mult.lower() == 'k':
+                        montant *= 1000
+                except IndexError:
+                    pass
 
                 # Si le montant est < 10000, c'est probablement une surface, pas un prix
                 if montant < 10000 and not match.group('devise'):
@@ -600,6 +795,198 @@ class AgentNotaire:
         except Exception as e:
             print(f"⚠️ Erreur Supabase: {e}")
 
+    def valider_donnees(self, donnees: Dict[str, Any], type_acte: str) -> ResultatValidation:
+        """
+        Valide les données avant génération.
+
+        Args:
+            donnees: Données à valider
+            type_acte: Type d'acte (promesse_vente, vente, etc.)
+
+        Returns:
+            ResultatValidation avec erreurs et suggestions
+        """
+        erreurs = []
+        avertissements = []
+        champs_manquants = []
+        suggestions = []
+
+        # Champs obligatoires par type d'acte
+        champs_obligatoires = {
+            'promesse_vente': ['promettants', 'beneficiaires', 'bien', 'prix'],
+            'vente': ['vendeurs', 'acquereurs', 'bien', 'prix'],
+            'reglement_copropriete': ['immeuble', 'lots'],
+            'modificatif_edd': ['immeuble', 'modifications'],
+        }
+
+        # Aliases pour normalisation
+        aliases = {
+            'promettants': ['vendeurs', 'promettant'],
+            'beneficiaires': ['acquereurs', 'acquéreurs', 'beneficiaire'],
+            'vendeurs': ['promettants', 'vendeur'],
+            'acquereurs': ['beneficiaires', 'bénéficiaires', 'acquereur'],
+        }
+
+        # Vérifier les champs obligatoires
+        champs_requis = champs_obligatoires.get(type_acte, [])
+        for champ in champs_requis:
+            valeur = donnees.get(champ)
+
+            # Vérifier les aliases si non trouvé
+            if not valeur:
+                for alias in aliases.get(champ, []):
+                    valeur = donnees.get(alias)
+                    if valeur:
+                        break
+
+            if not valeur:
+                champs_manquants.append(champ)
+                erreurs.append(f"Champ obligatoire manquant: {champ}")
+
+        # Validations spécifiques
+        if type_acte in ('promesse_vente', 'vente'):
+            # Vérifier le prix
+            prix = donnees.get('prix', {})
+            if prix and prix.get('montant', 0) <= 0:
+                erreurs.append("Le prix doit être supérieur à 0")
+
+            # Vérifier le bien
+            bien = donnees.get('bien', {})
+            if bien:
+                if not bien.get('adresse') and not bien.get('adresse_complete'):
+                    avertissements.append("Adresse du bien non spécifiée")
+                    suggestions.append("Ajouter l'adresse complète du bien")
+
+            # Vérifier les quotités si multiples parties
+            vendeurs = donnees.get('promettants') or donnees.get('vendeurs') or []
+            acquereurs = donnees.get('beneficiaires') or donnees.get('acquereurs') or []
+
+            if len(vendeurs) > 1:
+                suggestions.append("Vérifier les quotités vendues pour chaque vendeur")
+
+            if len(acquereurs) > 1:
+                suggestions.append("Vérifier les quotités acquises pour chaque acquéreur")
+
+        # Avertissements contextuels
+        if type_acte == 'promesse_vente':
+            if not donnees.get('conditions_suspensives'):
+                avertissements.append("Aucune condition suspensive définie")
+                suggestions.append("Ajouter une condition suspensive de prêt si applicable")
+
+            if not donnees.get('indemnite_immobilisation'):
+                avertissements.append("Indemnité d'immobilisation non définie")
+                suggestions.append("Définir l'indemnité d'immobilisation (généralement 5-10% du prix)")
+
+        return ResultatValidation(
+            valide=len(erreurs) == 0,
+            erreurs=erreurs,
+            avertissements=avertissements,
+            champs_manquants=champs_manquants,
+            suggestions=suggestions
+        )
+
+    def calculer_score_confiance_detaille(self, analyse: DemandeAnalysee) -> ScoreConfianceDetaille:
+        """
+        Calcule un score de confiance détaillé avec breakdown.
+
+        Args:
+            analyse: Résultat de l'analyse
+
+        Returns:
+            ScoreConfianceDetaille avec toutes les métriques
+        """
+        scores = {}
+        champs_detectes = []
+        champs_manquants = []
+        suggestions = []
+
+        # Score vendeur
+        if analyse.vendeur:
+            champs_detectes.append('vendeur')
+            nom = analyse.vendeur.get('nom', '')
+            prenom = analyse.vendeur.get('prenom', '')
+            scores['vendeur'] = 0.5 + (0.25 if nom else 0) + (0.25 if prenom else 0)
+        else:
+            champs_manquants.append('vendeur')
+            scores['vendeur'] = 0.0
+            suggestions.append("Préciser le nom du vendeur (ex: Martin → ...)")
+
+        # Score acquéreur
+        if analyse.acquereur:
+            champs_detectes.append('acquereur')
+            nom = analyse.acquereur.get('nom', '')
+            prenom = analyse.acquereur.get('prenom', '')
+            scores['acquereur'] = 0.5 + (0.25 if nom else 0) + (0.25 if prenom else 0)
+        else:
+            champs_manquants.append('acquereur')
+            scores['acquereur'] = 0.0
+            suggestions.append("Préciser le nom de l'acquéreur (ex: ... → Dupont)")
+
+        # Score bien
+        if analyse.bien:
+            champs_detectes.append('bien')
+            bien_score = 0.3
+            if analyse.bien.get('type'):
+                bien_score += 0.2
+            if analyse.bien.get('superficie'):
+                bien_score += 0.25
+            if analyse.bien.get('ville') or analyse.bien.get('code_postal'):
+                bien_score += 0.25
+            scores['bien'] = bien_score
+        else:
+            champs_manquants.append('bien')
+            scores['bien'] = 0.0
+            suggestions.append("Préciser le type de bien et sa localisation")
+
+        # Score prix
+        if analyse.prix and analyse.prix.get('montant', 0) > 0:
+            champs_detectes.append('prix')
+            scores['prix'] = 1.0
+        else:
+            champs_manquants.append('prix')
+            scores['prix'] = 0.0
+            suggestions.append("Indiquer le prix de vente (ex: 450000€)")
+
+        # Score type acte
+        if analyse.type_acte != TypeActeAgent.AUTO:
+            champs_detectes.append('type_acte')
+            scores['type_acte'] = 1.0
+        else:
+            scores['type_acte'] = 0.5
+            suggestions.append("Préciser le type d'acte (promesse ou vente)")
+
+        # Score intention
+        if analyse.intention != IntentionAgent.INCONNU:
+            champs_detectes.append('intention')
+            scores['intention'] = 1.0
+        else:
+            scores['intention'] = 0.3
+
+        # Calculer score global (moyenne pondérée)
+        poids = {
+            'vendeur': 0.2,
+            'acquereur': 0.2,
+            'bien': 0.15,
+            'prix': 0.2,
+            'type_acte': 0.15,
+            'intention': 0.1
+        }
+
+        score_global = sum(scores[k] * poids[k] for k in poids)
+
+        return ScoreConfianceDetaille(
+            score_global=score_global,
+            score_vendeur=scores['vendeur'],
+            score_acquereur=scores['acquereur'],
+            score_bien=scores['bien'],
+            score_prix=scores['prix'],
+            score_type_acte=scores['type_acte'],
+            score_intention=scores['intention'],
+            champs_detectes=champs_detectes,
+            champs_manquants=champs_manquants,
+            suggestions=suggestions[:5]  # Limiter à 5 suggestions
+        )
+
     def executer(self, demande: str) -> ResultatAgent:
         """
         Exécute une demande en langage naturel.
@@ -624,15 +1011,34 @@ class AgentNotaire:
         etapes.append("Analyse de la demande")
         analyse = self.parseur.analyser(demande)
 
+        # Calculer le score détaillé
+        score_detaille = self.calculer_score_confiance_detaille(analyse)
+
         print(f"🔍 Analyse:")
         print(f"   • Intention: {analyse.intention.value}")
         print(f"   • Type acte: {analyse.type_acte.value}")
-        print(f"   • Confiance: {analyse.confiance:.0%}")
+        print(f"   • Confiance: {score_detaille.score_global:.0%}")
 
-        if analyse.vendeur:
+        # Afficher les vendeurs (support multi-parties)
+        if analyse.vendeurs_multiples:
+            if len(analyse.vendeurs_multiples) == 1:
+                print(f"   • Vendeur: {analyse.vendeurs_multiples[0].get('nom', '?')}")
+            else:
+                noms = [v.get('nom', '?') for v in analyse.vendeurs_multiples]
+                print(f"   • Vendeurs ({len(noms)}): {' & '.join(noms)}")
+        elif analyse.vendeur:
             print(f"   • Vendeur: {analyse.vendeur.get('nom', '?')}")
-        if analyse.acquereur:
+
+        # Afficher les acquéreurs (support multi-parties)
+        if analyse.acquereurs_multiples:
+            if len(analyse.acquereurs_multiples) == 1:
+                print(f"   • Acquéreur: {analyse.acquereurs_multiples[0].get('nom', '?')}")
+            else:
+                noms = [a.get('nom', '?') for a in analyse.acquereurs_multiples]
+                print(f"   • Acquéreurs ({len(noms)}): {' & '.join(noms)}")
+        elif analyse.acquereur:
             print(f"   • Acquéreur: {analyse.acquereur.get('nom', '?')}")
+
         if analyse.bien:
             print(f"   • Bien: {analyse.bien}")
         if analyse.prix:
@@ -642,6 +1048,12 @@ class AgentNotaire:
 
         if analyse.champs_manquants:
             print(f"   ⚠️ Champs manquants: {', '.join(analyse.champs_manquants)}")
+
+        # Afficher les suggestions si confiance faible
+        if score_detaille.score_global < 0.7 and score_detaille.suggestions:
+            print(f"\n   💡 Suggestions:")
+            for suggestion in score_detaille.suggestions[:3]:
+                print(f"      → {suggestion}")
 
         # Router vers la bonne action
         if analyse.intention == IntentionAgent.CREER:
@@ -704,12 +1116,38 @@ class AgentNotaire:
                 intention=analyse.intention
             )
 
-        # Construire les données
+        # Construire les données (avec support multi-parties)
         etapes.append("Construction des données")
         donnees = self._construire_donnees(analyse)
 
         # Déterminer le type d'acte
         type_acte = self._resoudre_type_acte(analyse)
+
+        # Valider les données avant génération
+        etapes.append("Validation des données")
+        validation = self.valider_donnees(donnees, type_acte)
+
+        if not validation.valide:
+            print(f"\n⚠️ Erreurs de validation:")
+            for erreur in validation.erreurs:
+                print(f"   ❌ {erreur}")
+            return ResultatAgent(
+                succes=False,
+                message=f"Validation échouée: {', '.join(validation.erreurs)}",
+                intention=analyse.intention
+            )
+
+        # Afficher les avertissements
+        if validation.avertissements:
+            print(f"\n⚠️ Avertissements:")
+            for avert in validation.avertissements:
+                print(f"   ⚠️ {avert}")
+
+        # Afficher les suggestions
+        if validation.suggestions:
+            print(f"\n💡 Suggestions:")
+            for suggestion in validation.suggestions[:3]:
+                print(f"   → {suggestion}")
 
         # Générer la référence
         reference = f"{datetime.now().strftime('%Y')}-{datetime.now().strftime('%m%d%H%M')}"
@@ -1121,32 +1559,78 @@ class AgentNotaire:
             donnees = {}
 
         # Fusionner les données extraites (SANS écraser les données complètes)
-        # On modifie uniquement les noms/infos de base dans les personnes existantes
+        # Support multi-parties: utiliser vendeurs_multiples si disponibles
 
-        if analyse.vendeur:
-            if type_acte == 'promesse_vente':
-                # Modifier le premier promettant existant au lieu de le remplacer
-                if donnees.get('promettants') and len(donnees['promettants']) > 0:
-                    self._fusionner_personne(donnees['promettants'][0], analyse.vendeur)
-                else:
-                    donnees['promettants'] = [analyse.vendeur]
-            else:
-                if donnees.get('vendeurs') and len(donnees['vendeurs']) > 0:
-                    self._fusionner_personne(donnees['vendeurs'][0], analyse.vendeur)
-                else:
-                    donnees['vendeurs'] = [analyse.vendeur]
+        # Gestion des vendeurs/promettants (multi-parties)
+        vendeurs_a_traiter = analyse.vendeurs_multiples if analyse.vendeurs_multiples else (
+            [analyse.vendeur] if analyse.vendeur else []
+        )
 
-        if analyse.acquereur:
+        if vendeurs_a_traiter:
             if type_acte == 'promesse_vente':
-                if donnees.get('beneficiaires') and len(donnees['beneficiaires']) > 0:
-                    self._fusionner_personne(donnees['beneficiaires'][0], analyse.acquereur)
-                else:
-                    donnees['beneficiaires'] = [analyse.acquereur]
+                cle_vendeur = 'promettants'
             else:
-                if donnees.get('acquereurs') and len(donnees['acquereurs']) > 0:
-                    self._fusionner_personne(donnees['acquereurs'][0], analyse.acquereur)
+                cle_vendeur = 'vendeurs'
+
+            # Si multi-parties, remplacer toute la liste
+            if len(vendeurs_a_traiter) > 1:
+                # Charger les données d'exemple pour chaque vendeur supplémentaire
+                donnees_exemple = donnees.get(cle_vendeur, [{}])
+                modele_personne = donnees_exemple[0] if donnees_exemple else {}
+
+                nouvelles_personnes = []
+                for i, vendeur in enumerate(vendeurs_a_traiter):
+                    if i < len(donnees_exemple):
+                        # Fusionner avec l'existant
+                        personne = copy.deepcopy(donnees_exemple[i])
+                        self._fusionner_personne(personne, vendeur)
+                    else:
+                        # Créer une nouvelle personne basée sur le modèle
+                        personne = copy.deepcopy(modele_personne)
+                        self._fusionner_personne(personne, vendeur)
+                    nouvelles_personnes.append(personne)
+
+                donnees[cle_vendeur] = nouvelles_personnes
+            else:
+                # Un seul vendeur: modifier le premier existant
+                if donnees.get(cle_vendeur) and len(donnees[cle_vendeur]) > 0:
+                    self._fusionner_personne(donnees[cle_vendeur][0], vendeurs_a_traiter[0])
                 else:
-                    donnees['acquereurs'] = [analyse.acquereur]
+                    donnees[cle_vendeur] = vendeurs_a_traiter
+
+        # Gestion des acquéreurs/bénéficiaires (multi-parties)
+        acquereurs_a_traiter = analyse.acquereurs_multiples if analyse.acquereurs_multiples else (
+            [analyse.acquereur] if analyse.acquereur else []
+        )
+
+        if acquereurs_a_traiter:
+            if type_acte == 'promesse_vente':
+                cle_acquereur = 'beneficiaires'
+            else:
+                cle_acquereur = 'acquereurs'
+
+            # Si multi-parties, remplacer toute la liste
+            if len(acquereurs_a_traiter) > 1:
+                donnees_exemple = donnees.get(cle_acquereur, [{}])
+                modele_personne = donnees_exemple[0] if donnees_exemple else {}
+
+                nouvelles_personnes = []
+                for i, acquereur in enumerate(acquereurs_a_traiter):
+                    if i < len(donnees_exemple):
+                        personne = copy.deepcopy(donnees_exemple[i])
+                        self._fusionner_personne(personne, acquereur)
+                    else:
+                        personne = copy.deepcopy(modele_personne)
+                        self._fusionner_personne(personne, acquereur)
+                    nouvelles_personnes.append(personne)
+
+                donnees[cle_acquereur] = nouvelles_personnes
+            else:
+                # Un seul acquéreur: modifier le premier existant
+                if donnees.get(cle_acquereur) and len(donnees[cle_acquereur]) > 0:
+                    self._fusionner_personne(donnees[cle_acquereur][0], acquereurs_a_traiter[0])
+                else:
+                    donnees[cle_acquereur] = acquereurs_a_traiter
 
         # Fusionner les infos du bien (pas remplacer)
         if analyse.bien:

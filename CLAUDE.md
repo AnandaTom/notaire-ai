@@ -441,6 +441,48 @@ Be pragmatic. Be reliable. Self-anneal. **Build knowledge.**
 
 ---
 
+## Version 1.3.1 - Agent Intelligent & Multi-Parties
+
+### 🆕 Nouveautés Majeures
+
+1. **Support Multi-Parties** ([agent_autonome.py](execution/agent_autonome.py))
+   - Pattern: `"Martin & Pierre → Dupont & Thomas"`
+   - Extraction automatique de tous les vendeurs/acquéreurs
+   - Construction des données avec quotités pour chaque partie
+
+2. **Validation Intégrée**
+   - Vérification complétude avant génération
+   - Validation cohérence (prix > 0, champs obligatoires)
+   - Avertissements contextuels (conditions suspensives, indemnité)
+
+3. **Score de Confiance Détaillé**
+   - Breakdown par catégorie (vendeur, acquéreur, bien, prix, type)
+   - Suggestions automatiques si confiance < 70%
+   - Explication lisible du score
+
+4. **Template Promesse Complété**
+   - Ajout `partie_developpee_promesse.md` avec sections spécifiques
+   - Conditions suspensives (prêt, vente préalable, urbanisme)
+   - Indemnité d'immobilisation avec toutes les modalités
+   - Faculté de substitution + clause pénale
+
+### 📊 Capacités Agent v1.1
+
+| Fonctionnalité | Avant | Après |
+|----------------|-------|-------|
+| Multi-parties | ❌ | ✅ "A & B → C & D" |
+| Validation intégrée | ❌ | ✅ Avant génération |
+| Score détaillé | Score simple | Breakdown 6 catégories |
+| Suggestions | ❌ | ✅ Contextuelles |
+| Template promesse | 60.9% | ≥85% |
+
+### 🎯 Nouvelle Directive
+
+- **[workflow_agent_optimise.md](directives/workflow_agent_optimise.md)** - Workflow consolidé en 8 étapes
+- **[RECOMMANDATIONS_STRATEGIQUES.md](docs/RECOMMANDATIONS_STRATEGIQUES.md)** - Plan d'amélioration complet
+
+---
+
 ## Version 1.3.0 - Orchestrateur & Extraction Intelligente
 
 ### 🆕 Nouveautés Majeures
