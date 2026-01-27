@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire Vente Maison - Notaire</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a5276'%3E%3Cpath d='M12 3L2 12h3v9h14v-9h3L12 3z'/%3E%3C/svg%3E">
+    <style>
+        /* Couleur spécifique maison - rose/magenta */
+        :root {
+            --primary-color: #8e1c5f;
+            --primary-light: #c2185b;
+            --accent-color: #ad1457;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                </div>
+                <h1>Questionnaire Vente de Maison</h1>
+                <p class="subtitle">Formulaire vendeur - Informations pour l'acte de vente</p>
+                <span class="badge">Transmission sécurisée et chiffrée</span>
+            </div>
+        </header>
+
+        <div class="form-body">
+            <!-- Introduction -->
+            <div class="intro-section">
+                <h2>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                    Pourquoi ce questionnaire ?
+                </h2>
+                <p>La loi impose au vendeur une obligation d'information et de transparence envers l'acquéreur.
+                Ces informations permettront à votre notaire de préparer l'acte de vente et de vous conseiller
+                sur les aspects fiscaux de votre transaction.</p>
+            </div>
+
+            <!-- Barre de progression -->
+            <div class="progress-bar">
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Identité</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Coordonnées</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Terrain</span>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <span class="step-number">4</span>
+                        <span class="step-label">Bâtiment</span>
+                    </div>
+                    <div class="progress-step" data-step="5">
+                        <span class="step-number">5</span>
+                        <span class="step-label">Contrats</span>
+                    </div>
+                    <div class="progress-step" data-step="6">
+                        <span class="step-number">6</span>
+                        <span class="step-label">Prêts</span>
+                    </div>
+                    <div class="progress-step" data-step="7">
+                        <span class="step-number">7</span>
+                        <span class="step-label">Fiscal</span>
+                    </div>
+                    <div class="progress-step" data-step="8">
+                        <span class="step-number">8</span>
+                        <span class="step-label">Validation</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="questionnaireForm">
+                <!-- Section 1: Identité des vendeurs -->
+                <section class="form-section active" data-section="1">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Identité du vendeur</h2>
+                            <p>Informations personnelles du ou des vendeurs</p>
+                        </div>
+                    </div>
+
+                    <!-- Vendeur 1 -->
+                    <div class="subsection">
+                        <h3 class="subsection-title">Vendeur 1</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="v1_civilite">Civilité <span class="required">*</span></label>
+                                <select id="v1_civilite" name="vendeur1_civilite" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="M">Monsieur</option>
+                                    <option value="Mme">Madame</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="v1_nom">Nom de naissance <span class="required">*</span></label>
+                                <input type="text" id="v1_nom" name="vendeur1_nom" required placeholder="DUPONT">
+                            </div>
+                            <div class="form-group">
+                                <label for="v1_prenoms">Prénom(s) <span class="required">*</span></label>
+                                <input type="text" id="v1_prenoms" name="vendeur1_prenoms" required placeholder="Jean, Pierre">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="v1_date_naissance">Date de naissance <span class="required">*</span></label>
+                                <input type="date" id="v1_date_naissance" name="vendeur1_date_naissance" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="v1_lieu_naissance">Lieu de naissance <span class="required">*</span></label>
+                                <input type="text" id="v1_lieu_naissance" name="vendeur1_lieu_naissance" required placeholder="Paris (75)">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="v1_nationalite">Nationalité <span class="required">*</span></label>
+                                <input type="text" id="v1_nationalite" name="vendeur1_nationalite" required value="Française">
+                            </div>
+                            <div class="form-group">
+                                <label for="v1_profession">Profession</label>
+                                <input type="text" id="v1_profession" name="vendeur1_profession" placeholder="Ex: Cadre, Retraité...">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Situation matrimoniale <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label class="radio-item">
+                                    <input type="radio" name="vendeur1_situation" value="celibataire" required>
+                                    <span>Célibataire</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="vendeur1_situation" value="marie">
+                                    <span>Marié(e)</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="vendeur1_situation" value="pacse">
+                                    <span>Pacsé(e)</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="vendeur1_situation" value="divorce">
+                                    <span>Divorcé(e)</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="vendeur1_situation" value="veuf">
+                                    <span>Veuf(ve)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="v1_mariage_details">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="v1_date_mariage">Date du mariage/PACS</label>
+                                    <input type="date" id="v1_date_mariage" name="vendeur1_date_mariage">
+                                </div>
+                                <div class="form-group">
+                                    <label for="v1_lieu_mariage">Lieu (Commune, Code postal)</label>
+                                    <input type="text" id="v1_lieu_mariage" name="vendeur1_lieu_mariage" placeholder="Lyon, 69000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="v1_regime_matrimonial">Régime matrimonial</label>
+                                <select id="v1_regime_matrimonial" name="vendeur1_regime_matrimonial">
+                                    <option value="">Sélectionner</option>
+                                    <option value="communaute_legale">Communauté légale (défaut)</option>
+                                    <option value="separation_biens">Séparation de biens</option>
+                                    <option value="communaute_universelle">Communauté universelle</option>
+                                    <option value="participation_acquets">Participation aux acquêts</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="v1_divorce_details">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="v1_tribunal_divorce">Tribunal ayant prononcé le divorce</label>
+                                    <input type="text" id="v1_tribunal_divorce" name="vendeur1_tribunal_divorce">
+                                </div>
+                                <div class="form-group">
+                                    <label for="v1_date_divorce">Date du jugement</label>
+                                    <input type="date" id="v1_date_divorce" name="vendeur1_date_divorce">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Situations particulières</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="vendeur1_commercant" value="oui">
+                                    <span>Commerçant, artisan ou dirigeant de société</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="vendeur1_redressement" value="oui">
+                                    <span>En état de redressement judiciaire ou liquidation</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="vendeur1_surendettement" value="oui">
+                                    <span>Commission de surendettement saisie</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="v1_residence_fiscale">Résidence fiscale <span class="required">*</span></label>
+                            <div class="radio-group horizontal">
+                                <label class="radio-item">
+                                    <input type="radio" name="vendeur1_residence_fiscale" value="francais" required>
+                                    <span>Résident fiscal français</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="vendeur1_residence_fiscale" value="etranger">
+                                    <span>Résident fiscal étranger</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vendeur 2 optionnel -->
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="hasVendeur2" name="has_vendeur2">
+                            <span>Ajouter un second vendeur</span>
+                        </label>
+                    </div>
+
+                    <div class="subsection" id="vendeur2Section" style="display: none;">
+                        <h3 class="subsection-title">Vendeur 2</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="v2_civilite">Civilité</label>
+                                <select id="v2_civilite" name="vendeur2_civilite">
+                                    <option value="">Sélectionner</option>
+                                    <option value="M">Monsieur</option>
+                                    <option value="Mme">Madame</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="v2_nom">Nom de naissance</label>
+                                <input type="text" id="v2_nom" name="vendeur2_nom" placeholder="MARTIN">
+                            </div>
+                            <div class="form-group">
+                                <label for="v2_prenoms">Prénom(s)</label>
+                                <input type="text" id="v2_prenoms" name="vendeur2_prenoms" placeholder="Marie, Sophie">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="v2_date_naissance">Date de naissance</label>
+                                <input type="date" id="v2_date_naissance" name="vendeur2_date_naissance">
+                            </div>
+                            <div class="form-group">
+                                <label for="v2_lieu_naissance">Lieu de naissance</label>
+                                <input type="text" id="v2_lieu_naissance" name="vendeur2_lieu_naissance">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Coordonnées -->
+                <section class="form-section" data-section="2">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Coordonnées</h2>
+                            <p>Adresse et moyens de contact</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Adresse postale</h3>
+                        <div class="form-group">
+                            <label for="adresse">Adresse complète <span class="required">*</span></label>
+                            <input type="text" id="adresse" name="adresse" required placeholder="12 rue de la République">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="code_postal">Code postal <span class="required">*</span></label>
+                                <input type="text" id="code_postal" name="code_postal" required placeholder="75001" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="ville">Ville <span class="required">*</span></label>
+                                <input type="text" id="ville" name="ville" required placeholder="Paris">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Contact</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tel_portable">Téléphone portable <span class="required">*</span></label>
+                                <input type="tel" id="tel_portable" name="tel_portable" required placeholder="06 12 34 56 78">
+                            </div>
+                            <div class="form-group">
+                                <label for="tel_domicile">Téléphone domicile</label>
+                                <input type="tel" id="tel_domicile" name="tel_domicile" placeholder="01 23 45 67 89">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="jean.dupont@email.com">
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Coordonnées bancaires (pour le versement du prix)</h3>
+                        <div class="form-group">
+                            <label for="iban">IBAN <span class="required">*</span></label>
+                            <input type="text" id="iban" name="iban" required placeholder="FR76 1234 5678 9012 3456 7890 123">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bic">BIC <span class="required">*</span></label>
+                                <input type="text" id="bic" name="bic" required placeholder="BNPAFRPPXXX">
+                            </div>
+                            <div class="form-group">
+                                <label for="banque">Nom de la banque <span class="required">*</span></label>
+                                <input type="text" id="banque" name="banque" required placeholder="BNP Paribas">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Situation du terrain -->
+                <section class="form-section" data-section="3">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M3 9h18M9 21V9"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Situation du terrain</h2>
+                            <p>Informations sur le terrain et son environnement</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Votre maison dépend-elle d'un lotissement ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="lotissement" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="lotissement" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="conditional-field" id="lotissement_details">
+                        <div class="form-group">
+                            <label>Si oui, existe-t-il une association syndicale qui fonctionne ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="association_syndicale" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="association_syndicale" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="president_association">Nom et coordonnées du président</label>
+                            <textarea id="president_association" name="president_association" placeholder="Nom, adresse, téléphone..."></textarea>
+                        </div>
+                        <div class="info-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            <p>Joindre copie du règlement du lotissement ou du règlement de copropriété, du cahier des charges et des statuts de l'association syndicale.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Votre maison dépend-elle d'une copropriété horizontale ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="copropriete_horizontale" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="copropriete_horizontale" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                        <p class="field-help">Si oui, il convient de faire établir un mesurage au titre de la loi Carrez et de nous indiquer les nom et adresse du syndic.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Votre terrain a-t-il fait l'objet d'un procès-verbal de bornage ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="bornage" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="bornage" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                        <p class="field-help">Le cas échéant, joindre le document.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Êtes-vous propriétaire (ou avez-vous été propriétaire au cours des 10 dernières années) d'un terrain attenant à la propriété que vous vendez aujourd'hui ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="terrain_attenant" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="terrain_attenant" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Votre terrain est-il référencé comme boisé ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="terrain_boise" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="terrain_boise" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Avez-vous un mur séparatif ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="mur_separatif" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="mur_separatif" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="conditional-field" id="mur_separatif_details">
+                        <div class="form-group">
+                            <label for="entretien_mur">Savez-vous qui a la charge de son entretien ?</label>
+                            <input type="text" id="entretien_mur" name="entretien_mur" placeholder="Propriétaire, voisin, mitoyen...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Votre terrain est-il en pente ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="terrain_pente" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="terrain_pente" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">État du sous-sol - Pollution</h3>
+
+                        <div class="form-group">
+                            <label>Avez-vous exploité des activités polluantes sur le terrain ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="activites_polluantes" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="activites_polluantes" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>À votre connaissance, des activités polluantes ont-elles été effectuées sur le terrain par le passé, ou des déchets ont-ils pu être entreposés ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="activites_polluantes_passees" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="activites_polluantes_passees" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Avez-vous connaissance d'activités polluantes dans le voisinage ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="pollution_voisinage" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="pollution_voisinage" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Avez-vous connaissance de carrières souterraines à l'aplomb de votre terrain ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="carrieres_souterraines" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="carrieres_souterraines" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Votre maison est-elle située en zone inondable ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="zone_inondable" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="zone_inondable" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Servitudes</h3>
+
+                        <div class="form-group">
+                            <label>Avez-vous connaissance de servitudes particulières sur votre propriété ?</label>
+                            <p class="field-help">Servitudes qui la grèvent ou qui lui profitent : servitude de passage, de cour commune, d'interdiction de construire, alignement, etc.</p>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="servitudes" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="servitudes" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="servitudes_details">
+                            <div class="form-group">
+                                <label for="details_servitudes">Précisez les servitudes</label>
+                                <textarea id="details_servitudes" name="details_servitudes" placeholder="Si rien ne figure à ce sujet dans votre titre de propriété, merci de joindre le document arrêtant les modalités de cette servitude et de la préciser dans une note."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Situation du bâtiment -->
+                <section class="form-section" data-section="4">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Situation du bâtiment</h2>
+                            <p>Construction, assainissement et équipements</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Assainissement</h3>
+
+                        <div class="form-group">
+                            <label>L'assainissement de votre maison s'effectue-t-il :</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Par un système individuel (fosse septique) ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="assainissement_individuel" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="assainissement_individuel" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="assainissement_individuel_details">
+                            <div class="form-group">
+                                <label for="date_vidange">Date de la dernière vidange (fournir l'attestation SPANC)</label>
+                                <input type="date" id="date_vidange" name="date_vidange">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Par un raccordement au « tout à l'égout » ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="tout_egout" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="tout_egout" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Avez-vous reçu une mise en demeure de faire des travaux sur votre installation ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="mise_demeure_assainissement" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="mise_demeure_assainissement" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Si oui, joindre copie.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Y a-t-il un raccordement distinct pour les eaux pluviales et les eaux usées ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="raccordement_distinct" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="raccordement_distinct" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>La taxe de raccordement est-elle acquittée ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="taxe_raccordement" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="taxe_raccordement" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Construction</h3>
+
+                        <div class="form-group">
+                            <label>Avez-vous fait construire le bâtiment vendu (ou l'un d'entre eux) ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="construction_propre" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="construction_propre" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Si oui, joindre la copie du permis de construire, de la déclaration d'achèvement de travaux et du certificat de conformité.</p>
+                        </div>
+
+                        <div class="conditional-field" id="construction_details">
+                            <div class="form-group">
+                                <label>Ces travaux sont-ils achevés depuis moins de 10 ans ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="travaux_moins_10_ans" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="travaux_moins_10_ans" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Si oui, avez-vous souscrit une assurance dommage-ouvrage couvrant la garantie décennale ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="assurance_dommage_ouvrage" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="assurance_dommage_ouvrage" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                                <p class="field-help">Si oui, joindre l'attestation de souscription et de paiement de l'assurance, ainsi que la police intégrale. À défaut, joindre la liste de toutes les entreprises intervenues sur le chantier avec leur adresse et leur attestation d'assurance.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Ces travaux sont-ils achevés depuis moins de 5 ans ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="travaux_moins_5_ans" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="travaux_moins_5_ans" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                                <p class="field-help">Si oui, prendre rendez-vous à l'étude en vous munissant de votre dossier de construction et de toutes les factures, afin de calculer le montant de la TVA qui sera retenue sur le prix de vente.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Avez-vous acquitté l'ensemble des taxes fiscales générées par le permis de construire ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="taxes_permis" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="taxes_permis" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                                <p class="field-help">Le cas échéant, joindre la quittance du paiement.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Avez-vous effectué des travaux postérieurs à la construction qui auraient modifié l'aspect extérieur de l'immeuble ou qui ont pu augmenter la surface de la maison ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="travaux_posterieurs" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="travaux_posterieurs" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ces travaux ont-ils fait l'objet d'un permis de construire ou d'une déclaration de travaux ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="permis_travaux" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="permis_travaux" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Chauffage</h3>
+
+                        <div class="form-group">
+                            <label>La maison possède-t-elle une cuve à mazout ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="cuve_mazout" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="cuve_mazout" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Le cas échéant, voir avec l'acquéreur s'il y a lieu d'effectuer un remboursement du contenu.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>La maison est-elle raccordée au gaz de ville ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="gaz_ville" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="gaz_ville" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>La maison est-elle raccordée à une citerne à gaz ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="citerne_gaz" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="citerne_gaz" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="citerne_gaz_details">
+                            <div class="form-group">
+                                <label>Êtes-vous propriétaire de la citerne ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="proprietaire_citerne" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="proprietaire_citerne" value="non">
+                                        <span>Non (locataire)</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="coordonnees_citerne">Coordonnées de la société</label>
+                                <textarea id="coordonnees_citerne" name="coordonnees_citerne" placeholder="Nom de la société, adresse, téléphone..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Récupération des eaux de pluie</h3>
+
+                        <div class="form-group">
+                            <label>Votre maison est-elle équipée d'un équipement de récupération d'eau de pluie ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="recuperation_pluie" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="recuperation_pluie" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="recuperation_pluie_details">
+                            <div class="form-group">
+                                <label>Avez-vous apposé une plaque de signalisation ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="plaque_signalisation" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="plaque_signalisation" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Avez-vous établi un carnet sanitaire d'entretien de ce réseau ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="carnet_sanitaire" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="carnet_sanitaire" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="date_entretien_reseau">À quelle date avez-vous effectué le dernier entretien du réseau ?</label>
+                                <input type="date" id="date_entretien_reseau" name="date_entretien_reseau">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 5: Contrats existants -->
+                <section class="form-section" data-section="5">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Contrats existant sur le bien</h2>
+                            <p>Baux, contrats d'entretien et garanties</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Bail</h3>
+
+                        <div class="form-group">
+                            <label>La maison sera-t-elle libre le jour de la vente ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="maison_libre" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="maison_libre" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>A-t-elle été louée précédemment ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="louee_precedemment" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="louee_precedemment" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Si oui, joindre la copie du bail et l'original du congé donné par le locataire, ou du congé délivré par vos soins. Si la maison est vendue occupée, joindre, outre la copie du bail et de toutes ses annexes et avenants, la dernière quittance de loyer et le montant du dépôt de garantie.</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Affichage</h3>
+
+                        <div class="form-group">
+                            <label>La maison supporte-t-elle un contrat d'affichage ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="contrat_affichage" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="contrat_affichage" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Si oui, joindre la copie du contrat d'affichage et de la dernière quittance de paiement de la redevance.</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Alarme et autres contrats</h3>
+
+                        <div class="form-group">
+                            <label>La maison fait-elle l'objet d'un contrat d'alarme ou d'intervention ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="contrat_alarme" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="contrat_alarme" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Si oui, joindre copie du contrat avec les montants à jour des prestations. Il faudra prévoir de transmettre à l'acquéreur tous les éléments nécessaires au fonctionnement du système.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>La maison fait-elle l'objet d'autres contrats (entretien de chaudière, ramonage, dératisation, contrat fourniture gaz, etc.) ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="autres_contrats" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="autres_contrats" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Le cas échéant, joindre la copie de ceux qui peuvent être repris par l'acquéreur.</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Équipements et garanties</h3>
+
+                        <div class="form-group">
+                            <label>Certains équipements de votre maison sont-ils encore sous garantie ?</label>
+                            <p class="field-help">Chaudière, climatisation, électroménager, éventuellement inclus dans la vente</p>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="equipements_garantie" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="equipements_garantie" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Si oui, joindre la copie des contrats de garantie ou les factures.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Certains équipements font-ils encore l'objet de garanties ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="garanties_actives" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="garanties_actives" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Le cas échéant, joindre copie des factures ou certificats de garantie.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 6: Prêts - Hypothèques -->
+                <section class="form-section" data-section="6">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Prêts - Hypothèques</h2>
+                            <p>Situation financière du bien</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Une procédure de saisie immobilière est-elle en cours sur le bien à vendre ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="saisie_immobiliere" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="saisie_immobiliere" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Avez-vous souscrit un ou plusieurs prêts avec hypothèques sur le bien à vendre ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="prets_hypothecaires" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="prets_hypothecaires" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="conditional-field" id="prets_details">
+                        <div class="info-box warning">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            <p>Pour chacun de ces prêts, joindre un document indiquant l'adresse de la banque et les références du prêt pour que l'étude puisse demander un décompte des sommes restant dues, ou une attestation du fait qu'ils sont remboursés.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="details_prets">Détails des prêts</label>
+                            <textarea id="details_prets" name="details_prets" placeholder="Prêt 1 : BNP, 150 000€, reste environ 80 000€..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Avez-vous un crédit-relais dans l'attente de la vente de ce bien ?</label>
+                        <div class="yes-no-group">
+                            <label class="yes-no-btn">
+                                <input type="radio" name="credit_relais" value="oui">
+                                <span>Oui</span>
+                            </label>
+                            <label class="yes-no-btn">
+                                <input type="radio" name="credit_relais" value="non">
+                                <span>Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 7: Aspects fiscaux -->
+                <section class="form-section" data-section="7">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Aspects fiscaux</h2>
+                            <p>Plus-values, avantages fiscaux et sinistres</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Plus-values</h3>
+
+                        <div class="form-group">
+                            <label>Le bien vendu constitue-t-il votre résidence principale ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="residence_principale" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="residence_principale" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="residence_principale_oui">
+                            <div class="form-group">
+                                <label for="depuis_quand_residence">Depuis quand ?</label>
+                                <input type="date" id="depuis_quand_residence" name="depuis_quand_residence">
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="residence_principale_non">
+                            <div class="form-group">
+                                <label>Le vendez-vous pour remployer le prix dans l'achat de votre résidence principale ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="remploi_residence" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="remploi_residence" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Êtes-vous retraité ou invalide de condition modeste ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="retraite_invalide" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="retraite_invalide" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Avez-vous effectué des travaux de surélévation, de construction ou d'amélioration ?</label>
+                                <p class="field-help">Ne sont pas décomptés les travaux d'entretien et de réparation</p>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="travaux_amelioration" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="travaux_amelioration" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Si vous avez reçu le bien par donation ou succession, avez-vous payé vous-même les droits de mutation ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="droits_mutation" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="droits_mutation" value="non">
+                                    <span>Non</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="droits_mutation" value="na">
+                                    <span>Non concerné</span>
+                                </label>
+                            </div>
+                            <p class="field-help">Si oui, joindre la copie de la déclaration fiscale de succession ou l'acte de donation.</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Avantage fiscal</h3>
+
+                        <div class="form-group">
+                            <label>Le bien a-t-il fait l'objet d'un engagement de location lié à un avantage fiscal ?</label>
+                            <p class="field-help">Lois Besson, Malraux, Robien, Duflot, Pinel, subventions ANAH</p>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="avantage_fiscal" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="avantage_fiscal" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="avantage_fiscal_details">
+                            <div class="form-group">
+                                <label for="type_avantage_fiscal">Lequel ?</label>
+                                <input type="text" id="type_avantage_fiscal" name="type_avantage_fiscal" placeholder="Ex: Loi Pinel">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Sinistres et procédures</h3>
+
+                        <div class="form-group">
+                            <label>Y a-t-il eu une indemnisation d'assurance d'un sinistre survenu à votre immeuble ayant été reconnu comme catastrophe naturelle ?</label>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Avant que vous soyez propriétaire ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="sinistre_avant" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="sinistre_avant" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Depuis que vous êtes propriétaire ?</label>
+                                <div class="yes-no-group">
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="sinistre_apres" value="oui">
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="yes-no-btn">
+                                        <input type="radio" name="sinistre_apres" value="non">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Le bien a-t-il fait l'objet d'une déclaration ou d'une autorisation concernant une installation classée ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="installation_classee" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="installation_classee" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Êtes-vous partie à des procédures judiciaires au sujet de votre maison ?</label>
+                            <div class="yes-no-group">
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="procedures_judiciaires" value="oui">
+                                    <span>Oui</span>
+                                </label>
+                                <label class="yes-no-btn">
+                                    <input type="radio" name="procedures_judiciaires" value="non">
+                                    <span>Non</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="procedures_details">
+                            <div class="form-group">
+                                <label for="details_procedures">Précisez la nature de la procédure, les parties et le stade d'avancement</label>
+                                <textarea id="details_procedures" name="details_procedures"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Motivation de la vente</h3>
+
+                        <div class="form-group">
+                            <label>Pour quelles raisons vendez-vous ?</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="motivation_vente" value="mobilite_pro">
+                                    <span>Mobilité professionnelle</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="motivation_vente" value="evenement_familial">
+                                    <span>Événement familial (mariage/pacs/divorce/naissance/décès)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="motivation_vente" value="transfert_epargne">
+                                    <span>Transfert d'épargne</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="motivation_vente" value="autre">
+                                    <span>Autre cause</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 8: Validation -->
+                <section class="form-section" data-section="8">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Validation et envoi</h2>
+                            <p>Vérifiez vos informations et envoyez le questionnaire</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observations">Observations ou particularités</label>
+                        <p class="field-help">Indiquez les particularités qu'il vous paraît utile de porter à la connaissance de votre acquéreur, ou qui peuvent aider au bon déroulement du dossier.</p>
+                        <textarea id="observations" name="observations" rows="5" placeholder="Informations complémentaires..."></textarea>
+                    </div>
+
+                    <div class="info-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <p><strong>Documents à joindre :</strong> Copie du compte notarial concernant l'acquisition, titre de propriété, diagnostics techniques, attestation SPANC (si assainissement individuel), permis de construire et DAACT (si construction < 10 ans), RIB.</p>
+                    </div>
+
+                    <div class="rgpd-section">
+                        <h3>Protection des données personnelles</h3>
+                        <p>L'Office notarial traite des données personnelles vous concernant, pour l'accomplissement des activités notariales. Ce traitement est fondé sur le respect d'une obligation légale conformément à l'ordonnance n°45-2590 du 2 novembre 1945.</p>
+
+                        <div class="form-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="rgpd_consent" name="rgpd_consent" required>
+                                <span>J'accepte le traitement de mes données personnelles conformément à la réglementation en vigueur <span class="required">*</span></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" style="visibility: hidden;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        Précédent
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Suivant
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                        Envoyer le questionnaire
+                    </button>
+                </div>
+            </form>
+
+            <div class="form-footer">
+                <div class="security-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+                    Transmission sécurisée et chiffrée
+                </div>
+            </div>
+        </div>
+
+        <!-- Page de succès -->
+        <div class="success-page" id="successPage" style="display: none;">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <h2>Questionnaire envoyé avec succès !</h2>
+            <p>Vos informations ont été transmises de manière sécurisée à votre notaire.</p>
+            <p style="color: var(--text-light); margin-top: var(--spacing-lg);">Vous pouvez fermer cette page.</p>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Envoi en cours...</p>
+    </div>
+
+    <script src="questionnaire-common.js"></script>
+    <script src="questionnaire-maison.js"></script>
+    <script>
+        const CONFIG = {
+            type: 'vente_maison',
+            title: 'Questionnaire Vente Maison',
+            totalSections: 8
+        };
+    </script>
+</body>
+</html>
