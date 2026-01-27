@@ -2153,6 +2153,397 @@
             font-size: 0.75rem;
             color: var(--text-muted);
         }
+
+        /* ========== CHEF DE PROJET SECTION ========== */
+        .chef-projet-section {
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(6, 182, 212, 0.05));
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        .chef-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .chef-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chef-title h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .chef-week {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .main-alert {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .main-alert.warning { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.1); }
+        .main-alert.critical { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
+        .main-alert.success { border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1); }
+
+        .alert-icon {
+            font-size: 1.5rem;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-message {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-action {
+            font-size: 0.85rem;
+            color: var(--accent-warning);
+        }
+
+        /* Dev Priority Cards */
+        .dev-priority-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1100px) {
+            .dev-priority-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dev-priority-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dev-priority-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .dev-priority-card.tom::before { background: #6366f1; }
+        .dev-priority-card.augustin::before { background: #06b6d4; }
+        .dev-priority-card.payoss::before { background: #10b981; }
+
+        .dev-priority-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .dev-priority-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .dev-priority-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .dev-priority-info .role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .dev-priority-info .focus {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-top: 0.25rem;
+        }
+
+        .dev-task {
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .dev-task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .dev-task-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dev-task-deadline {
+            font-size: 0.7rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .priority-dot.critical { background: #ef4444; }
+        .priority-dot.important { background: #f59e0b; }
+        .priority-dot.nice { background: #10b981; }
+
+        .dev-subtasks {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0.75rem 0;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .dev-subtasks li {
+            padding: 0.25rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .dev-subtasks li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--text-muted);
+        }
+
+        .dev-task-progress {
+            height: 4px;
+            background: var(--border-subtle);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .dev-task-progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .quick-wins {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .quick-wins-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-win-item {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding: 0.25rem 0;
+        }
+
+        /* Business Actions */
+        .business-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .business-action-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .business-action-card.blocked {
+            opacity: 0.6;
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .action-icon.todo { background: rgba(245, 158, 11, 0.15); }
+        .action-icon.blocked { background: rgba(239, 68, 68, 0.15); }
+        .action-icon.done { background: rgba(16, 185, 129, 0.15); }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-blocked {
+            font-size: 0.7rem;
+            color: #ef4444;
+            margin-top: 0.25rem;
+        }
+
+        /* Sprint Objectives */
+        .sprint-objectives {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .objectives-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .objectives-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .objectives-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+        }
+
+        .objective-text {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .objective-status {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .objective-status.in_progress { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+        .objective-status.todo { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
+        .objective-status.pending { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
+        .objective-status.done { background: rgba(16, 185, 129, 0.15); color: var(--accent-success); }
+
+        /* Rituals */
+        .rituals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .rituals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ritual-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .ritual-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ritual-frequency {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.25rem;
+        }
+
+        .ritual-format {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -2478,6 +2869,64 @@
                 💡 Suggestions
             </h3>
             <div class="suggestions-list" id="suggestionsList">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- ========== CHEF DE PROJET SECTION ========== -->
+        <section class="chef-projet-section">
+            <div class="chef-header">
+                <div class="chef-title">
+                    <span style="font-size: 2rem;">👨‍💼</span>
+                    <div>
+                        <h2>Briefing Chef de Projet</h2>
+                        <span class="chef-week" id="chefWeek">Semaine du 27 Janvier</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Alert -->
+            <div class="main-alert warning" id="mainAlert">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-content">
+                    <div class="alert-message">Sans structure juridique, impossible de facturer.</div>
+                    <div class="alert-action">Action: Créer SASU cette semaine</div>
+                </div>
+            </div>
+
+            <!-- Dev Priority Cards -->
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                🎯 Priorités Cette Semaine par Développeur
+            </h3>
+            <div class="dev-priority-grid" id="devPriorityGrid">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Business Actions -->
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                💼 Actions Business Urgentes
+            </h3>
+            <div class="business-actions" id="businessActions">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Sprint Objectives -->
+            <div class="sprint-objectives">
+                <div class="objectives-header">
+                    <div class="objectives-title">
+                        🏁 Objectifs Fin de Sprint 1 (9 Février)
+                    </div>
+                </div>
+                <div class="objectives-list" id="sprintObjectivesList">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Rituals -->
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                📅 Rituels Recommandés
+            </h3>
+            <div class="rituals-grid" id="ritualsGrid">
                 <!-- Populated by JS -->
             </div>
         </section>
@@ -3455,6 +3904,129 @@
             }
         }
 
+        // Update Chef de Projet section
+        function updateChefProjet(chef) {
+            if (!chef) return;
+
+            const devColors = {
+                'Tom': '#6366f1',
+                'Augustin': '#06b6d4',
+                'Payoss': '#10b981'
+            };
+
+            // Update week
+            const chefWeek = document.getElementById('chefWeek');
+            if (chefWeek && chef.week) {
+                chefWeek.textContent = chef.week;
+            }
+
+            // Update main alert
+            const mainAlert = document.getElementById('mainAlert');
+            if (mainAlert && chef.main_alert) {
+                const a = chef.main_alert;
+                mainAlert.className = `main-alert ${a.type}`;
+                mainAlert.innerHTML = `
+                    <div class="alert-icon">${a.icon}</div>
+                    <div class="alert-content">
+                        <div class="alert-message">${a.message}</div>
+                        <div class="alert-action">Action: ${a.action}</div>
+                    </div>
+                `;
+            }
+
+            // Update dev priority cards
+            const devPriorityGrid = document.getElementById('devPriorityGrid');
+            if (devPriorityGrid && chef.dev_priorities) {
+                devPriorityGrid.innerHTML = Object.entries(chef.dev_priorities).map(([name, data]) => `
+                    <div class="dev-priority-card ${name.toLowerCase()}">
+                        <div class="dev-priority-header">
+                            <div class="dev-priority-avatar" style="background: ${data.color};">${name[0]}</div>
+                            <div class="dev-priority-info">
+                                <h3>${name}</h3>
+                                <div class="role">${data.role}</div>
+                                <div class="focus">🎯 ${data.focus}</div>
+                            </div>
+                        </div>
+
+                        ${data.this_week.map(task => `
+                            <div class="dev-task">
+                                <div class="dev-task-header">
+                                    <div class="dev-task-name">
+                                        <span class="priority-dot ${task.priority}"></span>
+                                        ${task.task}
+                                    </div>
+                                    <span class="dev-task-deadline">${task.deadline}</span>
+                                </div>
+                                <ul class="dev-subtasks">
+                                    ${task.subtasks.slice(0, 4).map(st => `<li>${st}</li>`).join('')}
+                                </ul>
+                                <div class="dev-task-progress">
+                                    <div class="dev-task-progress-fill" style="width: ${task.progress}%; background: ${data.color};"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+
+                        <div class="quick-wins">
+                            <div class="quick-wins-title">⚡ Quick Wins</div>
+                            ${data.quick_wins.map(qw => `<div class="quick-win-item">→ ${qw}</div>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update business actions
+            const businessActions = document.getElementById('businessActions');
+            if (businessActions && chef.business_actions) {
+                const statusIcons = {todo: '📋', blocked: '🔒', done: '✅'};
+                businessActions.innerHTML = chef.business_actions.map(a => `
+                    <div class="business-action-card ${a.status}">
+                        <div class="action-icon ${a.status}">${statusIcons[a.status] || '📋'}</div>
+                        <div class="action-content">
+                            <div class="action-title">${a.action}</div>
+                            <div class="action-meta">
+                                <span>⏱️ ${a.effort}</span>
+                                <span>📈 ${a.impact}</span>
+                                <span>👤 ${a.owner}</span>
+                            </div>
+                            ${a.blocked_by ? `<div class="action-blocked">🔒 Bloqué par: ${a.blocked_by}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update sprint objectives
+            const sprintObjectivesList = document.getElementById('sprintObjectivesList');
+            if (sprintObjectivesList && chef.sprint_objectives) {
+                const statusLabels = {
+                    in_progress: 'En cours',
+                    todo: 'À faire',
+                    pending: 'En attente',
+                    done: 'Terminé'
+                };
+                sprintObjectivesList.innerHTML = chef.sprint_objectives.map(o => `
+                    <div class="objective-item">
+                        <div class="objective-text">
+                            <span class="dev-badge" style="background: ${devColors[o.owner] || '#666'}; font-size: 0.65rem;">${o.owner}</span>
+                            ${o.objective}
+                        </div>
+                        <span class="objective-status ${o.status}">${statusLabels[o.status] || o.status}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Update rituals
+            const ritualsGrid = document.getElementById('ritualsGrid');
+            if (ritualsGrid && chef.rituals) {
+                ritualsGrid.innerHTML = chef.rituals.map(r => `
+                    <div class="ritual-card">
+                        <div class="ritual-name">${r.name}</div>
+                        <div class="ritual-frequency">${r.frequency}</div>
+                        <div class="ritual-format">${r.format}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
         // Main load function
         async function loadDashboard() {
             const data = await fetchDashboardData();
@@ -3466,6 +4038,7 @@
 
             updateHeaderStats(data);
             updateOverview(data.overview);
+            updateChefProjet(data.chef_projet);
             updateTemplates(data.templates);
             updateTeam(data.team);
             updateCapabilities(data.capabilities);

@@ -850,6 +850,159 @@ def get_project_overview() -> dict:
     }
 
 
+def get_chef_projet_briefing() -> dict:
+    """Génère le briefing chef de projet avec priorités par développeur."""
+
+    # Priorités par développeur
+    dev_priorities = {
+        "Tom": {
+            "role": "Lead Dev / Templates",
+            "focus": "Template Promesse",
+            "color": "#6366f1",
+            "this_week": [
+                {
+                    "task": "Compléter template promesse → 85%",
+                    "priority": "critical",
+                    "subtasks": [
+                        "Créer partie_developpee_promesse.md",
+                        "Ajouter conditions suspensives",
+                        "Ajouter indemnité d'immobilisation",
+                        "Tester avec comparer_documents.py"
+                    ],
+                    "deadline": "Vendredi",
+                    "progress": 60
+                }
+            ],
+            "quick_wins": [
+                "Lancer comparer_documents.py sur promesses anonymisées",
+                "Identifier sections manquantes dans docs_originels/"
+            ],
+            "blocked_by": None
+        },
+        "Augustin": {
+            "role": "Frontend / Formulaires",
+            "focus": "Maquette Formulaires",
+            "color": "#06b6d4",
+            "this_week": [
+                {
+                    "task": "Maquette formulaire collecte notaire",
+                    "priority": "important",
+                    "subtasks": [
+                        "Identifier 20 questions critiques",
+                        "Créer wireframe Figma/Excalidraw",
+                        "Proposer navigation conditionnelle",
+                        "Valider avec Tom"
+                    ],
+                    "deadline": "Mercredi",
+                    "progress": 20
+                }
+            ],
+            "quick_wins": [
+                "Lire schemas/questions_promesse_vente.json",
+                "Commencer par formulaire promesse (plus simple)"
+            ],
+            "blocked_by": None
+        },
+        "Payoss": {
+            "role": "Backend / Chat / Modal",
+            "focus": "Déploiement Modal",
+            "color": "#10b981",
+            "this_week": [
+                {
+                    "task": "Chat fonctionnel sur Modal",
+                    "priority": "critical",
+                    "subtasks": [
+                        "Endpoint /generate qui appelle l'agent",
+                        "Streaming de réponses",
+                        "Gestion d'erreurs avec fallback",
+                        "URL de démo partageable"
+                    ],
+                    "deadline": "Vendredi",
+                    "progress": 30
+                },
+                {
+                    "task": "Intégrer validation dans l'agent",
+                    "priority": "important",
+                    "subtasks": [
+                        "Ajouter _valider_donnees() avant génération",
+                        "Retourner erreurs structurées"
+                    ],
+                    "deadline": "Sprint 1",
+                    "progress": 0
+                }
+            ],
+            "quick_wins": [
+                "Tester modal deploy modal_app.py",
+                "Vérifier que le setup fonctionne"
+            ],
+            "blocked_by": None
+        }
+    }
+
+    # Actions business urgentes
+    business_actions = [
+        {
+            "action": "Créer SASU sur Legalstart",
+            "effort": "2h + 150€",
+            "impact": "Débloquer facturation",
+            "owner": "Fondateur",
+            "status": "todo",
+            "url": "https://www.legalstart.fr/creation-entreprise/sasu/"
+        },
+        {
+            "action": "Souscrire RC Pro",
+            "effort": "1h + ~1000€/an",
+            "impact": "Couvrir risques",
+            "owner": "Fondateur",
+            "status": "blocked",
+            "blocked_by": "SASU",
+            "options": ["MACSF", "Hiscox", "AXA"]
+        },
+        {
+            "action": "Contacter 3 notaires pour démo",
+            "effort": "2h",
+            "impact": "Pipeline prospects",
+            "owner": "Tom",
+            "status": "todo"
+        }
+    ]
+
+    # Objectifs fin de sprint
+    sprint_objectives = [
+        {"objective": "Template promesse ≥85% conformité", "owner": "Tom", "status": "in_progress"},
+        {"objective": "Chat fonctionnel sur Modal", "owner": "Payoss", "status": "in_progress"},
+        {"objective": "Maquette formulaire validée", "owner": "Augustin", "status": "in_progress"},
+        {"objective": "SASU créée", "owner": "Business", "status": "todo"},
+        {"objective": "1-2 démos notaires programmées", "owner": "Tom", "status": "pending"}
+    ]
+
+    # Rituels recommandés
+    rituals = [
+        {"name": "Daily async", "frequency": "Quotidien 9h", "duration": "2min", "format": "Slack: Hier/Aujourd'hui/Bloqué"},
+        {"name": "Démo vendredi", "frequency": "Vendredi 14h", "duration": "30min", "format": "Call + screen share"},
+        {"name": "Sprint review", "frequency": "Bi-hebdo", "duration": "45min", "format": "Rétro + planning"}
+    ]
+
+    # Alerte principale
+    main_alert = {
+        "type": "warning",
+        "message": "Sans structure juridique, impossible de facturer. C'est le vrai bloqueur.",
+        "action": "Créer SASU cette semaine",
+        "icon": "⚠️"
+    }
+
+    return {
+        "dev_priorities": dev_priorities,
+        "business_actions": business_actions,
+        "sprint_objectives": sprint_objectives,
+        "rituals": rituals,
+        "main_alert": main_alert,
+        "week": "27 Janvier - 2 Février 2026",
+        "sprint": "Sprint 1",
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M")
+    }
+
+
 def get_launch_status() -> dict:
     """Récupère le statut de lancement."""
     return {
@@ -951,6 +1104,7 @@ def generate_dashboard_data() -> dict:
     dev_stats = get_dev_stats()
     recommendations = get_recommendations()
     overview = get_project_overview()
+    chef_projet = get_chef_projet_briefing()
 
     # Calculer les métriques
     prod_templates = sum(1 for t in templates if t["status"] == "prod")
@@ -993,7 +1147,8 @@ def generate_dashboard_data() -> dict:
         "team": team,
         "activity": activity[:20],  # 20 dernières actions
         "recommendations": recommendations,
-        "overview": overview
+        "overview": overview,
+        "chef_projet": chef_projet
     }
 
     return data
