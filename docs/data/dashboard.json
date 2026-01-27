@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-27T18:41:13.309051",
+    "generated_at": "2026-01-27T17:42:13.991789",
     "version": "1.3.0",
     "dashboard_version": "2.5"
   },
@@ -8,23 +8,23 @@
     "templates_count": 4,
     "templates_prod": 3,
     "avg_conformity": 80.8,
-    "scripts_count": 74,
+    "scripts_count": 72,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 78
+    "commits": 79
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "167dc96",
-      "message": "chore: auto-update dashboard data [skip ci]",
+      "hash": "b23516f",
+      "message": "feat: add comprehensive project overview section to dashboard",
       "date": "2026-01-27"
     },
-    "total_commits": 78,
+    "total_commits": 79,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 60
+        "commits": 59
       },
       {
         "name": "augustinfrance-aico",
@@ -69,7 +69,7 @@
       "bookmarks": 116,
       "sections": 111,
       "lines": 1683,
-      "last_modified": "2026-01-19"
+      "last_modified": "2026-01-27"
     },
     {
       "file": "modificatif_edd.md",
@@ -79,14 +79,14 @@
       "bookmarks": 60,
       "sections": 13,
       "lines": 295,
-      "last_modified": "2026-01-19"
+      "last_modified": "2026-01-27"
     }
   ],
   "scripts": {
-    "total": 74,
-    "total_lines": 42096,
+    "total": 72,
+    "total_lines": 40559,
     "categories": {
-      "utils": 48,
+      "utils": 46,
       "generation": 10,
       "export": 12,
       "tests": 3,
@@ -94,54 +94,54 @@
     },
     "scripts": [
       {
-        "name": "agent_autonome.py",
-        "lines": 1901,
-        "path": "execution\\agent_autonome.py"
-      },
-      {
         "name": "exporter_docx.py",
         "lines": 1896,
-        "path": "execution\\exporter_docx.py"
+        "path": "execution/exporter_docx.py"
       },
       {
         "name": "exporter_docx_fidele.py",
         "lines": 1655,
-        "path": "execution\\archive_exporter\\exporter_docx_fidele.py"
-      },
-      {
-        "name": "exporter_docx_28pages.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages.py"
-      },
-      {
-        "name": "exporter_docx_28pages_final.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages_final.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v2.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v3.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages_v3.py"
+        "path": "execution/archive_exporter/exporter_docx_fidele.py"
       },
       {
         "name": "exporter_docx_v2.py",
         "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_v2.py"
+        "path": "execution/archive_exporter/exporter_docx_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v2.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v3.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages_v3.py"
+      },
+      {
+        "name": "exporter_docx_28pages.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages.py"
+      },
+      {
+        "name": "exporter_docx_28pages_final.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages_final.py"
+      },
+      {
+        "name": "agent_autonome.py",
+        "lines": 1417,
+        "path": "execution/agent_autonome.py"
       },
       {
         "name": "orchestrateur_notaire.py",
         "lines": 1380,
-        "path": "execution\\orchestrateur_notaire.py"
+        "path": "execution/orchestrateur_notaire.py"
       },
       {
         "name": "generer_donnees_test.py",
         "lines": 1049,
-        "path": "execution\\generer_donnees_test.py"
+        "path": "execution/generer_donnees_test.py"
       }
     ]
   },
@@ -150,51 +150,11 @@
     "total_variables": 173,
     "schemas": [
       {
-        "name": "annexes_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "questions_donation_partage.json",
-        "count": 6
-      },
-      {
-        "name": "questions_modificatif_edd.json",
-        "count": 2
-      },
-      {
         "name": "questions_notaire.json",
         "count": 6
       },
       {
-        "name": "questions_promesse_vente.json",
-        "count": 3
-      },
-      {
-        "name": "questions_reglement_copropriete.json",
-        "count": 2
-      },
-      {
-        "name": "sections_catalogue.json",
-        "count": 7
-      },
-      {
-        "name": "variables_donation_partage.json",
-        "count": 18
-      },
-      {
-        "name": "variables_modificatif_edd.json",
-        "count": 12
-      },
-      {
-        "name": "variables_promesse.json",
-        "count": 24
-      },
-      {
-        "name": "variables_promesse_vente.json",
+        "name": "variables_vente.json",
         "count": 22
       },
       {
@@ -202,49 +162,88 @@
         "count": 17
       },
       {
+        "name": "sections_catalogue.json",
+        "count": 7
+      },
+      {
+        "name": "questions_modificatif_edd.json",
+        "count": 2
+      },
+      {
+        "name": "questions_donation_partage.json",
+        "count": 6
+      },
+      {
+        "name": "questions_promesse_vente.json",
+        "count": 3
+      },
+      {
+        "name": "annexes_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
         "name": "variables_titre_propriete.json",
         "count": 16
       },
       {
-        "name": "variables_vente.json",
+        "name": "variables_promesse_vente.json",
         "count": 22
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "variables_modificatif_edd.json",
+        "count": 12
+      },
+      {
+        "name": "variables_donation_partage.json",
+        "count": 18
       }
     ]
   },
   "docs": {
     "legal": [
-      "BASES_LEGALES.md",
       "CGU_TEMPLATE.md",
-      "OBLIGATIONS_CSN.md",
       "POLITIQUE_CONFIDENTIALITE.md",
+      "BASES_LEGALES.md",
+      "OBLIGATIONS_CSN.md",
       "REGISTRE_TRAITEMENTS.md"
     ],
     "directives": [
-      "ajouter_template.md",
-      "apprentissage_continu.md",
-      "bonnes_pratiques_templates.md",
-      "collecte_informations.md",
-      "creer_acte.md",
-      "creer_donation_partage.md",
-      "creer_modificatif_edd.md",
-      "creer_promesse_vente.md",
-      "creer_reglement_copropriete.md",
-      "flexibilite_systeme.md",
-      "formatage_docx.md",
-      "gestion_flexible.md",
-      "integration_titre_propriete.md",
-      "lecons_apprises.md",
-      "mise_a_jour_statuts_donation.md",
-      "modifier_acte.md",
-      "pipeline_generation.md",
-      "README.md",
       "validation_donnees.md",
-      "workflow_agent_optimise.md",
+      "modifier_acte.md",
+      "gestion_flexible.md",
+      "collecte_informations.md",
+      "mise_a_jour_statuts_donation.md",
+      "creer_donation_partage.md",
+      "integration_titre_propriete.md",
+      "README.md",
+      "bonnes_pratiques_templates.md",
+      "apprentissage_continu.md",
       "workflow_notaire.md",
-      "workflow_titre_promesse_vente.md"
+      "pipeline_generation.md",
+      "lecons_apprises.md",
+      "formatage_docx.md",
+      "creer_modificatif_edd.md",
+      "creer_acte.md",
+      "workflow_titre_promesse_vente.md",
+      "ajouter_template.md",
+      "flexibilite_systeme.md",
+      "creer_reglement_copropriete.md",
+      "creer_promesse_vente.md"
     ],
     "total_legal": 5,
-    "total_directives": 22
+    "total_directives": 21
   },
   "tasks": {
     "todo": [
@@ -316,11 +315,6 @@
         "task": "Template CGU créé",
         "dev": "Tom",
         "path": "docs/legal/CGU_TEMPLATE.md"
-      },
-      {
-        "task": "Intégration Supabase MCP",
-        "dev": "Tom",
-        "path": ".mcp.json"
       },
       {
         "task": "Historique Supabase",
@@ -536,6 +530,16 @@
   ],
   "activity": [
     {
+      "hash": "b23516f",
+      "author": "Tom",
+      "date": "2026-01-27",
+      "message": "add comprehensive project overview section to dashboard",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
       "hash": "167dc96",
       "author": "github-actions[bot]",
       "date": "2026-01-27",
@@ -724,16 +728,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "94a5aa3",
-      "author": "Payoss",
-      "date": "2026-01-24",
-      "message": "Merge remote-tracking branch 'origin/master' into payoss/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1329,6 +1323,6 @@
         "action": "Maintenir CLAUDE.md et CHANGELOG.md"
       }
     ],
-    "last_updated": "2026-01-27 18:41"
+    "last_updated": "2026-01-27 17:42"
   }
 }
