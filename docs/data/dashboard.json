@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-27T19:57:30.384450",
+    "generated_at": "2026-01-27T20:17:43.740996",
     "version": "1.3.0",
     "dashboard_version": "2.5"
   },
@@ -11,20 +11,20 @@
     "scripts_count": 72,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 81
+    "commits": 83
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "64ffaba",
-      "message": "feat: add Chef de Projet briefing section to dashboard",
+      "hash": "e25dc71",
+      "message": "fix: add .nojekyll to disable Jekyll processing for GitHub Pages",
       "date": "2026-01-27"
     },
-    "total_commits": 81,
+    "total_commits": 83,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 60
+        "commits": 61
       },
       {
         "name": "augustinfrance-aico",
@@ -36,7 +36,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 4
+        "commits": 6
       }
     ]
   },
@@ -530,6 +530,26 @@
   ],
   "activity": [
     {
+      "hash": "e25dc71",
+      "author": "Tom",
+      "date": "2026-01-27",
+      "message": "add .nojekyll to disable Jekyll processing for GitHub Pages",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "0cbc624",
+      "author": "github-actions[bot]",
+      "date": "2026-01-27",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "64ffaba",
       "author": "Tom",
       "date": "2026-01-27",
@@ -704,26 +724,6 @@
       "author": "Payoss",
       "date": "2026-01-24",
       "message": "Merge pull request #14 from AnandaTom/payoss/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "0125c32",
-      "author": "Payoss",
-      "date": "2026-01-24",
-      "message": "merge: Sync avec master (mcp.json + travail 24/01)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "10a66e5",
-      "author": "Tom",
-      "date": "2026-01-24",
-      "message": "Update mcp.json",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1323,7 +1323,7 @@
         "action": "Maintenir CLAUDE.md et CHANGELOG.md"
       }
     ],
-    "last_updated": "2026-01-27 19:57"
+    "last_updated": "2026-01-27 20:17"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1495,6 +1495,6 @@
     },
     "week": "27 Janvier - 2 Février 2026",
     "sprint": "Sprint 1",
-    "last_updated": "2026-01-27 19:57"
+    "last_updated": "2026-01-27 20:17"
   }
 }
