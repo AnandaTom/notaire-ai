@@ -1,0 +1,47 @@
+name: Update Dashboard Data
+
+on:
+  push:
+    branches: [main, master, tom/dev]
+    paths-ignore:
+      - 'docs/data/dashboard.json'
+  workflow_dispatch:
+  schedule:
+    # Run every day at 6:00 AM UTC
+    - cron: '0 6 * * *'
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for git stats
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate dashboard data
+        run: |
+          python execution/generer_dashboard_data.py
+          echo "Dashboard data generated successfully"
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --quiet docs/data/dashboard.json || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/data/dashboard.json
+          git commit -m "chore: auto-update dashboard data [skip ci]"
+          git push

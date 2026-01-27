@@ -1,0 +1,444 @@
+{
+  "meta": {
+    "generated_at": "2026-01-27T17:34:44.507770",
+    "version": "1.3.0",
+    "dashboard_version": "2.4"
+  },
+  "metrics": {
+    "templates_count": 4,
+    "templates_prod": 3,
+    "avg_conformity": 80.8,
+    "scripts_count": 72,
+    "schemas_count": 15,
+    "generation_time": "5.7s",
+    "commits": 72
+  },
+  "git": {
+    "branch": "tom/dev",
+    "last_commit": {
+      "hash": "7141a0a",
+      "message": "chore: Fin de journee - 26/01/2026 20:45:52,37",
+      "date": "2026-01-26"
+    },
+    "total_commits": 72,
+    "team": [
+      {
+        "name": "AnandaTom",
+        "commits": 55
+      },
+      {
+        "name": "augustinfrance-aico",
+        "commits": 13
+      },
+      {
+        "name": "Payoss",
+        "commits": 7
+      }
+    ]
+  },
+  "templates": [
+    {
+      "file": "vente_lots_copropriete.md",
+      "name": "Vente lots copropriété",
+      "conformity": 85.1,
+      "status": "prod",
+      "bookmarks": 361,
+      "sections": 37,
+      "lines": 445,
+      "last_modified": "2026-01-27"
+    },
+    {
+      "file": "promesse_vente_lots_copropriete.md",
+      "name": "Promesse de vente",
+      "conformity": 60.9,
+      "status": "dev",
+      "bookmarks": 298,
+      "sections": 127,
+      "lines": 1530,
+      "last_modified": "2026-01-27"
+    },
+    {
+      "file": "reglement_copropriete_edd.md",
+      "name": "Règlement copropriété",
+      "conformity": 85.5,
+      "status": "prod",
+      "bookmarks": 116,
+      "sections": 111,
+      "lines": 1683,
+      "last_modified": "2026-01-19"
+    },
+    {
+      "file": "modificatif_edd.md",
+      "name": "Modificatif EDD",
+      "conformity": 91.7,
+      "status": "prod",
+      "bookmarks": 60,
+      "sections": 13,
+      "lines": 295,
+      "last_modified": "2026-01-19"
+    }
+  ],
+  "scripts": {
+    "total": 72,
+    "total_lines": 40468,
+    "categories": {
+      "utils": 46,
+      "generation": 10,
+      "export": 12,
+      "tests": 3,
+      "validation": 1
+    },
+    "scripts": [
+      {
+        "name": "exporter_docx.py",
+        "lines": 1896,
+        "path": "execution\\exporter_docx.py"
+      },
+      {
+        "name": "agent_autonome.py",
+        "lines": 1863,
+        "path": "execution\\agent_autonome.py"
+      },
+      {
+        "name": "exporter_docx_fidele.py",
+        "lines": 1655,
+        "path": "execution\\archive_exporter\\exporter_docx_fidele.py"
+      },
+      {
+        "name": "exporter_docx_28pages.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages.py"
+      },
+      {
+        "name": "exporter_docx_28pages_final.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_final.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v3.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v3.py"
+      },
+      {
+        "name": "exporter_docx_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_v2.py"
+      },
+      {
+        "name": "orchestrateur_notaire.py",
+        "lines": 1380,
+        "path": "execution\\orchestrateur_notaire.py"
+      },
+      {
+        "name": "generer_donnees_test.py",
+        "lines": 1049,
+        "path": "execution\\generer_donnees_test.py"
+      }
+    ]
+  },
+  "schemas": {
+    "total": 15,
+    "total_variables": 173,
+    "schemas": [
+      {
+        "name": "annexes_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "questions_donation_partage.json",
+        "count": 6
+      },
+      {
+        "name": "questions_modificatif_edd.json",
+        "count": 2
+      },
+      {
+        "name": "questions_notaire.json",
+        "count": 6
+      },
+      {
+        "name": "questions_promesse_vente.json",
+        "count": 3
+      },
+      {
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
+      },
+      {
+        "name": "sections_catalogue.json",
+        "count": 7
+      },
+      {
+        "name": "variables_donation_partage.json",
+        "count": 18
+      },
+      {
+        "name": "variables_modificatif_edd.json",
+        "count": 12
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_promesse_vente.json",
+        "count": 22
+      },
+      {
+        "name": "variables_reglement_copropriete.json",
+        "count": 17
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
+        "name": "variables_vente.json",
+        "count": 22
+      }
+    ]
+  },
+  "docs": {
+    "legal": [
+      "BASES_LEGALES.md",
+      "CGU_TEMPLATE.md",
+      "OBLIGATIONS_CSN.md",
+      "POLITIQUE_CONFIDENTIALITE.md",
+      "REGISTRE_TRAITEMENTS.md"
+    ],
+    "directives": [
+      "ajouter_template.md",
+      "apprentissage_continu.md",
+      "bonnes_pratiques_templates.md",
+      "collecte_informations.md",
+      "creer_acte.md",
+      "creer_donation_partage.md",
+      "creer_modificatif_edd.md",
+      "creer_promesse_vente.md",
+      "creer_reglement_copropriete.md",
+      "flexibilite_systeme.md",
+      "formatage_docx.md",
+      "gestion_flexible.md",
+      "integration_titre_propriete.md",
+      "lecons_apprises.md",
+      "mise_a_jour_statuts_donation.md",
+      "modifier_acte.md",
+      "pipeline_generation.md",
+      "README.md",
+      "validation_donnees.md",
+      "workflow_agent_optimise.md",
+      "workflow_notaire.md",
+      "workflow_titre_promesse_vente.md"
+    ],
+    "total_legal": 5,
+    "total_directives": 22
+  },
+  "tasks": {
+    "todo": [
+      "Créer structure juridique (SAS/SASU)",
+      "Souscrire RC Pro",
+      "Valider CGU avec avocat",
+      "Template donation-partage",
+      "Intégration extraction titre propriété",
+      "Label ETIK (optionnel)"
+    ],
+    "in_progress": [
+      "Enrichir template promesse (60.9% → 80%)",
+      "Dashboard temps réel",
+      "Formulaires web notaire"
+    ],
+    "done": [
+      "Template vente 85% conformité",
+      "Pipeline génération rapide",
+      "Documentation RGPD",
+      "Template CGU créé",
+      "Intégration Supabase MCP",
+      "Historique Supabase",
+      "Dashboard v2.3",
+      "Comparaison conformité",
+      "Tests automatisés",
+      "Analyse obligations CSN"
+    ]
+  },
+  "capabilities": [
+    {
+      "icon": "📄",
+      "name": "Générer actes",
+      "description": "DOCX/PDF fidèles aux trames",
+      "active": true
+    },
+    {
+      "icon": "💬",
+      "name": "Dialogue notaire",
+      "description": "Collecte interactive 100+ questions",
+      "active": true
+    },
+    {
+      "icon": "✅",
+      "name": "Validation",
+      "description": "Cohérence et complétude",
+      "active": true
+    },
+    {
+      "icon": "🔍",
+      "name": "Détection auto",
+      "description": "Type d'acte automatique",
+      "active": true
+    },
+    {
+      "icon": "💡",
+      "name": "Suggestions",
+      "description": "Clauses contextuelles",
+      "active": true
+    },
+    {
+      "icon": "📊",
+      "name": "Conformité",
+      "description": "Score automatique vs trame",
+      "active": true
+    },
+    {
+      "icon": "🗄️",
+      "name": "Historique",
+      "description": "Supabase + mode offline",
+      "active": true
+    },
+    {
+      "icon": "⚡",
+      "name": "Pipeline rapide",
+      "description": "~6 secondes / acte",
+      "active": true
+    }
+  ],
+  "launch": {
+    "score": 60,
+    "status": "PRE-LANCEMENT",
+    "message": "Structure juridique requise avant facturation",
+    "address": "2B chemin des Garennes, 69260 Charbonnières",
+    "email": "contact@notomai.fr",
+    "items": [
+      {
+        "id": "structure",
+        "title": "Structure Juridique",
+        "status": "blocked",
+        "icon": "🏢",
+        "details": "Recommandé: SAS ou SASU",
+        "cost": "150-300€"
+      },
+      {
+        "id": "rcpro",
+        "title": "Assurance RC Pro",
+        "status": "blocked",
+        "icon": "🛡️",
+        "details": "Requiert structure juridique",
+        "cost": "800-2000€/an"
+      },
+      {
+        "id": "cgu",
+        "title": "CGU / CGV",
+        "status": "pending",
+        "icon": "📜",
+        "details": "Template créé, validation avocat requise",
+        "cost": "500-800€"
+      },
+      {
+        "id": "rgpd",
+        "title": "Conformité RGPD",
+        "status": "done",
+        "icon": "✅",
+        "details": "Documentation complète",
+        "progress": 95
+      },
+      {
+        "id": "security",
+        "title": "Sécurité Technique",
+        "status": "done",
+        "icon": "🔐",
+        "details": "Infrastructure sécurisée",
+        "progress": 95
+      },
+      {
+        "id": "etik",
+        "title": "Label ETIK (CSN)",
+        "status": "optional",
+        "icon": "🏆",
+        "details": "Non obligatoire pour vendre",
+        "cost": "8000-10000€"
+      }
+    ],
+    "budget": {
+      "min": 1450,
+      "max": 3100
+    }
+  },
+  "security": {
+    "score": 95,
+    "items": [
+      {
+        "name": "Chiffrement AES-256",
+        "status": "ok"
+      },
+      {
+        "name": "TLS 1.3",
+        "status": "ok"
+      },
+      {
+        "name": "Row Level Security",
+        "status": "ok"
+      },
+      {
+        "name": "2FA",
+        "status": "ok"
+      },
+      {
+        "name": "Hébergement UE",
+        "status": "ok"
+      },
+      {
+        "name": "RGPD",
+        "status": "ok"
+      }
+    ],
+    "mcp_servers": [
+      {
+        "name": "Supabase",
+        "status": "connected",
+        "mode": "production"
+      },
+      {
+        "name": "Stripe",
+        "status": "connected",
+        "mode": "test"
+      }
+    ]
+  },
+  "team": [
+    {
+      "name": "Tom",
+      "branch": "tom/dev",
+      "role": "Lead Dev / Templates",
+      "status": "active"
+    },
+    {
+      "name": "Augustin",
+      "branch": "augustin/dev",
+      "role": "Frontend / Formulaires",
+      "status": "active"
+    },
+    {
+      "name": "Payoss",
+      "branch": "payoss/dev",
+      "role": "Backend / Scripts",
+      "status": "active"
+    }
+  ]
+}

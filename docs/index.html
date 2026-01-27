@@ -1956,13 +1956,17 @@
     <!-- Footer -->
     <footer class="footer">
         <p class="footer-text">
-            Notomai v1.3.0 | Dashboard v2.3 |
+            Notomai v1.3.0 | Dashboard v2.4 (Dynamique) |
             <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
-            <span id="lastUpdate">2026-01-26</span>
+            Chargement... <span id="lastUpdate"></span>
         </p>
     </footer>
 
     <script>
+        // Configuration
+        const DATA_URL = 'data/dashboard.json';
+        let dashboardData = null;
+
         // Toggle single branch
         function toggleBranch(element) {
             element.classList.toggle('expanded');
@@ -1972,7 +1976,6 @@
         function toggleAllBranches() {
             const branches = document.querySelectorAll('.branch-node');
             const anyExpanded = Array.from(branches).some(b => b.classList.contains('expanded'));
-
             branches.forEach(branch => {
                 if (anyExpanded) {
                     branch.classList.remove('expanded');
@@ -1982,65 +1985,55 @@
             });
         }
 
-        // Load data and populate
-        function loadData() {
-            const data = {
-                templates: [
-                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 32, lastGeneration: "2026-01-23" },
-                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 127, lastGeneration: "2026-01-20" },
-                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 111, lastGeneration: "2026-01-19" },
-                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 13, lastGeneration: "2026-01-19" }
-                ],
-                team: [
-                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev / Templates" },
-                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend / Formulaires" },
-                    { name: "Payoss", branch: "payoss/dev", status: "active", role: "Backend / Scripts" }
-                ],
-                capabilities: [
-                    { icon: "📄", name: "Generer actes", description: "DOCX/PDF fideles aux trames", status: "active" },
-                    { icon: "💬", name: "Dialogue notaire", description: "Collecte interactive 100+ questions", status: "active" },
-                    { icon: "✅", name: "Validation", description: "Coherence et completude", status: "active" },
-                    { icon: "🔍", name: "Detection auto", description: "Type d'acte automatique", status: "active" },
-                    { icon: "💡", name: "Suggestions", description: "Clauses contextuelles", status: "active" },
-                    { icon: "📊", name: "Conformite", description: "Score automatique vs trame", status: "active" },
-                    { icon: "🗄️", name: "Historique", description: "Supabase + mode offline", status: "active" },
-                    { icon: "⚡", name: "Pipeline rapide", description: "~6 secondes / acte", status: "active" }
-                ],
-                tasks: {
-                    todo: [
-                        "Enrichir template promesse de vente (24 titres)",
-                        "Integrer extraction titre de propriete",
-                        "Ajouter validation Carrez automatique",
-                        "Creer template donation-partage",
-                        "Tests automatises pytest"
-                    ],
-                    inProgress: [
-                        "Dashboard temps reel",
-                        "Workflow collaboratif 3 devs",
-                        "Formulaires web vendeur/acquereur"
-                    ],
-                    done: [
-                        "Template vente 85% conformite",
-                        "Scripts START_DAY/END_DAY",
-                        "Auto-sync v2 (30min commits)",
-                        "Integration Supabase MCP",
-                        "Integration Stripe MCP",
-                        "Pipeline generation 5.7s",
-                        "Securisation cles API",
-                        "Documentation complete",
-                        "Morning sync semi-auto",
-                        "Troubleshooting guide"
-                    ]
-                }
-            };
+        // Fetch dashboard data from JSON
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch(DATA_URL + '?t=' + Date.now());
+                if (!response.ok) throw new Error('Failed to fetch data');
+                dashboardData = await response.json();
+                return dashboardData;
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+                return null;
+            }
+        }
 
-            // Templates
-            const templatesHtml = data.templates.map(t => `
+        // Update header stats
+        function updateHeaderStats(data) {
+            if (!data || !data.metrics) return;
+            const m = data.metrics;
+
+            const statsHtml = `
+                <div class="stat-item">
+                    <div class="stat-value">${m.templates_count}</div>
+                    <div class="stat-label">Templates</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${m.avg_conformity}%</div>
+                    <div class="stat-label">Conformite</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${m.generation_time}</div>
+                    <div class="stat-label">Generation</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${m.scripts_count}</div>
+                    <div class="stat-label">Scripts</div>
+                </div>
+            `;
+            const headerStats = document.querySelector('.header-stats');
+            if (headerStats) headerStats.innerHTML = statsHtml;
+        }
+
+        // Update templates section
+        function updateTemplates(templates) {
+            if (!templates) return;
+            const html = templates.map(t => `
                 <div class="template-card ${t.status}">
                     <div class="template-header">
                         <div>
                             <div class="template-name">${t.name}</div>
-                            <div class="template-meta">${t.bookmarks} bookmarks · ${t.sections} sections · ${t.lastGeneration}</div>
+                            <div class="template-meta">${t.bookmarks} bookmarks · ${t.sections} sections · ${t.last_modified}</div>
                         </div>
                         <span class="template-badge badge-${t.status}">${t.status === 'prod' ? 'Production' : 'Dev'}</span>
                     </div>
@@ -2053,10 +2046,14 @@
                     </div>
                 </div>
             `).join('');
-            document.getElementById('templatesGrid').innerHTML = templatesHtml;
+            const grid = document.getElementById('templatesGrid');
+            if (grid) grid.innerHTML = html;
+        }
 
-            // Team
-            const teamHtml = data.team.map(m => `
+        // Update team section
+        function updateTeam(team) {
+            if (!team) return;
+            const html = team.map(m => `
                 <div class="team-card ${m.status}">
                     <div class="team-avatar">${m.name[0]}</div>
                     <div class="team-info">
@@ -2066,11 +2063,15 @@
                     </div>
                 </div>
             `).join('');
-            document.getElementById('teamGrid').innerHTML = teamHtml;
+            const grid = document.getElementById('teamGrid');
+            if (grid) grid.innerHTML = html;
+        }
 
-            // Capabilities
-            const capabilitiesHtml = data.capabilities.map(c => `
-                <div class="capability-card ${c.status}">
+        // Update capabilities section
+        function updateCapabilities(capabilities) {
+            if (!capabilities) return;
+            const html = capabilities.map(c => `
+                <div class="capability-card ${c.active ? 'active' : ''}">
                     <div class="capability-icon">${c.icon}</div>
                     <div class="capability-info">
                         <div class="capability-name">${c.name}</div>
@@ -2078,23 +2079,111 @@
                     </div>
                 </div>
             `).join('');
-            document.getElementById('capabilitiesGrid').innerHTML = capabilitiesHtml;
+            const grid = document.getElementById('capabilitiesGrid');
+            if (grid) grid.innerHTML = html;
+        }
 
-            // Tasks
-            const renderTasks = (tasks) => tasks.map(t => `<div class="task-item">${t}</div>`).join('');
+        // Update tasks section
+        function updateTasks(tasks) {
+            if (!tasks) return;
+            const renderTasks = (items) => items.map(t => `<div class="task-item">${t}</div>`).join('');
 
-            document.getElementById('todoList').innerHTML = renderTasks(data.tasks.todo);
-            document.getElementById('todoCount').textContent = data.tasks.todo.length;
+            const todoList = document.getElementById('todoList');
+            const todoCount = document.getElementById('todoCount');
+            const inProgressList = document.getElementById('inProgressList');
+            const inProgressCount = document.getElementById('inProgressCount');
+            const doneList = document.getElementById('doneList');
+            const doneCount = document.getElementById('doneCount');
 
-            document.getElementById('inProgressList').innerHTML = renderTasks(data.tasks.inProgress);
-            document.getElementById('inProgressCount').textContent = data.tasks.inProgress.length;
+            if (todoList && tasks.todo) {
+                todoList.innerHTML = renderTasks(tasks.todo);
+                if (todoCount) todoCount.textContent = tasks.todo.length;
+            }
+            if (inProgressList && tasks.in_progress) {
+                inProgressList.innerHTML = renderTasks(tasks.in_progress);
+                if (inProgressCount) inProgressCount.textContent = tasks.in_progress.length;
+            }
+            if (doneList && tasks.done) {
+                doneList.innerHTML = renderTasks(tasks.done);
+                if (doneCount) doneCount.textContent = tasks.done.length;
+            }
+        }
 
-            document.getElementById('doneList').innerHTML = renderTasks(data.tasks.done);
-            document.getElementById('doneCount').textContent = data.tasks.done.length;
+        // Update footer with metadata
+        function updateFooter(meta) {
+            if (!meta) return;
+            const footer = document.querySelector('.footer-text');
+            if (footer) {
+                const date = meta.generated_at ? meta.generated_at.split('T')[0] : 'N/A';
+                footer.innerHTML = `
+                    Notomai v${meta.version || '1.3.0'} | Dashboard v${meta.dashboard_version || '2.4'} |
+                    <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
+                    Mis a jour: <span id="lastUpdate">${date}</span>
+                `;
+            }
+        }
+
+        // Main load function
+        async function loadDashboard() {
+            const data = await fetchDashboardData();
+            if (!data) {
+                console.log('Using fallback data');
+                loadFallbackData();
+                return;
+            }
+
+            updateHeaderStats(data);
+            updateTemplates(data.templates);
+            updateTeam(data.team);
+            updateCapabilities(data.capabilities);
+            updateTasks(data.tasks);
+            updateFooter(data.meta);
+
+            console.log('Dashboard loaded from JSON:', data.meta?.generated_at);
+        }
+
+        // Fallback data if JSON not available
+        function loadFallbackData() {
+            const fallback = {
+                templates: [
+                    { name: "Vente lots copropriete", conformity: 85.1, status: "prod", bookmarks: 361, sections: 37, last_modified: "2026-01-26" },
+                    { name: "Promesse de vente", conformity: 60.9, status: "dev", bookmarks: 298, sections: 127, last_modified: "2026-01-20" },
+                    { name: "Reglement copropriete", conformity: 85.5, status: "prod", bookmarks: 116, sections: 111, last_modified: "2026-01-19" },
+                    { name: "Modificatif EDD", conformity: 91.7, status: "prod", bookmarks: 60, sections: 13, last_modified: "2026-01-19" }
+                ],
+                team: [
+                    { name: "Tom", branch: "tom/dev", status: "active", role: "Lead Dev / Templates" },
+                    { name: "Augustin", branch: "augustin/dev", status: "active", role: "Frontend / Formulaires" },
+                    { name: "Payoss", branch: "payoss/dev", status: "active", role: "Backend / Scripts" }
+                ],
+                capabilities: [
+                    { icon: "📄", name: "Generer actes", description: "DOCX/PDF fideles aux trames", active: true },
+                    { icon: "💬", name: "Dialogue notaire", description: "Collecte interactive 100+ questions", active: true },
+                    { icon: "✅", name: "Validation", description: "Coherence et completude", active: true },
+                    { icon: "🔍", name: "Detection auto", description: "Type d'acte automatique", active: true },
+                    { icon: "💡", name: "Suggestions", description: "Clauses contextuelles", active: true },
+                    { icon: "📊", name: "Conformite", description: "Score automatique vs trame", active: true },
+                    { icon: "🗄️", name: "Historique", description: "Supabase + mode offline", active: true },
+                    { icon: "⚡", name: "Pipeline rapide", description: "~6 secondes / acte", active: true }
+                ],
+                tasks: {
+                    todo: ["Creer structure juridique", "Souscrire RC Pro", "Valider CGU"],
+                    in_progress: ["Dashboard dynamique", "Formulaires web"],
+                    done: ["Template vente 85%", "Integration Supabase", "Documentation RGPD", "CGU template"]
+                }
+            };
+
+            updateTemplates(fallback.templates);
+            updateTeam(fallback.team);
+            updateCapabilities(fallback.capabilities);
+            updateTasks(fallback.tasks);
         }
 
         // Initialize
-        loadData();
+        loadDashboard();
+
+        // Auto-refresh every 5 minutes
+        setInterval(loadDashboard, 5 * 60 * 1000);
 
         // Add hover glow effect
         document.addEventListener('mousemove', (e) => {
