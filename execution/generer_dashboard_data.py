@@ -103,6 +103,131 @@ def get_git_info() -> dict:
         }
 
 
+def get_recent_activity() -> list:
+    """Récupère l'activité récente des développeurs depuis les commits."""
+    try:
+        # Récupérer les 30 derniers commits avec auteur, date, message
+        commits_raw = subprocess.check_output(
+            ["git", "log", "-30", "--format=%H|%an|%ai|%s"],
+            cwd=PROJECT_ROOT,
+            text=True
+        ).strip().split("\n")
+
+        activity = []
+        # Mapping des noms git vers noms courts
+        name_map = {
+            "AnandaTom": "Tom",
+            "augustinfrance-aico": "Augustin",
+            "Payoss": "Payoss",
+            "Tom": "Tom",
+            "Augustin": "Augustin"
+        }
+
+        # Types de commits basés sur les préfixes conventionnels
+        type_map = {
+            "feat": {"label": "Feature", "icon": "✨", "color": "green"},
+            "fix": {"label": "Fix", "icon": "🐛", "color": "red"},
+            "chore": {"label": "Maintenance", "icon": "🔧", "color": "blue"},
+            "docs": {"label": "Documentation", "icon": "📝", "color": "purple"},
+            "style": {"label": "Style", "icon": "💅", "color": "pink"},
+            "refactor": {"label": "Refactor", "icon": "♻️", "color": "yellow"},
+            "test": {"label": "Tests", "icon": "🧪", "color": "cyan"},
+            "perf": {"label": "Performance", "icon": "⚡", "color": "orange"},
+            "ci": {"label": "CI/CD", "icon": "🔄", "color": "gray"},
+            "build": {"label": "Build", "icon": "📦", "color": "brown"}
+        }
+
+        for line in commits_raw:
+            if not line.strip():
+                continue
+            parts = line.split("|")
+            if len(parts) < 4:
+                continue
+
+            commit_hash = parts[0][:7]
+            author_raw = parts[1].strip()
+            date_raw = parts[2][:10]
+            message = parts[3].strip()
+
+            # Mapper le nom d'auteur
+            author = name_map.get(author_raw, author_raw.split()[0] if author_raw else "Unknown")
+
+            # Détecter le type de commit
+            commit_type = "other"
+            for prefix, info in type_map.items():
+                if message.lower().startswith(prefix + ":") or message.lower().startswith(prefix + "("):
+                    commit_type = prefix
+                    break
+
+            # Nettoyer le message (enlever le préfixe)
+            clean_message = message
+            for prefix in type_map.keys():
+                if message.lower().startswith(prefix + ":"):
+                    clean_message = message[len(prefix)+1:].strip()
+                    break
+                elif message.lower().startswith(prefix + "("):
+                    # Handle feat(scope): message
+                    idx = message.find(":")
+                    if idx > 0:
+                        clean_message = message[idx+1:].strip()
+                    break
+
+            type_info = type_map.get(commit_type, {"label": "Autre", "icon": "📌", "color": "gray"})
+
+            activity.append({
+                "hash": commit_hash,
+                "author": author,
+                "date": date_raw,
+                "message": clean_message[:80] + ("..." if len(clean_message) > 80 else ""),
+                "type": commit_type,
+                "type_label": type_info["label"],
+                "type_icon": type_info["icon"],
+                "type_color": type_info["color"]
+            })
+
+        return activity
+    except Exception as e:
+        print(f"Warning: Could not get recent activity: {e}", file=sys.stderr)
+        return []
+
+
+def get_dev_stats() -> dict:
+    """Calcule les statistiques par développeur sur les 7 derniers jours."""
+    try:
+        # Commits des 7 derniers jours par auteur
+        commits_7d = subprocess.check_output(
+            ["git", "shortlog", "-sn", "--since=7 days ago"],
+            cwd=PROJECT_ROOT,
+            text=True
+        ).strip().split("\n")
+
+        name_map = {
+            "AnandaTom": "Tom",
+            "augustinfrance-aico": "Augustin",
+            "Payoss": "Payoss"
+        }
+
+        stats = {}
+        for line in commits_7d:
+            if line.strip():
+                parts = line.strip().split("\t")
+                if len(parts) >= 2:
+                    count = int(parts[0].strip())
+                    author_raw = parts[1].strip()
+                    author = name_map.get(author_raw, author_raw)
+                    stats[author] = {"commits_7d": count}
+
+        # Ajouter fichiers modifiés par dev (dernière semaine)
+        for author in stats:
+            stats[author]["files_changed"] = 0
+            stats[author]["lines_added"] = 0
+
+        return stats
+    except Exception as e:
+        print(f"Warning: Could not get dev stats: {e}", file=sys.stderr)
+        return {}
+
+
 def analyze_templates() -> list:
     """Analyse les templates et leur conformité."""
     templates_dir = PROJECT_ROOT / "templates"
@@ -262,49 +387,53 @@ def analyze_docs() -> dict:
 
 
 def get_project_tasks() -> dict:
-    """Récupère les tâches du projet depuis TODO.md ou génère depuis le code."""
+    """Récupère les tâches du projet avec attribution développeur."""
     tasks = {
         "todo": [],
         "in_progress": [],
         "done": []
     }
 
-    # Tâches basées sur l'analyse du projet
-    # TODO: Améliorer en lisant depuis un fichier TODO.md
-
-    # Tâches terminées (basées sur les fichiers existants)
+    # Tâches terminées avec développeur (basées sur git blame/fichiers existants)
     done_indicators = [
-        ("templates/vente_lots_copropriete.md", "Template vente 85% conformité"),
-        ("execution/workflow_rapide.py", "Pipeline génération rapide"),
-        ("docs/legal/REGISTRE_TRAITEMENTS.md", "Documentation RGPD"),
-        ("docs/legal/CGU_TEMPLATE.md", "Template CGU créé"),
-        (".mcp.json", "Intégration Supabase MCP"),
-        ("execution/historique_supabase.py", "Historique Supabase"),
-        ("docs/index.html", "Dashboard v2.3"),
-        ("execution/comparer_documents.py", "Comparaison conformité"),
-        ("execution/test_fiabilite.py", "Tests automatisés"),
-        ("docs/legal/OBLIGATIONS_CSN.md", "Analyse obligations CSN"),
+        ("templates/vente_lots_copropriete.md", "Template vente 85% conformité", "Tom"),
+        ("execution/workflow_rapide.py", "Pipeline génération rapide", "Tom"),
+        ("docs/legal/REGISTRE_TRAITEMENTS.md", "Documentation RGPD", "Tom"),
+        ("docs/legal/CGU_TEMPLATE.md", "Template CGU créé", "Tom"),
+        (".mcp.json", "Intégration Supabase MCP", "Tom"),
+        ("execution/historique_supabase.py", "Historique Supabase", "Payoss"),
+        ("docs/index.html", "Dashboard v2.4 dynamique", "Tom"),
+        ("execution/comparer_documents.py", "Comparaison conformité", "Tom"),
+        ("execution/test_fiabilite.py", "Tests automatisés", "Payoss"),
+        ("docs/legal/OBLIGATIONS_CSN.md", "Analyse obligations CSN", "Tom"),
+        ("execution/generer_dashboard_data.py", "Script génération dashboard", "Tom"),
+        (".github/workflows/update-dashboard.yml", "GitHub Actions auto-update", "Tom"),
     ]
 
-    for path, task in done_indicators:
+    for item in done_indicators:
+        path, task, dev = item[0], item[1], item[2] if len(item) > 2 else None
         if (PROJECT_ROOT / path).exists():
-            tasks["done"].append(task)
+            tasks["done"].append({
+                "task": task,
+                "dev": dev,
+                "path": path
+            })
 
-    # Tâches en cours (templates < 80%)
+    # Tâches en cours avec assignation
     tasks["in_progress"] = [
-        "Enrichir template promesse (60.9% → 80%)",
-        "Dashboard temps réel",
-        "Formulaires web notaire"
+        {"task": "Enrichir template promesse (60.9% → 80%)", "dev": "Tom", "progress": 60},
+        {"task": "Formulaires web notaire", "dev": "Augustin", "progress": 40},
+        {"task": "API backend génération", "dev": "Payoss", "progress": 30}
     ]
 
-    # Tâches à faire
+    # Tâches à faire avec priorité
     tasks["todo"] = [
-        "Créer structure juridique (SAS/SASU)",
-        "Souscrire RC Pro",
-        "Valider CGU avec avocat",
-        "Template donation-partage",
-        "Intégration extraction titre propriété",
-        "Label ETIK (optionnel)"
+        {"task": "Créer structure juridique (SAS/SASU)", "priority": "high", "assignee": None},
+        {"task": "Souscrire RC Pro", "priority": "high", "assignee": None},
+        {"task": "Valider CGU avec avocat", "priority": "medium", "assignee": None},
+        {"task": "Template donation-partage", "priority": "medium", "assignee": "Tom"},
+        {"task": "Intégration extraction titre propriété", "priority": "low", "assignee": "Payoss"},
+        {"task": "Label ETIK (optionnel)", "priority": "low", "assignee": None}
     ]
 
     return tasks
@@ -423,16 +552,28 @@ def generate_dashboard_data() -> dict:
     capabilities = get_capabilities()
     launch = get_launch_status()
     security = get_security_status()
+    activity = get_recent_activity()
+    dev_stats = get_dev_stats()
 
     # Calculer les métriques
     prod_templates = sum(1 for t in templates if t["status"] == "prod")
     avg_conformity = sum(t["conformity"] for t in templates) / len(templates) if templates else 0
 
+    # Enrichir l'équipe avec les stats
+    team = [
+        {"name": "Tom", "branch": "tom/dev", "role": "Lead Dev / Templates", "status": "active"},
+        {"name": "Augustin", "branch": "augustin/dev", "role": "Frontend / Formulaires", "status": "active"},
+        {"name": "Payoss", "branch": "payoss/dev", "role": "Backend / Scripts", "status": "active"}
+    ]
+    for member in team:
+        stats = dev_stats.get(member["name"], {})
+        member["commits_7d"] = stats.get("commits_7d", 0)
+
     data = {
         "meta": {
             "generated_at": datetime.now().isoformat(),
             "version": "1.3.0",
-            "dashboard_version": "2.4"
+            "dashboard_version": "2.5"
         },
         "metrics": {
             "templates_count": len(templates),
@@ -452,11 +593,8 @@ def generate_dashboard_data() -> dict:
         "capabilities": capabilities,
         "launch": launch,
         "security": security,
-        "team": [
-            {"name": "Tom", "branch": "tom/dev", "role": "Lead Dev / Templates", "status": "active"},
-            {"name": "Augustin", "branch": "augustin/dev", "role": "Frontend / Formulaires", "status": "active"},
-            {"name": "Payoss", "branch": "payoss/dev", "role": "Backend / Scripts", "status": "active"}
-        ]
+        "team": team,
+        "activity": activity[:20]  # 20 dernières actions
     }
 
     return data

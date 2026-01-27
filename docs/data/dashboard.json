@@ -1,8 +1,8 @@
 {
   "meta": {
-    "generated_at": "2026-01-27T16:39:16.051953",
+    "generated_at": "2026-01-27T17:51:26.469966",
     "version": "1.3.0",
-    "dashboard_version": "2.4"
+    "dashboard_version": "2.5"
   },
   "metrics": {
     "templates_count": 4,
@@ -11,20 +11,20 @@
     "scripts_count": 72,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 73
+    "commits": 74
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "8fd8ff3",
-      "message": "feat: add dynamic dashboard with auto-update",
+      "hash": "57c26f4",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-01-27"
     },
-    "total_commits": 73,
+    "total_commits": 74,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 56
+        "commits": 58
       },
       {
         "name": "augustinfrance-aico",
@@ -33,6 +33,10 @@
       {
         "name": "Payoss",
         "commits": 7
+      },
+      {
+        "name": "github-actions[bot]",
+        "commits": 1
       }
     ]
   },
@@ -65,7 +69,7 @@
       "bookmarks": 116,
       "sections": 111,
       "lines": 1683,
-      "last_modified": "2026-01-27"
+      "last_modified": "2026-01-19"
     },
     {
       "file": "modificatif_edd.md",
@@ -75,12 +79,12 @@
       "bookmarks": 60,
       "sections": 13,
       "lines": 295,
-      "last_modified": "2026-01-27"
+      "last_modified": "2026-01-19"
     }
   ],
   "scripts": {
     "total": 72,
-    "total_lines": 40022,
+    "total_lines": 40644,
     "categories": {
       "utils": 46,
       "generation": 10,
@@ -90,54 +94,54 @@
     },
     "scripts": [
       {
+        "name": "agent_autonome.py",
+        "lines": 1901,
+        "path": "execution\\agent_autonome.py"
+      },
+      {
         "name": "exporter_docx.py",
         "lines": 1896,
-        "path": "execution/exporter_docx.py"
+        "path": "execution\\exporter_docx.py"
       },
       {
         "name": "exporter_docx_fidele.py",
         "lines": 1655,
-        "path": "execution/archive_exporter/exporter_docx_fidele.py"
-      },
-      {
-        "name": "exporter_docx_v2.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v2.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v3.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_v3.py"
+        "path": "execution\\archive_exporter\\exporter_docx_fidele.py"
       },
       {
         "name": "exporter_docx_28pages.py",
         "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages.py"
+        "path": "execution\\archive_exporter\\exporter_docx_28pages.py"
       },
       {
         "name": "exporter_docx_28pages_final.py",
         "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_final.py"
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_final.py"
       },
       {
-        "name": "agent_autonome.py",
-        "lines": 1417,
-        "path": "execution/agent_autonome.py"
+        "name": "exporter_docx_28pages_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v3.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v3.py"
+      },
+      {
+        "name": "exporter_docx_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_v2.py"
       },
       {
         "name": "orchestrateur_notaire.py",
         "lines": 1380,
-        "path": "execution/orchestrateur_notaire.py"
+        "path": "execution\\orchestrateur_notaire.py"
       },
       {
         "name": "generer_donnees_test.py",
         "lines": 1049,
-        "path": "execution/generer_donnees_test.py"
+        "path": "execution\\generer_donnees_test.py"
       }
     ]
   },
@@ -146,27 +150,23 @@
     "total_variables": 173,
     "schemas": [
       {
-        "name": "questions_notaire.json",
+        "name": "annexes_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "questions_donation_partage.json",
         "count": 6
-      },
-      {
-        "name": "variables_vente.json",
-        "count": 22
-      },
-      {
-        "name": "variables_reglement_copropriete.json",
-        "count": 17
-      },
-      {
-        "name": "sections_catalogue.json",
-        "count": 7
       },
       {
         "name": "questions_modificatif_edd.json",
         "count": 2
       },
       {
-        "name": "questions_donation_partage.json",
+        "name": "questions_notaire.json",
         "count": 6
       },
       {
@@ -174,97 +174,189 @@
         "count": 3
       },
       {
-        "name": "annexes_catalogue.json",
-        "count": 8
-      },
-      {
         "name": "questions_reglement_copropriete.json",
         "count": 2
       },
       {
-        "name": "variables_promesse.json",
-        "count": 24
+        "name": "sections_catalogue.json",
+        "count": 7
       },
       {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
-        "name": "variables_promesse_vente.json",
-        "count": 22
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
+        "name": "variables_donation_partage.json",
+        "count": 18
       },
       {
         "name": "variables_modificatif_edd.json",
         "count": 12
       },
       {
-        "name": "variables_donation_partage.json",
-        "count": 18
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_promesse_vente.json",
+        "count": 22
+      },
+      {
+        "name": "variables_reglement_copropriete.json",
+        "count": 17
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
+        "name": "variables_vente.json",
+        "count": 22
       }
     ]
   },
   "docs": {
     "legal": [
-      "CGU_TEMPLATE.md",
-      "POLITIQUE_CONFIDENTIALITE.md",
       "BASES_LEGALES.md",
+      "CGU_TEMPLATE.md",
       "OBLIGATIONS_CSN.md",
+      "POLITIQUE_CONFIDENTIALITE.md",
       "REGISTRE_TRAITEMENTS.md"
     ],
     "directives": [
-      "validation_donnees.md",
-      "modifier_acte.md",
-      "gestion_flexible.md",
-      "collecte_informations.md",
-      "mise_a_jour_statuts_donation.md",
-      "creer_donation_partage.md",
-      "integration_titre_propriete.md",
-      "README.md",
-      "bonnes_pratiques_templates.md",
-      "apprentissage_continu.md",
-      "workflow_notaire.md",
-      "pipeline_generation.md",
-      "lecons_apprises.md",
-      "formatage_docx.md",
-      "creer_modificatif_edd.md",
-      "creer_acte.md",
-      "workflow_titre_promesse_vente.md",
       "ajouter_template.md",
-      "flexibilite_systeme.md",
+      "apprentissage_continu.md",
+      "bonnes_pratiques_templates.md",
+      "collecte_informations.md",
+      "creer_acte.md",
+      "creer_donation_partage.md",
+      "creer_modificatif_edd.md",
+      "creer_promesse_vente.md",
       "creer_reglement_copropriete.md",
-      "creer_promesse_vente.md"
+      "flexibilite_systeme.md",
+      "formatage_docx.md",
+      "gestion_flexible.md",
+      "integration_titre_propriete.md",
+      "lecons_apprises.md",
+      "mise_a_jour_statuts_donation.md",
+      "modifier_acte.md",
+      "pipeline_generation.md",
+      "README.md",
+      "validation_donnees.md",
+      "workflow_agent_optimise.md",
+      "workflow_notaire.md",
+      "workflow_titre_promesse_vente.md"
     ],
     "total_legal": 5,
-    "total_directives": 21
+    "total_directives": 22
   },
   "tasks": {
     "todo": [
-      "Créer structure juridique (SAS/SASU)",
-      "Souscrire RC Pro",
-      "Valider CGU avec avocat",
-      "Template donation-partage",
-      "Intégration extraction titre propriété",
-      "Label ETIK (optionnel)"
+      {
+        "task": "Créer structure juridique (SAS/SASU)",
+        "priority": "high",
+        "assignee": null
+      },
+      {
+        "task": "Souscrire RC Pro",
+        "priority": "high",
+        "assignee": null
+      },
+      {
+        "task": "Valider CGU avec avocat",
+        "priority": "medium",
+        "assignee": null
+      },
+      {
+        "task": "Template donation-partage",
+        "priority": "medium",
+        "assignee": "Tom"
+      },
+      {
+        "task": "Intégration extraction titre propriété",
+        "priority": "low",
+        "assignee": "Payoss"
+      },
+      {
+        "task": "Label ETIK (optionnel)",
+        "priority": "low",
+        "assignee": null
+      }
     ],
     "in_progress": [
-      "Enrichir template promesse (60.9% → 80%)",
-      "Dashboard temps réel",
-      "Formulaires web notaire"
+      {
+        "task": "Enrichir template promesse (60.9% → 80%)",
+        "dev": "Tom",
+        "progress": 60
+      },
+      {
+        "task": "Formulaires web notaire",
+        "dev": "Augustin",
+        "progress": 40
+      },
+      {
+        "task": "API backend génération",
+        "dev": "Payoss",
+        "progress": 30
+      }
     ],
     "done": [
-      "Template vente 85% conformité",
-      "Pipeline génération rapide",
-      "Documentation RGPD",
-      "Template CGU créé",
-      "Historique Supabase",
-      "Dashboard v2.3",
-      "Comparaison conformité",
-      "Tests automatisés",
-      "Analyse obligations CSN"
+      {
+        "task": "Template vente 85% conformité",
+        "dev": "Tom",
+        "path": "templates/vente_lots_copropriete.md"
+      },
+      {
+        "task": "Pipeline génération rapide",
+        "dev": "Tom",
+        "path": "execution/workflow_rapide.py"
+      },
+      {
+        "task": "Documentation RGPD",
+        "dev": "Tom",
+        "path": "docs/legal/REGISTRE_TRAITEMENTS.md"
+      },
+      {
+        "task": "Template CGU créé",
+        "dev": "Tom",
+        "path": "docs/legal/CGU_TEMPLATE.md"
+      },
+      {
+        "task": "Intégration Supabase MCP",
+        "dev": "Tom",
+        "path": ".mcp.json"
+      },
+      {
+        "task": "Historique Supabase",
+        "dev": "Payoss",
+        "path": "execution/historique_supabase.py"
+      },
+      {
+        "task": "Dashboard v2.4 dynamique",
+        "dev": "Tom",
+        "path": "docs/index.html"
+      },
+      {
+        "task": "Comparaison conformité",
+        "dev": "Tom",
+        "path": "execution/comparer_documents.py"
+      },
+      {
+        "task": "Tests automatisés",
+        "dev": "Payoss",
+        "path": "execution/test_fiabilite.py"
+      },
+      {
+        "task": "Analyse obligations CSN",
+        "dev": "Tom",
+        "path": "docs/legal/OBLIGATIONS_CSN.md"
+      },
+      {
+        "task": "Script génération dashboard",
+        "dev": "Tom",
+        "path": "execution/generer_dashboard_data.py"
+      },
+      {
+        "task": "GitHub Actions auto-update",
+        "dev": "Tom",
+        "path": ".github/workflows/update-dashboard.yml"
+      }
     ]
   },
   "capabilities": [
@@ -424,19 +516,224 @@
       "name": "Tom",
       "branch": "tom/dev",
       "role": "Lead Dev / Templates",
-      "status": "active"
+      "status": "active",
+      "commits_7d": 0
     },
     {
       "name": "Augustin",
       "branch": "augustin/dev",
       "role": "Frontend / Formulaires",
-      "status": "active"
+      "status": "active",
+      "commits_7d": 0
     },
     {
       "name": "Payoss",
       "branch": "payoss/dev",
       "role": "Backend / Scripts",
-      "status": "active"
+      "status": "active",
+      "commits_7d": 0
+    }
+  ],
+  "activity": [
+    {
+      "hash": "57c26f4",
+      "author": "github-actions[bot]",
+      "date": "2026-01-27",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "8fd8ff3",
+      "author": "Tom",
+      "date": "2026-01-27",
+      "message": "add dynamic dashboard with auto-update",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "7141a0a",
+      "author": "Tom",
+      "date": "2026-01-26",
+      "message": "Fin de journee - 26/01/2026 20:45:52,37",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "660bb79",
+      "author": "Tom",
+      "date": "2026-01-26",
+      "message": "add launch & legal section to dashboard + CGU template",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "3058392",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "Fin de journee - 24/01/2026 22:18:16,63",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "8e0e777",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "add comprehensive Security section to dashboard",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "3bfe5e2",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "add missing sections to dashboard",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "fcbde73",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "redesign dashboard with modern mind-map visualization",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "89fa838",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "rename NotaireAI to Notomai + add security section to dashboard",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "10bab71",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "enhance dashboard architecture section with 3-layer visualization",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "b7698f6",
+      "author": "Payoss",
+      "date": "2026-01-24",
+      "message": "Merge pull request #14 from AnandaTom/payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "0125c32",
+      "author": "Payoss",
+      "date": "2026-01-24",
+      "message": "merge: Sync avec master (mcp.json + travail 24/01)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "10a66e5",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "Update mcp.json",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "0a9101b",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "Travail du 24/01/2026 (#9)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "bbd069a",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "Fin de journee - 24/01/2026 11:52:55,61",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "94a5aa3",
+      "author": "Payoss",
+      "date": "2026-01-24",
+      "message": "Merge remote-tracking branch 'origin/master' into payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "5eea594",
+      "author": "Payoss",
+      "date": "2026-01-24",
+      "message": "24/01",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "935d728",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "Dashboard in docs/ for GitHub Pages (#8)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "d4db98b",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "move dashboard to docs for GitHub Pages",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "5bd86c1",
+      "author": "Tom",
+      "date": "2026-01-24",
+      "message": "add real-time dashboard with notarial design (#7)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
     }
   ]
 }

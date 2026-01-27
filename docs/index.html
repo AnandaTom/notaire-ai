@@ -867,6 +867,96 @@
             margin-bottom: 0;
         }
 
+        .dev-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: white;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .mini-progress {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .mini-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Activity Section */
+        .activity-section {
+            margin-bottom: 2rem;
+        }
+
+        .activity-list {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            font-size: 1.2rem;
+            width: 32px;
+            text-align: center;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-message {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .activity-hash {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(99, 102, 241, 0.15);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            color: var(--accent-primary);
+        }
+
         /* Pipeline Section */
         .pipeline-container {
             display: flex;
@@ -1946,6 +2036,19 @@
             <div class="templates-grid" id="templatesGrid"></div>
         </section>
 
+        <!-- Activity Section -->
+        <section class="activity-section">
+            <h2 class="section-title">Activite Recente</h2>
+            <div class="activity-list" id="activityList">
+                <div class="activity-item">
+                    <div class="activity-icon">⏳</div>
+                    <div class="activity-content">
+                        <div class="activity-message">Chargement...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Team Section -->
         <section class="team-section">
             <h2 class="section-title">Equipe</h2>
@@ -2053,13 +2156,21 @@
         // Update team section
         function updateTeam(team) {
             if (!team) return;
+            const devColors = {
+                'Tom': '#6366f1',
+                'Augustin': '#06b6d4',
+                'Payoss': '#10b981'
+            };
             const html = team.map(m => `
-                <div class="team-card ${m.status}">
-                    <div class="team-avatar">${m.name[0]}</div>
+                <div class="team-card ${m.status}" style="border-left: 3px solid ${devColors[m.name] || '#666'};">
+                    <div class="team-avatar" style="background: ${devColors[m.name] || '#666'};">${m.name[0]}</div>
                     <div class="team-info">
                         <div class="team-name">${m.name}</div>
                         <div class="team-role">${m.role}</div>
-                        <span class="team-branch">${m.branch}</span>
+                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.25rem;">
+                            <span class="team-branch">${m.branch}</span>
+                            ${m.commits_7d > 0 ? `<span style="font-size: 0.65rem; color: var(--accent-success);">📊 ${m.commits_7d} commits (7j)</span>` : ''}
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -2083,10 +2194,44 @@
             if (grid) grid.innerHTML = html;
         }
 
-        // Update tasks section
+        // Update tasks section with developer names
         function updateTasks(tasks) {
             if (!tasks) return;
-            const renderTasks = (items) => items.map(t => `<div class="task-item">${t}</div>`).join('');
+
+            // Developer color mapping
+            const devColors = {
+                'Tom': '#6366f1',
+                'Augustin': '#06b6d4',
+                'Payoss': '#10b981'
+            };
+
+            // Render todo items (with priority and assignee)
+            const renderTodo = (items) => items.map(t => {
+                const task = typeof t === 'string' ? t : t.task;
+                const assignee = t.assignee || null;
+                const priority = t.priority || 'medium';
+                const priorityIcon = priority === 'high' ? '🔴' : priority === 'medium' ? '🟡' : '🟢';
+                const devBadge = assignee ? `<span class="dev-badge" style="background: ${devColors[assignee] || '#666'};">${assignee}</span>` : '';
+                return `<div class="task-item">${priorityIcon} ${task} ${devBadge}</div>`;
+            }).join('');
+
+            // Render in-progress items (with dev and progress)
+            const renderInProgress = (items) => items.map(t => {
+                const task = typeof t === 'string' ? t : t.task;
+                const dev = t.dev || null;
+                const progress = t.progress || 0;
+                const devBadge = dev ? `<span class="dev-badge" style="background: ${devColors[dev] || '#666'};">${dev}</span>` : '';
+                const progressBar = progress > 0 ? `<div class="mini-progress"><div class="mini-progress-fill" style="width: ${progress}%;"></div></div>` : '';
+                return `<div class="task-item">${task} ${devBadge}${progressBar}</div>`;
+            }).join('');
+
+            // Render done items (with dev)
+            const renderDone = (items) => items.map(t => {
+                const task = typeof t === 'string' ? t : t.task;
+                const dev = t.dev || null;
+                const devBadge = dev ? `<span class="dev-badge" style="background: ${devColors[dev] || '#666'};">${dev}</span>` : '';
+                return `<div class="task-item">✓ ${task} ${devBadge}</div>`;
+            }).join('');
 
             const todoList = document.getElementById('todoList');
             const todoCount = document.getElementById('todoCount');
@@ -2096,17 +2241,48 @@
             const doneCount = document.getElementById('doneCount');
 
             if (todoList && tasks.todo) {
-                todoList.innerHTML = renderTasks(tasks.todo);
+                todoList.innerHTML = renderTodo(tasks.todo);
                 if (todoCount) todoCount.textContent = tasks.todo.length;
             }
             if (inProgressList && tasks.in_progress) {
-                inProgressList.innerHTML = renderTasks(tasks.in_progress);
+                inProgressList.innerHTML = renderInProgress(tasks.in_progress);
                 if (inProgressCount) inProgressCount.textContent = tasks.in_progress.length;
             }
             if (doneList && tasks.done) {
-                doneList.innerHTML = renderTasks(tasks.done);
+                doneList.innerHTML = renderDone(tasks.done);
                 if (doneCount) doneCount.textContent = tasks.done.length;
             }
+        }
+
+        // Update activity section
+        function updateActivity(activity) {
+            if (!activity || !activity.length) return;
+
+            const devColors = {
+                'Tom': '#6366f1',
+                'Augustin': '#06b6d4',
+                'Payoss': '#10b981'
+            };
+
+            const html = activity.slice(0, 15).map(a => `
+                <div class="activity-item">
+                    <div class="activity-icon">${a.type_icon || '📌'}</div>
+                    <div class="activity-content">
+                        <div class="activity-message">
+                            ${a.message}
+                            <span class="dev-badge" style="background: ${devColors[a.author] || '#666'};">${a.author}</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span class="activity-hash">${a.hash}</span>
+                            <span>${a.date}</span>
+                            <span style="color: ${a.type_color === 'green' ? 'var(--accent-success)' : a.type_color === 'red' ? '#ef4444' : 'var(--text-muted)'};">${a.type_label}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const list = document.getElementById('activityList');
+            if (list) list.innerHTML = html;
         }
 
         // Update footer with metadata
@@ -2137,6 +2313,7 @@
             updateTeam(data.team);
             updateCapabilities(data.capabilities);
             updateTasks(data.tasks);
+            updateActivity(data.activity);
             updateFooter(data.meta);
 
             console.log('Dashboard loaded from JSON:', data.meta?.generated_at);
