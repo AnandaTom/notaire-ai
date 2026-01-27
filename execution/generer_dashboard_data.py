@@ -455,6 +455,230 @@ def get_capabilities() -> list:
     return capabilities
 
 
+def get_recommendations() -> dict:
+    """Récupère les recommandations stratégiques par développeur."""
+
+    # Analyse des templates pour déterminer les priorités dynamiques
+    templates_dir = PROJECT_ROOT / "templates"
+    promesse_conformity = 60.9  # Default
+
+    # Vérifier si le fichier partie_developpee_promesse.md existe
+    partie_dev_promesse_exists = (PROJECT_ROOT / "templates" / "sections" / "partie_developpee_promesse.md").exists()
+
+    # Recommandations par priorité
+    priorities = {
+        "P0": {
+            "label": "CRITIQUE",
+            "color": "#ef4444",
+            "items": []
+        },
+        "P1": {
+            "label": "IMPORTANT",
+            "color": "#f59e0b",
+            "items": []
+        },
+        "P2": {
+            "label": "NICE TO HAVE",
+            "color": "#10b981",
+            "items": []
+        }
+    }
+
+    # P0 - Critique
+    if not partie_dev_promesse_exists:
+        priorities["P0"]["items"].append({
+            "task": "Compléter template promesse (60.9% → 85%)",
+            "dev": "Tom",
+            "effort": "3j",
+            "impact": 5,
+            "details": "Créer sections/partie_developpee_promesse.md avec conditions suspensives, indemnité d'immobilisation"
+        })
+
+    # P1 - Important
+    priorities["P1"]["items"].extend([
+        {
+            "task": "Intégrer validation dans l'agent",
+            "dev": "Payoss",
+            "effort": "2j",
+            "impact": 4,
+            "details": "Ajouter _valider_donnees() dans executer() avant génération"
+        },
+        {
+            "task": "Support multi-parties (A & B → C)",
+            "dev": "Payoss",
+            "effort": "3j",
+            "impact": 4,
+            "details": "Parser 'Martin & Pierre → Dupont' avec PATTERN_FLECHE_MULTI"
+        },
+        {
+            "task": "Formulaires web collecte données",
+            "dev": "Augustin",
+            "effort": "5j",
+            "impact": 4,
+            "details": "Interface React/Vue pour questionnaire notaire interactif"
+        }
+    ])
+
+    # P2 - Nice to have
+    priorities["P2"]["items"].extend([
+        {
+            "task": "Mode interactif agent",
+            "dev": "Payoss",
+            "effort": "3j",
+            "impact": 3,
+            "details": "Dialogue multi-tour avec questions/réponses"
+        },
+        {
+            "task": "Suggestions contextuelles clauses",
+            "dev": "Tom",
+            "effort": "2j",
+            "impact": 3,
+            "details": "Suggérer clauses basées sur contexte (multi-acquéreurs, prix, etc.)"
+        },
+        {
+            "task": "Dashboard analytics temps réel",
+            "dev": "Augustin",
+            "effort": "3j",
+            "impact": 3,
+            "details": "Graphiques d'utilisation, métriques génération"
+        }
+    ])
+
+    # Recommandations par développeur
+    dev_recommendations = {
+        "Tom": {
+            "role": "Lead Dev / Templates",
+            "focus": "Templates & Conformité",
+            "current_sprint": "Sprint 1",
+            "priorities": [],
+            "checklist": [
+                {"item": "Ajouter {% include 'sections/partie_developpee_promesse.md' %}", "done": partie_dev_promesse_exists},
+                {"item": "Créer sections spécifiques promesse", "done": partie_dev_promesse_exists},
+                {"item": "Tester conformité ≥85%", "done": False},
+                {"item": "Standardiser variables promesse/vente", "done": False}
+            ],
+            "next_actions": [
+                "Créer partie_developpee_promesse.md avec conditions suspensives",
+                "Ajouter indemnité d'immobilisation et délai réalisation",
+                "Valider avec comparer_documents.py"
+            ]
+        },
+        "Augustin": {
+            "role": "Frontend / Formulaires",
+            "focus": "Interface Utilisateur",
+            "current_sprint": "Sprint 2",
+            "priorities": [],
+            "checklist": [
+                {"item": "Maquette formulaire collecte", "done": False},
+                {"item": "Composants React/Vue questionnaire", "done": False},
+                {"item": "Intégration API backend", "done": False},
+                {"item": "Validation côté client", "done": False}
+            ],
+            "next_actions": [
+                "Designer wireframes formulaire notaire",
+                "Créer composants pour 100+ questions",
+                "Implémenter navigation conditionnelle"
+            ]
+        },
+        "Payoss": {
+            "role": "Backend / Scripts",
+            "focus": "Agent & API",
+            "current_sprint": "Sprint 1-2",
+            "priorities": [],
+            "checklist": [
+                {"item": "Validation intégrée dans agent", "done": False},
+                {"item": "Pattern multi-parties", "done": False},
+                {"item": "Score confiance détaillé", "done": False},
+                {"item": "API REST génération", "done": False}
+            ],
+            "next_actions": [
+                "Ajouter _valider_donnees() dans agent_autonome.py",
+                "Créer PATTERN_FLECHE_MULTI pour couples/indivisions",
+                "Implémenter ScoreConfianceDetaille dataclass"
+            ]
+        }
+    }
+
+    # Assigner les priorités par dev
+    for priority_key, priority_data in priorities.items():
+        for item in priority_data["items"]:
+            dev = item.get("dev")
+            if dev and dev in dev_recommendations:
+                dev_recommendations[dev]["priorities"].append({
+                    **item,
+                    "priority": priority_key,
+                    "priority_label": priority_data["label"],
+                    "priority_color": priority_data["color"]
+                })
+
+    # Sprints planning
+    sprints = [
+        {
+            "name": "Sprint 1",
+            "weeks": "Semaine 1-2",
+            "objective": "Template promesse ≥85%",
+            "status": "in_progress",
+            "tasks": [
+                {"task": "Compléter template promesse", "dev": "Tom", "effort": "3j", "status": "in_progress"},
+                {"task": "Créer partie_developpee_promesse.md", "dev": "Tom", "effort": "2j", "status": "pending"},
+                {"task": "Intégrer validation agent", "dev": "Payoss", "effort": "2j", "status": "pending"},
+                {"task": "Tests génération promesse", "dev": "Payoss", "effort": "1j", "status": "pending"}
+            ]
+        },
+        {
+            "name": "Sprint 2",
+            "weeks": "Semaine 3-4",
+            "objective": "Agent gère 90% des cas",
+            "status": "pending",
+            "tasks": [
+                {"task": "Support multi-parties", "dev": "Payoss", "effort": "3j", "status": "pending"},
+                {"task": "Score confiance détaillé", "dev": "Payoss", "effort": "2j", "status": "pending"},
+                {"task": "Formulaires web v1", "dev": "Augustin", "effort": "5j", "status": "pending"},
+                {"task": "Documentation API", "dev": "Tom", "effort": "2j", "status": "pending"}
+            ]
+        },
+        {
+            "name": "Sprint 3",
+            "weeks": "Semaine 5-6",
+            "objective": "UX excellente, <2s",
+            "status": "pending",
+            "tasks": [
+                {"task": "Mode interactif", "dev": "Payoss", "effort": "3j", "status": "pending"},
+                {"task": "Suggestions contextuelles", "dev": "Tom", "effort": "2j", "status": "pending"},
+                {"task": "Dashboard analytics", "dev": "Augustin", "effort": "3j", "status": "pending"},
+                {"task": "Optimisations perf", "dev": "Payoss", "effort": "2j", "status": "pending"}
+            ]
+        }
+    ]
+
+    # Scores du système
+    system_scores = {
+        "architecture": {"score": 9, "max": 10, "label": "Architecture 3 couches"},
+        "documentation": {"score": 8, "max": 10, "label": "Documentation"},
+        "templates_vente": {"score": 8.5, "max": 10, "label": "Templates Vente"},
+        "agent": {"score": 7, "max": 10, "label": "Agent Autonome"},
+        "pipeline": {"score": 8, "max": 10, "label": "Pipeline Performance"}
+    }
+
+    # Faiblesses critiques
+    weaknesses = [
+        {"problem": "Template Promesse incomplet (60.9%)", "impact": "Bloque production", "priority": "P0"},
+        {"problem": "Agent sans validation intégrée", "impact": "Erreurs silencieuses", "priority": "P1"},
+        {"problem": "Pas de support multi-parties", "impact": "Limite cas réels", "priority": "P1"},
+        {"problem": "Pas de dialogue multi-tour", "impact": "UX limitée", "priority": "P2"}
+    ]
+
+    return {
+        "priorities": priorities,
+        "dev_recommendations": dev_recommendations,
+        "sprints": sprints,
+        "system_scores": system_scores,
+        "weaknesses": weaknesses,
+        "source_file": "docs/RECOMMANDATIONS_STRATEGIQUES.md",
+        "last_updated": datetime.now().strftime("%Y-%m-%d")
+    }
+
+
 def get_launch_status() -> dict:
     """Récupère le statut de lancement."""
     return {
@@ -554,6 +778,7 @@ def generate_dashboard_data() -> dict:
     security = get_security_status()
     activity = get_recent_activity()
     dev_stats = get_dev_stats()
+    recommendations = get_recommendations()
 
     # Calculer les métriques
     prod_templates = sum(1 for t in templates if t["status"] == "prod")
@@ -594,7 +819,8 @@ def generate_dashboard_data() -> dict:
         "launch": launch,
         "security": security,
         "team": team,
-        "activity": activity[:20]  # 20 dernières actions
+        "activity": activity[:20],  # 20 dernières actions
+        "recommendations": recommendations
     }
 
     return data

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-27T16:53:59.333667",
+    "generated_at": "2026-01-27T18:14:21.378394",
     "version": "1.3.0",
     "dashboard_version": "2.5"
   },
@@ -11,20 +11,20 @@
     "scripts_count": 72,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 75
+    "commits": 76
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "0d65f9a",
-      "message": "feat: add developer tracking to dashboard",
+      "hash": "2e818b6",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-01-27"
     },
-    "total_commits": 75,
+    "total_commits": 76,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 57
+        "commits": 59
       },
       {
         "name": "augustinfrance-aico",
@@ -36,7 +36,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 1
+        "commits": 2
       }
     ]
   },
@@ -69,7 +69,7 @@
       "bookmarks": 116,
       "sections": 111,
       "lines": 1683,
-      "last_modified": "2026-01-27"
+      "last_modified": "2026-01-19"
     },
     {
       "file": "modificatif_edd.md",
@@ -79,12 +79,12 @@
       "bookmarks": 60,
       "sections": 13,
       "lines": 295,
-      "last_modified": "2026-01-27"
+      "last_modified": "2026-01-19"
     }
   ],
   "scripts": {
     "total": 72,
-    "total_lines": 40160,
+    "total_lines": 40870,
     "categories": {
       "utils": 46,
       "generation": 10,
@@ -94,54 +94,54 @@
     },
     "scripts": [
       {
+        "name": "agent_autonome.py",
+        "lines": 1901,
+        "path": "execution\\agent_autonome.py"
+      },
+      {
         "name": "exporter_docx.py",
         "lines": 1896,
-        "path": "execution/exporter_docx.py"
+        "path": "execution\\exporter_docx.py"
       },
       {
         "name": "exporter_docx_fidele.py",
         "lines": 1655,
-        "path": "execution/archive_exporter/exporter_docx_fidele.py"
-      },
-      {
-        "name": "exporter_docx_v2.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v2.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v3.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_v3.py"
+        "path": "execution\\archive_exporter\\exporter_docx_fidele.py"
       },
       {
         "name": "exporter_docx_28pages.py",
         "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages.py"
+        "path": "execution\\archive_exporter\\exporter_docx_28pages.py"
       },
       {
         "name": "exporter_docx_28pages_final.py",
         "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_final.py"
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_final.py"
       },
       {
-        "name": "agent_autonome.py",
-        "lines": 1417,
-        "path": "execution/agent_autonome.py"
+        "name": "exporter_docx_28pages_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v3.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v3.py"
+      },
+      {
+        "name": "exporter_docx_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_v2.py"
       },
       {
         "name": "orchestrateur_notaire.py",
         "lines": 1380,
-        "path": "execution/orchestrateur_notaire.py"
+        "path": "execution\\orchestrateur_notaire.py"
       },
       {
         "name": "generer_donnees_test.py",
         "lines": 1049,
-        "path": "execution/generer_donnees_test.py"
+        "path": "execution\\generer_donnees_test.py"
       }
     ]
   },
@@ -150,27 +150,23 @@
     "total_variables": 173,
     "schemas": [
       {
-        "name": "questions_notaire.json",
+        "name": "annexes_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "questions_donation_partage.json",
         "count": 6
-      },
-      {
-        "name": "variables_vente.json",
-        "count": 22
-      },
-      {
-        "name": "variables_reglement_copropriete.json",
-        "count": 17
-      },
-      {
-        "name": "sections_catalogue.json",
-        "count": 7
       },
       {
         "name": "questions_modificatif_edd.json",
         "count": 2
       },
       {
-        "name": "questions_donation_partage.json",
+        "name": "questions_notaire.json",
         "count": 6
       },
       {
@@ -178,72 +174,77 @@
         "count": 3
       },
       {
-        "name": "annexes_catalogue.json",
-        "count": 8
-      },
-      {
         "name": "questions_reglement_copropriete.json",
         "count": 2
       },
       {
-        "name": "variables_promesse.json",
-        "count": 24
+        "name": "sections_catalogue.json",
+        "count": 7
       },
       {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
-        "name": "variables_promesse_vente.json",
-        "count": 22
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
+        "name": "variables_donation_partage.json",
+        "count": 18
       },
       {
         "name": "variables_modificatif_edd.json",
         "count": 12
       },
       {
-        "name": "variables_donation_partage.json",
-        "count": 18
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_promesse_vente.json",
+        "count": 22
+      },
+      {
+        "name": "variables_reglement_copropriete.json",
+        "count": 17
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
+        "name": "variables_vente.json",
+        "count": 22
       }
     ]
   },
   "docs": {
     "legal": [
-      "CGU_TEMPLATE.md",
-      "POLITIQUE_CONFIDENTIALITE.md",
       "BASES_LEGALES.md",
+      "CGU_TEMPLATE.md",
       "OBLIGATIONS_CSN.md",
+      "POLITIQUE_CONFIDENTIALITE.md",
       "REGISTRE_TRAITEMENTS.md"
     ],
     "directives": [
-      "validation_donnees.md",
-      "modifier_acte.md",
-      "gestion_flexible.md",
-      "collecte_informations.md",
-      "mise_a_jour_statuts_donation.md",
-      "creer_donation_partage.md",
-      "integration_titre_propriete.md",
-      "README.md",
-      "bonnes_pratiques_templates.md",
-      "apprentissage_continu.md",
-      "workflow_notaire.md",
-      "pipeline_generation.md",
-      "lecons_apprises.md",
-      "formatage_docx.md",
-      "creer_modificatif_edd.md",
-      "creer_acte.md",
-      "workflow_titre_promesse_vente.md",
       "ajouter_template.md",
-      "flexibilite_systeme.md",
+      "apprentissage_continu.md",
+      "bonnes_pratiques_templates.md",
+      "collecte_informations.md",
+      "creer_acte.md",
+      "creer_donation_partage.md",
+      "creer_modificatif_edd.md",
+      "creer_promesse_vente.md",
       "creer_reglement_copropriete.md",
-      "creer_promesse_vente.md"
+      "flexibilite_systeme.md",
+      "formatage_docx.md",
+      "gestion_flexible.md",
+      "integration_titre_propriete.md",
+      "lecons_apprises.md",
+      "mise_a_jour_statuts_donation.md",
+      "modifier_acte.md",
+      "pipeline_generation.md",
+      "README.md",
+      "validation_donnees.md",
+      "workflow_agent_optimise.md",
+      "workflow_notaire.md",
+      "workflow_titre_promesse_vente.md"
     ],
     "total_legal": 5,
-    "total_directives": 21
+    "total_directives": 22
   },
   "tasks": {
     "todo": [
@@ -315,6 +316,11 @@
         "task": "Template CGU créé",
         "dev": "Tom",
         "path": "docs/legal/CGU_TEMPLATE.md"
+      },
+      {
+        "task": "Intégration Supabase MCP",
+        "dev": "Tom",
+        "path": ".mcp.json"
       },
       {
         "task": "Historique Supabase",
@@ -530,6 +536,16 @@
   ],
   "activity": [
     {
+      "hash": "2e818b6",
+      "author": "github-actions[bot]",
+      "date": "2026-01-27",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "0d65f9a",
       "author": "Tom",
       "date": "2026-01-27",
@@ -718,16 +734,370 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "d4db98b",
-      "author": "Tom",
-      "date": "2026-01-24",
-      "message": "move dashboard to docs for GitHub Pages",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
     }
-  ]
+  ],
+  "recommendations": {
+    "priorities": {
+      "P0": {
+        "label": "CRITIQUE",
+        "color": "#ef4444",
+        "items": []
+      },
+      "P1": {
+        "label": "IMPORTANT",
+        "color": "#f59e0b",
+        "items": [
+          {
+            "task": "Intégrer validation dans l'agent",
+            "dev": "Payoss",
+            "effort": "2j",
+            "impact": 4,
+            "details": "Ajouter _valider_donnees() dans executer() avant génération"
+          },
+          {
+            "task": "Support multi-parties (A & B → C)",
+            "dev": "Payoss",
+            "effort": "3j",
+            "impact": 4,
+            "details": "Parser 'Martin & Pierre → Dupont' avec PATTERN_FLECHE_MULTI"
+          },
+          {
+            "task": "Formulaires web collecte données",
+            "dev": "Augustin",
+            "effort": "5j",
+            "impact": 4,
+            "details": "Interface React/Vue pour questionnaire notaire interactif"
+          }
+        ]
+      },
+      "P2": {
+        "label": "NICE TO HAVE",
+        "color": "#10b981",
+        "items": [
+          {
+            "task": "Mode interactif agent",
+            "dev": "Payoss",
+            "effort": "3j",
+            "impact": 3,
+            "details": "Dialogue multi-tour avec questions/réponses"
+          },
+          {
+            "task": "Suggestions contextuelles clauses",
+            "dev": "Tom",
+            "effort": "2j",
+            "impact": 3,
+            "details": "Suggérer clauses basées sur contexte (multi-acquéreurs, prix, etc.)"
+          },
+          {
+            "task": "Dashboard analytics temps réel",
+            "dev": "Augustin",
+            "effort": "3j",
+            "impact": 3,
+            "details": "Graphiques d'utilisation, métriques génération"
+          }
+        ]
+      }
+    },
+    "dev_recommendations": {
+      "Tom": {
+        "role": "Lead Dev / Templates",
+        "focus": "Templates & Conformité",
+        "current_sprint": "Sprint 1",
+        "priorities": [
+          {
+            "task": "Suggestions contextuelles clauses",
+            "dev": "Tom",
+            "effort": "2j",
+            "impact": 3,
+            "details": "Suggérer clauses basées sur contexte (multi-acquéreurs, prix, etc.)",
+            "priority": "P2",
+            "priority_label": "NICE TO HAVE",
+            "priority_color": "#10b981"
+          }
+        ],
+        "checklist": [
+          {
+            "item": "Ajouter {% include 'sections/partie_developpee_promesse.md' %}",
+            "done": true
+          },
+          {
+            "item": "Créer sections spécifiques promesse",
+            "done": true
+          },
+          {
+            "item": "Tester conformité ≥85%",
+            "done": false
+          },
+          {
+            "item": "Standardiser variables promesse/vente",
+            "done": false
+          }
+        ],
+        "next_actions": [
+          "Créer partie_developpee_promesse.md avec conditions suspensives",
+          "Ajouter indemnité d'immobilisation et délai réalisation",
+          "Valider avec comparer_documents.py"
+        ]
+      },
+      "Augustin": {
+        "role": "Frontend / Formulaires",
+        "focus": "Interface Utilisateur",
+        "current_sprint": "Sprint 2",
+        "priorities": [
+          {
+            "task": "Formulaires web collecte données",
+            "dev": "Augustin",
+            "effort": "5j",
+            "impact": 4,
+            "details": "Interface React/Vue pour questionnaire notaire interactif",
+            "priority": "P1",
+            "priority_label": "IMPORTANT",
+            "priority_color": "#f59e0b"
+          },
+          {
+            "task": "Dashboard analytics temps réel",
+            "dev": "Augustin",
+            "effort": "3j",
+            "impact": 3,
+            "details": "Graphiques d'utilisation, métriques génération",
+            "priority": "P2",
+            "priority_label": "NICE TO HAVE",
+            "priority_color": "#10b981"
+          }
+        ],
+        "checklist": [
+          {
+            "item": "Maquette formulaire collecte",
+            "done": false
+          },
+          {
+            "item": "Composants React/Vue questionnaire",
+            "done": false
+          },
+          {
+            "item": "Intégration API backend",
+            "done": false
+          },
+          {
+            "item": "Validation côté client",
+            "done": false
+          }
+        ],
+        "next_actions": [
+          "Designer wireframes formulaire notaire",
+          "Créer composants pour 100+ questions",
+          "Implémenter navigation conditionnelle"
+        ]
+      },
+      "Payoss": {
+        "role": "Backend / Scripts",
+        "focus": "Agent & API",
+        "current_sprint": "Sprint 1-2",
+        "priorities": [
+          {
+            "task": "Intégrer validation dans l'agent",
+            "dev": "Payoss",
+            "effort": "2j",
+            "impact": 4,
+            "details": "Ajouter _valider_donnees() dans executer() avant génération",
+            "priority": "P1",
+            "priority_label": "IMPORTANT",
+            "priority_color": "#f59e0b"
+          },
+          {
+            "task": "Support multi-parties (A & B → C)",
+            "dev": "Payoss",
+            "effort": "3j",
+            "impact": 4,
+            "details": "Parser 'Martin & Pierre → Dupont' avec PATTERN_FLECHE_MULTI",
+            "priority": "P1",
+            "priority_label": "IMPORTANT",
+            "priority_color": "#f59e0b"
+          },
+          {
+            "task": "Mode interactif agent",
+            "dev": "Payoss",
+            "effort": "3j",
+            "impact": 3,
+            "details": "Dialogue multi-tour avec questions/réponses",
+            "priority": "P2",
+            "priority_label": "NICE TO HAVE",
+            "priority_color": "#10b981"
+          }
+        ],
+        "checklist": [
+          {
+            "item": "Validation intégrée dans agent",
+            "done": false
+          },
+          {
+            "item": "Pattern multi-parties",
+            "done": false
+          },
+          {
+            "item": "Score confiance détaillé",
+            "done": false
+          },
+          {
+            "item": "API REST génération",
+            "done": false
+          }
+        ],
+        "next_actions": [
+          "Ajouter _valider_donnees() dans agent_autonome.py",
+          "Créer PATTERN_FLECHE_MULTI pour couples/indivisions",
+          "Implémenter ScoreConfianceDetaille dataclass"
+        ]
+      }
+    },
+    "sprints": [
+      {
+        "name": "Sprint 1",
+        "weeks": "Semaine 1-2",
+        "objective": "Template promesse ≥85%",
+        "status": "in_progress",
+        "tasks": [
+          {
+            "task": "Compléter template promesse",
+            "dev": "Tom",
+            "effort": "3j",
+            "status": "in_progress"
+          },
+          {
+            "task": "Créer partie_developpee_promesse.md",
+            "dev": "Tom",
+            "effort": "2j",
+            "status": "pending"
+          },
+          {
+            "task": "Intégrer validation agent",
+            "dev": "Payoss",
+            "effort": "2j",
+            "status": "pending"
+          },
+          {
+            "task": "Tests génération promesse",
+            "dev": "Payoss",
+            "effort": "1j",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "name": "Sprint 2",
+        "weeks": "Semaine 3-4",
+        "objective": "Agent gère 90% des cas",
+        "status": "pending",
+        "tasks": [
+          {
+            "task": "Support multi-parties",
+            "dev": "Payoss",
+            "effort": "3j",
+            "status": "pending"
+          },
+          {
+            "task": "Score confiance détaillé",
+            "dev": "Payoss",
+            "effort": "2j",
+            "status": "pending"
+          },
+          {
+            "task": "Formulaires web v1",
+            "dev": "Augustin",
+            "effort": "5j",
+            "status": "pending"
+          },
+          {
+            "task": "Documentation API",
+            "dev": "Tom",
+            "effort": "2j",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "name": "Sprint 3",
+        "weeks": "Semaine 5-6",
+        "objective": "UX excellente, <2s",
+        "status": "pending",
+        "tasks": [
+          {
+            "task": "Mode interactif",
+            "dev": "Payoss",
+            "effort": "3j",
+            "status": "pending"
+          },
+          {
+            "task": "Suggestions contextuelles",
+            "dev": "Tom",
+            "effort": "2j",
+            "status": "pending"
+          },
+          {
+            "task": "Dashboard analytics",
+            "dev": "Augustin",
+            "effort": "3j",
+            "status": "pending"
+          },
+          {
+            "task": "Optimisations perf",
+            "dev": "Payoss",
+            "effort": "2j",
+            "status": "pending"
+          }
+        ]
+      }
+    ],
+    "system_scores": {
+      "architecture": {
+        "score": 9,
+        "max": 10,
+        "label": "Architecture 3 couches"
+      },
+      "documentation": {
+        "score": 8,
+        "max": 10,
+        "label": "Documentation"
+      },
+      "templates_vente": {
+        "score": 8.5,
+        "max": 10,
+        "label": "Templates Vente"
+      },
+      "agent": {
+        "score": 7,
+        "max": 10,
+        "label": "Agent Autonome"
+      },
+      "pipeline": {
+        "score": 8,
+        "max": 10,
+        "label": "Pipeline Performance"
+      }
+    },
+    "weaknesses": [
+      {
+        "problem": "Template Promesse incomplet (60.9%)",
+        "impact": "Bloque production",
+        "priority": "P0"
+      },
+      {
+        "problem": "Agent sans validation intégrée",
+        "impact": "Erreurs silencieuses",
+        "priority": "P1"
+      },
+      {
+        "problem": "Pas de support multi-parties",
+        "impact": "Limite cas réels",
+        "priority": "P1"
+      },
+      {
+        "problem": "Pas de dialogue multi-tour",
+        "impact": "UX limitée",
+        "priority": "P2"
+      }
+    ],
+    "source_file": "docs/RECOMMANDATIONS_STRATEGIQUES.md",
+    "last_updated": "2026-01-27"
+  }
 }
