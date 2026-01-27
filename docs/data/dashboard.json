@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-27T20:04:01.305043",
+    "generated_at": "2026-01-27T20:25:06.056791",
     "version": "1.3.0",
     "dashboard_version": "2.5"
   },
@@ -11,16 +11,16 @@
     "scripts_count": 72,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 83
+    "commits": 89
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "e25dc71",
-      "message": "fix: add .nojekyll to disable Jekyll processing for GitHub Pages",
+      "hash": "de0fb0a",
+      "message": "Merge branch 'augustin/dev'",
       "date": "2026-01-27"
     },
-    "total_commits": 83,
+    "total_commits": 89,
     "team": [
       {
         "name": "AnandaTom",
@@ -28,7 +28,7 @@
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 13
+        "commits": 15
       },
       {
         "name": "Payoss",
@@ -36,7 +36,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 5
+        "commits": 7
       }
     ]
   },
@@ -530,6 +530,36 @@
   ],
   "activity": [
     {
+      "hash": "de0fb0a",
+      "author": "Augustin",
+      "date": "2026-01-27",
+      "message": "Merge branch 'augustin/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "38ff0c6",
+      "author": "Augustin",
+      "date": "2026-01-27",
+      "message": "système complet de questionnaires notariaux",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "9649c04",
+      "author": "github-actions[bot]",
+      "date": "2026-01-27",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "e25dc71",
       "author": "Tom",
       "date": "2026-01-27",
@@ -640,6 +670,26 @@
       "type_color": "green"
     },
     {
+      "hash": "35864bb",
+      "author": "Augustin",
+      "date": "2026-01-27",
+      "message": "Merge origin/master into augustin/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "7fc958d",
+      "author": "Augustin",
+      "date": "2026-01-26",
+      "message": "WIP before pull",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
       "hash": "7141a0a",
       "author": "Tom",
       "date": "2026-01-26",
@@ -678,56 +728,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "3bfe5e2",
-      "author": "Tom",
-      "date": "2026-01-24",
-      "message": "add missing sections to dashboard",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "fcbde73",
-      "author": "Tom",
-      "date": "2026-01-24",
-      "message": "redesign dashboard with modern mind-map visualization",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "89fa838",
-      "author": "Tom",
-      "date": "2026-01-24",
-      "message": "rename NotaireAI to Notomai + add security section to dashboard",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "10bab71",
-      "author": "Tom",
-      "date": "2026-01-24",
-      "message": "enhance dashboard architecture section with 3-layer visualization",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "b7698f6",
-      "author": "Payoss",
-      "date": "2026-01-24",
-      "message": "Merge pull request #14 from AnandaTom/payoss/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1323,7 +1323,7 @@
         "action": "Maintenir CLAUDE.md et CHANGELOG.md"
       }
     ],
-    "last_updated": "2026-01-27 20:04"
+    "last_updated": "2026-01-27 20:25"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1495,6 +1495,6 @@
     },
     "week": "27 Janvier - 2 Février 2026",
     "sprint": "Sprint 1",
-    "last_updated": "2026-01-27 20:04"
+    "last_updated": "2026-01-27 20:25"
   }
 }
