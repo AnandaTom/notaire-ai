@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-27T17:34:44.507770",
+    "generated_at": "2026-01-27T16:39:16.051953",
     "version": "1.3.0",
     "dashboard_version": "2.4"
   },
@@ -11,20 +11,20 @@
     "scripts_count": 72,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 72
+    "commits": 73
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "7141a0a",
-      "message": "chore: Fin de journee - 26/01/2026 20:45:52,37",
-      "date": "2026-01-26"
+      "hash": "8fd8ff3",
+      "message": "feat: add dynamic dashboard with auto-update",
+      "date": "2026-01-27"
     },
-    "total_commits": 72,
+    "total_commits": 73,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 55
+        "commits": 56
       },
       {
         "name": "augustinfrance-aico",
@@ -65,7 +65,7 @@
       "bookmarks": 116,
       "sections": 111,
       "lines": 1683,
-      "last_modified": "2026-01-19"
+      "last_modified": "2026-01-27"
     },
     {
       "file": "modificatif_edd.md",
@@ -75,12 +75,12 @@
       "bookmarks": 60,
       "sections": 13,
       "lines": 295,
-      "last_modified": "2026-01-19"
+      "last_modified": "2026-01-27"
     }
   ],
   "scripts": {
     "total": 72,
-    "total_lines": 40468,
+    "total_lines": 40022,
     "categories": {
       "utils": 46,
       "generation": 10,
@@ -92,52 +92,52 @@
       {
         "name": "exporter_docx.py",
         "lines": 1896,
-        "path": "execution\\exporter_docx.py"
-      },
-      {
-        "name": "agent_autonome.py",
-        "lines": 1863,
-        "path": "execution\\agent_autonome.py"
+        "path": "execution/exporter_docx.py"
       },
       {
         "name": "exporter_docx_fidele.py",
         "lines": 1655,
-        "path": "execution\\archive_exporter\\exporter_docx_fidele.py"
-      },
-      {
-        "name": "exporter_docx_28pages.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages.py"
-      },
-      {
-        "name": "exporter_docx_28pages_final.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages_final.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v2.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v3.py",
-        "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_28pages_v3.py"
+        "path": "execution/archive_exporter/exporter_docx_fidele.py"
       },
       {
         "name": "exporter_docx_v2.py",
         "lines": 1651,
-        "path": "execution\\archive_exporter\\exporter_docx_v2.py"
+        "path": "execution/archive_exporter/exporter_docx_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v2.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v3.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages_v3.py"
+      },
+      {
+        "name": "exporter_docx_28pages.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages.py"
+      },
+      {
+        "name": "exporter_docx_28pages_final.py",
+        "lines": 1651,
+        "path": "execution/archive_exporter/exporter_docx_28pages_final.py"
+      },
+      {
+        "name": "agent_autonome.py",
+        "lines": 1417,
+        "path": "execution/agent_autonome.py"
       },
       {
         "name": "orchestrateur_notaire.py",
         "lines": 1380,
-        "path": "execution\\orchestrateur_notaire.py"
+        "path": "execution/orchestrateur_notaire.py"
       },
       {
         "name": "generer_donnees_test.py",
         "lines": 1049,
-        "path": "execution\\generer_donnees_test.py"
+        "path": "execution/generer_donnees_test.py"
       }
     ]
   },
@@ -146,51 +146,11 @@
     "total_variables": 173,
     "schemas": [
       {
-        "name": "annexes_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "questions_donation_partage.json",
-        "count": 6
-      },
-      {
-        "name": "questions_modificatif_edd.json",
-        "count": 2
-      },
-      {
         "name": "questions_notaire.json",
         "count": 6
       },
       {
-        "name": "questions_promesse_vente.json",
-        "count": 3
-      },
-      {
-        "name": "questions_reglement_copropriete.json",
-        "count": 2
-      },
-      {
-        "name": "sections_catalogue.json",
-        "count": 7
-      },
-      {
-        "name": "variables_donation_partage.json",
-        "count": 18
-      },
-      {
-        "name": "variables_modificatif_edd.json",
-        "count": 12
-      },
-      {
-        "name": "variables_promesse.json",
-        "count": 24
-      },
-      {
-        "name": "variables_promesse_vente.json",
+        "name": "variables_vente.json",
         "count": 22
       },
       {
@@ -198,49 +158,88 @@
         "count": 17
       },
       {
+        "name": "sections_catalogue.json",
+        "count": 7
+      },
+      {
+        "name": "questions_modificatif_edd.json",
+        "count": 2
+      },
+      {
+        "name": "questions_donation_partage.json",
+        "count": 6
+      },
+      {
+        "name": "questions_promesse_vente.json",
+        "count": 3
+      },
+      {
+        "name": "annexes_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
         "name": "variables_titre_propriete.json",
         "count": 16
       },
       {
-        "name": "variables_vente.json",
+        "name": "variables_promesse_vente.json",
         "count": 22
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "variables_modificatif_edd.json",
+        "count": 12
+      },
+      {
+        "name": "variables_donation_partage.json",
+        "count": 18
       }
     ]
   },
   "docs": {
     "legal": [
-      "BASES_LEGALES.md",
       "CGU_TEMPLATE.md",
-      "OBLIGATIONS_CSN.md",
       "POLITIQUE_CONFIDENTIALITE.md",
+      "BASES_LEGALES.md",
+      "OBLIGATIONS_CSN.md",
       "REGISTRE_TRAITEMENTS.md"
     ],
     "directives": [
-      "ajouter_template.md",
-      "apprentissage_continu.md",
-      "bonnes_pratiques_templates.md",
-      "collecte_informations.md",
-      "creer_acte.md",
-      "creer_donation_partage.md",
-      "creer_modificatif_edd.md",
-      "creer_promesse_vente.md",
-      "creer_reglement_copropriete.md",
-      "flexibilite_systeme.md",
-      "formatage_docx.md",
-      "gestion_flexible.md",
-      "integration_titre_propriete.md",
-      "lecons_apprises.md",
-      "mise_a_jour_statuts_donation.md",
-      "modifier_acte.md",
-      "pipeline_generation.md",
-      "README.md",
       "validation_donnees.md",
-      "workflow_agent_optimise.md",
+      "modifier_acte.md",
+      "gestion_flexible.md",
+      "collecte_informations.md",
+      "mise_a_jour_statuts_donation.md",
+      "creer_donation_partage.md",
+      "integration_titre_propriete.md",
+      "README.md",
+      "bonnes_pratiques_templates.md",
+      "apprentissage_continu.md",
       "workflow_notaire.md",
-      "workflow_titre_promesse_vente.md"
+      "pipeline_generation.md",
+      "lecons_apprises.md",
+      "formatage_docx.md",
+      "creer_modificatif_edd.md",
+      "creer_acte.md",
+      "workflow_titre_promesse_vente.md",
+      "ajouter_template.md",
+      "flexibilite_systeme.md",
+      "creer_reglement_copropriete.md",
+      "creer_promesse_vente.md"
     ],
     "total_legal": 5,
-    "total_directives": 22
+    "total_directives": 21
   },
   "tasks": {
     "todo": [
@@ -261,7 +260,6 @@
       "Pipeline génération rapide",
       "Documentation RGPD",
       "Template CGU créé",
-      "Intégration Supabase MCP",
       "Historique Supabase",
       "Dashboard v2.3",
       "Comparaison conformité",
