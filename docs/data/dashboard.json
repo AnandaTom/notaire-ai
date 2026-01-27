@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-27T17:23:07.716223",
+    "generated_at": "2026-01-27T18:41:13.309051",
     "version": "1.3.0",
     "dashboard_version": "2.5"
   },
@@ -8,23 +8,23 @@
     "templates_count": 4,
     "templates_prod": 3,
     "avg_conformity": 80.8,
-    "scripts_count": 72,
+    "scripts_count": 74,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 77
+    "commits": 78
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "103c919",
-      "message": "feat: add strategic recommendations to dashboard",
+      "hash": "167dc96",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-01-27"
     },
-    "total_commits": 77,
+    "total_commits": 78,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 58
+        "commits": 60
       },
       {
         "name": "augustinfrance-aico",
@@ -36,7 +36,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 2
+        "commits": 3
       }
     ]
   },
@@ -69,7 +69,7 @@
       "bookmarks": 116,
       "sections": 111,
       "lines": 1683,
-      "last_modified": "2026-01-27"
+      "last_modified": "2026-01-19"
     },
     {
       "file": "modificatif_edd.md",
@@ -79,14 +79,14 @@
       "bookmarks": 60,
       "sections": 13,
       "lines": 295,
-      "last_modified": "2026-01-27"
+      "last_modified": "2026-01-19"
     }
   ],
   "scripts": {
-    "total": 72,
-    "total_lines": 40386,
+    "total": 74,
+    "total_lines": 42096,
     "categories": {
-      "utils": 46,
+      "utils": 48,
       "generation": 10,
       "export": 12,
       "tests": 3,
@@ -94,54 +94,54 @@
     },
     "scripts": [
       {
+        "name": "agent_autonome.py",
+        "lines": 1901,
+        "path": "execution\\agent_autonome.py"
+      },
+      {
         "name": "exporter_docx.py",
         "lines": 1896,
-        "path": "execution/exporter_docx.py"
+        "path": "execution\\exporter_docx.py"
       },
       {
         "name": "exporter_docx_fidele.py",
         "lines": 1655,
-        "path": "execution/archive_exporter/exporter_docx_fidele.py"
-      },
-      {
-        "name": "exporter_docx_v2.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v2.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_v2.py"
-      },
-      {
-        "name": "exporter_docx_28pages_v3.py",
-        "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_v3.py"
+        "path": "execution\\archive_exporter\\exporter_docx_fidele.py"
       },
       {
         "name": "exporter_docx_28pages.py",
         "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages.py"
+        "path": "execution\\archive_exporter\\exporter_docx_28pages.py"
       },
       {
         "name": "exporter_docx_28pages_final.py",
         "lines": 1651,
-        "path": "execution/archive_exporter/exporter_docx_28pages_final.py"
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_final.py"
       },
       {
-        "name": "agent_autonome.py",
-        "lines": 1417,
-        "path": "execution/agent_autonome.py"
+        "name": "exporter_docx_28pages_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v2.py"
+      },
+      {
+        "name": "exporter_docx_28pages_v3.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_28pages_v3.py"
+      },
+      {
+        "name": "exporter_docx_v2.py",
+        "lines": 1651,
+        "path": "execution\\archive_exporter\\exporter_docx_v2.py"
       },
       {
         "name": "orchestrateur_notaire.py",
         "lines": 1380,
-        "path": "execution/orchestrateur_notaire.py"
+        "path": "execution\\orchestrateur_notaire.py"
       },
       {
         "name": "generer_donnees_test.py",
         "lines": 1049,
-        "path": "execution/generer_donnees_test.py"
+        "path": "execution\\generer_donnees_test.py"
       }
     ]
   },
@@ -150,27 +150,23 @@
     "total_variables": 173,
     "schemas": [
       {
-        "name": "questions_notaire.json",
+        "name": "annexes_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "questions_donation_partage.json",
         "count": 6
-      },
-      {
-        "name": "variables_vente.json",
-        "count": 22
-      },
-      {
-        "name": "variables_reglement_copropriete.json",
-        "count": 17
-      },
-      {
-        "name": "sections_catalogue.json",
-        "count": 7
       },
       {
         "name": "questions_modificatif_edd.json",
         "count": 2
       },
       {
-        "name": "questions_donation_partage.json",
+        "name": "questions_notaire.json",
         "count": 6
       },
       {
@@ -178,72 +174,77 @@
         "count": 3
       },
       {
-        "name": "annexes_catalogue.json",
-        "count": 8
-      },
-      {
         "name": "questions_reglement_copropriete.json",
         "count": 2
       },
       {
-        "name": "variables_promesse.json",
-        "count": 24
+        "name": "sections_catalogue.json",
+        "count": 7
       },
       {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
-        "name": "variables_promesse_vente.json",
-        "count": 22
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
+        "name": "variables_donation_partage.json",
+        "count": 18
       },
       {
         "name": "variables_modificatif_edd.json",
         "count": 12
       },
       {
-        "name": "variables_donation_partage.json",
-        "count": 18
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_promesse_vente.json",
+        "count": 22
+      },
+      {
+        "name": "variables_reglement_copropriete.json",
+        "count": 17
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
+        "name": "variables_vente.json",
+        "count": 22
       }
     ]
   },
   "docs": {
     "legal": [
-      "CGU_TEMPLATE.md",
-      "POLITIQUE_CONFIDENTIALITE.md",
       "BASES_LEGALES.md",
+      "CGU_TEMPLATE.md",
       "OBLIGATIONS_CSN.md",
+      "POLITIQUE_CONFIDENTIALITE.md",
       "REGISTRE_TRAITEMENTS.md"
     ],
     "directives": [
-      "validation_donnees.md",
-      "modifier_acte.md",
-      "gestion_flexible.md",
-      "collecte_informations.md",
-      "mise_a_jour_statuts_donation.md",
-      "creer_donation_partage.md",
-      "integration_titre_propriete.md",
-      "README.md",
-      "bonnes_pratiques_templates.md",
-      "apprentissage_continu.md",
-      "workflow_notaire.md",
-      "pipeline_generation.md",
-      "lecons_apprises.md",
-      "formatage_docx.md",
-      "creer_modificatif_edd.md",
-      "creer_acte.md",
-      "workflow_titre_promesse_vente.md",
       "ajouter_template.md",
-      "flexibilite_systeme.md",
+      "apprentissage_continu.md",
+      "bonnes_pratiques_templates.md",
+      "collecte_informations.md",
+      "creer_acte.md",
+      "creer_donation_partage.md",
+      "creer_modificatif_edd.md",
+      "creer_promesse_vente.md",
       "creer_reglement_copropriete.md",
-      "creer_promesse_vente.md"
+      "flexibilite_systeme.md",
+      "formatage_docx.md",
+      "gestion_flexible.md",
+      "integration_titre_propriete.md",
+      "lecons_apprises.md",
+      "mise_a_jour_statuts_donation.md",
+      "modifier_acte.md",
+      "pipeline_generation.md",
+      "README.md",
+      "validation_donnees.md",
+      "workflow_agent_optimise.md",
+      "workflow_notaire.md",
+      "workflow_titre_promesse_vente.md"
     ],
     "total_legal": 5,
-    "total_directives": 21
+    "total_directives": 22
   },
   "tasks": {
     "todo": [
@@ -315,6 +316,11 @@
         "task": "Template CGU créé",
         "dev": "Tom",
         "path": "docs/legal/CGU_TEMPLATE.md"
+      },
+      {
+        "task": "Intégration Supabase MCP",
+        "dev": "Tom",
+        "path": ".mcp.json"
       },
       {
         "task": "Historique Supabase",
@@ -530,6 +536,16 @@
   ],
   "activity": [
     {
+      "hash": "167dc96",
+      "author": "github-actions[bot]",
+      "date": "2026-01-27",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "103c919",
       "author": "Tom",
       "date": "2026-01-27",
@@ -714,16 +730,6 @@
       "author": "Payoss",
       "date": "2026-01-24",
       "message": "Merge remote-tracking branch 'origin/master' into payoss/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "5eea594",
-      "author": "Payoss",
-      "date": "2026-01-24",
-      "message": "24/01",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1093,5 +1099,236 @@
     ],
     "source_file": "docs/RECOMMANDATIONS_STRATEGIQUES.md",
     "last_updated": "2026-01-27"
+  },
+  "overview": {
+    "overall_score": 65,
+    "phase": {
+      "name": "Beta",
+      "color": "#06b6d4",
+      "icon": "🔬"
+    },
+    "scores": {
+      "tech": {
+        "score": 95,
+        "label": "Technique",
+        "icon": "⚙️"
+      },
+      "business": {
+        "score": 30,
+        "label": "Business",
+        "icon": "💼"
+      },
+      "legal": {
+        "score": 60,
+        "label": "Juridique",
+        "icon": "⚖️"
+      }
+    },
+    "milestones": [
+      {
+        "name": "Architecture 3 couches",
+        "status": "done",
+        "date": "2025-12",
+        "description": "Directives + Orchestration + Exécution"
+      },
+      {
+        "name": "Templates Production",
+        "status": "in_progress",
+        "progress": 75,
+        "description": "3/4 templates ≥80% conformité"
+      },
+      {
+        "name": "Premier client payant",
+        "status": "blocked",
+        "blocker": "Structure juridique requise",
+        "description": "Objectif Q1 2026"
+      },
+      {
+        "name": "10 clients actifs",
+        "status": "pending",
+        "description": "Objectif Q2 2026"
+      }
+    ],
+    "okrs": [
+      {
+        "objective": "Tous les templates en production",
+        "key_results": [
+          {
+            "kr": "Template promesse ≥85%",
+            "current": 60.9,
+            "target": 85,
+            "unit": "%"
+          },
+          {
+            "kr": "Tests e2e couvrant 90% des cas",
+            "current": 60,
+            "target": 90,
+            "unit": "%"
+          },
+          {
+            "kr": "Temps génération <3s",
+            "current": 5.7,
+            "target": 3,
+            "unit": "s",
+            "lower_is_better": true
+          }
+        ]
+      },
+      {
+        "objective": "Lancement commercial",
+        "key_results": [
+          {
+            "kr": "Structure juridique créée",
+            "current": 0,
+            "target": 1,
+            "unit": "done"
+          },
+          {
+            "kr": "RC Pro souscrite",
+            "current": 0,
+            "target": 1,
+            "unit": "done"
+          },
+          {
+            "kr": "CGU validées avocat",
+            "current": 0,
+            "target": 1,
+            "unit": "done"
+          }
+        ]
+      },
+      {
+        "objective": "Acquisition premiers clients",
+        "key_results": [
+          {
+            "kr": "Démos réalisées",
+            "current": 0,
+            "target": 5,
+            "unit": ""
+          },
+          {
+            "kr": "Clients signés",
+            "current": 0,
+            "target": 2,
+            "unit": ""
+          },
+          {
+            "kr": "MRR",
+            "current": 0,
+            "target": 500,
+            "unit": "€"
+          }
+        ]
+      }
+    ],
+    "current_sprint": {
+      "name": "Sprint 1",
+      "start_date": "2026-01-27",
+      "end_date": "2026-02-09",
+      "days_remaining": 13,
+      "progress": 25,
+      "velocity_target": 20,
+      "velocity_current": 5,
+      "burndown": [
+        {
+          "day": 1,
+          "remaining": 20,
+          "ideal": 20
+        },
+        {
+          "day": 2,
+          "remaining": 18,
+          "ideal": 18.5
+        },
+        {
+          "day": 3,
+          "remaining": 15,
+          "ideal": 17
+        }
+      ],
+      "blockers": [
+        {
+          "issue": "Template promesse incomplet",
+          "assigned": "Tom",
+          "severity": "high"
+        }
+      ],
+      "risks": [
+        {
+          "risk": "Délai structure juridique",
+          "probability": "high",
+          "impact": "Bloque facturation"
+        }
+      ]
+    },
+    "remaining_work": {
+      "critical": [
+        {
+          "task": "Compléter template promesse",
+          "effort": "3j",
+          "assigned": "Tom"
+        },
+        {
+          "task": "Créer structure juridique",
+          "effort": "2j",
+          "assigned": null
+        }
+      ],
+      "important": [
+        {
+          "task": "Intégrer validation dans agent",
+          "effort": "2j",
+          "assigned": "Payoss"
+        },
+        {
+          "task": "Souscrire RC Pro",
+          "effort": "1j",
+          "assigned": null
+        },
+        {
+          "task": "Formulaires web v1",
+          "effort": "5j",
+          "assigned": "Augustin"
+        }
+      ],
+      "nice_to_have": [
+        {
+          "task": "Mode interactif agent",
+          "effort": "3j",
+          "assigned": "Payoss"
+        },
+        {
+          "task": "Dashboard analytics",
+          "effort": "3j",
+          "assigned": "Augustin"
+        },
+        {
+          "task": "Label ETIK",
+          "effort": "60j",
+          "assigned": null
+        }
+      ]
+    },
+    "suggestions": [
+      {
+        "type": "business",
+        "priority": "high",
+        "message": "Structure juridique manquante - Bloque la facturation",
+        "action": "Créer SASU via Legalstart ou Infogreffe"
+      },
+      {
+        "type": "growth",
+        "priority": "medium",
+        "message": "Aucun client actif - Démarrer les démos",
+        "action": "Contacter 3 notaires pour démo cette semaine"
+      },
+      {
+        "type": "quick_win",
+        "priority": "low",
+        "message": "Documentation à jour - Continuer sur cette lancée",
+        "action": "Maintenir CLAUDE.md et CHANGELOG.md"
+      }
+    ],
+    "last_updated": "2026-01-27 18:41"
   }
 }

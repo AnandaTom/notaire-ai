@@ -1698,6 +1698,461 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.5; transform: scale(1.2); }
         }
+
+        /* ========== OVERVIEW SECTION ========== */
+        .overview-section {
+            margin-bottom: 3rem;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Health Gauge */
+        .health-gauge {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .health-gauge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .gauge-circle {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .gauge-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: var(--border-subtle);
+            stroke-width: 12;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        .gauge-score {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .gauge-score .value {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .gauge-score .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .pillar-scores {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .pillar-score {
+            text-align: center;
+        }
+
+        .pillar-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .pillar-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .pillar-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Sprint Card */
+        .sprint-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        .sprint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .sprint-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sprint-title h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .sprint-dates {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .days-remaining {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .sprint-progress {
+            margin-bottom: 1.5rem;
+        }
+
+        .sprint-progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sprint-progress-bar {
+            height: 12px;
+            background: var(--border-subtle);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .sprint-progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-cyan));
+            transition: width 0.5s ease;
+        }
+
+        .sprint-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sprint-metric {
+            background: rgba(255,255,255,0.02);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .sprint-metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .sprint-metric-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .sprint-blockers {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .blocker-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ef4444;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .blocker-item {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* OKRs Section */
+        .okrs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .okr-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .okr-objective {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .kr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .kr-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .kr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .kr-text {
+            color: var(--text-secondary);
+        }
+
+        .kr-progress-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .kr-progress-bar {
+            height: 6px;
+            background: var(--border-subtle);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .kr-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .kr-progress-fill.good { background: var(--accent-success); }
+        .kr-progress-fill.warning { background: var(--accent-warning); }
+        .kr-progress-fill.bad { background: #ef4444; }
+
+        /* Remaining Work */
+        .remaining-work {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .remaining-work {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .work-column {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.25rem;
+        }
+
+        .work-column.critical { border-top: 3px solid #ef4444; }
+        .work-column.important { border-top: 3px solid #f59e0b; }
+        .work-column.nice { border-top: 3px solid #10b981; }
+
+        .work-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .work-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.85rem;
+        }
+
+        .work-item:last-child {
+            border-bottom: none;
+        }
+
+        .work-effort {
+            font-size: 0.7rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* Suggestions */
+        .suggestions-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .suggestion-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .suggestion-card.high { border-left: 3px solid #ef4444; }
+        .suggestion-card.medium { border-left: 3px solid #f59e0b; }
+        .suggestion-card.low { border-left: 3px solid #10b981; }
+
+        .suggestion-icon {
+            font-size: 1.5rem;
+        }
+
+        .suggestion-content {
+            flex: 1;
+        }
+
+        .suggestion-message {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .suggestion-action {
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Milestones */
+        .milestones-track {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .milestone {
+            min-width: 200px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .milestone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .milestone.done::before { background: var(--accent-success); }
+        .milestone.in_progress::before { background: var(--accent-cyan); }
+        .milestone.blocked::before { background: #ef4444; }
+        .milestone.pending::before { background: var(--border-subtle); }
+
+        .milestone-status {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .milestone-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .milestone-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -1872,6 +2327,158 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- ========== PROJECT OVERVIEW SECTION ========== -->
+        <section class="overview-section">
+            <h2 class="section-title">Vue d'Ensemble du Projet</h2>
+
+            <!-- Health Gauge + Sprint Card -->
+            <div class="overview-grid">
+                <!-- Project Health Gauge -->
+                <div class="health-gauge">
+                    <div class="phase-badge" id="phaseBadge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                        <span>⚙️</span> <span id="phaseName">Alpha</span>
+                    </div>
+
+                    <div class="gauge-circle">
+                        <svg width="160" height="160" viewBox="0 0 160 160">
+                            <circle class="gauge-bg" cx="80" cy="80" r="70"></circle>
+                            <circle class="gauge-fill" id="gaugeFill" cx="80" cy="80" r="70"
+                                stroke="url(#gaugeGradient)"
+                                stroke-dasharray="440"
+                                stroke-dashoffset="220">
+                            </circle>
+                            <defs>
+                                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#6366f1"/>
+                                    <stop offset="100%" stop-color="#06b6d4"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="gauge-score">
+                            <div class="value" id="overallScore">--</div>
+                            <div class="label">Sante Projet</div>
+                        </div>
+                    </div>
+
+                    <div class="pillar-scores" id="pillarScores">
+                        <div class="pillar-score">
+                            <div class="pillar-icon">⚙️</div>
+                            <div class="pillar-value" id="techScore">--</div>
+                            <div class="pillar-label">Technique</div>
+                        </div>
+                        <div class="pillar-score">
+                            <div class="pillar-icon">💼</div>
+                            <div class="pillar-value" id="businessScore">--</div>
+                            <div class="pillar-label">Business</div>
+                        </div>
+                        <div class="pillar-score">
+                            <div class="pillar-icon">⚖️</div>
+                            <div class="pillar-value" id="legalScore">--</div>
+                            <div class="pillar-label">Juridique</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Sprint Card -->
+                <div class="sprint-card">
+                    <div class="sprint-header">
+                        <div class="sprint-title">
+                            <span style="font-size: 1.5rem;">🏃</span>
+                            <div>
+                                <h3 id="sprintName">Sprint 1</h3>
+                                <div class="sprint-dates" id="sprintDates">27 Jan - 09 Fev 2026</div>
+                            </div>
+                        </div>
+                        <div class="days-remaining" id="daysRemaining">13 jours</div>
+                    </div>
+
+                    <div class="sprint-progress">
+                        <div class="sprint-progress-header">
+                            <span>Progression</span>
+                            <span id="sprintProgressText">25%</span>
+                        </div>
+                        <div class="sprint-progress-bar">
+                            <div class="sprint-progress-fill" id="sprintProgressFill" style="width: 25%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="sprint-metrics">
+                        <div class="sprint-metric">
+                            <div class="sprint-metric-value" id="velocityCurrent">5</div>
+                            <div class="sprint-metric-label">Points realises</div>
+                        </div>
+                        <div class="sprint-metric">
+                            <div class="sprint-metric-value" id="velocityTarget">20</div>
+                            <div class="sprint-metric-label">Points cible</div>
+                        </div>
+                        <div class="sprint-metric">
+                            <div class="sprint-metric-value" id="blockerCount">1</div>
+                            <div class="sprint-metric-label">Bloqueurs</div>
+                        </div>
+                    </div>
+
+                    <div class="sprint-blockers" id="sprintBlockers">
+                        <div class="blocker-title">🚨 Bloqueurs actifs</div>
+                        <div class="blocker-item" id="blockersList">
+                            <span>Template promesse incomplet</span>
+                            <span class="dev-badge" style="background: #6366f1;">Tom</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestones Track -->
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                🎯 Jalons du Projet
+            </h3>
+            <div class="milestones-track" id="milestonesTrack">
+                <div class="milestone done">
+                    <div class="milestone-status">✅</div>
+                    <div class="milestone-name">Architecture 3 couches</div>
+                    <div class="milestone-desc">Directives + Orchestration + Execution</div>
+                </div>
+                <div class="milestone in_progress">
+                    <div class="milestone-status">🔄</div>
+                    <div class="milestone-name">Templates Production</div>
+                    <div class="milestone-desc">3/4 templates ≥80% conformite</div>
+                </div>
+                <div class="milestone blocked">
+                    <div class="milestone-status">🚫</div>
+                    <div class="milestone-name">Premier client payant</div>
+                    <div class="milestone-desc">Structure juridique requise</div>
+                </div>
+                <div class="milestone pending">
+                    <div class="milestone-status">⏳</div>
+                    <div class="milestone-name">10 clients actifs</div>
+                    <div class="milestone-desc">Objectif Q2 2026</div>
+                </div>
+            </div>
+
+            <!-- OKRs -->
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                📊 OKRs du Trimestre
+            </h3>
+            <div class="okrs-grid" id="okrsGrid">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Remaining Work -->
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                📋 Ce qu'il reste a faire
+            </h3>
+            <div class="remaining-work" id="remainingWork">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Suggestions -->
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                💡 Suggestions
+            </h3>
+            <div class="suggestions-list" id="suggestionsList">
+                <!-- Populated by JS -->
             </div>
         </section>
 
@@ -2677,10 +3284,174 @@
             if (footer) {
                 const date = meta.generated_at ? meta.generated_at.split('T')[0] : 'N/A';
                 footer.innerHTML = `
-                    Notomai v${meta.version || '1.3.0'} | Dashboard v${meta.dashboard_version || '2.4'} |
+                    Notomai v${meta.version || '1.3.0'} | Dashboard v${meta.dashboard_version || '2.5'} |
                     <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
                     Mis a jour: <span id="lastUpdate">${date}</span>
                 `;
+            }
+        }
+
+        // Update overview section
+        function updateOverview(overview) {
+            if (!overview) return;
+
+            const devColors = {
+                'Tom': '#6366f1',
+                'Augustin': '#06b6d4',
+                'Payoss': '#10b981'
+            };
+
+            // Update overall score and gauge
+            const overallScore = document.getElementById('overallScore');
+            if (overallScore) overallScore.textContent = overview.overall_score;
+
+            // Update gauge fill (circumference = 2 * PI * 70 = 440)
+            const gaugeFill = document.getElementById('gaugeFill');
+            if (gaugeFill) {
+                const offset = 440 - (440 * overview.overall_score / 100);
+                gaugeFill.style.strokeDashoffset = offset;
+            }
+
+            // Update phase badge
+            const phaseBadge = document.getElementById('phaseBadge');
+            const phaseName = document.getElementById('phaseName');
+            if (phaseBadge && overview.phase) {
+                phaseBadge.style.background = `${overview.phase.color}22`;
+                phaseBadge.style.color = overview.phase.color;
+                phaseBadge.innerHTML = `<span>${overview.phase.icon}</span> <span>${overview.phase.name}</span>`;
+            }
+
+            // Update pillar scores
+            if (overview.scores) {
+                const techScore = document.getElementById('techScore');
+                const businessScore = document.getElementById('businessScore');
+                const legalScore = document.getElementById('legalScore');
+                if (techScore) techScore.textContent = overview.scores.tech?.score || '--';
+                if (businessScore) businessScore.textContent = overview.scores.business?.score || '--';
+                if (legalScore) legalScore.textContent = overview.scores.legal?.score || '--';
+            }
+
+            // Update current sprint
+            if (overview.current_sprint) {
+                const s = overview.current_sprint;
+                const sprintName = document.getElementById('sprintName');
+                const daysRemaining = document.getElementById('daysRemaining');
+                const sprintProgressText = document.getElementById('sprintProgressText');
+                const sprintProgressFill = document.getElementById('sprintProgressFill');
+                const velocityCurrent = document.getElementById('velocityCurrent');
+                const velocityTarget = document.getElementById('velocityTarget');
+                const blockerCount = document.getElementById('blockerCount');
+
+                if (sprintName) sprintName.textContent = s.name;
+                if (daysRemaining) daysRemaining.textContent = `${s.days_remaining} jours`;
+                if (sprintProgressText) sprintProgressText.textContent = `${s.progress}%`;
+                if (sprintProgressFill) sprintProgressFill.style.width = `${s.progress}%`;
+                if (velocityCurrent) velocityCurrent.textContent = s.velocity_current;
+                if (velocityTarget) velocityTarget.textContent = s.velocity_target;
+                if (blockerCount) blockerCount.textContent = s.blockers?.length || 0;
+
+                // Update blockers
+                const blockersList = document.getElementById('blockersList');
+                if (blockersList && s.blockers) {
+                    blockersList.innerHTML = s.blockers.map(b => `
+                        <div class="blocker-item">
+                            <span>${b.issue}</span>
+                            <span class="dev-badge" style="background: ${devColors[b.assigned] || '#666'};">${b.assigned}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Update milestones
+            const milestonesTrack = document.getElementById('milestonesTrack');
+            if (milestonesTrack && overview.milestones) {
+                const statusIcons = {done: '✅', in_progress: '🔄', blocked: '🚫', pending: '⏳'};
+                milestonesTrack.innerHTML = overview.milestones.map(m => `
+                    <div class="milestone ${m.status}">
+                        <div class="milestone-status">${statusIcons[m.status] || '⏳'}</div>
+                        <div class="milestone-name">${m.name}</div>
+                        <div class="milestone-desc">${m.description}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Update OKRs
+            const okrsGrid = document.getElementById('okrsGrid');
+            if (okrsGrid && overview.okrs) {
+                okrsGrid.innerHTML = overview.okrs.map(okr => `
+                    <div class="okr-card">
+                        <div class="okr-objective">🎯 ${okr.objective}</div>
+                        <div class="kr-list">
+                            ${okr.key_results.map(kr => {
+                                const progress = kr.lower_is_better
+                                    ? Math.max(0, Math.min(100, (1 - (kr.current / kr.target)) * 100 + 100))
+                                    : Math.min(100, (kr.current / kr.target) * 100);
+                                const progressClass = progress >= 70 ? 'good' : progress >= 40 ? 'warning' : 'bad';
+                                return `
+                                    <div class="kr-item">
+                                        <div class="kr-header">
+                                            <span class="kr-text">${kr.kr}</span>
+                                            <span class="kr-progress-text">${kr.current}${kr.unit} / ${kr.target}${kr.unit}</span>
+                                        </div>
+                                        <div class="kr-progress-bar">
+                                            <div class="kr-progress-fill ${progressClass}" style="width: ${progress}%;"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update remaining work
+            const remainingWork = document.getElementById('remainingWork');
+            if (remainingWork && overview.remaining_work) {
+                const work = overview.remaining_work;
+                remainingWork.innerHTML = `
+                    <div class="work-column critical">
+                        <div class="work-header">🔴 Critique</div>
+                        ${(work.critical || []).map(w => `
+                            <div class="work-item">
+                                <span>${w.task}</span>
+                                <span class="work-effort">${w.effort}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="work-column important">
+                        <div class="work-header">🟡 Important</div>
+                        ${(work.important || []).map(w => `
+                            <div class="work-item">
+                                <span>${w.task}</span>
+                                <span class="work-effort">${w.effort}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="work-column nice">
+                        <div class="work-header">🟢 Nice to Have</div>
+                        ${(work.nice_to_have || []).map(w => `
+                            <div class="work-item">
+                                <span>${w.task}</span>
+                                <span class="work-effort">${w.effort}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Update suggestions
+            const suggestionsList = document.getElementById('suggestionsList');
+            if (suggestionsList && overview.suggestions) {
+                const typeIcons = {tech: '⚙️', business: '💼', growth: '📈', quick_win: '⚡'};
+                suggestionsList.innerHTML = overview.suggestions.map(s => `
+                    <div class="suggestion-card ${s.priority}">
+                        <div class="suggestion-icon">${typeIcons[s.type] || '💡'}</div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-message">${s.message}</div>
+                            <div class="suggestion-action">${s.action}</div>
+                        </div>
+                    </div>
+                `).join('');
             }
         }
 
@@ -2694,6 +3465,7 @@
             }
 
             updateHeaderStats(data);
+            updateOverview(data.overview);
             updateTemplates(data.templates);
             updateTeam(data.team);
             updateCapabilities(data.capabilities);

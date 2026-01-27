@@ -679,6 +679,177 @@ def get_recommendations() -> dict:
     }
 
 
+def get_project_overview() -> dict:
+    """Génère une vue d'ensemble complète du projet."""
+
+    # Calculer le score de santé projet
+    templates = analyze_templates()
+    prod_templates = sum(1 for t in templates if t["status"] == "prod")
+    avg_conformity = sum(t["conformity"] for t in templates) / len(templates) if templates else 0
+
+    # Scores par domaine (0-100)
+    tech_score = min(100, int(avg_conformity + (prod_templates / 4 * 20)))
+    business_score = 30  # Pas encore de clients
+    legal_score = 60  # RGPD fait, structure juridique manquante
+
+    overall_score = int((tech_score * 0.4 + business_score * 0.3 + legal_score * 0.3))
+
+    # Déterminer la phase
+    if overall_score >= 80:
+        phase = {"name": "Production", "color": "#10b981", "icon": "🚀"}
+    elif overall_score >= 60:
+        phase = {"name": "Beta", "color": "#06b6d4", "icon": "🔬"}
+    elif overall_score >= 40:
+        phase = {"name": "Alpha", "color": "#f59e0b", "icon": "⚙️"}
+    else:
+        phase = {"name": "MVP", "color": "#ef4444", "icon": "🔨"}
+
+    # Milestones
+    milestones = [
+        {
+            "name": "Architecture 3 couches",
+            "status": "done",
+            "date": "2025-12",
+            "description": "Directives + Orchestration + Exécution"
+        },
+        {
+            "name": "Templates Production",
+            "status": "in_progress",
+            "progress": int(prod_templates / 4 * 100),
+            "description": f"{prod_templates}/4 templates ≥80% conformité"
+        },
+        {
+            "name": "Premier client payant",
+            "status": "blocked",
+            "blocker": "Structure juridique requise",
+            "description": "Objectif Q1 2026"
+        },
+        {
+            "name": "10 clients actifs",
+            "status": "pending",
+            "description": "Objectif Q2 2026"
+        }
+    ]
+
+    # OKRs du trimestre
+    okrs = [
+        {
+            "objective": "Tous les templates en production",
+            "key_results": [
+                {"kr": "Template promesse ≥85%", "current": 60.9, "target": 85, "unit": "%"},
+                {"kr": "Tests e2e couvrant 90% des cas", "current": 60, "target": 90, "unit": "%"},
+                {"kr": "Temps génération <3s", "current": 5.7, "target": 3, "unit": "s", "lower_is_better": True}
+            ]
+        },
+        {
+            "objective": "Lancement commercial",
+            "key_results": [
+                {"kr": "Structure juridique créée", "current": 0, "target": 1, "unit": "done"},
+                {"kr": "RC Pro souscrite", "current": 0, "target": 1, "unit": "done"},
+                {"kr": "CGU validées avocat", "current": 0, "target": 1, "unit": "done"}
+            ]
+        },
+        {
+            "objective": "Acquisition premiers clients",
+            "key_results": [
+                {"kr": "Démos réalisées", "current": 0, "target": 5, "unit": ""},
+                {"kr": "Clients signés", "current": 0, "target": 2, "unit": ""},
+                {"kr": "MRR", "current": 0, "target": 500, "unit": "€"}
+            ]
+        }
+    ]
+
+    # Sprint actuel
+    current_sprint = {
+        "name": "Sprint 1",
+        "start_date": "2026-01-27",
+        "end_date": "2026-02-09",
+        "days_remaining": 13,
+        "progress": 25,
+        "velocity_target": 20,
+        "velocity_current": 5,
+        "burndown": [
+            {"day": 1, "remaining": 20, "ideal": 20},
+            {"day": 2, "remaining": 18, "ideal": 18.5},
+            {"day": 3, "remaining": 15, "ideal": 17}
+        ],
+        "blockers": [
+            {"issue": "Template promesse incomplet", "assigned": "Tom", "severity": "high"},
+        ],
+        "risks": [
+            {"risk": "Délai structure juridique", "probability": "high", "impact": "Bloque facturation"}
+        ]
+    }
+
+    # Ce qui reste à faire (priorité décroissante)
+    remaining_work = {
+        "critical": [
+            {"task": "Compléter template promesse", "effort": "3j", "assigned": "Tom"},
+            {"task": "Créer structure juridique", "effort": "2j", "assigned": None}
+        ],
+        "important": [
+            {"task": "Intégrer validation dans agent", "effort": "2j", "assigned": "Payoss"},
+            {"task": "Souscrire RC Pro", "effort": "1j", "assigned": None},
+            {"task": "Formulaires web v1", "effort": "5j", "assigned": "Augustin"}
+        ],
+        "nice_to_have": [
+            {"task": "Mode interactif agent", "effort": "3j", "assigned": "Payoss"},
+            {"task": "Dashboard analytics", "effort": "3j", "assigned": "Augustin"},
+            {"task": "Label ETIK", "effort": "60j", "assigned": None}
+        ]
+    }
+
+    # Suggestions intelligentes basées sur l'état
+    suggestions = []
+
+    if avg_conformity < 80:
+        suggestions.append({
+            "type": "tech",
+            "priority": "high",
+            "message": f"Conformité moyenne à {avg_conformity:.1f}% - Prioriser template promesse",
+            "action": "Exécuter: python execution/comparer_documents.py"
+        })
+
+    if legal_score < 70:
+        suggestions.append({
+            "type": "business",
+            "priority": "high",
+            "message": "Structure juridique manquante - Bloque la facturation",
+            "action": "Créer SASU via Legalstart ou Infogreffe"
+        })
+
+    if business_score < 50:
+        suggestions.append({
+            "type": "growth",
+            "priority": "medium",
+            "message": "Aucun client actif - Démarrer les démos",
+            "action": "Contacter 3 notaires pour démo cette semaine"
+        })
+
+    suggestions.append({
+        "type": "quick_win",
+        "priority": "low",
+        "message": "Documentation à jour - Continuer sur cette lancée",
+        "action": "Maintenir CLAUDE.md et CHANGELOG.md"
+    })
+
+    return {
+        "overall_score": overall_score,
+        "phase": phase,
+        "scores": {
+            "tech": {"score": tech_score, "label": "Technique", "icon": "⚙️"},
+            "business": {"score": business_score, "label": "Business", "icon": "💼"},
+            "legal": {"score": legal_score, "label": "Juridique", "icon": "⚖️"}
+        },
+        "milestones": milestones,
+        "okrs": okrs,
+        "current_sprint": current_sprint,
+        "remaining_work": remaining_work,
+        "suggestions": suggestions,
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M")
+    }
+
+
 def get_launch_status() -> dict:
     """Récupère le statut de lancement."""
     return {
@@ -779,6 +950,7 @@ def generate_dashboard_data() -> dict:
     activity = get_recent_activity()
     dev_stats = get_dev_stats()
     recommendations = get_recommendations()
+    overview = get_project_overview()
 
     # Calculer les métriques
     prod_templates = sum(1 for t in templates if t["status"] == "prod")
@@ -820,7 +992,8 @@ def generate_dashboard_data() -> dict:
         "security": security,
         "team": team,
         "activity": activity[:20],  # 20 dernières actions
-        "recommendations": recommendations
+        "recommendations": recommendations,
+        "overview": overview
     }
 
     return data
