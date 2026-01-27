@@ -938,6 +938,209 @@
             }
         }
 
+        /* Launch Section */
+        .launch-section {
+            margin-bottom: 2rem;
+        }
+
+        .launch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .launch-score {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .score-circle.ready {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+            border: 2px solid var(--accent-success);
+        }
+
+        .score-circle.warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(236, 72, 153, 0.2));
+            border: 2px solid var(--accent-warning);
+        }
+
+        .score-circle.blocked {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(236, 72, 153, 0.2));
+            border: 2px solid #ef4444;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+        }
+
+        .score-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .launch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .launch-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .launch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .launch-card.done::before { background: var(--accent-success); }
+        .launch-card.pending::before { background: var(--accent-warning); }
+        .launch-card.blocked::before { background: #ef4444; }
+
+        .launch-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .launch-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .launch-card-icon.green { background: rgba(16, 185, 129, 0.15); }
+        .launch-card-icon.yellow { background: rgba(245, 158, 11, 0.15); }
+        .launch-card-icon.red { background: rgba(239, 68, 68, 0.15); }
+        .launch-card-icon.blue { background: rgba(99, 102, 241, 0.15); }
+
+        .launch-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .launch-card-status {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .status-done { background: rgba(16, 185, 129, 0.15); color: var(--accent-success); }
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
+        .status-blocked { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .status-optional { background: rgba(99, 102, 241, 0.15); color: var(--accent-primary); }
+
+        .launch-card-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .launch-card-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .launch-card-content li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .launch-card-content li:last-child {
+            border-bottom: none;
+        }
+
+        .cost {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .cost.green { color: var(--accent-success); }
+        .cost.yellow { color: var(--accent-warning); }
+        .cost.red { color: #ef4444; }
+
+        .action-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--glow-primary);
+        }
+
+        .budget-summary {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .budget-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.9rem;
+        }
+
+        .budget-row:last-child {
+            border-bottom: none;
+        }
+
+        .budget-row.total {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--accent-primary);
+        }
+
         /* Security Section */
         .security-grid {
             display: grid;
@@ -1434,6 +1637,171 @@
             </div>
         </section>
 
+        <!-- Launch Section -->
+        <section class="launch-section">
+            <h2 class="section-title">Lancement & Juridique</h2>
+            <div class="launch-header">
+                <div class="launch-score">
+                    <div class="score-circle warning">
+                        <span class="score-value">60%</span>
+                        <span class="score-label">Pret</span>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">Statut: PRE-LANCEMENT</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Structure juridique requise avant facturation</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Siege social prevu</div>
+                    <div style="font-size: 0.85rem;">2B chemin des Garennes, 69260 Charbonnieres</div>
+                    <div style="font-size: 0.75rem; color: var(--accent-primary); margin-top: 0.25rem;">contact@notomai.fr</div>
+                </div>
+            </div>
+
+            <div class="launch-grid">
+                <!-- Structure Juridique -->
+                <div class="launch-card blocked">
+                    <div class="launch-card-header">
+                        <div class="launch-card-icon red">🏢</div>
+                        <div>
+                            <div class="launch-card-title">Structure Juridique</div>
+                            <span class="launch-card-status status-blocked">Non creee</span>
+                        </div>
+                    </div>
+                    <div class="launch-card-content">
+                        <strong>Recommande: SAS ou SASU</strong>
+                        <ul>
+                            <li><span>Creation en ligne (Legalstart)</span><span class="cost yellow">150-300EUR</span></li>
+                            <li><span>Avec expert-comptable</span><span class="cost yellow">800-1500EUR</span></li>
+                            <li><span>Capital minimum</span><span class="cost green">1EUR</span></li>
+                        </ul>
+                        <a href="https://www.legalstart.fr/creation-sas/" target="_blank" class="action-button">Creer ma SAS</a>
+                    </div>
+                </div>
+
+                <!-- Assurance RC Pro -->
+                <div class="launch-card blocked">
+                    <div class="launch-card-header">
+                        <div class="launch-card-icon red">🛡️</div>
+                        <div>
+                            <div class="launch-card-title">Assurance RC Pro</div>
+                            <span class="launch-card-status status-blocked">Aucune</span>
+                        </div>
+                    </div>
+                    <div class="launch-card-content">
+                        <strong>Requiert structure juridique</strong>
+                        <ul>
+                            <li><span>Hiscox (Tech/SaaS)</span><span class="cost yellow">800-2000EUR/an</span></li>
+                            <li><span>AXA Pro</span><span class="cost yellow">1000-2500EUR/an</span></li>
+                            <li><span>Couverture recommandee</span><span class="cost">500kEUR</span></li>
+                        </ul>
+                        <a href="https://www.hiscox.fr/assurance-professionnelle" target="_blank" class="action-button">Demander devis</a>
+                    </div>
+                </div>
+
+                <!-- CGU -->
+                <div class="launch-card pending">
+                    <div class="launch-card-header">
+                        <div class="launch-card-icon yellow">📜</div>
+                        <div>
+                            <div class="launch-card-title">CGU / CGV</div>
+                            <span class="launch-card-status status-pending">Template cree</span>
+                        </div>
+                    </div>
+                    <div class="launch-card-content">
+                        <strong>A faire valider par avocat IT/RGPD</strong>
+                        <ul>
+                            <li><span>Template Notomai</span><span class="cost green">Cree</span></li>
+                            <li><span>Validation avocat en ligne</span><span class="cost yellow">500-800EUR</span></li>
+                            <li><span>Avocat specialise Lyon</span><span class="cost yellow">1500-2500EUR</span></li>
+                        </ul>
+                        <a href="docs/legal/CGU_TEMPLATE.md" class="action-button">Voir template</a>
+                    </div>
+                </div>
+
+                <!-- RGPD -->
+                <div class="launch-card done">
+                    <div class="launch-card-header">
+                        <div class="launch-card-icon green">✅</div>
+                        <div>
+                            <div class="launch-card-title">Conformite RGPD</div>
+                            <span class="launch-card-status status-done">95% complet</span>
+                        </div>
+                    </div>
+                    <div class="launch-card-content">
+                        <strong>Documentation complete</strong>
+                        <ul>
+                            <li><span>Registre des traitements</span><span class="cost green">Fait</span></li>
+                            <li><span>Politique confidentialite</span><span class="cost green">Fait</span></li>
+                            <li><span>Bases legales</span><span class="cost green">Fait</span></li>
+                            <li><span>DPO reference (ADNOV)</span><span class="cost green">Fait</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Securite Technique -->
+                <div class="launch-card done">
+                    <div class="launch-card-header">
+                        <div class="launch-card-icon green">🔐</div>
+                        <div>
+                            <div class="launch-card-title">Securite Technique</div>
+                            <span class="launch-card-status status-done">95% complet</span>
+                        </div>
+                    </div>
+                    <div class="launch-card-content">
+                        <strong>Infrastructure securisee</strong>
+                        <ul>
+                            <li><span>Chiffrement AES-256</span><span class="cost green">Actif</span></li>
+                            <li><span>TLS 1.3 (transit)</span><span class="cost green">Actif</span></li>
+                            <li><span>Row Level Security</span><span class="cost green">8 migrations</span></li>
+                            <li><span>Hebergement UE</span><span class="cost green">Francfort</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Label ETIK -->
+                <div class="launch-card pending">
+                    <div class="launch-card-header">
+                        <div class="launch-card-icon blue">🏆</div>
+                        <div>
+                            <div class="launch-card-title">Label ETIK (CSN)</div>
+                            <span class="launch-card-status status-optional">Optionnel</span>
+                        </div>
+                    </div>
+                    <div class="launch-card-content">
+                        <strong>Non obligatoire pour vendre</strong>
+                        <ul>
+                            <li><span>172 points de controle</span><span class="cost">Bureau Veritas</span></li>
+                            <li><span>Cout total</span><span class="cost yellow">8000-10000EUR</span></li>
+                            <li><span>Validite</span><span class="cost">3 ans</span></li>
+                            <li><span>Recommande apres</span><span class="cost">10-20 clients</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Summary -->
+            <div class="budget-summary">
+                <h3 style="margin-bottom: 1rem; font-size: 1rem;">Budget Lancement Legal</h3>
+                <div class="budget-row">
+                    <span>Creation SASU (en ligne)</span>
+                    <span class="cost yellow">150 - 300 EUR</span>
+                </div>
+                <div class="budget-row">
+                    <span>Assurance RC Pro (annee 1)</span>
+                    <span class="cost yellow">800 - 2000 EUR</span>
+                </div>
+                <div class="budget-row">
+                    <span>Validation CGU (avocat en ligne)</span>
+                    <span class="cost yellow">500 - 800 EUR</span>
+                </div>
+                <div class="budget-row total">
+                    <span>TOTAL MINIMUM</span>
+                    <span class="cost" style="color: var(--accent-success);">1 450 - 3 100 EUR</span>
+                </div>
+            </div>
+        </section>
+
         <!-- Security Section -->
         <section class="security-section">
             <h2 class="section-title">Securite & Integrations</h2>
@@ -1588,10 +1956,9 @@
     <!-- Footer -->
     <footer class="footer">
         <p class="footer-text">
-            Notomai v1.2.0 | Dashboard v2.2 |
+            Notomai v1.3.0 | Dashboard v2.3 |
             <a href="https://github.com/AnandaTom/notaire-ai" target="_blank">GitHub</a> |
-            Maitre Charlotte Diaz |
-            <span id="lastUpdate">2026-01-24</span>
+            <span id="lastUpdate">2026-01-26</span>
         </p>
     </footer>
 

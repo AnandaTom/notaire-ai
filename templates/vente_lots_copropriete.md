@@ -1,40 +1,34 @@
 {# ============================================================================
    TEMPLATE: ACTE DE VENTE - LOTS DE COPROPRIÉTÉ
-   Version: 1.2.0
+   Version: 1.3.0
    Description: Template Jinja2 pour la génération d'actes de vente de lots
                 de copropriété. Préserve la syntaxe juridique exacte.
    Format: Conforme au format notarial standard (Word original)
-   Note: Utilise HTML pour le positionnement précis (indentations, centrage)
+   Note: Structure Markdown pure, identique au document original
    ============================================================================ #}
-<div class="header-ref">
-{{ acte.numero_repertoire }}<br/>
+{FIRST_PAGE_HEADER_START}
+{{ acte.numero_repertoire }}
 {{ acte.reference_interne }}
-</div>
 
-<div class="header-titre">
-<strong>{{ acte.date.en_lettres | capitalize }}</strong><br/>
-<strong>VENTE</strong><br/>
-<strong>Par {% for v in vendeurs %}{{ v.civilite }} {{ v.nom }}{% if not loop.last %} et {% endif %}{% endfor %}</strong><br/>
-<strong>Au profit de {% for a in acquereurs %}{{ a.civilite }} {{ a.nom }}{% if not loop.last %} et {% endif %}{% endfor %}</strong><br/>
-<strong>***************************************************************</strong>
-</div>
 
-<div class="header-notaire">
-<strong>L'AN {{ acte.date.annee_lettres|upper }},</strong><br/>
-<strong>LE {{ acte.date.jour_mois_lettres|upper }}</strong><br/>
-<strong>A {{ acte.notaire.ville|upper }} ({{ acte.notaire.departement }}), {{ acte.notaire.adresse }}, au siège de l'Office Notarial, ci-après nommé,</strong><br/>
-<strong>{{ acte.notaire.civilite }} {{ acte.notaire.prenom }} {{ acte.notaire.nom|upper }}, Notaire de la société par actions simplifiée dénommée « <u>{{ acte.notaire.societe }}</u> » dont le siège social est situé à {{ acte.notaire.ville|upper }} ({{ acte.notaire.departement }}), {{ acte.notaire.adresse }},</strong> <strong>identifié sous le numéro CRPCEN {{ acte.notaire.crpcen }},</strong>
-</div>
+Le {{ acte.date.jour }} {{ acte.date.mois | mois_en_lettres }} {{ acte.date.annee }}
+{FIRST_PAGE_HEADER_END}
+**VENTE**
+**Par {% for v in vendeurs %}{{ v.civilite }} {{ v.nom }}{% if not loop.last %} et {% endif %}{% endfor %}**
+**Au profit de {% for a in acquereurs %}{{ a.civilite }} {{ a.nom }}{% if not loop.last %} et {% endif %}{% endfor %}**
+**\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\***
+
+
+**L'AN {{ acte.date.annee | annee_en_lettres | upper }},**
+**LE {{ acte.date.jour | jour_en_lettres | upper }} {{ acte.date.mois | mois_en_lettres | upper }}**
+**A {{ acte.notaire.ville | upper }} ({{ acte.notaire.departement }}), {{ acte.notaire.adresse }}, au siège de l'Office Notarial, ci-après nommé,**
+**{{ acte.notaire.civilite }} {{ acte.notaire.prenom }} {{ acte.notaire.nom | upper }}, Notaire de la société par actions simplifiée dénommée « <u>{{ acte.notaire.societe }}</u> » dont le siège social est situé à {{ acte.notaire.ville | upper }} ({{ acte.notaire.departement }}), {{ acte.notaire.adresse }}, identifié sous le numéro CRPCEN {{ acte.notaire.crpcen }},**
 
 {% if acte.notaire_assistant %}
-<div class="header-notaire">
-<strong>Avec la participation de {{ acte.notaire_assistant.civilite }} {{ acte.notaire_assistant.prenom }} {{ acte.notaire_assistant.nom|upper }}, notaire à {{ acte.notaire_assistant.ville }}, assistant l'ACQUEREUR,</strong>
-</div>
+**Avec la participation de {{ acte.notaire_assistant.civilite }} {{ acte.notaire_assistant.prenom }} {{ acte.notaire_assistant.nom | upper }}, notaire à {{ acte.notaire_assistant.ville }}, assistant l'ACQUEREUR,**
 {% endif %}
 
-<div class="header-notaire">
-<strong>A REÇU LA <u>PRESENTE</u> VENTE à la requête des parties ci-après identifiées.</strong>
-</div>
+**A REÇU LA <u>PRESENTE</u> VENTE à la requête des parties ci-après identifiées.**
 
 Cet acte comprend deux parties pour répondre aux exigences de la publicité foncière, néanmoins l'ensemble de l'acte et de ses annexes forme un contrat indissociable et unique.
 **La première partie dite "partie normalisée"** constitue le document hypothécaire normalisé et contient toutes les énonciations nécessaires tant à la publication au fichier immobilier qu'à la détermination de l'assiette et au contrôle du calcul de tous impôts, droits et taxes.
@@ -47,58 +41,54 @@ Cet acte comprend deux parties pour répondre aux exigences de la publicité fon
 #### VENDEUR
 
 {% for vendeur in vendeurs %}
-<div class="personne">
-{{ vendeur.civilite }} {{ vendeur.prenoms }} {{ vendeur.nom }}{% if vendeur.nom_naissance %} née {{ vendeur.nom_naissance }}{% endif %}, {{ vendeur.profession }}, demeurant à {{ vendeur.adresse }} {{ vendeur.code_postal }} {{ vendeur.ville }}<br/>
-{{ "Née" if vendeur.civilite == "Madame" else "Né" }} à {{ vendeur.lieu_naissance }} le {{ vendeur.date_naissance | format_date }}.<br/>
-{% if vendeur.situation_matrimoniale.statut == "celibataire" -%}
-Célibataire.<br/>
-Non {{ "liée" if vendeur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.<br/>
-{% elif vendeur.situation_matrimoniale.statut == "marie" -%}
-{{ "Mariée" if vendeur.civilite == "Madame" else "Marié" }} avec {{ vendeur.situation_matrimoniale.conjoint.civilite }} {{ vendeur.situation_matrimoniale.conjoint.prenoms }} {{ vendeur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ vendeur.situation_matrimoniale.regime_matrimonial_libelle }} aux termes du contrat de mariage reçu par {{ vendeur.situation_matrimoniale.contrat_mariage.notaire }}, notaire à {{ vendeur.situation_matrimoniale.contrat_mariage.lieu }}, le {{ vendeur.situation_matrimoniale.contrat_mariage.date | format_date }}.<br/>
-Ce régime matrimonial n'a pas fait l'objet de modification.<br/>
-{% elif vendeur.situation_matrimoniale.statut == "pacse" -%}
-{{ "Liée" if vendeur.civilite == "Madame" else "Lié" }} par un pacte civil de solidarité avec {{ vendeur.situation_matrimoniale.conjoint.civilite }} {{ vendeur.situation_matrimoniale.conjoint.prenoms }} {{ vendeur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ vendeur.situation_matrimoniale.pacs.regime_libelle }}, enregistré {{ vendeur.situation_matrimoniale.pacs.lieu_enregistrement }} le {{ vendeur.situation_matrimoniale.pacs.date | format_date }}.<br/>
-Contrat non modifié depuis lors.<br/>
-{% elif vendeur.situation_matrimoniale.statut == "divorce" -%}
-{{ "Divorcée" if vendeur.civilite == "Madame" else "Divorcé" }} de {{ vendeur.situation_matrimoniale.ex_conjoint.civilite }} {{ vendeur.situation_matrimoniale.ex_conjoint.nom }} suivant jugement rendu par le tribunal judiciaire de {{ vendeur.situation_matrimoniale.jugement_divorce.lieu }} le {{ vendeur.situation_matrimoniale.jugement_divorce.date | format_date }}, et non {{ "remariée" if vendeur.civilite == "Madame" else "remarié" }}.<br/>
-Non {{ "liée" if vendeur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.<br/>
-{% elif vendeur.situation_matrimoniale.statut == "veuf" -%}
-{{ "Veuve" if vendeur.civilite == "Madame" else "Veuf" }} de {{ vendeur.situation_matrimoniale.defunt_conjoint.civilite }} {{ vendeur.situation_matrimoniale.defunt_conjoint.nom }}.<br/>
-Non {{ "remariée" if vendeur.civilite == "Madame" else "remarié" }}.<br/>
-Non {{ "liée" if vendeur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.<br/>
-{% endif -%}
-De nationalité {{ vendeur.nationalite }}.<br/>
+{{ vendeur.civilite }} {{ vendeur.prenoms }} {{ vendeur.nom }}{% if vendeur.nom_naissance %} née {{ vendeur.nom_naissance }}{% endif %}, {{ vendeur.profession }}, demeurant à {{ vendeur.adresse }} {{ vendeur.code_postal }} {{ vendeur.ville }}.
+{{ "Née" if vendeur.civilite == "Madame" else "Né" }} à {{ vendeur.lieu_naissance }} le {{ vendeur.date_naissance | format_date }}.
+{% if vendeur.situation_matrimoniale.statut == "celibataire" %}
+Célibataire.
+Non {{ "liée" if vendeur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.
+{% elif vendeur.situation_matrimoniale.statut == "marie" %}
+{{ "Mariée" if vendeur.civilite == "Madame" else "Marié" }} avec {{ vendeur.situation_matrimoniale.conjoint.civilite }} {{ vendeur.situation_matrimoniale.conjoint.prenoms }} {{ vendeur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ vendeur.situation_matrimoniale.regime_matrimonial_libelle }} aux termes du contrat de mariage reçu par {{ vendeur.situation_matrimoniale.contrat_mariage.notaire }}, notaire à {{ vendeur.situation_matrimoniale.contrat_mariage.lieu }}, le {{ vendeur.situation_matrimoniale.contrat_mariage.date | format_date }}.
+Ce régime matrimonial n'a pas fait l'objet de modification.
+{% elif vendeur.situation_matrimoniale.statut == "pacse" %}
+{{ "Liée" if vendeur.civilite == "Madame" else "Lié" }} par un pacte civil de solidarité avec {{ vendeur.situation_matrimoniale.conjoint.civilite }} {{ vendeur.situation_matrimoniale.conjoint.prenoms }} {{ vendeur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ vendeur.situation_matrimoniale.pacs.regime_libelle }}, enregistré {{ vendeur.situation_matrimoniale.pacs.lieu_enregistrement }} le {{ vendeur.situation_matrimoniale.pacs.date | format_date }}.
+Contrat non modifié depuis lors.
+{% elif vendeur.situation_matrimoniale.statut == "divorce" %}
+{{ "Divorcée" if vendeur.civilite == "Madame" else "Divorcé" }} de {{ vendeur.situation_matrimoniale.ex_conjoint.civilite }} {{ vendeur.situation_matrimoniale.ex_conjoint.nom }} suivant jugement rendu par le tribunal judiciaire de {{ vendeur.situation_matrimoniale.jugement_divorce.lieu }} le {{ vendeur.situation_matrimoniale.jugement_divorce.date | format_date }}, et non {{ "remariée" if vendeur.civilite == "Madame" else "remarié" }}.
+Non {{ "liée" if vendeur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.
+{% elif vendeur.situation_matrimoniale.statut == "veuf" %}
+{{ "Veuve" if vendeur.civilite == "Madame" else "Veuf" }} de {{ vendeur.situation_matrimoniale.defunt_conjoint.civilite }} {{ vendeur.situation_matrimoniale.defunt_conjoint.nom }}.
+Non {{ "remariée" if vendeur.civilite == "Madame" else "remarié" }}.
+Non {{ "liée" if vendeur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.
+{% endif %}
+De nationalité {{ vendeur.nationalite }}.
 {{ "Résidente" if vendeur.civilite == "Madame" else "Résident" }} au sens de la réglementation fiscale.
-</div>
 
 {% endfor %}
 
 #### ACQUEREUR
 
 {% for acquereur in acquereurs %}
-<div class="personne">
-{{ acquereur.civilite }} {{ acquereur.prenoms }} {{ acquereur.nom }}{% if acquereur.nom_naissance %} née {{ acquereur.nom_naissance }}{% endif %}, {{ acquereur.profession }}, demeurant à {{ acquereur.adresse }} {{ acquereur.code_postal }} {{ acquereur.ville }}<br/>
-{{ "Née" if acquereur.civilite == "Madame" else "Né" }} à {{ acquereur.lieu_naissance }} le {{ acquereur.date_naissance | format_date }}.<br/>
-{% if acquereur.situation_matrimoniale.statut == "celibataire" -%}
-Célibataire.<br/>
-Non {{ "liée" if acquereur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.<br/>
-{% elif acquereur.situation_matrimoniale.statut == "marie" -%}
-{{ "Mariée" if acquereur.civilite == "Madame" else "Marié" }} avec {{ acquereur.situation_matrimoniale.conjoint.civilite }} {{ acquereur.situation_matrimoniale.conjoint.prenoms }} {{ acquereur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ acquereur.situation_matrimoniale.regime_matrimonial_libelle }} aux termes du contrat de mariage reçu par {{ acquereur.situation_matrimoniale.contrat_mariage.notaire }}, notaire à {{ acquereur.situation_matrimoniale.contrat_mariage.lieu }}, le {{ acquereur.situation_matrimoniale.contrat_mariage.date | format_date }}.<br/>
-Ce régime matrimonial n'a pas fait l'objet de modification.<br/>
-{% elif acquereur.situation_matrimoniale.statut == "pacse" -%}
-{{ "Liée" if acquereur.civilite == "Madame" else "Lié" }} par un pacte civil de solidarité avec {{ acquereur.situation_matrimoniale.conjoint.civilite }} {{ acquereur.situation_matrimoniale.conjoint.prenoms }} {{ acquereur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ acquereur.situation_matrimoniale.pacs.regime_libelle }}, enregistré {{ acquereur.situation_matrimoniale.pacs.lieu_enregistrement }} le {{ acquereur.situation_matrimoniale.pacs.date | format_date }}.<br/>
-Contrat non modifié depuis lors.<br/>
-{% elif acquereur.situation_matrimoniale.statut == "divorce" -%}
-{{ "Divorcée" if acquereur.civilite == "Madame" else "Divorcé" }} de {{ acquereur.situation_matrimoniale.ex_conjoint.civilite }} {{ acquereur.situation_matrimoniale.ex_conjoint.nom }} suivant jugement rendu par le tribunal judiciaire de {{ acquereur.situation_matrimoniale.jugement_divorce.lieu }} le {{ acquereur.situation_matrimoniale.jugement_divorce.date | format_date }}, et non {{ "remariée" if acquereur.civilite == "Madame" else "remarié" }}.<br/>
-Non {{ "liée" if acquereur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.<br/>
-{% elif acquereur.situation_matrimoniale.statut == "veuf" -%}
-{{ "Veuve" if acquereur.civilite == "Madame" else "Veuf" }} de {{ acquereur.situation_matrimoniale.defunt_conjoint.civilite }} {{ acquereur.situation_matrimoniale.defunt_conjoint.nom }}.<br/>
-Non {{ "remariée" if acquereur.civilite == "Madame" else "remarié" }}.<br/>
-Non {{ "liée" if acquereur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.<br/>
-{% endif -%}
-De nationalité {{ acquereur.nationalite }}.<br/>
+{{ acquereur.civilite }} {{ acquereur.prenoms }} {{ acquereur.nom }}{% if acquereur.nom_naissance %} née {{ acquereur.nom_naissance }}{% endif %}, {{ acquereur.profession }}, demeurant à {{ acquereur.adresse }} {{ acquereur.code_postal }} {{ acquereur.ville }}.
+{{ "Née" if acquereur.civilite == "Madame" else "Né" }} à {{ acquereur.lieu_naissance }} le {{ acquereur.date_naissance | format_date }}.
+{% if acquereur.situation_matrimoniale.statut == "celibataire" %}
+Célibataire.
+Non {{ "liée" if acquereur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.
+{% elif acquereur.situation_matrimoniale.statut == "marie" %}
+{{ "Mariée" if acquereur.civilite == "Madame" else "Marié" }} avec {{ acquereur.situation_matrimoniale.conjoint.civilite }} {{ acquereur.situation_matrimoniale.conjoint.prenoms }} {{ acquereur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ acquereur.situation_matrimoniale.regime_matrimonial_libelle }} aux termes du contrat de mariage reçu par {{ acquereur.situation_matrimoniale.contrat_mariage.notaire }}, notaire à {{ acquereur.situation_matrimoniale.contrat_mariage.lieu }}, le {{ acquereur.situation_matrimoniale.contrat_mariage.date | format_date }}.
+Ce régime matrimonial n'a pas fait l'objet de modification.
+{% elif acquereur.situation_matrimoniale.statut == "pacse" %}
+{{ "Liée" if acquereur.civilite == "Madame" else "Lié" }} par un pacte civil de solidarité avec {{ acquereur.situation_matrimoniale.conjoint.civilite }} {{ acquereur.situation_matrimoniale.conjoint.prenoms }} {{ acquereur.situation_matrimoniale.conjoint.nom }} sous le régime de {{ acquereur.situation_matrimoniale.pacs.regime_libelle }}, enregistré {{ acquereur.situation_matrimoniale.pacs.lieu_enregistrement }} le {{ acquereur.situation_matrimoniale.pacs.date | format_date }}.
+Contrat non modifié depuis lors.
+{% elif acquereur.situation_matrimoniale.statut == "divorce" %}
+{{ "Divorcée" if acquereur.civilite == "Madame" else "Divorcé" }} de {{ acquereur.situation_matrimoniale.ex_conjoint.civilite }} {{ acquereur.situation_matrimoniale.ex_conjoint.nom }} suivant jugement rendu par le tribunal judiciaire de {{ acquereur.situation_matrimoniale.jugement_divorce.lieu }} le {{ acquereur.situation_matrimoniale.jugement_divorce.date | format_date }}, et non {{ "remariée" if acquereur.civilite == "Madame" else "remarié" }}.
+Non {{ "liée" if acquereur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.
+{% elif acquereur.situation_matrimoniale.statut == "veuf" %}
+{{ "Veuve" if acquereur.civilite == "Madame" else "Veuf" }} de {{ acquereur.situation_matrimoniale.defunt_conjoint.civilite }} {{ acquereur.situation_matrimoniale.defunt_conjoint.nom }}.
+Non {{ "remariée" if acquereur.civilite == "Madame" else "remarié" }}.
+Non {{ "liée" if acquereur.civilite == "Madame" else "lié" }} par un pacte civil de solidarité.
+{% endif %}
+De nationalité {{ acquereur.nationalite }}.
 {{ "Résidente" if acquereur.civilite == "Madame" else "Résident" }} au sens de la réglementation fiscale.
-</div>
 
 {% endfor %}
 
