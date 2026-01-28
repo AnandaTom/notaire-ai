@@ -212,7 +212,7 @@ def executer_workflow(
     # Import de l'orchestrateur
     sys.path.insert(0, str(PROJECT_ROOT))
     try:
-        from execution.orchestrateur_notaire import OrchestratorNotaire, TypeActe
+        from execution.gestionnaires.orchestrateur import OrchestratorNotaire, TypeActe
     except ImportError:
         console.print("[red]Erreur: Impossible de charger l'orchestrateur[/red]")
         return {"succes": False, "erreur": "Module orchestrateur non trouvé"}
