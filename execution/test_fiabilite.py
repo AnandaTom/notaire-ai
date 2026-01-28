@@ -188,8 +188,8 @@ class TestFiabilite:
         test_config = TESTS[template_key]
 
         originals = {
-            'vente': 'docs_originels/Trame vente lots de copropriété.docx',
-            'promesse': 'docs_originels/Trame promesse unilatérale de vente lots de copropriété.docx'
+            'vente': 'docs_original/Trame vente lots de copropriété.docx',
+            'promesse': 'docs_original/Trame promesse unilatérale de vente lots de copropriété.docx'
         }
 
         original = originals.get(template_key)

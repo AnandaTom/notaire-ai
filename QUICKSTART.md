@@ -102,7 +102,7 @@ python execution/test_fiabilite.py
 
 ```bash
 python execution/comparer_documents_v2.py \
-  --original "docs_originels/Trame vente lots de copropriété.docx" \
+  --original "docs_original/Trame vente lots de copropriété.docx" \
   --genere outputs/mon_acte.docx
 ```
 

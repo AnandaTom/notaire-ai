@@ -323,7 +323,7 @@ DONT ACTE
 ```bash
 python execution/comparer_documents_v2.py \
     outputs/acte_genere.docx \
-    docs_originels/Trame_promesse.docx
+    docs_original/Trame_promesse.docx
 ```
 
 ### Rapport de Conformité

@@ -1045,7 +1045,7 @@ class NotarialHTMLParser(HTMLParser):
 def configurer_styles(doc: Document):
     """
     Configure les styles du document EXACTEMENT comme l'original DOCX.
-    Basé sur l'analyse de docs_originels/Trame vente lots de copropriété.docx:
+    Basé sur l'analyse de docs_original/Trame vente lots de copropriété.docx:
 
     - Normal: 11pt, justified, first line indent 1.251cm
     - Heading 1: bold, ALL CAPS, underline, CENTERED, space after 12pt

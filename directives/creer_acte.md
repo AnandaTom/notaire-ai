@@ -334,7 +334,7 @@ Cela peut s'expliquer par l'inclusion des frais de notaire et frais de prêt. So
 
 ## Spécifications de formatage DOCX (CRITIQUE)
 
-Le formatage DOCX doit être **100% fidèle** à la trame originale. Les paramètres suivants sont extraits de l'analyse de `docs_originels/Trame vente lots de copropriété.docx` et **ne doivent jamais être modifiés**.
+Le formatage DOCX doit être **100% fidèle** à la trame originale. Les paramètres suivants sont extraits de l'analyse de `docs_original/Trame vente lots de copropriété.docx` et **ne doivent jamais être modifiés**.
 
 ### Police et taille
 - **Police**: Times New Roman 11pt (partout, sans exception)

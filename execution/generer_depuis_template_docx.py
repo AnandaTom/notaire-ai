@@ -11,7 +11,7 @@ AVANTAGE: Format 100% identique à l'original car on copie le document, pas qu'o
 
 Usage:
     python generer_depuis_template_docx.py \\
-        --template "docs_originels/Trame vente lots de copropriété.docx" \\
+        --template "docs_original/Trame vente lots de copropriété.docx" \\
         --variables donnees.json \\
         --output "acte_genere.docx"
 

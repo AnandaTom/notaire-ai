@@ -23,7 +23,7 @@
 
 ```bash
 python execution/extraire_bookmarks_contenu.py \
-    --input "docs_originels/Statuts (1).docx" \
+    --input "docs_original/Statuts (1).docx" \
     --output "analyse_statuts.json"
 ```
 
@@ -229,10 +229,10 @@ par un template légal équivalent, sans frais pour l'Utilisateur.
 ### Semaine 1 : Sécurisation Minimale
 
 ```bash
-# 1. Anonymiser TOUS les docs_originels
+# 1. Anonymiser TOUS les docs_original
 python execution/anonymiser_documents.py \
-    --dossier docs_originels/ \
-    --output docs_originels_anonymises/
+    --dossier docs_original/ \
+    --output docs_original_anonymises/
 
 # 2. Ajouter disclaimer dans README
 echo "⚠️  Les templates sont basés sur des trames notariales standards.

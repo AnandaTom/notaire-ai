@@ -1,7 +1,7 @@
 # Analyse du Titre de Propriété et Intégration Complétée
 
 **Date**: 23 janvier 2026
-**Document analysé**: [docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf](docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf)
+**Document analysé**: [docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf](docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf)
 **Statut**: ✅ Intégration terminée
 
 ---
@@ -346,7 +346,7 @@ Lors des prochaines promesses de vente:
 
 | Document | Description |
 |----------|-------------|
-| [docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf](docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf) | PDF analysé |
+| [docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf](docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf) | PDF analysé |
 | [directives/integration_titre_propriete.md](directives/integration_titre_propriete.md) | Directive complète |
 | [directives/creer_promesse_vente.md](directives/creer_promesse_vente.md) | Workflow de création |
 | [exemples/donnees_promesse_avec_origine.json](exemples/donnees_promesse_avec_origine.json) | Exemple de données |

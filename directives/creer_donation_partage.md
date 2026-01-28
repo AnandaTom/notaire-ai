@@ -2,7 +2,7 @@
 
 ## Objectif
 
-Générer un acte de **donation-partage** 100% conforme à la trame originale ([docs_originels/Donation partage (2).pdf](../docs_originels/Donation%20partage%20(2).pdf)), avec 28 pages de contenu structuré.
+Générer un acte de **donation-partage** 100% conforme à la trame originale ([docs_original/Donation partage (2).pdf](../docs_original/Donation%20partage%20(2).pdf)), avec 28 pages de contenu structuré.
 
 ## Qu'est-ce qu'une Donation-Partage ?
 
@@ -80,7 +80,7 @@ python execution/exporter_docx.py \
 
 # 4. Validation conformité
 python execution/comparer_documents.py \
-    --original "docs_originels/Donation partage (2).pdf" \
+    --original "docs_original/Donation partage (2).pdf" \
     --genere outputs/donation_partage_client_X.docx \
     --seuil 80
 ```
@@ -276,7 +276,7 @@ Donation 2025 :     500 € (abattement 0 € → base taxable 500 €)
 | **Schéma** | `schemas/variables_donation_partage.json` | 150+ variables structurées |
 | **Questions** | `schemas/questions_donation_partage.json` | 150+ questions collecte |
 | **Directive** | `directives/creer_donation_partage.md` | Ce fichier |
-| **Original** | `docs_originels/Donation partage (2).pdf` | Trame de référence (28 pages) |
+| **Original** | `docs_original/Donation partage (2).pdf` | Trame de référence (28 pages) |
 
 ### Documentation juridique
 
@@ -315,7 +315,7 @@ python execution/exporter_docx.py \
 
 # ÉTAPE 5 : Valider la conformité
 python execution/comparer_documents.py \
-    --original "docs_originels/Donation partage (2).pdf" \
+    --original "docs_original/Donation partage (2).pdf" \
     --genere outputs/donation_partage_auvray.docx \
     --seuil 80
 

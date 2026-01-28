@@ -10,7 +10,7 @@ Détecte les noms/prénoms UNIQUEMENT dans des contextes identifiables:
 - Noms de notaires après "Maître"
 
 Usage:
-    python execution/anonymiser_docx_v2.py docs_originels/Promesse*.docx --batch
+    python execution/anonymiser_docx_v2.py docs_original/Promesse*.docx --batch
 """
 
 import argparse

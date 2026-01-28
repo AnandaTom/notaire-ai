@@ -171,13 +171,13 @@ Directives are living documents. When you discover edge cases, new types de situ
 ├── execution/              # Scripts Python
 ├── schemas/                # Schémas JSON (variables, questions)
 ├── templates/              # Templates Jinja2 (Markdown)
-├── docs_originels/         # Trames DOCX de référence (NE PAS MODIFIER)
+├── docs_original/         # Trames DOCX de référence (NE PAS MODIFIER)
 ├── outputs/                # Actes finaux générés
 └── .env                    # Variables d'environnement
 ```
 
 **Key principle:**
-- `docs_originels/` = référence absolue, ne jamais modifier
+- `docs_original/` = référence absolue, ne jamais modifier
 - `outputs/` = livrables pour le notaire
 - `.tmp/` = peut être supprimé et régénéré
 
@@ -185,7 +185,7 @@ Directives are living documents. When you discover edge cases, new types de situ
 
 ## Variables du document original
 
-Le document `docs_originels/Trame vente lots de copropriété.docx` contient **361 bookmarks** (zones variables). Les principales catégories :
+Le document `docs_original/Trame vente lots de copropriété.docx` contient **361 bookmarks** (zones variables). Les principales catégories :
 
 | Catégorie | Variables | Exemples |
 |-----------|-----------|----------|

@@ -46,12 +46,12 @@ Le prix comprend les meubles suivants :
 
 ### Quand un notaire fournit un nouveau template
 
-1. **Placer dans `docs_originels/`** (ne jamais modifier l'original)
+1. **Placer dans `docs_original/`** (ne jamais modifier l'original)
 
 2. **Analyser les variables** :
    ```bash
    python execution/extraire_bookmarks_contenu.py \
-       -i "docs_originels/[nouveau].docx" \
+       -i "docs_original/[nouveau].docx" \
        -o ".tmp/analyse_[nouveau].json"
    ```
 
@@ -231,7 +231,7 @@ Le template génère automatiquement la section agent.
 **Notaire :** "J'ai besoin de générer des baux commerciaux, voici ma trame"
 
 **Action :**
-1. Recevoir `docs_originels/Trame bail commercial.docx`
+1. Recevoir `docs_original/Trame bail commercial.docx`
 2. Analyser les variables
 3. Créer `schemas/variables_bail_commercial.json`
 4. Créer `schemas/questions_bail_commercial.json`

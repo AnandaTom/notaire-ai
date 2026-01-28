@@ -16,22 +16,22 @@ Documenter le processus d'ajout d'un nouveau type d'acte notarial au système (e
 
 ### Étape 1 : Analyse du document original
 
-#### 1.1 Placer le document dans `docs_originels/`
+#### 1.1 Placer le document dans `docs_original/`
 
 ```
-docs_originels/
+docs_original/
 ├── Trame vente lots de copropriété.docx      # Existant
 ├── Trame promesse vente.docx                  # Existant
 └── [Nouveau] Trame donation.docx              # À ajouter
 ```
 
-**IMPORTANT** : Ne jamais modifier les documents dans `docs_originels/`. Ce sont les références absolues.
+**IMPORTANT** : Ne jamais modifier les documents dans `docs_original/`. Ce sont les références absolues.
 
 #### 1.2 Analyser les variables (zones grisées/bookmarks)
 
 ```bash
 python execution/extraire_bookmarks_contenu.py \
-    --input "docs_originels/[nouveau_template].docx" \
+    --input "docs_original/[nouveau_template].docx" \
     --output ".tmp/analyse_[type_acte].json"
 ```
 
@@ -220,7 +220,7 @@ Guider la création d'un acte de [type] de A à Z.
 
 Avant de déclarer le nouveau type d'acte opérationnel :
 
-- [ ] Document original placé dans `docs_originels/`
+- [ ] Document original placé dans `docs_original/`
 - [ ] Analyse des bookmarks effectuée
 - [ ] Schéma de variables créé (`schemas/variables_[type].json`)
 - [ ] Questions créées (`schemas/questions_[type].json`)
@@ -239,7 +239,7 @@ Avant de déclarer le nouveau type d'acte opérationnel :
 ```bash
 # 1. Analyser le document
 python execution/extraire_bookmarks_contenu.py \
-    -i "docs_originels/Trame donation.docx" \
+    -i "docs_original/Trame donation.docx" \
     -o ".tmp/analyse_donation.json"
 
 # 2. Créer le schéma (manuellement basé sur l'analyse)

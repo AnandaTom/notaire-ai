@@ -21,7 +21,7 @@ Générer un acte d'état descriptif de division (EDD) et règlement de copropri
 | `templates/reglement_copropriete_edd.md` | Template Markdown avec variables Jinja2 |
 | `schemas/variables_reglement_copropriete.json` | Structure des données attendues |
 | `schemas/questions_reglement_copropriete.json` | Questions à poser au notaire |
-| `docs_originels/Trame reglement copropriete EDD.docx` | Trame originale - NE JAMAIS MODIFIER |
+| `docs_original/Trame reglement copropriete EDD.docx` | Trame originale - NE JAMAIS MODIFIER |
 
 ---
 

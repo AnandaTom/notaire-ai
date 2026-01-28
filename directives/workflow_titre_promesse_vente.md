@@ -348,7 +348,7 @@ python execution/workflow_rapide.py --donnees .tmp/promesse.json --template prom
 ```bash
 # Extraire le titre de propriété analysé
 python execution/extraire_titre_propriete.py \
-    -i "docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf" \
+    -i "docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf" \
     -o .tmp/titre_diaz_extrait.json \
     -v
 ```
