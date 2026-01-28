@@ -17,7 +17,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 EXECUTION_DIR = PROJECT_ROOT / "execution"
 sys.path.insert(0, str(EXECUTION_DIR))
 
-from valider_acte import (
+from execution.core.valider_acte import (
     ValidateurActe,
     NiveauErreur,
     ResultatValidation,

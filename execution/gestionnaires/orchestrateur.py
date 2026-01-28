@@ -64,9 +64,9 @@ if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-# Chemins
+# Chemins (v1.5.0 - ajusté pour nouvelle structure execution/gestionnaires/)
 SCRIPT_DIR = Path(__file__).parent
-PROJECT_ROOT = SCRIPT_DIR.parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # execution/gestionnaires/ -> execution/ -> projet/
 
 # Configuration timeouts (secondes)
 TIMEOUT_ASSEMBLAGE = 120  # 2 minutes max pour l'assemblage
@@ -970,7 +970,7 @@ class OrchestratorNotaire:
 
         # Appeler le script d'enrichissement
         try:
-            script = self.project_root / 'execution' / 'generer_donnees_minimales.py'
+            script = self.project_root / 'execution' / 'generation' / 'generer_donnees_minimales.py'
             if script.exists():
                 # Sauvegarder temporairement
                 tmp = self.project_root / '.tmp' / 'enrichir_tmp.json'
@@ -1034,7 +1034,7 @@ class OrchestratorNotaire:
     ) -> Dict[str, Any]:
         """Assemble le template avec les données."""
         template = self.TEMPLATES.get(type_acte)
-        script = self.project_root / 'execution' / 'assembler_acte.py'
+        script = self.project_root / 'execution' / 'core' / 'assembler_acte.py'
 
         # Créer le dossier de sortie
         output_dir = Path(output_path).parent
@@ -1075,7 +1075,7 @@ class OrchestratorNotaire:
 
     def _exporter_docx(self, markdown_path: str, output_path: str) -> Dict[str, Any]:
         """Exporte le markdown en DOCX."""
-        script = self.project_root / 'execution' / 'exporter_docx.py'
+        script = self.project_root / 'execution' / 'core' / 'exporter_docx.py'
 
         # Vérifier que le fichier source existe
         md_path = Path(markdown_path)
@@ -1290,19 +1290,19 @@ class OrchestratorNotaire:
         print(f"🔧 STATUT SYSTÈME")
         print(f"{'='*60}")
 
-        # Vérifier les scripts
+        # Vérifier les scripts (v1.5.0 - nouvelle structure)
         scripts_requis = [
-            'assembler_acte.py',
-            'exporter_docx.py',
-            'valider_acte.py',
-            'generer_donnees_minimales.py'
+            ('core/assembler_acte.py', 'assembler_acte.py'),
+            ('core/exporter_docx.py', 'exporter_docx.py'),
+            ('core/valider_acte.py', 'valider_acte.py'),
+            ('generation/generer_donnees_minimales.py', 'generer_donnees_minimales.py')
         ]
 
         print(f"\n📦 Scripts:")
-        for script in scripts_requis:
-            chemin = self.project_root / 'execution' / script
+        for chemin_rel, nom_affiche in scripts_requis:
+            chemin = self.project_root / 'execution' / chemin_rel
             status = "✅" if chemin.exists() else "❌"
-            print(f"   {status} {script}")
+            print(f"   {status} {nom_affiche}")
 
         # Vérifier les templates
         print(f"\n📝 Templates:")
