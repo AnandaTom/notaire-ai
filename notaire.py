@@ -385,7 +385,7 @@ def main():
     # =========================================================================
     elif commande == 'feedback':
         import argparse
-        from execution.api_feedback_notaire import APIFeedbackNotaire
+        from execution.api.api_feedback import APIFeedbackNotaire
 
         parser = argparse.ArgumentParser(prog='notaire.py feedback')
         subparsers = parser.add_subparsers(dest='action', help='Action feedback')

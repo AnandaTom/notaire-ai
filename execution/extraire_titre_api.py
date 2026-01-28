@@ -42,7 +42,7 @@ if sys.platform == "win32":
 
 # Import du module d'extraction existant
 try:
-    from execution.extraire_titre_propriete import (
+    from execution.utils.extraire_titre import (
         extraire_donnees_titre,
         extraire_texte,
         calculer_hash_fichier

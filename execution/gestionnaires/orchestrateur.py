@@ -40,7 +40,7 @@ import logging
 
 # Import du module d'historique Supabase
 try:
-    from execution.historique_supabase import HistoriqueActes, Acte
+    from execution.database.historique import HistoriqueActes, Acte
 except ImportError:
     try:
         from historique_supabase import HistoriqueActes, Acte
