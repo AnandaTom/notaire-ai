@@ -15,7 +15,7 @@ import pytest
 
 # Import du module à tester
 sys.path.insert(0, str(Path(__file__).parent.parent / "execution"))
-from assembler_acte import (
+from execution.core.assembler_acte import (
     nombre_en_lettres,
     montant_en_lettres,
     format_nombre,
