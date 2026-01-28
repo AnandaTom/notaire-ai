@@ -42,8 +42,8 @@ if sys.platform == 'win32':
     sys.stderr.reconfigure(encoding='utf-8')
 
 # Import du gestionnaire de clients securise
-from secure_client_manager import SecureClientManager, ClientData
-from encryption_service import mask_pii
+from .secure_client_manager import SecureClientManager, ClientData
+from .encryption_service import mask_pii
 
 # Try to import Rich for console output
 try:

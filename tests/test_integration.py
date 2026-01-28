@@ -28,7 +28,7 @@ class TestPipelineGeneration:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "generer_donnees_test.py"),
+                str(EXECUTION_DIR / "generation/generer_donnees_test.py"),
                 "--type", "reglement",
                 "--lots", "5",
                 "--output", str(output_file),
@@ -58,7 +58,7 @@ class TestPipelineGeneration:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "generer_donnees_test.py"),
+                str(EXECUTION_DIR / "generation/generer_donnees_test.py"),
                 "--type", "modificatif",
                 "--output", str(output_file),
                 "--seed", "123"
@@ -91,7 +91,7 @@ class TestPipelineGeneration:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "detecter_type_acte.py"),
+                str(EXECUTION_DIR / "analyse/detecter_type_acte.py"),
                 "--data", str(data_file),
                 "--json"
             ],
@@ -119,7 +119,7 @@ class TestPipelineGeneration:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "detecter_type_acte.py"),
+                str(EXECUTION_DIR / "analyse/detecter_type_acte.py"),
                 "--data", str(data_file),
                 "--json"
             ],
@@ -146,7 +146,7 @@ class TestPipelineGeneration:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "detecter_type_acte.py"),
+                str(EXECUTION_DIR / "analyse/detecter_type_acte.py"),
                 "--data", str(data_file),
                 "--json"
             ],
@@ -173,7 +173,7 @@ class TestPipelineGeneration:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "suggerer_clauses.py"),
+                str(EXECUTION_DIR / "utils/suggerer_clauses.py"),
                 "--data", str(data_file),
                 "--type", "vente",
                 "--json"
@@ -211,7 +211,7 @@ class TestValidationDonnees:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "valider_acte.py"),
+                str(EXECUTION_DIR / "core/valider_acte.py"),
                 "--schema", str(schema_file),
                 "--data", str(data_file)
             ],
@@ -238,7 +238,7 @@ class TestHistorique:
         result = subprocess.run(
             [
                 sys.executable,
-                str(EXECUTION_DIR / "historique_supabase.py"),
+                str(EXECUTION_DIR / "database/historique.py"),
                 "--action", "list"
             ],
             capture_output=True,
@@ -258,7 +258,7 @@ class TestCompareDocuments:
     @pytest.mark.docx
     def test_comparer_structure_disponible(self):
         """Vérifie que le script de comparaison est disponible."""
-        script = EXECUTION_DIR / "comparer_documents.py"
+        script = EXECUTION_DIR / "analyse/comparer_documents.py"
         assert script.exists()
 
         result = subprocess.run(
