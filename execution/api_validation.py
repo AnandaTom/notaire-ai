@@ -37,7 +37,7 @@ if sys.platform == "win32":
 
 # Import du validateur existant
 try:
-    from execution.valider_acte import (
+    from execution.core.valider_acte import (
         ValidateurActe,
         NiveauErreur,
         ResultatValidation,
