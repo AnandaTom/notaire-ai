@@ -951,59 +951,35 @@ body {
    SIDEBAR TOGGLE SYSTEM
    ============================================ */
 
-/* Zone de détection pour afficher le toggle (bord gauche) */
+/* Zone de détection - cachée sur grand écran */
 .sidebar-hover-zone {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 20px;
-    height: 100vh;
-    z-index: 999;
-    /* Debug: background: rgba(255,0,0,0.1); */
+    display: none;
 }
 
-/* Bouton toggle sidebar */
+/* Bouton toggle sidebar - caché par défaut sur grand écran */
 .sidebar-toggle {
+    display: none;
     position: fixed;
     left: 0;
     top: 50%;
-    transform: translateY(-50%) translateX(-100%);
-    width: 24px;
+    transform: translateY(-50%);
+    width: 28px;
     height: 60px;
     background: linear-gradient(180deg, var(--ink-black) 0%, var(--ink-deep) 100%);
     border: none;
     border-radius: 0 8px 8px 0;
     cursor: pointer;
     z-index: 1001;
-    display: flex;
     align-items: center;
     justify-content: center;
     color: var(--gold-primary);
-    font-size: 0.9rem;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    opacity: 0;
+    font-size: 1rem;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease;
 }
 
 .sidebar-toggle:hover {
     background: var(--ink-deep);
-}
-
-/* Afficher le toggle quand on survole la zone */
-.sidebar-hover-zone:hover + .sidebar-toggle,
-.sidebar-toggle:hover {
-    transform: translateY(-50%) translateX(0);
-    opacity: 1;
-}
-
-/* Toggle visible quand sidebar est fermée */
-.sidebar-toggle.visible {
-    transform: translateY(-50%) translateX(0);
-    opacity: 0.7;
-}
-
-.sidebar-toggle.visible:hover {
-    opacity: 1;
 }
 
 /* Flèche dans le toggle */
@@ -1015,7 +991,7 @@ body {
     transform: rotate(180deg);
 }
 
-/* Sidebar rétractable */
+/* Sidebar - toujours visible sur grand écran */
 .sidebar {
     width: 280px;
     background: linear-gradient(180deg, var(--ink-black) 0%, var(--ink-deep) 100%);
@@ -1023,17 +999,10 @@ body {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    transition: transform 0.3s ease, width 0.3s ease, margin-left 0.3s ease;
     z-index: 1000;
 }
 
-/* État fermé de la sidebar */
-.sidebar.collapsed {
-    transform: translateX(-100%);
-    margin-left: -280px;
-}
-
-/* Overlay pour fermer en cliquant ailleurs (mobile) */
+/* Overlay pour fermer en cliquant ailleurs (petit écran uniquement) */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -1050,49 +1019,42 @@ body {
 }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE - PETITS ÉCRANS
    ============================================ */
 
-/* Tablettes et petits écrans */
 @media (max-width: 1024px) {
+    /* Sidebar devient fixe et rétractable */
     .sidebar {
         position: fixed;
         left: 0;
         top: 0;
         height: 100vh;
-        transform: translateX(0);
-        margin-left: 0;
+        transition: transform 0.3s ease;
     }
 
+    /* État fermé de la sidebar (petit écran) */
     .sidebar.collapsed {
         transform: translateX(-100%);
-        margin-left: 0;
     }
 
-    /* Afficher le toggle par défaut sur petits écrans */
+    /* Afficher le toggle sur petits écrans */
     .sidebar-toggle {
-        transform: translateY(-50%) translateX(0);
-        opacity: 0.8;
+        display: flex;
     }
 
+    /* Position du toggle quand sidebar ouverte */
     .sidebar-toggle.open {
         left: 280px;
     }
 
+    /* Main content prend toute la largeur */
     .main-content {
         margin-left: 0;
+        width: 100%;
     }
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        width: 280px;
-    }
-
-    .sidebar-toggle.open {
-        left: 280px;
-    }
-
     .message-content {
         max-width: 85%;
     }

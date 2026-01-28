@@ -206,23 +206,28 @@
 
     <!-- Sidebar Toggle Logic -->
     <script>
+        // Variable pour détecter le changement de taille d'écran
+        let wasSmallScreen = window.innerWidth <= 1024;
+
         // Gestion de la sidebar rétractable
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const toggle = document.getElementById('sidebarToggle');
             const overlay = document.getElementById('sidebarOverlay');
 
-            sidebar.classList.toggle('collapsed');
-            toggle.classList.toggle('open');
-            toggle.classList.toggle('visible');
+            const isCollapsed = sidebar.classList.contains('collapsed');
 
-            // Afficher overlay sur mobile
-            if (window.innerWidth <= 1024) {
-                overlay.classList.toggle('visible', !sidebar.classList.contains('collapsed'));
+            if (isCollapsed) {
+                // Ouvrir
+                sidebar.classList.remove('collapsed');
+                toggle.classList.add('open');
+                overlay.classList.add('visible');
+            } else {
+                // Fermer
+                sidebar.classList.add('collapsed');
+                toggle.classList.remove('open');
+                overlay.classList.remove('visible');
             }
-
-            // Sauvegarder la préférence
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
         }
 
         function closeSidebar() {
@@ -232,10 +237,7 @@
 
             sidebar.classList.add('collapsed');
             toggle.classList.remove('open');
-            toggle.classList.add('visible');
             overlay.classList.remove('visible');
-
-            localStorage.setItem('sidebarCollapsed', 'true');
         }
 
         function openSidebar() {
@@ -245,39 +247,20 @@
 
             sidebar.classList.remove('collapsed');
             toggle.classList.add('open');
-            toggle.classList.remove('visible');
-
-            if (window.innerWidth <= 1024) {
-                overlay.classList.add('visible');
-            }
-
-            localStorage.setItem('sidebarCollapsed', 'false');
+            overlay.classList.add('visible');
         }
 
         // Initialiser l'état de la sidebar
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('sidebar');
             const toggle = document.getElementById('sidebarToggle');
-
-            // Vérifier la taille de l'écran
             const isSmallScreen = window.innerWidth <= 1024;
-            const savedState = localStorage.getItem('sidebarCollapsed');
 
-            // Sur petits écrans, fermer par défaut sauf si explicitement ouvert
+            // Sur petits écrans: sidebar fermée par défaut
             if (isSmallScreen) {
-                if (savedState !== 'false') {
-                    sidebar.classList.add('collapsed');
-                    toggle.classList.add('visible');
-                } else {
-                    toggle.classList.add('open');
-                }
-            } else {
-                // Sur grands écrans, respecter la préférence sauvegardée
-                if (savedState === 'true') {
-                    sidebar.classList.add('collapsed');
-                    toggle.classList.add('visible');
-                }
+                sidebar.classList.add('collapsed');
             }
+            // Sur grands écrans: sidebar toujours visible (pas de classe collapsed)
         });
 
         // Gérer le redimensionnement de la fenêtre
@@ -287,11 +270,24 @@
             const overlay = document.getElementById('sidebarOverlay');
             const isSmallScreen = window.innerWidth <= 1024;
 
-            if (isSmallScreen && !sidebar.classList.contains('collapsed')) {
-                overlay.classList.add('visible');
-            } else {
+            // Détection du passage grand → petit écran
+            if (isSmallScreen && !wasSmallScreen) {
+                // On passe de grand à petit : fermer la sidebar
+                sidebar.classList.add('collapsed');
+                toggle.classList.remove('open');
                 overlay.classList.remove('visible');
             }
+
+            // Détection du passage petit → grand écran
+            if (!isSmallScreen && wasSmallScreen) {
+                // On passe de petit à grand : ouvrir la sidebar
+                sidebar.classList.remove('collapsed');
+                toggle.classList.remove('open');
+                overlay.classList.remove('visible');
+            }
+
+            // Mettre à jour l'état
+            wasSmallScreen = isSmallScreen;
         });
     </script>
 </body>
