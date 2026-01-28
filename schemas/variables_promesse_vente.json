@@ -1,10 +1,96 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Variables Promesse Unilatérale de Vente - Lots de Copropriété",
-  "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente de lots de copropriété",
+  "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente de lots de copropriété. Supporte 4 types de promesses détectés automatiquement.",
+  "version": "2.0.0",
+  "date_modification": "2026-01-28",
   "type": "object",
-  "required": ["acte", "promettant", "beneficiaire", "bien", "prix", "indemnite_immobilisation", "delais"],
+  "required": ["promettants", "beneficiaires", "prix", "delai_realisation"],
+  "$comment": "Les champs 'bien' ou 'biens' sont requis selon le type. Voir promesse_catalogue_unifie.json pour détails.",
   "properties": {
+    "_metadata": {
+      "type": "object",
+      "description": "Métadonnées pour le système multi-templates v1.4.0",
+      "properties": {
+        "type_promesse": {
+          "type": "string",
+          "enum": ["standard", "premium", "avec_mobilier", "multi_biens"],
+          "description": "Type de promesse (détecté automatiquement ou forcé)"
+        },
+        "template_utilise": {
+          "type": "string",
+          "description": "Chemin du template utilisé pour la génération"
+        },
+        "source_titre": {
+          "type": "object",
+          "description": "Si généré depuis un titre de propriété",
+          "properties": {
+            "titre_id": { "type": "string" },
+            "date_titre": { "type": "string" },
+            "hash_fichier": { "type": "string" }
+          }
+        },
+        "profil_applique": {
+          "type": "string",
+          "enum": ["particulier_simple", "particulier_meuble", "agence_premium", "investisseur_multi", "sans_pret"],
+          "description": "Profil prédéfini appliqué"
+        },
+        "confiance_detection": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Score de confiance de la détection automatique"
+        }
+      }
+    },
+    "promettants": {
+      "type": "array",
+      "description": "Liste des promettants (vendeurs) - Alias de 'promettant' pour compatibilité v2",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/personne_physique"
+      }
+    },
+    "beneficiaires": {
+      "type": "array",
+      "description": "Liste des bénéficiaires (futurs acquéreurs) - Alias de 'beneficiaire' pour compatibilité v2",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/personne_physique"
+      }
+    },
+    "biens": {
+      "type": "array",
+      "description": "Liste des biens pour promesse multi-biens (remplace 'bien' si plusieurs propriétés)",
+      "items": {
+        "$ref": "#/$defs/bien_immobilier"
+      }
+    },
+    "mobilier": {
+      "type": "object",
+      "description": "Mobilier vendu avec le bien (déclenche type avec_mobilier)",
+      "properties": {
+        "existe": { "type": "boolean", "default": false },
+        "prix_total": { "type": "number" },
+        "liste": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "designation": { "type": "string" },
+              "etat": { "type": "string" },
+              "valeur": { "type": "number" }
+            },
+            "required": ["designation"]
+          }
+        }
+      }
+    },
+    "delai_realisation": {
+      "type": "string",
+      "format": "date",
+      "description": "Date limite pour la réitération authentique (requis)"
+    },
     "acte": {
       "type": "object",
       "description": "Informations générales sur l'acte",
@@ -783,6 +869,61 @@
         "resultat": { "type": "string" },
         "observations": { "type": "string" }
       }
+    },
+
+    "bien_immobilier": {
+      "type": "object",
+      "description": "Bien immobilier pour promesse multi-biens",
+      "required": ["adresse"],
+      "properties": {
+        "adresse": { "type": "string" },
+        "code_postal": { "type": "string" },
+        "ville": { "type": "string" },
+        "nature": {
+          "type": "string",
+          "enum": ["Appartement", "Parking", "Cave", "Local commercial", "Bureau", "Autre"]
+        },
+        "lieu_dit": { "type": "string" },
+        "batiment": { "type": "string" },
+        "escalier": { "type": "string" },
+        "etage": { "type": "string" },
+        "cadastre": {
+          "type": "object",
+          "properties": {
+            "section": { "type": "string" },
+            "numero": { "type": "string" },
+            "surface_totale": { "type": "string" },
+            "parcelles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section": { "type": "string" },
+                  "numero": { "type": "string" },
+                  "lieu_dit": { "type": "string" },
+                  "nature": { "type": "string" },
+                  "surface": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "copropriete": {
+          "type": "object",
+          "properties": {
+            "adresse": { "type": "string" },
+            "tantiemes_totaux": { "type": "integer" }
+          }
+        },
+        "lots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/lot_copropriete" }
+        },
+        "carrez": { "type": "number" },
+        "prix": { "type": "number", "description": "Prix individuel du bien (pour multi-biens)" }
+      }
     }
-  }
+  },
+
+  "$comment_v2": "Ce schéma est compatible avec le système multi-templates v1.4.0. Voir schemas/promesse_catalogue_unifie.json pour le catalogue complet des 4 types de promesses (standard, premium, avec_mobilier, multi_biens)."
 }

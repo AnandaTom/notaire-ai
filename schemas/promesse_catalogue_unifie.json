@@ -1,0 +1,644 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "description": "Catalogue unifié des 4 trames de promesse de vente",
+    "date_creation": "2026-01-28",
+    "trames_sources": [
+      "Trame promesse unilatérale de vente lots de copropriété.docx",
+      "Trame_promesse_A.docx",
+      "Trame_promesse_B.docx",
+      "Trame_promesse_C.docx"
+    ]
+  },
+
+  "types_promesse": {
+    "standard": {
+      "id": "standard",
+      "nom": "Promesse Standard",
+      "description": "1 bien en copropriété, sans mobilier",
+      "trame_source": "ORIGINAL",
+      "template": "promesse_standard.md",
+      "bookmarks": 298,
+      "cas_usage": [
+        "Vente appartement simple",
+        "1 vendeur → 1 acquéreur",
+        "Pas de mobilier inclus"
+      ],
+      "conditions_detection": {
+        "biens_count": 1,
+        "mobilier": false,
+        "diagnostics_exhaustifs": false
+      }
+    },
+    "premium": {
+      "id": "premium",
+      "nom": "Promesse Premium",
+      "description": "Diagnostics exhaustifs, localisation détaillée, annexes complètes",
+      "trame_source": "Trame_B",
+      "template": "promesse_premium.md",
+      "bookmarks": 359,
+      "cas_usage": [
+        "Agences immobilières",
+        "Transactions professionnelles",
+        "Exigences documentaires maximales"
+      ],
+      "conditions_detection": {
+        "biens_count": 1,
+        "diagnostics_exhaustifs": true,
+        "adresse_detaillee": true,
+        "annexes_count_min": 20
+      }
+    },
+    "avec_mobilier": {
+      "id": "avec_mobilier",
+      "nom": "Promesse avec Mobilier",
+      "description": "Inclut liste des meubles vendus + diagnostics en tableau",
+      "trame_source": "Trame_C",
+      "template": "promesse_avec_mobilier.md",
+      "bookmarks": 312,
+      "cas_usage": [
+        "Vente meublée",
+        "Appartement avec équipements",
+        "Liste mobilier contractuelle"
+      ],
+      "conditions_detection": {
+        "biens_count": 1,
+        "mobilier": true
+      }
+    },
+    "multi_biens": {
+      "id": "multi_biens",
+      "nom": "Promesse Multi-Propriétés",
+      "description": "Vente de plusieurs biens distincts ensemble",
+      "trame_source": "Trame_A",
+      "template": "promesse_multi_biens.md",
+      "bookmarks": 423,
+      "cas_usage": [
+        "Vente lot + cave + parking séparés",
+        "Plusieurs propriétés vendues conjointement",
+        "Indivision multi-parcelles"
+      ],
+      "conditions_detection": {
+        "biens_count_min": 2
+      }
+    }
+  },
+
+  "variables": {
+    "communes": {
+      "description": "Variables présentes dans les 4 trames (16 bookmarks)",
+      "liste": [
+        {"id": "DOC_CONTENT", "description": "Contenu principal du document"},
+        {"id": "PYPROME", "description": "Identification de la promesse"},
+        {"id": "WdAnnexe1", "description": "Annexe 1"},
+        {"id": "WdAnnexe2", "description": "Annexe 2"},
+        {"id": "WdAnnexe3", "description": "Annexe 3"},
+        {"id": "WdAnnexe4", "description": "Annexe 4"},
+        {"id": "WdAnnexe5", "description": "Annexe 5"},
+        {"id": "WdAnnexe6", "description": "Annexe 6"},
+        {"id": "WdAnnexe7", "description": "Annexe 7"},
+        {"id": "WdAnnexe8", "description": "Annexe 8"},
+        {"id": "WdAnnexe9", "description": "Annexe 9"},
+        {"id": "PXPRIXV", "description": "Prix de vente"},
+        {"id": "PXPRIXL", "description": "Prix en lettres"},
+        {"id": "PYPROMETTANT", "description": "Nom du promettant"},
+        {"id": "PYBENEFICIAIRE", "description": "Nom du bénéficiaire"},
+        {"id": "PYADRESSE", "description": "Adresse du bien"}
+      ]
+    },
+    "parties": {
+      "description": "Variables pour les parties (vendeurs/acquéreurs)",
+      "variantes_matrimoniales": {
+        "ORIGINAL": 16,
+        "Trame_A": 22,
+        "Trame_B": 24,
+        "Trame_C": 12
+      },
+      "liste_complete": [
+        {"id": "CompPPHCEL", "description": "Homme célibataire", "trames": ["all"]},
+        {"id": "CompPPFCEL", "description": "Femme célibataire", "trames": ["all"]},
+        {"id": "CompPPHMAR", "description": "Homme marié", "trames": ["all"]},
+        {"id": "CompPPFMAR", "description": "Femme mariée", "trames": ["all"]},
+        {"id": "CompPPHDIV", "description": "Homme divorcé", "trames": ["all"]},
+        {"id": "CompPPFDIV", "description": "Femme divorcée", "trames": ["all"]},
+        {"id": "CompPPHVEU", "description": "Homme veuf", "trames": ["all"]},
+        {"id": "CompPPFVEU", "description": "Femme veuve", "trames": ["all"]},
+        {"id": "CompPPHPACS", "description": "Homme pacsé", "trames": ["all"]},
+        {"id": "CompPPFPACS", "description": "Femme pacsée", "trames": ["all"]},
+        {"id": "CompPPHSEP", "description": "Homme séparé", "trames": ["A", "B"]},
+        {"id": "CompPPFSEP", "description": "Femme séparée", "trames": ["A", "B"]},
+        {"id": "CompPPHEMAFCO", "description": "Couple: homme marié + femme célibataire, régime commun", "trames": ["A", "B"]},
+        {"id": "CompPPFSDCHCO", "description": "Couple: femme séparée + homme célibataire, régime commun", "trames": ["A", "B"]},
+        {"id": "CompPPCOUPLE", "description": "Couple marié ensemble", "trames": ["all"]},
+        {"id": "CompPPINDIV", "description": "Indivision", "trames": ["all"]}
+      ]
+    },
+    "bien_immobilier": {
+      "description": "Variables de désignation du bien",
+      "liste": [
+        {"id": "PYADRPE", "description": "Adresse postale", "trames": ["all"]},
+        {"id": "PYADRVILLE", "description": "Ville", "trames": ["all"]},
+        {"id": "PYADRCP", "description": "Code postal", "trames": ["all"]},
+        {"id": "PYLIEU1", "description": "Lieu-dit ligne 1", "trames": ["B"]},
+        {"id": "PYLIEU2", "description": "Lieu-dit ligne 2", "trames": ["B"]},
+        {"id": "PYLIEU3", "description": "Voie d'accès", "trames": ["B"]},
+        {"id": "PYLIEU4", "description": "Coordonnées GPS", "trames": ["B"]},
+        {"id": "PYLIEU5", "description": "Précision localisation 1", "trames": ["B"]},
+        {"id": "PYLIEU6", "description": "Précision localisation 2", "trames": ["B"]},
+        {"id": "PYLIEU7", "description": "Précision localisation 3", "trames": ["B"]}
+      ]
+    },
+    "cadastre": {
+      "description": "Variables cadastrales",
+      "multi_biens": {
+        "Trame_A": {
+          "nb_biens_max": 3,
+          "structure_par_bien": [
+            "PYCAD1_SECTION", "PYCAD1_NUMERO", "PYCAD1_SURFACE",
+            "PYCAD2_SECTION", "PYCAD2_NUMERO", "PYCAD2_SURFACE",
+            "PYCAD3_SECTION", "PYCAD3_NUMERO", "PYCAD3_SURFACE"
+          ]
+        }
+      },
+      "liste_standard": [
+        {"id": "PYCADSEC", "description": "Section cadastrale"},
+        {"id": "PYCADNUM", "description": "Numéro de parcelle"},
+        {"id": "PYCADSURF", "description": "Surface cadastrale"},
+        {"id": "PYCADLIEU", "description": "Lieu-dit cadastral"}
+      ]
+    },
+    "lots_copropriete": {
+      "description": "Variables pour les lots de copropriété",
+      "max_lots": {
+        "ORIGINAL": 12,
+        "Trame_A": 12,
+        "Trame_B": 12,
+        "Trame_C": 9
+      },
+      "structure_lot": [
+        {"id": "PXLOT{n}_NUM", "description": "Numéro du lot"},
+        {"id": "PXLOT{n}_NATURE", "description": "Nature du lot"},
+        {"id": "PXLOT{n}_ETAGE", "description": "Étage"},
+        {"id": "PXLOT{n}_TANT", "description": "Tantièmes généraux"},
+        {"id": "PXLOT{n}_CARREZ", "description": "Surface Carrez"}
+      ]
+    },
+    "mobilier": {
+      "description": "Variables pour le mobilier vendu (Trames A et C uniquement)",
+      "trames": ["A", "C"],
+      "max_items": {
+        "Trame_A": 24,
+        "Trame_C": 19
+      },
+      "structure_item": [
+        {"id": "PZMOB{n}_DESIGN", "description": "Désignation du meuble"},
+        {"id": "PZMOB{n}_ETAT", "description": "État du meuble"},
+        {"id": "PZMOB{n}_VALEUR", "description": "Valeur estimée"}
+      ]
+    },
+    "diagnostics": {
+      "description": "Variables diagnostics techniques",
+      "niveaux": {
+        "minimal": {
+          "trames": ["ORIGINAL", "C"],
+          "variables": ["PDIAG_DPE", "PDIAG_AMIANTE", "PDIAG_PLOMB", "PDIAG_ELEC"]
+        },
+        "standard": {
+          "trames": ["A"],
+          "variables": ["PDIAG_DPE", "PDIAG_AMIANTE", "PDIAG_PLOMB", "PDIAG_ELEC", "PDIAG_GAZ"]
+        },
+        "exhaustif": {
+          "trames": ["B"],
+          "variables": [
+            "PDIAG_DPE", "PDIAG_AMIANTE", "PDIAG_PLOMB", "PDIAG_ELEC",
+            "PDIAG_GAZ", "PDIAG_TERMITES", "PDIAGTITRE"
+          ]
+        }
+      }
+    },
+    "prix_paiement": {
+      "description": "Variables de prix et modalités de paiement",
+      "liste": [
+        {"id": "PXPRIXV", "description": "Prix de vente en chiffres"},
+        {"id": "PXPRIXL", "description": "Prix en lettres"},
+        {"id": "PXPRIXMOB", "description": "Prix du mobilier (si applicable)"},
+        {"id": "PXPRIXNET", "description": "Prix net vendeur"},
+        {"id": "PXSEQUESTRE", "description": "Montant séquestre"},
+        {"id": "PXINDEMNITE", "description": "Indemnité d'immobilisation"},
+        {"id": "PXMODALITE", "description": "Modalités de paiement"}
+      ]
+    },
+    "conditions_suspensives": {
+      "description": "Variables pour les conditions suspensives",
+      "liste": [
+        {"id": "PYCSPRET", "description": "Condition suspensive de prêt"},
+        {"id": "PYCSPRET_MONTANT", "description": "Montant du prêt"},
+        {"id": "PYCSPRET_TAUX", "description": "Taux maximum"},
+        {"id": "PYCSPRET_DUREE", "description": "Durée du prêt"},
+        {"id": "PYCSVENTE", "description": "Condition suspensive de vente préalable"},
+        {"id": "PYCSURBA", "description": "Condition suspensive d'urbanisme"},
+        {"id": "PYCSDIAG", "description": "Condition suspensive diagnostics"},
+        {"id": "PYCSAUTRE", "description": "Autres conditions"}
+      ]
+    },
+    "annexes": {
+      "description": "Variables pour les annexes",
+      "counts": {
+        "ORIGINAL": 19,
+        "Trame_A": 29,
+        "Trame_B": 32,
+        "Trame_C": 13
+      }
+    }
+  },
+
+  "tableaux": {
+    "cadastre_simple": {
+      "description": "Tableau cadastral standard",
+      "dimensions": [2, 4],
+      "colonnes": ["Section", "Numéro", "Lieu-dit", "Surface"],
+      "trames": ["ORIGINAL", "B", "C"]
+    },
+    "cadastre_detaille": {
+      "description": "Tableau cadastral détaillé avec références",
+      "dimensions": [19, 5],
+      "colonnes": ["Section", "Numéro", "Lieu-dit", "Nature", "Surface"],
+      "trames": ["ORIGINAL"]
+    },
+    "cadastre_multi_biens": {
+      "description": "Tableaux cadastraux pour multi-propriétés (répété 3x)",
+      "repetitions": 3,
+      "structure_par_bien": [
+        {"dimensions": [7, 2], "type": "lieu_situation"},
+        {"dimensions": [2, 4], "type": "section"},
+        {"dimensions": [3, 4], "type": "detail"},
+        {"dimensions": [1, 1], "type": "total_surface"}
+      ],
+      "trames": ["A"]
+    },
+    "lieu_situation_detaille": {
+      "description": "Localisation ultra-précise (7 lignes)",
+      "dimensions": [7, 2],
+      "lignes": [
+        "Adresse postale",
+        "Ville et CP",
+        "Lieu-dit",
+        "Voie d'accès",
+        "Coordonnées",
+        "Précision 1",
+        "Précision 2"
+      ],
+      "trames": ["B"]
+    },
+    "mobilier": {
+      "description": "Liste des meubles vendus",
+      "dimensions_A": [24, 2],
+      "dimensions_C": [19, 2],
+      "colonnes": ["Désignation", "État/Valeur"],
+      "trames": ["A", "C"]
+    },
+    "prix_ventilation": {
+      "description": "Ventilation du prix",
+      "dimensions": [10, 2],
+      "lignes": [
+        "Prix total",
+        "Dont immobilier",
+        "Dont mobilier",
+        "Frais de notaire estimés",
+        "Droits d'enregistrement",
+        "Émoluments",
+        "Débours",
+        "TVA",
+        "Contribution sécurité immo",
+        "Total à payer"
+      ],
+      "trames": ["all"]
+    },
+    "diagnostics_tableau": {
+      "description": "Tableau récapitulatif des diagnostics (Trame C)",
+      "dimensions": [15, 1],
+      "lignes": [
+        "DPE", "Amiante", "Plomb", "Électricité", "Gaz",
+        "Termites", "ERP", "Assainissement", "Mérule",
+        "Bruit", "Radon", "Performance énergétique",
+        "Audit énergétique", "Carnet logement", "Carrez"
+      ],
+      "trames": ["C"]
+    }
+  },
+
+  "sections": {
+    "fixes": {
+      "description": "Sections toujours présentes",
+      "liste": [
+        {"id": "entete", "titre": "En-tête et références"},
+        {"id": "identification_parties", "titre": "Identification des parties"},
+        {"id": "qualite_capacite", "titre": "Qualité et capacité"},
+        {"id": "designation_bien", "titre": "Désignation du bien"},
+        {"id": "origine_propriete", "titre": "Origine de propriété"},
+        {"id": "situation_locative", "titre": "Situation locative"},
+        {"id": "prix_paiement", "titre": "Prix et modalités de paiement"},
+        {"id": "conditions_generales", "titre": "Conditions générales"},
+        {"id": "clause_penale", "titre": "Clause pénale"},
+        {"id": "election_domicile", "titre": "Élection de domicile"},
+        {"id": "signature", "titre": "Signatures"}
+      ]
+    },
+    "variables": {
+      "description": "Sections conditionnelles selon le type",
+      "liste": [
+        {
+          "id": "copropriete",
+          "titre": "Copropriété",
+          "condition": "bien.copropriete == true",
+          "trames": ["all"]
+        },
+        {
+          "id": "lots_copropriete",
+          "titre": "Désignation des lots",
+          "condition": "bien.lots.length > 0",
+          "trames": ["all"]
+        },
+        {
+          "id": "mobilier_vendu",
+          "titre": "Mobilier vendu",
+          "condition": "mobilier.existe == true",
+          "trames": ["A", "C"]
+        },
+        {
+          "id": "multi_biens",
+          "titre": "Désignation des biens (multi)",
+          "condition": "biens.length > 1",
+          "trames": ["A"]
+        },
+        {
+          "id": "localisation_detaillee",
+          "titre": "Lieu de situation détaillé",
+          "condition": "bien.localisation_detaillee == true",
+          "trames": ["B"]
+        },
+        {
+          "id": "condition_suspensive_pret",
+          "titre": "Condition suspensive de prêt",
+          "condition": "financement.pret == true",
+          "trames": ["all"]
+        },
+        {
+          "id": "condition_suspensive_vente",
+          "titre": "Condition suspensive de vente préalable",
+          "condition": "conditions_suspensives.vente_prealable == true",
+          "trames": ["all"]
+        },
+        {
+          "id": "condition_suspensive_urbanisme",
+          "titre": "Condition suspensive d'urbanisme",
+          "condition": "conditions_suspensives.urbanisme == true",
+          "trames": ["all"]
+        },
+        {
+          "id": "indemnite_immobilisation",
+          "titre": "Indemnité d'immobilisation",
+          "condition": "indemnite.montant > 0",
+          "trames": ["all"]
+        },
+        {
+          "id": "sequestre",
+          "titre": "Séquestre",
+          "condition": "sequestre.montant > 0",
+          "trames": ["all"]
+        },
+        {
+          "id": "faculte_substitution",
+          "titre": "Faculté de substitution",
+          "condition": "substitution.autorisee == true",
+          "trames": ["all"]
+        },
+        {
+          "id": "diagnostics_exhaustifs",
+          "titre": "Dossier diagnostics techniques complet",
+          "condition": "diagnostics.exhaustifs == true",
+          "trames": ["B"]
+        },
+        {
+          "id": "diagnostics_tableau",
+          "titre": "Tableau récapitulatif diagnostics",
+          "condition": "diagnostics.format_tableau == true",
+          "trames": ["C"]
+        },
+        {
+          "id": "mandat_agent",
+          "titre": "Intervention d'un agent immobilier",
+          "condition": "agent_immobilier.intervient == true",
+          "trames": ["all"]
+        },
+        {
+          "id": "plus_value",
+          "titre": "Plus-value immobilière",
+          "condition": "fiscalite.plus_value.applicable == true",
+          "trames": ["all"]
+        },
+        {
+          "id": "garanties_vices_caches",
+          "titre": "Garantie des vices cachés",
+          "condition": "true",
+          "trames": ["all"]
+        }
+      ]
+    }
+  },
+
+  "mapping_titre_propriete": {
+    "description": "Correspondance entre données extraites d'un titre et variables promesse",
+    "mappings": [
+      {"source": "proprietaires", "cible": "promettants", "transformation": "copy"},
+      {"source": "bien.adresse", "cible": "bien.adresse", "transformation": "copy"},
+      {"source": "bien.cadastre", "cible": "bien.cadastre", "transformation": "copy"},
+      {"source": "bien.lots", "cible": "bien.lots", "transformation": "copy"},
+      {"source": "origine.acte", "cible": "origine_propriete", "transformation": "format_origine"},
+      {"source": "copropriete.syndic", "cible": "copropriete.syndic", "transformation": "copy"},
+      {"source": "copropriete.edd", "cible": "copropriete.edd", "transformation": "copy"},
+      {"source": "servitudes", "cible": "servitudes", "transformation": "copy"}
+    ],
+    "champs_a_completer": [
+      "beneficiaires",
+      "prix",
+      "financement",
+      "conditions_suspensives",
+      "indemnite_immobilisation",
+      "date_signature",
+      "delai_realisation"
+    ]
+  },
+
+  "detection_automatique": {
+    "description": "Règles de détection du type de promesse",
+    "regles": [
+      {
+        "priorite": 1,
+        "condition": "len(donnees.get('biens', [donnees.get('bien')])) > 1",
+        "type": "multi_biens",
+        "raison": "Plusieurs biens distincts à vendre"
+      },
+      {
+        "priorite": 2,
+        "condition": "donnees.get('mobilier', {}).get('existe', False) and donnees.get('mobilier', {}).get('liste', [])",
+        "type": "avec_mobilier",
+        "raison": "Liste de mobilier fournie"
+      },
+      {
+        "priorite": 3,
+        "condition": "donnees.get('diagnostics', {}).get('exhaustifs', False) or donnees.get('bien', {}).get('localisation_detaillee', False) or len(donnees.get('annexes', [])) >= 20",
+        "type": "premium",
+        "raison": "Exigences documentaires élevées"
+      },
+      {
+        "priorite": 4,
+        "condition": "True",
+        "type": "standard",
+        "raison": "Cas standard par défaut"
+      }
+    ]
+  },
+
+  "profils_predefinits": {
+    "particulier_simple": {
+      "description": "Vente entre particuliers, 1 bien, sans mobilier",
+      "type_promesse": "standard",
+      "sections_actives": [
+        "entete", "identification_parties", "qualite_capacite",
+        "designation_bien", "copropriete", "lots_copropriete",
+        "origine_propriete", "situation_locative", "prix_paiement",
+        "condition_suspensive_pret", "indemnite_immobilisation",
+        "conditions_generales", "clause_penale", "signature"
+      ]
+    },
+    "particulier_meuble": {
+      "description": "Vente meublée entre particuliers",
+      "type_promesse": "avec_mobilier",
+      "sections_actives": [
+        "entete", "identification_parties", "qualite_capacite",
+        "designation_bien", "copropriete", "lots_copropriete",
+        "mobilier_vendu", "diagnostics_tableau",
+        "origine_propriete", "situation_locative", "prix_paiement",
+        "condition_suspensive_pret", "indemnite_immobilisation",
+        "conditions_generales", "clause_penale", "signature"
+      ]
+    },
+    "agence_premium": {
+      "description": "Transaction via agence, documentation complète",
+      "type_promesse": "premium",
+      "sections_actives": [
+        "entete", "identification_parties", "qualite_capacite",
+        "designation_bien", "localisation_detaillee", "copropriete",
+        "lots_copropriete", "diagnostics_exhaustifs",
+        "origine_propriete", "situation_locative", "prix_paiement",
+        "mandat_agent", "condition_suspensive_pret",
+        "indemnite_immobilisation", "sequestre",
+        "conditions_generales", "clause_penale", "signature"
+      ]
+    },
+    "investisseur_multi": {
+      "description": "Vente de plusieurs biens (lot + parking + cave)",
+      "type_promesse": "multi_biens",
+      "sections_actives": [
+        "entete", "identification_parties", "qualite_capacite",
+        "multi_biens", "copropriete", "lots_copropriete",
+        "origine_propriete", "situation_locative", "prix_paiement",
+        "condition_suspensive_pret", "condition_suspensive_vente",
+        "indemnite_immobilisation", "faculte_substitution",
+        "conditions_generales", "clause_penale", "signature"
+      ]
+    },
+    "sans_pret": {
+      "description": "Achat comptant sans financement",
+      "type_promesse": "standard",
+      "sections_actives": [
+        "entete", "identification_parties", "qualite_capacite",
+        "designation_bien", "copropriete", "lots_copropriete",
+        "origine_propriete", "situation_locative", "prix_paiement",
+        "indemnite_immobilisation",
+        "conditions_generales", "clause_penale", "signature"
+      ],
+      "sections_exclues": ["condition_suspensive_pret"]
+    }
+  },
+
+  "validation": {
+    "regles_obligatoires": [
+      {
+        "champ": "promettants",
+        "regle": "len(promettants) >= 1",
+        "message": "Au moins un promettant requis"
+      },
+      {
+        "champ": "beneficiaires",
+        "regle": "len(beneficiaires) >= 1",
+        "message": "Au moins un bénéficiaire requis"
+      },
+      {
+        "champ": "bien.adresse",
+        "regle": "bien.adresse is not None",
+        "message": "Adresse du bien requise"
+      },
+      {
+        "champ": "prix.montant",
+        "regle": "prix.montant > 0",
+        "message": "Prix de vente requis"
+      },
+      {
+        "champ": "delai_realisation",
+        "regle": "delai_realisation is not None",
+        "message": "Délai de réalisation requis"
+      }
+    ],
+    "regles_conditionnelles": [
+      {
+        "condition": "financement.pret == true",
+        "champs_requis": ["financement.montant", "financement.taux_max", "financement.duree"],
+        "message": "Détails du prêt requis si condition suspensive de prêt"
+      },
+      {
+        "condition": "mobilier.existe == true",
+        "champs_requis": ["mobilier.liste", "mobilier.prix_total"],
+        "message": "Liste et prix du mobilier requis"
+      },
+      {
+        "condition": "biens.length > 1",
+        "champs_requis": ["biens[*].adresse", "biens[*].cadastre"],
+        "message": "Adresse et cadastre requis pour chaque bien"
+      }
+    ]
+  },
+
+  "supabase_integration": {
+    "tables": {
+      "titres_propriete": {
+        "description": "Titres extraits et stockés",
+        "colonnes": [
+          "id", "etude_id", "reference", "proprietaires", "bien",
+          "origine", "copropriete", "servitudes", "created_at", "updated_at"
+        ]
+      },
+      "promesses_generees": {
+        "description": "Promesses générées",
+        "colonnes": [
+          "id", "etude_id", "type_promesse", "titre_source_id",
+          "promettants", "beneficiaires", "bien", "prix",
+          "fichier_path", "created_at"
+        ]
+      },
+      "feedbacks_promesse": {
+        "description": "Retours notaires sur les promesses",
+        "colonnes": [
+          "id", "promesse_id", "etude_id", "section", "action",
+          "contenu", "raison", "approuve", "created_at"
+        ]
+      }
+    },
+    "queries": {
+      "get_titre_by_adresse": "SELECT * FROM titres_propriete WHERE bien->>'adresse' ILIKE $1",
+      "get_titre_by_proprietaire": "SELECT * FROM titres_propriete WHERE proprietaires @> $1::jsonb",
+      "get_promesses_etude": "SELECT * FROM promesses_generees WHERE etude_id = $1 ORDER BY created_at DESC"
+    }
+  }
+}

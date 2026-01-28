@@ -1477,16 +1477,28 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_negociation.md' %}
 {% endif %}
 
+{% if agent_immobilier and agent_immobilier.actif %}
+{% include 'sections/section_agent_immobilier.md' %}
+{% endif %}
+
 {% if pouvoirs or representation or mandats %}
 {% include 'sections/section_mandats_representation.md' %}
 {% endif %}
 
-{% if dommages_ouvrage or garanties or assurances %}
+{% if travaux %}
+{% include 'sections/section_travaux_construction.md' %}
+{% endif %}
+
+{% if dommages_ouvrage or garanties or assurances or travaux %}
 {% include 'sections/section_assurances_garanties.md' %}
 {% endif %}
 
 {% if fiscalite or declarations_fiscales or tva or plus_value %}
 {% include 'sections/section_declarations_fiscales.md' %}
+{% endif %}
+
+{% if plus_value %}
+{% include 'sections/section_plus_value.md' %}
 {% endif %}
 
 # Formalisme lié aux annexes

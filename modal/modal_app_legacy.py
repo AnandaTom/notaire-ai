@@ -1,6 +1,14 @@
 """
-Modal deployment for NotaireAI API
+Modal deployment for NotaireAI API (Legacy Version)
+===================================================
 Serverless Python backend for notarial act generation
+
+Version simplifiée avec:
+- generate_act(): Génération d'actes
+- chat_with_notaire(): Chat Claude
+- sync_knowledge_base(): Sync Supabase
+
+Pour la version complète avec CRON et multi-tenant, voir modal_app.py
 """
 
 import modal

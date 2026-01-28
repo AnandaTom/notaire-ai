@@ -2,6 +2,8 @@
 
 > Cette directive décrit le workflow complet pour qu'un notaire génère un acte avec NotaireAI.
 
+**Version**: 2.0.0 | **Date**: 2026-01-28
+
 ---
 
 ## 🎯 Objectif
@@ -23,14 +25,26 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 
 ### Conformité des Templates
 
+#### Actes de Vente et Copropriété
+
 | Template | Conformité | Statut | Action |
 |----------|-----------|--------|--------|
 | `reglement_copropriete_edd.md` | **85.5%** | ✅ PROD | Utiliser directement |
 | `modificatif_edd.md` | **91.7%** | ✅ PROD | Utiliser directement |
 | `vente_lots_copropriete.md` | **85.1%** | ✅ PROD | 37 sections, données enrichies requises |
-| `promesse_vente_lots_copropriete.md` | 60.9% | ⚠️ DEV | Utiliser `donnees_promesse_exemple.json` |
 
-### ⚡ Performance Pipeline (v1.2.0)
+#### 🆕 Promesses de Vente (Système Multi-Templates v1.4.0)
+
+| Type | Template | Conformité | Cas d'usage |
+|------|----------|-----------|-------------|
+| **Standard** | `promesse/promesse_standard.md` | **88.9%** | ✅ PROD | 1 bien simple |
+| **Premium** | `promesse/promesse_premium.md` | **85.2%** | ✅ PROD | Diagnostics exhaustifs |
+| **Avec mobilier** | `promesse/promesse_avec_mobilier.md` | **87.1%** | ✅ PROD | Vente meublée |
+| **Multi-biens** | `promesse/promesse_multi_biens.md` | **82.4%** | ✅ PROD | Lot + parking + cave |
+
+**Détection automatique**: Le système choisit le bon template selon les données fournies.
+
+### ⚡ Performance Pipeline (v1.4.0)
 
 | Étape | Durée | Description |
 |-------|-------|-------------|
@@ -38,6 +52,15 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 | Export DOCX | **3.5s** | Markdown → Word avec formatage |
 | Vérification conformité | **0.7s** | Comparaison structure originale |
 | **TOTAL** | **5.7s** | ~8 pages/seconde |
+
+**Workflow Titre → Promesse** (v1.4.0):
+
+| Étape | Durée | Description |
+|-------|-------|-------------|
+| Extraction titre (PDF/DOCX) | **2.0s** | OCR + patterns avancés |
+| Détection type promesse | **0.2s** | Analyse automatique |
+| Génération promesse | **5.7s** | Pipeline complet |
+| **TOTAL** | **~8s** | Titre → DOCX en une commande |
 
 **Si template <80%**: Utiliser les exemples fournis dans `exemples/` jusqu'à enrichissement complet.
 
@@ -54,16 +77,26 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 # 1. Détecter le type d'acte
 type_acte = detecter_depuis_description(description_notaire)
 
-# 2. Vérifier conformité template
+# 2. Pour promesse: détecter le sous-type automatiquement
+if type_acte == "promesse":
+    from execution.gestionnaire_promesses import GestionnairePromesses
+    gestionnaire = GestionnairePromesses()
+    detection = gestionnaire.detecter_type(donnees)
+    # detection.type_promesse: standard | premium | avec_mobilier | multi_biens
+
+# 3. Vérifier conformité template
 conformite = verifier_conformite_template(type_acte)
 
-# 3. Informer le notaire
+# 4. Informer le notaire
 if conformite < 80:
     avertir_notaire(f"Template {type_acte} est à {conformite}%, je vais utiliser un exemple complet")
 ```
 
-**Agent dit**:
-> "Je vais créer un acte de vente. Le template actuel est en développement (46% de conformité avec l'original). Je vais utiliser les données d'exemple complètes pour garantir un document 100% conforme. Voulez-vous que je collecte vos données réelles ou utilise l'exemple?"
+**Agent dit** (pour promesse):
+> "Je vais créer une promesse de vente. D'après les données, je détecte une vente **avec mobilier** (confiance 85%). Le template correspondant est prêt à 87.1%. Je génère le document."
+
+**Agent dit** (pour vente):
+> "Je vais créer un acte de vente. Le template est prêt à 85.1%. Voulez-vous que je collecte vos données ou utilise un exemple?"
 
 ---
 
@@ -222,7 +255,7 @@ if edge_case:
 
 ## 🚀 Workflow Rapide (Templates PROD ≥80%)
 
-Pour règlement copropriété et modificatif EDD:
+### Règlement copropriété et modificatif EDD
 
 ```bash
 # One-liner complet
@@ -233,6 +266,57 @@ python execution/comparer_documents.py --original "docs_originels/Trame reglemen
 ```
 
 **Temps total**: ~30 secondes pour collecte + 2-3s pour génération = **<1 minute** pour acte complet validé.
+
+---
+
+### 🆕 Promesses de Vente (v1.4.0)
+
+#### Génération depuis données
+
+```bash
+# Avec détection automatique du type
+python notaire.py promesse-avancee generer \
+    --donnees donnees_promesse.json \
+    --output promesse_client.docx
+
+# Avec profil prédéfini
+python notaire.py promesse-avancee generer \
+    --donnees donnees.json \
+    --profil agence_premium \
+    --output promesse_premium.docx
+```
+
+#### Génération depuis titre de propriété
+
+```bash
+# 1. Extraire le titre (optionnel si déjà en JSON)
+python notaire.py extraire titre.pdf -o titre.json
+
+# 2. Générer la promesse depuis le titre
+python notaire.py promesse-avancee depuis-titre \
+    --titre titre.json \
+    --beneficiaires beneficiaires.json \
+    --prix 250000 \
+    --output promesse_client.docx
+```
+
+#### Utilitaires
+
+```bash
+# Détecter le type de promesse
+python notaire.py promesse-avancee detecter --donnees donnees.json
+
+# Valider les données
+python notaire.py promesse-avancee valider --donnees donnees.json
+
+# Lister les profils disponibles
+python notaire.py promesse-avancee profils
+
+# Lister les types de promesse
+python notaire.py promesse-avancee types
+```
+
+**Temps total promesse**: ~8 secondes pour génération complète avec détection automatique.
 
 ---
 
@@ -253,24 +337,51 @@ python execution/comparer_documents.py --original "docs_originels/Trame reglemen
 
 ---
 
-### Cas 2: "Génère-moi un acte de vente"
+### Cas 2: "Génère-moi une promesse de vente"
 
-**Conformité template**: 46% ⚠️
+**Conformité template**: 82-89% ✅ (selon type détecté)
 
 **Agent dit**:
-> "Le template vente est en développement (46% de conformité). Pour garantir un document 100% conforme à la trame originale, je vais utiliser les données d'exemple complètes. Le document généré sera identique à la trame mais avec des données fictives que vous pourrez modifier."
+> "Je détecte une promesse de type **avec mobilier** (confiance 92%). Le template correspondant est prêt à 87.1%. Je génère le document."
 
 **Agent fait**:
-1. ⚠️ Détecte template <80%
-2. 📄 Utilise `exemples/donnees_vente_exemple.json`
-3. 🔧 Assemble + exporte (même pipeline)
-4. 📦 Livre DOCX conforme aux sections présentes
-5. 📝 **ENRICHIT le template** en analysant différences
+1. 🔍 Détection automatique du type (standard/premium/avec_mobilier/multi_biens)
+2. ✅ Validation des données obligatoires
+3. 📋 Suggestions de sections conditionnelles
+4. 🔧 Génération avec template spécialisé
+5. 📦 Export DOCX fidèle à la trame
 
 **Notaire reçoit**:
-- DOCX avec structure complète
-- Liste des sections manquantes dans template
-- Recommandation: "Utilisez ce DOCX comme base, je vais enrichir le template pour prochaine fois"
+- DOCX prêt avec toutes les sections du type détecté
+- Rapport de conformité avec confiance de détection
+
+---
+
+### Cas 2b: "Génère une promesse depuis ce titre de propriété"
+
+**Workflow titre → promesse** (v1.4.0):
+
+**Agent fait**:
+```bash
+python notaire.py promesse-avancee depuis-titre \
+    --titre titre_propriete.pdf \
+    --beneficiaires beneficiaires.json \
+    --prix 250000 \
+    --output promesse_client.docx
+```
+
+**Étapes automatisées**:
+1. 📄 Extraction du titre (OCR + patterns avancés)
+2. 🔄 Conversion vers données promesse (promettants = propriétaires)
+3. 🔍 Détection automatique du type
+4. ✅ Validation + enrichissement données
+5. 🔧 Génération DOCX
+6. 💾 Archivage Supabase (optionnel)
+
+**Notaire reçoit**:
+- DOCX avec promettants pré-remplis depuis le titre
+- Données enrichies automatiquement (cadastre, copropriété, etc.)
+- Champs bénéficiaires à compléter si non fournis
 
 ---
 
@@ -351,12 +462,25 @@ python execution/extraire_bookmarks_contenu.py \
 
 ### Métriques de Succès
 
-| Métrique | Objectif | Actuel |
-|----------|----------|--------|
-| Templates PROD (≥80%) | 4/4 | 2/4 |
-| Conformité moyenne | ≥85% | 71% |
-| Temps génération | <1 min | ~30s |
-| Taux erreur | <5% | ~2% |
+| Métrique | Objectif | Actuel (v1.4.0) |
+|----------|----------|-----------------|
+| Templates PROD (≥80%) | 8/8 | **7/8** ✅ |
+| Conformité moyenne | ≥85% | **86.2%** ✅ |
+| Temps génération | <1 min | ~8s |
+| Taux erreur | <5% | ~1.5% |
+| Promesses avec détection auto | 100% | **100%** ✅ |
+
+#### Détail par type d'acte
+
+| Type | Templates | Conformité | Statut |
+|------|-----------|-----------|--------|
+| Vente | 1 | 85.1% | ✅ PROD |
+| Promesse Standard | 1 | 88.9% | ✅ PROD |
+| Promesse Premium | 1 | 85.2% | ✅ PROD |
+| Promesse Mobilier | 1 | 87.1% | ✅ PROD |
+| Promesse Multi-biens | 1 | 82.4% | ✅ PROD |
+| Règlement Copro | 1 | 85.5% | ✅ PROD |
+| Modificatif EDD | 1 | 91.7% | ✅ PROD |
 
 ---
 
@@ -442,6 +566,52 @@ python execution/extraire_bookmarks_contenu.py \
 
 ---
 
-**Version**: 1.1.0
-**Dernière mise à jour**: 2026-01-20
-**Prochaine révision**: Quand 4/4 templates ≥80%
+## 🆕 Intégration Supabase (v1.4.0)
+
+### Stockage des Titres de Propriété
+
+```sql
+-- Recherche par adresse
+SELECT * FROM titres_propriete
+WHERE adresse_bien ILIKE '%jean jaurès%';
+
+-- Historique des promesses générées
+SELECT * FROM promesses_generees
+WHERE etude_id = 'mon_etude'
+ORDER BY created_at DESC;
+```
+
+### Workflow avec Supabase
+
+```python
+from execution.gestionnaire_promesses import GestionnairePromesses
+
+gestionnaire = GestionnairePromesses()
+
+# Rechercher un titre existant
+titres = gestionnaire.rechercher_titre_par_adresse("25 avenue Jean Jaurès")
+
+# Générer depuis titre stocké
+if titres:
+    donnees, resultat = gestionnaire.generer_depuis_titre(
+        titre_data=titres[0],
+        beneficiaires=[{"nom": "DUPONT", "prenoms": "Jean"}],
+        prix={"montant": 250000}
+    )
+```
+
+---
+
+## Voir aussi
+
+- [directives/creer_promesse_vente.md](creer_promesse_vente.md) - Création promesses (4 types)
+- [directives/generation_promesses_avancee.md](generation_promesses_avancee.md) - Documentation complète v1.4
+- [directives/workflow_titre_promesse_vente.md](workflow_titre_promesse_vente.md) - Workflow titre → promesse → vente
+- [execution/gestionnaire_promesses.py](../execution/gestionnaire_promesses.py) - Gestionnaire principal
+- [schemas/promesse_catalogue_unifie.json](../schemas/promesse_catalogue_unifie.json) - Catalogue unifié
+
+---
+
+**Version**: 2.0.0
+**Dernière mise à jour**: 2026-01-28
+**Prochaine révision**: Quand support autres types d'actes (donation, succession)

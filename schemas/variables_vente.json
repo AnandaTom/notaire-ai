@@ -57,19 +57,25 @@
 
     "vendeurs": {
       "type": "array",
-      "description": "Liste des vendeurs",
+      "description": "Liste des vendeurs (personnes physiques ou morales)",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/personne_physique"
+        "oneOf": [
+          { "$ref": "#/$defs/personne_physique" },
+          { "$ref": "#/$defs/personne_morale" }
+        ]
       }
     },
 
     "acquereurs": {
       "type": "array",
-      "description": "Liste des acquéreurs",
+      "description": "Liste des acquéreurs (personnes physiques ou morales)",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/personne_physique"
+        "oneOf": [
+          { "$ref": "#/$defs/personne_physique" },
+          { "$ref": "#/$defs/personne_morale" }
+        ]
       }
     },
 
@@ -567,6 +573,127 @@
   },
 
   "$defs": {
+    "personne_morale": {
+      "type": "object",
+      "description": "Personne morale (société, association, etc.)",
+      "required": ["type_personne", "forme_juridique", "denomination", "siege_social", "siren", "representant"],
+      "properties": {
+        "type_personne": {
+          "type": "string",
+          "const": "morale",
+          "description": "Discriminant pour identifier une personne morale"
+        },
+        "forme_juridique": {
+          "type": "string",
+          "enum": ["SCI", "SARL", "SAS", "SA", "SNC", "EURL", "SASU", "SC", "Association", "Fondation", "GIE", "Syndicat", "Autre"],
+          "description": "Forme juridique de la société"
+        },
+        "denomination": {
+          "type": "string",
+          "description": "Dénomination sociale (ex: SCI LES OLIVIERS)"
+        },
+        "sigle": {
+          "type": "string",
+          "description": "Sigle éventuel"
+        },
+        "siege_social": {
+          "type": "object",
+          "required": ["adresse", "code_postal", "ville"],
+          "properties": {
+            "adresse": { "type": "string" },
+            "complement": { "type": "string" },
+            "code_postal": { "type": "string", "pattern": "^[0-9]{5}$" },
+            "ville": { "type": "string" }
+          }
+        },
+        "siren": {
+          "type": "string",
+          "pattern": "^[0-9]{9}$",
+          "description": "Numéro SIREN (9 chiffres)"
+        },
+        "siret": {
+          "type": "string",
+          "pattern": "^[0-9]{14}$",
+          "description": "Numéro SIRET (14 chiffres)"
+        },
+        "rcs": {
+          "type": "object",
+          "description": "Immatriculation au Registre du Commerce et des Sociétés",
+          "properties": {
+            "numero": { "type": "string" },
+            "ville": { "type": "string", "description": "Ville du greffe" }
+          }
+        },
+        "capital_social": {
+          "type": "object",
+          "description": "Capital social",
+          "properties": {
+            "montant": { "type": "number" },
+            "devise": { "type": "string", "default": "EUR" }
+          }
+        },
+        "representant": {
+          "type": "object",
+          "description": "Représentant légal de la société",
+          "required": ["qualite", "nom", "prenoms"],
+          "properties": {
+            "qualite": {
+              "type": "string",
+              "enum": ["Gérant", "Président", "Directeur général", "Administrateur", "Mandataire", "Co-gérant", "Liquidateur"],
+              "description": "Qualité du représentant"
+            },
+            "civilite": { "type": "string", "enum": ["Monsieur", "Madame"] },
+            "nom": { "type": "string" },
+            "prenoms": { "type": "string" },
+            "date_naissance": { "type": "string", "format": "date" },
+            "lieu_naissance": { "type": "string" },
+            "adresse": { "type": "string" },
+            "pouvoir": {
+              "type": "object",
+              "description": "Origine des pouvoirs",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "enum": ["statuts", "proces_verbal_ag", "delegation", "pouvoir_special"],
+                  "description": "Source des pouvoirs"
+                },
+                "date": { "type": "string", "format": "date" },
+                "reference": { "type": "string" }
+              }
+            }
+          }
+        },
+        "statuts": {
+          "type": "object",
+          "description": "Informations sur les statuts",
+          "properties": {
+            "date_constitution": { "type": "string", "format": "date" },
+            "date_modification": { "type": "string", "format": "date" },
+            "notaire": { "type": "string" },
+            "duree_societe": { "type": "integer", "description": "Durée en années" },
+            "date_fin": { "type": "string", "format": "date" },
+            "objet_social": { "type": "string" }
+          }
+        },
+        "objet_social_abrege": {
+          "type": "string",
+          "description": "Résumé de l'objet social (ex: acquisition et gestion immobilière)"
+        },
+        "presence": {
+          "type": "string",
+          "enum": ["representee", "absente"],
+          "default": "representee"
+        },
+        "coordonnees": {
+          "type": "object",
+          "properties": {
+            "telephone": { "type": "string" },
+            "email": { "type": "string", "format": "email" }
+          }
+        }
+      }
+    },
+
     "personne_physique": {
       "type": "object",
       "required": ["nom", "prenoms", "date_naissance", "lieu_naissance", "adresse"],

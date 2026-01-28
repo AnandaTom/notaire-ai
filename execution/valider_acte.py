@@ -418,56 +418,177 @@ class ValidateurActe:
                                 ))
 
     def _valider_personnes(self, donnees: Dict[str, Any]):
-        """Vérifie la validité des informations des personnes."""
+        """Vérifie la validité des informations des personnes (physiques et morales)."""
 
         for cle, type_partie in [('vendeurs', 'Vendeur'), ('acquereurs', 'Acquéreur')]:
             if cle in donnees:
                 for i, personne in enumerate(donnees[cle]):
-                    # Nom et prénom obligatoires
-                    if not personne.get('nom'):
-                        self.rapport.ajouter(ResultatValidation(
-                            niveau=NiveauErreur.ERREUR,
-                            code="NOM_MANQUANT",
-                            message=f"Nom manquant pour {type_partie} {i+1}",
-                            chemin=f"{cle}.{i}.nom"
-                        ))
+                    # Déterminer si personne morale ou physique
+                    type_personne = personne.get('type_personne', 'physique')
 
-                    if not personne.get('prenoms'):
-                        self.rapport.ajouter(ResultatValidation(
-                            niveau=NiveauErreur.ERREUR,
-                            code="PRENOM_MANQUANT",
-                            message=f"Prénom(s) manquant(s) pour {type_partie} {i+1}",
-                            chemin=f"{cle}.{i}.prenoms"
-                        ))
+                    if type_personne == 'morale':
+                        self._valider_personne_morale(personne, cle, i, type_partie)
+                    else:
+                        self._valider_personne_physique(personne, cle, i, type_partie)
 
-                    # Adresse obligatoire
-                    if not personne.get('adresse'):
-                        self.rapport.ajouter(ResultatValidation(
-                            niveau=NiveauErreur.ERREUR,
-                            code="ADRESSE_MANQUANTE",
-                            message=f"Adresse manquante pour {type_partie} {i+1}",
-                            chemin=f"{cle}.{i}.adresse"
-                        ))
+    def _valider_personne_physique(self, personne: Dict, cle: str, index: int, type_partie: str):
+        """Valide une personne physique."""
+        # Nom et prénom obligatoires
+        if not personne.get('nom'):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="NOM_MANQUANT",
+                message=f"Nom manquant pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.nom"
+            ))
 
-                    # Date et lieu de naissance
-                    if not personne.get('date_naissance'):
-                        self.rapport.ajouter(ResultatValidation(
-                            niveau=NiveauErreur.ERREUR,
-                            code="DATE_NAISSANCE_MANQUANTE",
-                            message=f"Date de naissance manquante pour {type_partie} {i+1}",
-                            chemin=f"{cle}.{i}.date_naissance"
-                        ))
+        if not personne.get('prenoms'):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="PRENOM_MANQUANT",
+                message=f"Prénom(s) manquant(s) pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.prenoms"
+            ))
 
-                    if not personne.get('lieu_naissance'):
-                        self.rapport.ajouter(ResultatValidation(
-                            niveau=NiveauErreur.ERREUR,
-                            code="LIEU_NAISSANCE_MANQUANT",
-                            message=f"Lieu de naissance manquant pour {type_partie} {i+1}",
-                            chemin=f"{cle}.{i}.lieu_naissance"
-                        ))
+        # Adresse obligatoire
+        if not personne.get('adresse'):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="ADRESSE_MANQUANTE",
+                message=f"Adresse manquante pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.adresse"
+            ))
 
-                    # Valider situation PACS
-                    self._valider_pacs(personne, cle, i, type_partie)
+        # Date et lieu de naissance
+        if not personne.get('date_naissance'):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="DATE_NAISSANCE_MANQUANTE",
+                message=f"Date de naissance manquante pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.date_naissance"
+            ))
+
+        if not personne.get('lieu_naissance'):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="LIEU_NAISSANCE_MANQUANT",
+                message=f"Lieu de naissance manquant pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.lieu_naissance"
+            ))
+
+        # Valider situation PACS
+        self._valider_pacs(personne, cle, index, type_partie)
+
+    def _valider_personne_morale(self, personne: Dict, cle: str, index: int, type_partie: str):
+        """Valide une personne morale (SCI, SARL, etc.)."""
+        # Dénomination obligatoire
+        if not personne.get('denomination'):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="DENOMINATION_MANQUANTE",
+                message=f"Dénomination sociale manquante pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.denomination"
+            ))
+
+        # Forme juridique obligatoire
+        forme = personne.get('forme_juridique', '')
+        if not forme:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="FORME_JURIDIQUE_MANQUANTE",
+                message=f"Forme juridique manquante pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.forme_juridique"
+            ))
+        else:
+            formes_valides = ['SCI', 'SARL', 'SAS', 'SA', 'SNC', 'EURL', 'SASU', 'SC',
+                           'Association', 'Fondation', 'GIE', 'Syndicat', 'Autre']
+            if forme not in formes_valides:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="FORME_JURIDIQUE_INCONNUE",
+                    message=f"Forme juridique non reconnue: {forme}",
+                    chemin=f"{cle}.{index}.forme_juridique",
+                    suggestion=f"Formes connues: {', '.join(formes_valides)}"
+                ))
+
+        # Siège social obligatoire
+        siege = personne.get('siege_social', {})
+        if not siege or not siege.get('adresse'):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="SIEGE_SOCIAL_MANQUANT",
+                message=f"Siège social manquant pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.siege_social"
+            ))
+
+        # SIREN obligatoire
+        siren = personne.get('siren', '')
+        if not siren:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="SIREN_MANQUANT",
+                message=f"Numéro SIREN manquant pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.siren"
+            ))
+        elif not re.match(r'^\d{9}$', siren):
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="SIREN_INVALIDE",
+                message=f"Format SIREN invalide: {siren} (9 chiffres attendus)",
+                chemin=f"{cle}.{index}.siren"
+            ))
+
+        # Représentant légal obligatoire
+        representant = personne.get('representant', {})
+        if not representant:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.ERREUR,
+                code="REPRESENTANT_MANQUANT",
+                message=f"Représentant légal manquant pour {type_partie} {index+1}",
+                chemin=f"{cle}.{index}.representant"
+            ))
+        else:
+            # Vérifier qualité du représentant
+            qualite = representant.get('qualite', '')
+            if not qualite:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="QUALITE_REPRESENTANT_MANQUANTE",
+                    message=f"Qualité du représentant manquante pour {type_partie} {index+1}",
+                    chemin=f"{cle}.{index}.representant.qualite"
+                ))
+
+            # Nom du représentant
+            if not representant.get('nom'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="NOM_REPRESENTANT_MANQUANT",
+                    message=f"Nom du représentant manquant pour {type_partie} {index+1}",
+                    chemin=f"{cle}.{index}.representant.nom"
+                ))
+
+            # Pouvoirs du représentant
+            pouvoir = representant.get('pouvoir', {})
+            if not pouvoir.get('source'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="POUVOIRS_NON_SPECIFIES",
+                    message=f"Source des pouvoirs du représentant non spécifiée pour {type_partie} {index+1}",
+                    chemin=f"{cle}.{index}.representant.pouvoir",
+                    suggestion="Préciser l'origine des pouvoirs (statuts, PV AG, délégation)"
+                ))
+
+        # RCS recommandé pour les sociétés commerciales
+        formes_commerciales = ['SARL', 'SAS', 'SA', 'SNC', 'EURL', 'SASU']
+        if forme in formes_commerciales:
+            rcs = personne.get('rcs', {})
+            if not rcs or not rcs.get('numero'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="RCS_MANQUANT",
+                    message=f"Numéro RCS recommandé pour {forme} ({type_partie} {index+1})",
+                    chemin=f"{cle}.{index}.rcs"
+                ))
 
     def _valider_pacs(self, personne: Dict, cle: str, index: int, type_partie: str):
         """Valide la structure PACS."""
@@ -683,6 +804,581 @@ class ValidateurActe:
                         suggestion="Les tantièmes ne peuvent pas dépasser la base totale"
                     ))
 
+    # =========================================================================
+    # NOUVELLES RÈGLES DE VALIDATION MÉTIER (v1.5.0)
+    # =========================================================================
+
+    def _valider_intervention_conjoint(self, donnees: Dict[str, Any]):
+        """
+        Vérifie que le conjoint intervient si le bien est commun.
+
+        ERREUR si:
+        - Vendeur marié en communauté (légale ou universelle)
+        - ET bien acquis pendant le mariage (présumé commun)
+        - ET conjoint n'intervient pas à l'acte
+        """
+        vendeurs = donnees.get('vendeurs', donnees.get('promettants', []))
+
+        regimes_communaute = [
+            'communaute_legale', 'communauté légale', 'communaute_universelle',
+            'communauté universelle', 'communaute_reduite_aux_acquets',
+            'communauté réduite aux acquêts', 'regime_legal', 'régime légal'
+        ]
+
+        for i, vendeur in enumerate(vendeurs):
+            situation = vendeur.get('situation_matrimoniale', {})
+            statut = situation.get('statut', '').lower()
+            regime = situation.get('regime_matrimonial', situation.get('regime', '')).lower()
+
+            # Vérifier si marié en communauté
+            if statut in ['marie', 'marié', 'mariee', 'mariée']:
+                est_communaute = any(r in regime for r in regimes_communaute) or not regime
+
+                if est_communaute:
+                    # Vérifier si le conjoint intervient
+                    conjoint = situation.get('conjoint', {})
+                    conjoint_intervient = conjoint.get('intervient', False)
+
+                    # Chercher aussi dans la liste des co-vendeurs
+                    nom_conjoint = conjoint.get('nom', '').upper()
+                    conjoint_dans_vendeurs = any(
+                        v.get('nom', '').upper() == nom_conjoint and v != vendeur
+                        for v in vendeurs
+                    ) if nom_conjoint else False
+
+                    if not conjoint_intervient and not conjoint_dans_vendeurs:
+                        self.rapport.ajouter(ResultatValidation(
+                            niveau=NiveauErreur.ERREUR,
+                            code="CONJOINT_NON_INTERVENANT",
+                            message=f"Le vendeur {vendeur.get('nom', '')} est marié en communauté mais le conjoint n'intervient pas",
+                            chemin=f"vendeurs.{i}.situation_matrimoniale",
+                            suggestion="Le conjoint doit intervenir à l'acte pour vendre un bien commun (art. 1424 Code civil)"
+                        ))
+
+    def _valider_diagnostics_validite(self, donnees: Dict[str, Any]):
+        """
+        Vérifie que les diagnostics ne sont pas expirés.
+
+        Durées de validité:
+        - DPE: 10 ans
+        - Plomb (CREP): 1 an si présence, illimité si absence
+        - Amiante: 3 ans si présence, illimité si absence
+        - Termites: 6 mois
+        - Électricité: 3 ans
+        - Gaz: 3 ans
+        - ERP: 6 mois
+        """
+        diagnostics = donnees.get('diagnostics', {})
+        if not diagnostics:
+            return
+
+        date_acte = donnees.get('acte', {}).get('date', {})
+        if isinstance(date_acte, dict):
+            try:
+                date_ref = datetime(
+                    date_acte.get('annee', datetime.now().year),
+                    date_acte.get('mois', 1),
+                    date_acte.get('jour', 1)
+                )
+            except (ValueError, TypeError):
+                date_ref = datetime.now()
+        else:
+            date_ref = datetime.now()
+
+        # Configuration des durées de validité (en jours)
+        validites = {
+            'dpe': {'duree': 3650, 'nom': 'DPE'},  # 10 ans
+            'electricite': {'duree': 1095, 'nom': 'Diagnostic électricité'},  # 3 ans
+            'gaz': {'duree': 1095, 'nom': 'Diagnostic gaz'},  # 3 ans
+            'termites': {'duree': 180, 'nom': 'État termites'},  # 6 mois
+            'etat_risques': {'duree': 180, 'nom': 'ERP'},  # 6 mois
+            'erp': {'duree': 180, 'nom': 'ERP'},  # 6 mois
+            'plomb': {'duree': 365, 'nom': 'CREP (plomb)', 'si_positif': True},  # 1 an si positif
+            'amiante': {'duree': 1095, 'nom': 'Amiante', 'si_positif': True},  # 3 ans si positif
+        }
+
+        for diag_key, config in validites.items():
+            diag = diagnostics.get(diag_key, {})
+            if not diag:
+                continue
+
+            date_diag = diag.get('date', '')
+            if not date_diag:
+                continue
+
+            # Parser la date du diagnostic
+            try:
+                if isinstance(date_diag, str):
+                    if '/' in date_diag:
+                        date_diag_parsed = datetime.strptime(date_diag, '%d/%m/%Y')
+                    elif '-' in date_diag:
+                        date_diag_parsed = datetime.strptime(date_diag, '%Y-%m-%d')
+                    else:
+                        continue
+                else:
+                    continue
+
+                # Calculer l'ancienneté
+                jours_ecoules = (date_ref - date_diag_parsed).days
+
+                # Vérifier si expiré
+                if jours_ecoules > config['duree']:
+                    # Pour plomb/amiante, vérifier si présence
+                    if config.get('si_positif'):
+                        presence = diag.get('presence', diag.get('positif', None))
+                        if presence is False:
+                            continue  # Illimité si absence
+
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.ERREUR,
+                        code=f"DIAGNOSTIC_EXPIRE_{diag_key.upper()}",
+                        message=f"{config['nom']} expiré ({jours_ecoules} jours, max {config['duree']})",
+                        chemin=f"diagnostics.{diag_key}.date",
+                        suggestion=f"Renouveler le {config['nom']} avant la signature"
+                    ))
+
+            except (ValueError, TypeError):
+                pass
+
+    def _valider_coherence_dates_promesse(self, donnees: Dict[str, Any]):
+        """
+        Vérifie la cohérence des dates pour une promesse de vente.
+
+        AVERTISSEMENT si:
+        - date_obtention_pret > delai_realisation
+        - delai_realisation < date_acte + 30 jours
+        """
+        # Délai de réalisation
+        delai = donnees.get('delai_realisation', donnees.get('delais', {}).get('date_realisation', ''))
+        if not delai:
+            return
+
+        # Date de l'acte
+        date_acte = donnees.get('acte', {}).get('date', {})
+
+        try:
+            # Parser délai de réalisation
+            if isinstance(delai, str):
+                if '-' in delai:
+                    date_delai = datetime.strptime(delai, '%Y-%m-%d')
+                elif '/' in delai:
+                    date_delai = datetime.strptime(delai, '%d/%m/%Y')
+                else:
+                    return
+            else:
+                return
+
+            # Parser date acte
+            if isinstance(date_acte, dict):
+                date_acte_parsed = datetime(
+                    date_acte.get('annee', datetime.now().year),
+                    date_acte.get('mois', 1),
+                    date_acte.get('jour', 1)
+                )
+            else:
+                date_acte_parsed = datetime.now()
+
+            # Vérifier délai minimum (30 jours)
+            jours_delai = (date_delai - date_acte_parsed).days
+            if jours_delai < 30:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="DELAI_REALISATION_COURT",
+                    message=f"Délai de réalisation très court ({jours_delai} jours)",
+                    chemin="delai_realisation",
+                    suggestion="Prévoir au minimum 60-90 jours pour les formalités"
+                ))
+
+            # Vérifier cohérence avec date obtention prêt
+            conditions = donnees.get('conditions_suspensives', {})
+            pret = conditions.get('pret', {})
+            date_pret = pret.get('date_limite_obtention', '')
+
+            if date_pret:
+                if isinstance(date_pret, str):
+                    if '-' in date_pret:
+                        date_pret_parsed = datetime.strptime(date_pret, '%Y-%m-%d')
+                    elif '/' in date_pret:
+                        date_pret_parsed = datetime.strptime(date_pret, '%d/%m/%Y')
+                    else:
+                        return
+
+                    if date_pret_parsed > date_delai:
+                        self.rapport.ajouter(ResultatValidation(
+                            niveau=NiveauErreur.AVERTISSEMENT,
+                            code="DATE_PRET_APRES_REALISATION",
+                            message="Date limite d'obtention du prêt postérieure au délai de réalisation",
+                            chemin="conditions_suspensives.pret.date_limite_obtention",
+                            suggestion="La date d'obtention du prêt doit être antérieure au délai de réalisation"
+                        ))
+
+        except (ValueError, TypeError):
+            pass
+
+    def _valider_prix_coherent(self, donnees: Dict[str, Any]):
+        """
+        Vérifie que le prix au m² est cohérent.
+
+        AVERTISSEMENT si prix/m² aberrant:
+        - Hors Paris: < 500€/m² ou > 15000€/m²
+        - Paris (75): < 5000€/m² ou > 25000€/m²
+        """
+        prix = donnees.get('prix', {}).get('montant', 0)
+        if not prix or prix <= 0:
+            return
+
+        # Chercher la surface
+        bien = donnees.get('bien', {})
+        surface = bien.get('superficie_carrez', {})
+        if isinstance(surface, dict):
+            surface_m2 = surface.get('superficie_m2', surface.get('valeur', 0))
+        else:
+            surface_m2 = surface if isinstance(surface, (int, float)) else 0
+
+        # Si pas de Carrez, chercher dans les lots
+        if not surface_m2:
+            lots = bien.get('lots', [])
+            surface_m2 = sum(l.get('superficie_carrez', 0) for l in lots)
+
+        if not surface_m2 or surface_m2 <= 0:
+            return
+
+        prix_m2 = prix / surface_m2
+
+        # Déterminer si Paris
+        adresse = bien.get('adresse', {})
+        code_postal = str(adresse.get('code_postal', ''))
+        est_paris = code_postal.startswith('75')
+
+        # Seuils
+        if est_paris:
+            min_prix = 5000
+            max_prix = 25000
+            zone = "Paris"
+        else:
+            min_prix = 500
+            max_prix = 15000
+            zone = "hors Paris"
+
+        if prix_m2 < min_prix:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.AVERTISSEMENT,
+                code="PRIX_M2_ANORMALEMENT_BAS",
+                message=f"Prix/m² anormalement bas: {prix_m2:.0f}€/m² ({zone}, min attendu: {min_prix}€)",
+                chemin="prix.montant",
+                suggestion="Vérifier le prix ou la surface déclarée"
+            ))
+        elif prix_m2 > max_prix:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.AVERTISSEMENT,
+                code="PRIX_M2_ANORMALEMENT_HAUT",
+                message=f"Prix/m² anormalement élevé: {prix_m2:.0f}€/m² ({zone}, max attendu: {max_prix}€)",
+                chemin="prix.montant",
+                suggestion="Vérifier le prix ou la surface déclarée"
+            ))
+
+    def _valider_dpe_energie(self, donnees: Dict[str, Any]):
+        """
+        Vérifie les obligations liées au DPE (passoires thermiques).
+
+        ERREUR si:
+        - DPE classe F ou G
+        - ET pas d'audit énergétique
+        (Obligatoire depuis avril 2023)
+        """
+        diagnostics = donnees.get('diagnostics', {})
+        dpe = diagnostics.get('dpe', {})
+
+        classe = dpe.get('classe_energie', dpe.get('classe', '')).upper()
+
+        if classe in ['F', 'G']:
+            audit = diagnostics.get('audit_energetique', {})
+            if not audit or not audit.get('date'):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="AUDIT_ENERGETIQUE_MANQUANT",
+                    message=f"Audit énergétique obligatoire pour DPE classe {classe} (passoire thermique)",
+                    chemin="diagnostics.audit_energetique",
+                    suggestion="Réaliser un audit énergétique avant la vente (obligation depuis avril 2023)"
+                ))
+
+    def _valider_quotites_croisees(self, donnees: Dict[str, Any]):
+        """
+        Vérifie la cohérence croisée des quotités vendeurs/acquéreurs.
+
+        ERREUR si:
+        - Total quotités vendues ≠ 100%
+        - Total quotités acquises ≠ 100%
+        - Nombre de vendeurs ≠ nombre de quotités vendues (si spécifié)
+        """
+        # Quotités vendues
+        vendeurs = donnees.get('vendeurs', donnees.get('promettants', []))
+        quotites_vendues = donnees.get('quotites_vendues', [])
+
+        if quotites_vendues:
+            # Calculer le total
+            total_vendues = sum(
+                q.get('pourcentage', 0) or self._fraction_to_pct(q.get('fraction', ''))
+                for q in quotites_vendues
+            )
+
+            if abs(total_vendues - 100) > 0.01 and total_vendues > 0:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="QUOTITES_VENDUES_INVALIDES",
+                    message=f"Les quotités vendues ne totalisent pas 100% ({total_vendues:.2f}%)",
+                    chemin="quotites_vendues",
+                    suggestion="Ajuster les quotités pour qu'elles totalisent exactement 100%"
+                ))
+
+            # Vérifier correspondance avec nombre de vendeurs
+            if len(quotites_vendues) != len(vendeurs) and len(vendeurs) > 0:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="QUOTITES_VENDEURS_MISMATCH",
+                    message=f"Nombre de quotités ({len(quotites_vendues)}) ≠ nombre de vendeurs ({len(vendeurs)})",
+                    chemin="quotites_vendues",
+                    suggestion="Vérifier que chaque vendeur a une quotité associée"
+                ))
+
+        # Quotités acquises
+        acquereurs = donnees.get('acquereurs', donnees.get('beneficiaires', []))
+        quotites_acquises = donnees.get('quotites_acquises', [])
+
+        if quotites_acquises:
+            total_acquises = sum(
+                q.get('pourcentage', 0) or self._fraction_to_pct(q.get('fraction', ''))
+                for q in quotites_acquises
+            )
+
+            if abs(total_acquises - 100) > 0.01 and total_acquises > 0:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="QUOTITES_ACQUISES_INVALIDES",
+                    message=f"Les quotités acquises ne totalisent pas 100% ({total_acquises:.2f}%)",
+                    chemin="quotites_acquises",
+                    suggestion="Ajuster les quotités pour qu'elles totalisent exactement 100%"
+                ))
+
+            if len(quotites_acquises) != len(acquereurs) and len(acquereurs) > 0:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="QUOTITES_ACQUEREURS_MISMATCH",
+                    message=f"Nombre de quotités ({len(quotites_acquises)}) ≠ nombre d'acquéreurs ({len(acquereurs)})",
+                    chemin="quotites_acquises",
+                    suggestion="Vérifier que chaque acquéreur a une quotité associée"
+                ))
+
+        # Si plusieurs vendeurs sans quotités spécifiées
+        if len(vendeurs) > 1 and not quotites_vendues:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.AVERTISSEMENT,
+                code="QUOTITES_VENDUES_MANQUANTES",
+                message=f"Plusieurs vendeurs ({len(vendeurs)}) sans quotités définies",
+                chemin="quotites_vendues",
+                suggestion="Définir les quotités de propriété de chaque vendeur"
+            ))
+
+        if len(acquereurs) > 1 and not quotites_acquises:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.AVERTISSEMENT,
+                code="QUOTITES_ACQUISES_MANQUANTES",
+                message=f"Plusieurs acquéreurs ({len(acquereurs)}) sans quotités définies",
+                chemin="quotites_acquises",
+                suggestion="Définir les quotités d'acquisition de chaque acquéreur"
+            ))
+
+    def _fraction_to_pct(self, fraction: str) -> float:
+        """Convertit une fraction en pourcentage."""
+        if not fraction:
+            return 0.0
+        try:
+            if '/' in fraction:
+                parts = fraction.split('/')
+                return (float(parts[0]) / float(parts[1])) * 100
+            return float(fraction)
+        except (ValueError, ZeroDivisionError):
+            return 0.0
+
+    def _valider_cadastre_coherent(self, donnees: Dict[str, Any]):
+        """
+        Vérifie la cohérence des références cadastrales.
+
+        ERREUR si:
+        - Section cadastrale manquante
+        - Numéro de parcelle manquant
+        - Commune cadastrale différente de l'adresse
+
+        AVERTISSEMENT si:
+        - Format section inhabituel
+        - Lieudit sans parcelle
+        """
+        bien = donnees.get('bien', {})
+        cadastre = bien.get('cadastre', [])
+
+        if not cadastre:
+            self.rapport.ajouter(ResultatValidation(
+                niveau=NiveauErreur.AVERTISSEMENT,
+                code="CADASTRE_MANQUANT",
+                message="Aucune référence cadastrale définie",
+                chemin="bien.cadastre",
+                suggestion="Ajouter les références cadastrales du bien"
+            ))
+            return
+
+        adresse = bien.get('adresse', {})
+        commune_adresse = adresse.get('commune', '').upper().strip()
+
+        for i, parcelle in enumerate(cadastre):
+            # Vérifier section
+            section = parcelle.get('section', '')
+            if not section:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="SECTION_CADASTRALE_MANQUANTE",
+                    message=f"Section cadastrale manquante pour la parcelle {i+1}",
+                    chemin=f"bien.cadastre.{i}.section"
+                ))
+            elif not re.match(r'^[A-Z]{1,2}$', section.upper()):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="SECTION_FORMAT_INHABITUEL",
+                    message=f"Format de section cadastrale inhabituel: '{section}'",
+                    chemin=f"bien.cadastre.{i}.section",
+                    suggestion="La section est généralement 1 ou 2 lettres majuscules (ex: A, AB, ZC)"
+                ))
+
+            # Vérifier numéro de parcelle
+            numero = parcelle.get('numero', parcelle.get('numero_parcelle', ''))
+            if not numero:
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.ERREUR,
+                    code="NUMERO_PARCELLE_MANQUANT",
+                    message=f"Numéro de parcelle manquant pour la parcelle {i+1}",
+                    chemin=f"bien.cadastre.{i}.numero"
+                ))
+            elif not re.match(r'^\d+[a-zA-Z]?$', str(numero)):
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.AVERTISSEMENT,
+                    code="NUMERO_PARCELLE_FORMAT",
+                    message=f"Format numéro de parcelle inhabituel: '{numero}'",
+                    chemin=f"bien.cadastre.{i}.numero",
+                    suggestion="Le numéro est généralement un nombre (ex: 123, 456b)"
+                ))
+
+            # Vérifier cohérence commune
+            commune_cadastre = parcelle.get('commune', '').upper().strip()
+            if commune_cadastre and commune_adresse:
+                # Normaliser les communes (enlever articles, accents)
+                norm_cad = self._normaliser_commune(commune_cadastre)
+                norm_adr = self._normaliser_commune(commune_adresse)
+
+                if norm_cad and norm_adr and norm_cad != norm_adr:
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.AVERTISSEMENT,
+                        code="COMMUNE_CADASTRE_DIFFERENTE",
+                        message=f"Commune cadastrale '{commune_cadastre}' ≠ adresse '{commune_adresse}'",
+                        chemin=f"bien.cadastre.{i}.commune",
+                        suggestion="Vérifier que la commune cadastrale correspond à l'adresse du bien"
+                    ))
+
+            # Vérifier contenance si présente
+            contenance = parcelle.get('contenance', parcelle.get('superficie', 0))
+            if contenance and contenance > 100000:  # > 10 hectares
+                self.rapport.ajouter(ResultatValidation(
+                    niveau=NiveauErreur.INFO,
+                    code="GRANDE_PARCELLE",
+                    message=f"Parcelle de grande superficie: {contenance} m² ({contenance/10000:.2f} ha)",
+                    chemin=f"bien.cadastre.{i}.contenance"
+                ))
+
+    def _normaliser_commune(self, commune: str) -> str:
+        """Normalise le nom d'une commune pour comparaison."""
+        if not commune:
+            return ''
+        # Supprimer les articles courants
+        articles = ['LA ', 'LE ', 'LES ', 'L\'', 'SAINT-', 'SAINTE-', 'ST-', 'STE-']
+        result = commune.upper().strip()
+        for art in articles:
+            if result.startswith(art):
+                result = result[len(art):]
+        # Supprimer accents basiques
+        accents = {'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E', 'À': 'A', 'Â': 'A',
+                   'Ù': 'U', 'Û': 'U', 'Î': 'I', 'Ï': 'I', 'Ô': 'O', 'Ç': 'C'}
+        for acc, repl in accents.items():
+            result = result.replace(acc, repl)
+        return result.strip()
+
+    def _valider_impots_plus_value(self, donnees: Dict[str, Any]):
+        """
+        Vérifie les déclarations relatives à la plus-value immobilière.
+
+        AVERTISSEMENT si:
+        - Bien non résidence principale et pas d'info plus-value
+        - Durée de détention < 30 ans et pas de calcul plus-value
+
+        INFO si:
+        - Exonération applicable (résidence principale, > 30 ans)
+        """
+        plus_value = donnees.get('plus_value', {})
+        bien = donnees.get('bien', {})
+        vendeurs = donnees.get('vendeurs', donnees.get('promettants', []))
+
+        # Vérifier si résidence principale (exonération)
+        usage = bien.get('usage', bien.get('usage_actuel', '')).lower()
+        est_residence_principale = 'principal' in usage or 'habitation' in usage
+
+        # Vérifier durée de détention
+        origine = donnees.get('origine_propriete', {})
+        date_acquisition = origine.get('date', {})
+
+        if date_acquisition and isinstance(date_acquisition, dict):
+            try:
+                annee_acq = date_acquisition.get('annee', 0)
+                if annee_acq:
+                    duree_detention = datetime.now().year - annee_acq
+
+                    if duree_detention >= 30:
+                        self.rapport.ajouter(ResultatValidation(
+                            niveau=NiveauErreur.INFO,
+                            code="EXONERATION_30_ANS",
+                            message=f"Bien détenu depuis {duree_detention} ans - Exonération plus-value totale",
+                            chemin="origine_propriete.date"
+                        ))
+                    elif not est_residence_principale and not plus_value:
+                        self.rapport.ajouter(ResultatValidation(
+                            niveau=NiveauErreur.AVERTISSEMENT,
+                            code="PLUS_VALUE_NON_RENSEIGNEE",
+                            message=f"Plus-value potentiellement imposable (détention: {duree_detention} ans, non résidence principale)",
+                            chemin="plus_value",
+                            suggestion="Renseigner les informations de plus-value ou confirmer l'exonération"
+                        ))
+            except (ValueError, TypeError):
+                pass
+
+        # Si info plus-value présente, vérifier cohérence
+        if plus_value:
+            if plus_value.get('exoneration'):
+                motif = plus_value.get('motif_exoneration', '')
+                if not motif:
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.AVERTISSEMENT,
+                        code="MOTIF_EXONERATION_MANQUANT",
+                        message="Exonération déclarée mais motif non précisé",
+                        chemin="plus_value.motif_exoneration",
+                        suggestion="Préciser le motif d'exonération (résidence principale, > 30 ans, etc.)"
+                    ))
+            else:
+                # Vérifier que le montant d'impôt est calculé
+                if not plus_value.get('montant_impot') and plus_value.get('montant_brut'):
+                    self.rapport.ajouter(ResultatValidation(
+                        niveau=NiveauErreur.AVERTISSEMENT,
+                        code="IMPOT_PLUS_VALUE_MANQUANT",
+                        message="Plus-value brute déclarée mais montant d'impôt non calculé",
+                        chemin="plus_value.montant_impot",
+                        suggestion="Calculer l'impôt sur la plus-value (IR 19% + PS 17.2%)"
+                    ))
+
     def valider_complet(self, donnees: Dict[str, Any], strict: bool = True) -> RapportValidation:
         """
         Validation complète avec toutes les règles avancées.
@@ -697,13 +1393,25 @@ class ValidateurActe:
         # Validation de base
         self.valider(donnees, strict)
 
-        # Règles avancées
+        # Règles avancées (existantes)
         self._valider_superficie_carrez(donnees)
         self._valider_diagnostics_dpe(donnees)
         self._valider_diagnostics_obligatoires(donnees)
         self._valider_coherence_adresse(donnees)
         self._valider_coherence_financiere(donnees)
         self._valider_tantièmes(donnees)
+
+        # Règles métier v1.5.0
+        self._valider_intervention_conjoint(donnees)
+        self._valider_diagnostics_validite(donnees)
+        self._valider_coherence_dates_promesse(donnees)
+        self._valider_prix_coherent(donnees)
+        self._valider_dpe_energie(donnees)
+
+        # Règles métier v1.5.1
+        self._valider_quotites_croisees(donnees)
+        self._valider_cadastre_coherent(donnees)
+        self._valider_impots_plus_value(donnees)
 
         return self.rapport
 

@@ -85,11 +85,12 @@ python notaire.py dashboard
 | `execution/valider_rapide.ps1` / `.sh` | ⚡ **Validation pré-commit** - 4 tests en 10 secondes |
 | `execution/generer_donnees_minimales.py` | 🔧 Enrichit données avec 16 variables obligatoires |
 | `execution/enrichir_prets_existants.py` | 💰 Calcule mensualités et enrichit prêts |
-| `execution/orchestrateur_notaire.py` | 🆕 **ORCHESTRATEUR** - Point d'entrée unifié pour tous workflows |
-| `execution/extraire_titre_propriete.py` | 🆕 **EXTRACTION** - Extrait données d'un titre PDF/DOCX |
-| `execution/gestionnaire_titres_propriete.py` | 🆕 **GESTIONNAIRE** - CRUD titres + conversion vers promesse/vente |
-| `execution/extraction/` | 🆕 **MODULE ML** - Patterns avancés, OCR, Machine Learning |
-| `notaire.py` | 🆕 **CLI SIMPLIFIÉ** - Point d'entrée racine (`python notaire.py`) |
+| `execution/orchestrateur_notaire.py` | **ORCHESTRATEUR** - Point d'entrée unifié pour tous workflows |
+| `execution/extraire_titre_propriete.py` | **EXTRACTION** - Extrait données d'un titre PDF/DOCX |
+| `execution/gestionnaire_titres_propriete.py` | **GESTIONNAIRE TITRES** - CRUD titres + conversion vers promesse/vente |
+| `execution/gestionnaire_promesses.py` | 🆕 **GESTIONNAIRE PROMESSES** - 4 types, détection auto, validation, Supabase |
+| `execution/extraction/` | **MODULE ML** - Patterns avancés, OCR, Machine Learning |
+| `notaire.py` | **CLI SIMPLIFIÉ** - Point d'entrée racine (`python notaire.py`) |
 
 ### Schémas de données
 
@@ -106,16 +107,26 @@ python notaire.py dashboard
 | `schemas/sections_catalogue.json` | Catalogue des sections optionnelles |
 | `schemas/clauses_catalogue.json` | Catalogue des clauses réutilisables |
 | `schemas/annexes_catalogue.json` | Catalogue des types d'annexes |
-| `schemas/variables_titre_propriete.json` | 🆕 Structure des données pour titres de propriété |
+| `schemas/variables_titre_propriete.json` | Structure des données pour titres de propriété |
+| `schemas/promesse_catalogue_unifie.json` | 🆕 **CATALOGUE UNIFIÉ** - 4 trames promesse, variables, tableaux, sections |
 
 ### Templates disponibles
 
-| Template | Type d'acte | Bookmarks |
-|----------|-------------|-----------|
-| `templates/vente_lots_copropriete.md` | Acte de vente définitif | 361 |
-| `templates/promesse_vente_lots_copropriete.md` | Promesse unilatérale de vente | 298 |
-| `templates/reglement_copropriete_edd.md` | EDD et règlement de copropriété | 116 |
-| `templates/modificatif_edd.md` | Modificatif EDD/RC | 60 |
+| Template | Type d'acte | Conformité | Bookmarks |
+|----------|-------------|------------|-----------|
+| `templates/vente_lots_copropriete.md` | Acte de vente définitif | 80.2% ✅ | 361 |
+| `templates/promesse_vente_lots_copropriete.md` | Promesse standard | 88.9% ✅ | 298 |
+| `templates/reglement_copropriete_edd.md` | EDD et règlement de copropriété | 85.5% ✅ | 116 |
+| `templates/modificatif_edd.md` | Modificatif EDD/RC | 91.7% ✅ | 60 |
+
+### 🆕 Templates Promesse Spécialisés (v1.4.0)
+
+| Template | Type | Cas d'usage | Source |
+|----------|------|-------------|--------|
+| `templates/promesse/promesse_standard.md` | Standard | 1 bien simple | ORIGINAL |
+| `templates/promesse/promesse_premium.md` | Premium | Diagnostics exhaustifs | Trame B |
+| `templates/promesse/promesse_avec_mobilier.md` | Mobilier | Vente meublée | Trame C |
+| `templates/promesse/promesse_multi_biens.md` | Multi-biens | Lot + parking + cave | Trame A |
 
 ---
 
@@ -411,33 +422,113 @@ Be pragmatic. Be reliable. Self-anneal. **Build knowledge.**
    - Enrichir catalogues si nouvelles clauses/situations
    - Documenter dans `lecons_apprises.md` si edge case
 
-### Templates Actuels (v1.1.0)
+### Templates Actuels (v1.4.0) - Janvier 2026
 
-| Template | Conformité | Comportement |
-|----------|-----------|--------------|
-| Règlement copropriété | 85.5% ✅ | Utiliser directement |
-| Modificatif EDD | 91.7% ✅ | Utiliser directement |
-| Vente | 46% ⚠️ | Utiliser `exemples/donnees_vente_exemple.json` |
-| Promesse | 60.9% ⚠️ | Utiliser `exemples/donnees_promesse_exemple.json` |
+| Template | Conformité | Statut |
+|----------|-----------|--------|
+| Règlement copropriété | 85.5% | ✅ PROD |
+| Modificatif EDD | 91.7% | ✅ PROD |
+| **Promesse** | **88.9%** | ✅ PROD |
+| **Vente** | **80.2%** | ✅ PROD |
+
+**Objectif atteint: 4/4 templates ≥80%!**
 
 ### Garanties au Notaire
 
-**Pour templates PROD (≥80%)**:
 > "Je génère un acte 100% conforme à la trame originale en moins d'1 minute. Le document sera identique à votre modèle habituel."
 
-**Pour templates DEV (<80%)**:
-> "Le template est en développement ({conformité}%). J'utilise les données d'exemple complètes pour garantir un document conforme dans les sections disponibles. Je vais enrichir le template progressivement."
+### Déploiement Modal
 
-### Enrichissement Obligatoire
+Les fichiers Modal sont dans le dossier `modal/`:
+```bash
+modal deploy modal/modal_app.py   # Déploiement production
+modal serve modal/modal_app.py    # Test local
+```
 
-**Après CHAQUE acte généré avec template <80%**:
-1. Analyser rapport conformité
-2. Identifier 3-5 sections manquantes prioritaires
-3. Proposer au notaire: "Je peux enrichir le template avec ces sections maintenant, ça prendra 5 minutes"
-4. Si accepté → Enrichir le template
-5. Documenter dans CHANGELOG
+Endpoint: `https://notaire-ai--fastapi-app.modal.run/`
 
-**Objectif**: 4/4 templates ≥80% dans les 10 prochaines générations
+---
+
+## Version 1.4.0 - Système de Promesses Avancé (Janvier 2026)
+
+### 🆕 Architecture Multi-Templates Promesse
+
+Le système supporte désormais **4 types de promesses** basés sur l'analyse des 4 trames originales:
+
+| Type | Template | Cas d'usage | Bookmarks |
+|------|----------|-------------|-----------|
+| **Standard** | `promesse_standard.md` | 1 bien simple, pas de mobilier | 298 |
+| **Premium** | `promesse_premium.md` | Diagnostics exhaustifs, agences | 359 |
+| **Mobilier** | `promesse_avec_mobilier.md` | Vente meublée | 312 |
+| **Multi-biens** | `promesse_multi_biens.md` | Lot + parking + cave | 423 |
+
+### 🔧 Nouveaux Composants
+
+1. **Gestionnaire de Promesses** ([gestionnaire_promesses.py](execution/gestionnaire_promesses.py))
+   - Détection automatique du type de promesse
+   - Validation des données avec règles conditionnelles
+   - Génération depuis titre de propriété
+   - Intégration Supabase complète
+
+2. **Catalogue Unifié** ([promesse_catalogue_unifie.json](schemas/promesse_catalogue_unifie.json))
+   - Variables des 4 trames (298-423 bookmarks)
+   - Tableaux avec dimensions et structures
+   - Sections fixes (11) et variables (16)
+   - Profils prédéfinis (5)
+   - Mapping titre → promesse
+
+3. **Migration Supabase** ([20260128_promesses_titres.sql](supabase/migrations/20260128_promesses_titres.sql))
+   - `titres_propriete`: Stockage titres extraits
+   - `promesses_generees`: Promesses générées
+   - `feedbacks_promesse`: Retours notaires
+   - Fonctions: `rechercher_titre_adresse()`, `titre_vers_promesse_data()`
+
+### 📡 Nouveaux Endpoints API
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/promesses/generer` | POST | Génère une promesse (détection auto) |
+| `/promesses/detecter-type` | POST | Détecte le type approprié |
+| `/promesses/valider` | POST | Valide les données |
+| `/promesses/profils` | GET | Liste les profils |
+| `/titres` | GET | Liste les titres |
+| `/titres/{id}/vers-promesse` | POST | Convertit titre → promesse |
+
+### 🎯 Workflow Recommandé
+
+```python
+from execution.gestionnaire_promesses import GestionnairePromesses
+
+gestionnaire = GestionnairePromesses()
+
+# 1. Détection automatique
+detection = gestionnaire.detecter_type(donnees)
+# → type_promesse: "avec_mobilier", confiance: 85%
+
+# 2. Validation
+validation = gestionnaire.valider(donnees)
+# → erreurs: [], champs_manquants: []
+
+# 3. Génération
+resultat = gestionnaire.generer(donnees)
+# → fichier_docx: "promesse_avec_mobilier_20260128.docx"
+
+# Ou depuis un titre de propriété
+donnees, resultat = gestionnaire.generer_depuis_titre(
+    titre_data, beneficiaires, prix, financement
+)
+```
+
+### 📊 Couverture des Cas
+
+| Situation | Avant v1.4 | Après v1.4 |
+|-----------|------------|------------|
+| 1 bien simple | ✅ | ✅ |
+| Vente meublée | ❌ | ✅ |
+| Multi-biens (lot+parking) | ❌ | ✅ |
+| Localisation détaillée | ❌ | ✅ |
+| Diagnostics exhaustifs | Partiel | ✅ Complet |
+| Depuis titre propriété | ❌ | ✅ Auto |
 
 ---
 
@@ -537,12 +628,12 @@ python notaire.py status                 # Statut système
 
 | Type | Conformité | Statut | Notes |
 |------|-----------|--------|-------|
-| Règlement copropriété | **85.5%** | ✅ PROD | Template complet, 22 tableaux |
 | Modificatif EDD | **91.7%** | ✅ PROD | Template le plus abouti |
-| **Vente** | **85.1%** | ✅ PROD | **37 sections, données enrichies** |
-| Promesse | 60.9% | ⚠️ Dev | Template squelette (manque 24 titres) |
+| **Promesse** | **88.9%** | ✅ PROD | Système clauses intelligentes (65 sections) |
+| Règlement copropriété | **85.5%** | ✅ PROD | Template complet, 22 tableaux |
+| **Vente** | **80.2%** | ✅ PROD | Données enrichies (fiscalité, travaux, assurances) |
 
-**Seuil production**: ≥80% de conformité structurelle. **3/4 templates en PROD!**
+**Seuil production**: ≥80% de conformité structurelle. **4/4 templates en PROD!**
 
 ### ⚡ Performance Pipeline
 

@@ -1,0 +1,617 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "description": "Catalogue des clauses modulaires pour promesse de vente - Système intelligent auto-adaptatif",
+  "metadata": {
+    "created": "2026-01-28",
+    "source": "Analyse de 4 trames: Trame_promesse_A, B, C + template original",
+    "fixed_sections_count": 44,
+    "variable_sections_count": 21,
+    "coverage": "67.7% fixe, 32.3% variable"
+  },
+
+  "sections_fixes": {
+    "description": "Sections TOUJOURS présentes dans TOUTE promesse de vente",
+    "sections": [
+      {
+        "id": "promettant",
+        "titre": "PROMETTANT",
+        "titre_pluriel": "PROMETTANTS",
+        "niveau": "H1",
+        "obligatoire": true,
+        "auto_pluriel": true,
+        "condition_pluriel": "promettants|length > 1"
+      },
+      {
+        "id": "beneficiaire",
+        "titre": "BENEFICIAIRE",
+        "titre_pluriel": "BENEFICIAIRES",
+        "niveau": "H1",
+        "obligatoire": true,
+        "auto_pluriel": true,
+        "condition_pluriel": "beneficiaires|length > 1"
+      },
+      {
+        "id": "quotites_acquises",
+        "titre": "Quotités acquises",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "declarations_capacite",
+        "titre": "Déclarations des parties sur leur capacité",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "documents_capacite",
+        "titre": "Documents relatifs à la capacité et à la qualité des parties",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "presence_representation",
+        "titre": "Présence - représentation",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "conclusion_contrat",
+        "titre": "CONCLUSION DU CONTRAT",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "devoir_information",
+        "titre": "DEVOIR D'INFORMATION RECIPROQUE",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "promesse_titre",
+        "titre": "PROMESSE UNILATERALE DE VENTE",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "terminologie",
+        "titre": "TERMINOLOGIE",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "identification_bien",
+        "titre": "Identification du bien",
+        "niveau": "H1",
+        "obligatoire": true,
+        "sous_sections": ["Désignation", "Mention de la superficie", "État descriptif de division"]
+      },
+      {
+        "id": "usage_bien",
+        "titre": "Usage du bien",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "effet_relatif",
+        "titre": "Effet relatif",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "caracteristiques",
+        "titre": "Caractéristiques",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "information_prealable",
+        "titre": "Information préalable",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "delai",
+        "titre": "Délai",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "realisation",
+        "titre": "RÉALISATION",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "redacteur_acte",
+        "titre": "Rédacteur de l'acte authentique de vente",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "carence",
+        "titre": "CARENCE",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "force_executoire",
+        "titre": "Force exécutoire de la promesse",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "prix_conditions",
+        "titre": "PRIX - CONDITIONS FINANCIERES",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "prix",
+        "titre": "PRIX",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "frais",
+        "titre": "Frais",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "negociation",
+        "titre": "Négociation",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "reserves_conditions",
+        "titre": "Réserves et conditions suspensives",
+        "niveau": "H1",
+        "obligatoire": true,
+        "sous_sections": ["Réserves", "Conditions suspensives"]
+      },
+      {
+        "id": "conditions_declarations",
+        "titre": "Conditions et déclarations générales",
+        "niveau": "H1",
+        "obligatoire": true,
+        "sous_sections": [
+          "Garantie contre le risque d'éviction",
+          "Garantie de jouissance",
+          "Garantie hypothécaire",
+          "Servitudes",
+          "Etat du bien",
+          "Contenance du terrain",
+          "Impôts et taxes",
+          "Contrats de distribution",
+          "Assurance",
+          "Contrat d'affichage"
+        ]
+      },
+      {
+        "id": "urbanisme",
+        "titre": "DISPOSITIONS RELATIVES A L'URBANISME",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "construction",
+        "titre": "Dispositions relatives à la construction",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "diagnostics",
+        "titre": "Diagnostics",
+        "niveau": "H1",
+        "obligatoire": true,
+        "sous_sections": [
+          "Dossier de diagnostics techniques",
+          "Diagnostics techniques",
+          "Diagnostics environnementaux"
+        ]
+      },
+      {
+        "id": "equipements",
+        "titre": "Equipements du BIEN",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "situation_environnementale",
+        "titre": "Situation environnementale",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "reglementations_copropriete",
+        "titre": "Réglementations spécifiques à la copropriété",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "fiscalite",
+        "titre": "FISCALITE",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "plus_values",
+        "titre": "plus-values",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "dispositions_transitoires",
+        "titre": "Dispositions transitoires",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "pouvoirs",
+        "titre": "POUVOIRS",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "election_domicile",
+        "titre": "ELECTION DE DOMICILE",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "communication_pieces",
+        "titre": "COMMUNICATION DES PIECES ET DOCUMENTS",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "faculte_retractation",
+        "titre": "FACULTE DE RETRACTATION",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "mediation",
+        "titre": "Médiation",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "affirmation_sincerite",
+        "titre": "Affirmation de sincérité",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "renonciation_imprevision",
+        "titre": "Renonciation à l'imprévision",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "donnees_personnelles",
+        "titre": "Mention sur la protection des données personnelles",
+        "niveau": "H1",
+        "obligatoire": true
+      },
+      {
+        "id": "certification_identite",
+        "titre": "Certification d'identité",
+        "niveau": "H1",
+        "obligatoire": true
+      }
+    ]
+  },
+
+  "sections_variables": {
+    "description": "Sections CONDITIONNELLES basées sur le contexte du dossier",
+    "sections": [
+      {
+        "id": "liste_meubles",
+        "titre": "LISTE DES MEUBLES",
+        "titre_alternatif": "ABSENCE DE MEUBLES ET OBJETS MOBILIERS",
+        "niveau": "H1",
+        "condition": "meubles.inclus == true",
+        "present_dans": ["A", "C"],
+        "absent_dans": ["B", "original"],
+        "priorite": "haute",
+        "description": "Liste détaillée des meubles inclus dans la vente ou déclaration d'absence"
+      },
+      {
+        "id": "indemnite_immobilisation",
+        "titre": "Indemnité d'immobilisation",
+        "niveau": "H1",
+        "condition": "indemnite_immobilisation is defined",
+        "present_dans": ["C", "original"],
+        "absent_dans": ["A", "B"],
+        "priorite": "haute",
+        "description": "Somme versée par le bénéficiaire pour immobiliser le bien"
+      },
+      {
+        "id": "clause_penale",
+        "titre": "Clause pénale",
+        "niveau": "H1",
+        "condition": "clause_penale is defined",
+        "present_dans": ["A", "B"],
+        "absent_dans": ["C"],
+        "priorite": "haute",
+        "description": "Alternative à l'indemnité d'immobilisation - pénalités en cas de non-exécution"
+      },
+      {
+        "id": "provision_frais",
+        "titre": "PROVISION SUR LES FRAIS DE LA VENTE",
+        "niveau": "H1",
+        "condition": "provision_frais is defined",
+        "present_dans": ["C", "original"],
+        "absent_dans": ["A", "B"],
+        "priorite": "moyenne",
+        "description": "Provision versée pour couvrir les frais de la vente"
+      },
+      {
+        "id": "sequestre",
+        "titre": "SEQUESTRE",
+        "niveau": "H1",
+        "condition": "sequestre is defined and sequestre.actif == true",
+        "present_dans": ["A", "B"],
+        "absent_dans": ["C", "original"],
+        "priorite": "moyenne",
+        "description": "Mise sous séquestre de sommes chez le notaire"
+      },
+      {
+        "id": "mandats",
+        "titre": "Mandats",
+        "niveau": "H1",
+        "condition": "mandats is defined",
+        "present_dans": ["A", "B"],
+        "absent_dans": ["C", "original"],
+        "priorite": "moyenne",
+        "description": "Mandats spéciaux donnés par les parties"
+      },
+      {
+        "id": "faculte_substitution",
+        "titre": "FACULTE DE SUBSTITUTION",
+        "titre_alternatif": "ABSENCE DE FACULTE DE SUBSTITUTION",
+        "niveau": "H1",
+        "condition": "faculte_substitution.autorisee == true",
+        "present_dans": ["tous"],
+        "priorite": "haute",
+        "description": "Possibilité pour le bénéficiaire de se substituer un tiers"
+      },
+      {
+        "id": "propriete_jouissance",
+        "titre": "Propriété jouissance",
+        "niveau": "H1",
+        "condition": "propriete_jouissance is defined",
+        "present_dans": ["B", "C", "original"],
+        "absent_dans": ["A"],
+        "priorite": "moyenne",
+        "description": "Modalités de transfert de propriété et jouissance"
+      },
+      {
+        "id": "condition_suspensive_pret",
+        "titre": "Condition suspensive d'obtention de prêt",
+        "niveau": "H3",
+        "condition": "conditions_suspensives.pret.applicable == true",
+        "present_dans": ["tous"],
+        "priorite": "critique",
+        "description": "Condition de financement bancaire"
+      },
+      {
+        "id": "condition_suspensive_vente_prealable",
+        "titre": "Condition suspensive de vente préalable",
+        "niveau": "H3",
+        "condition": "conditions_suspensives.vente_prealable.applicable == true",
+        "present_dans": ["certains"],
+        "priorite": "haute",
+        "description": "Condition de vente d'un autre bien par le bénéficiaire"
+      },
+      {
+        "id": "condition_suspensive_urbanisme",
+        "titre": "Condition suspensive d'urbanisme",
+        "niveau": "H3",
+        "condition": "conditions_suspensives.urbanisme.applicable == true",
+        "present_dans": ["certains"],
+        "priorite": "haute",
+        "description": "Condition d'obtention d'autorisations d'urbanisme"
+      },
+      {
+        "id": "information_rdv_signature",
+        "titre": "Information des parties sur le rendez-vous de signature",
+        "niveau": "H1",
+        "condition": "true",
+        "present_dans": ["A", "B", "C"],
+        "absent_dans": ["original"],
+        "priorite": "basse",
+        "description": "Modalités de convocation pour la signature"
+      },
+      {
+        "id": "remise_pieces",
+        "titre": "Remise des pièces",
+        "niveau": "H1",
+        "condition": "true",
+        "present_dans": ["A", "B", "C"],
+        "absent_dans": ["original"],
+        "priorite": "basse",
+        "description": "Liste des pièces remises au bénéficiaire"
+      },
+      {
+        "id": "ascenseurs",
+        "titre": "Règlementation - Ascenseurs",
+        "niveau": "H2",
+        "condition": "copropriete.ascenseurs is defined",
+        "sous_sections": ["Sécurité", "Contrôle technique", "Contrat d'entretien et de maintenance"],
+        "present_dans": ["tous si ascenseur"],
+        "priorite": "moyenne",
+        "description": "Réglementation spécifique aux ascenseurs de l'immeuble"
+      },
+      {
+        "id": "domicile_fiscal",
+        "titre": "Domicile fiscal",
+        "niveau": "H2",
+        "condition": "true",
+        "present_dans": ["C"],
+        "absent_dans": ["A", "B", "original"],
+        "priorite": "basse",
+        "description": "Déclaration de domicile fiscal des parties"
+      },
+      {
+        "id": "reprise_engagement_ayants_droit",
+        "titre": "Reprise d'engagement par les ayants droit du promettant",
+        "niveau": "H2",
+        "condition": "true",
+        "present_dans": ["C"],
+        "absent_dans": ["A", "B", "original"],
+        "priorite": "basse",
+        "description": "Engagement des héritiers en cas de décès du promettant"
+      },
+      {
+        "id": "travaux_recents",
+        "titre": "Absence d'opération de construction ou de rénovation depuis dix ans",
+        "niveau": "H2",
+        "condition": "travaux_recents is defined",
+        "present_dans": ["tous"],
+        "priorite": "moyenne",
+        "description": "Déclaration sur les travaux récents et garanties décennales"
+      },
+      {
+        "id": "apl",
+        "titre": "Aide personnalisée au logement",
+        "niveau": "H2",
+        "condition": "apl is defined",
+        "present_dans": ["certains"],
+        "priorite": "basse",
+        "description": "Conventionnement APL éventuel du bien"
+      }
+    ]
+  },
+
+  "regles_selection": {
+    "description": "Règles pour déterminer quelles sections inclure",
+    "regles": [
+      {
+        "id": "pluriel_promettant",
+        "description": "Utiliser PROMETTANTS si plusieurs promettants",
+        "condition": "promettants|length > 1",
+        "action": "titre_pluriel"
+      },
+      {
+        "id": "pluriel_beneficiaire",
+        "description": "Utiliser BENEFICIAIRES si plusieurs bénéficiaires",
+        "condition": "beneficiaires|length > 1",
+        "action": "titre_pluriel"
+      },
+      {
+        "id": "meubles_ou_absence",
+        "description": "Inclure liste meubles OU déclaration d'absence",
+        "condition": "meubles.inclus",
+        "si_vrai": "liste_meubles",
+        "si_faux": "absence_meubles"
+      },
+      {
+        "id": "indemnite_ou_clause_penale",
+        "description": "Indemnité d'immobilisation OU clause pénale (mutuellement exclusifs)",
+        "condition": "indemnite_immobilisation is defined",
+        "si_vrai": "indemnite_immobilisation",
+        "si_faux_et": "clause_penale is defined",
+        "alors": "clause_penale"
+      },
+      {
+        "id": "faculte_substitution",
+        "description": "Faculté de substitution OU absence de faculté",
+        "condition": "faculte_substitution.autorisee == true",
+        "si_vrai": "faculte_substitution",
+        "si_faux": "absence_faculte_substitution"
+      }
+    ]
+  },
+
+  "profils_type": {
+    "description": "Profils pré-configurés pour génération rapide",
+    "profils": [
+      {
+        "id": "standard_simple",
+        "nom": "Promesse standard simple",
+        "description": "1 promettant, 1 bénéficiaire, avec prêt, sans meubles",
+        "sections_incluses": [
+          "toutes_fixes",
+          "condition_suspensive_pret",
+          "absence_meubles",
+          "indemnite_immobilisation"
+        ],
+        "sections_exclues": ["sequestre", "mandats", "clause_penale"]
+      },
+      {
+        "id": "standard_couple",
+        "nom": "Promesse couple vers couple",
+        "description": "2 promettants, 2 bénéficiaires, avec prêt, avec meubles",
+        "sections_incluses": [
+          "toutes_fixes",
+          "condition_suspensive_pret",
+          "liste_meubles",
+          "indemnite_immobilisation",
+          "faculte_substitution"
+        ],
+        "sections_exclues": ["sequestre", "mandats"]
+      },
+      {
+        "id": "complexe_investisseur",
+        "nom": "Promesse pour investisseur",
+        "description": "Avec vente préalable, séquestre, mandats",
+        "sections_incluses": [
+          "toutes_fixes",
+          "condition_suspensive_pret",
+          "condition_suspensive_vente_prealable",
+          "sequestre",
+          "mandats",
+          "clause_penale"
+        ],
+        "sections_exclues": ["indemnite_immobilisation"]
+      },
+      {
+        "id": "sans_pret",
+        "nom": "Promesse sans financement",
+        "description": "Paiement comptant, sans condition suspensive de prêt",
+        "sections_incluses": [
+          "toutes_fixes",
+          "indemnite_immobilisation"
+        ],
+        "sections_exclues": ["condition_suspensive_pret"]
+      }
+    ]
+  },
+
+  "apprentissage": {
+    "description": "Système d'apprentissage continu",
+    "sources_enrichissement": [
+      {
+        "source": "feedback_notaire",
+        "description": "Retours directs des notaires via l'interface",
+        "actions": ["ajout_clause", "modification_clause", "suppression_clause", "ajout_question"]
+      },
+      {
+        "source": "nouvelles_trames",
+        "description": "Analyse de nouvelles trames fournies par les notaires",
+        "actions": ["extraction_sections", "comparaison_existant", "proposition_enrichissement"]
+      },
+      {
+        "source": "corrections_manuelles",
+        "description": "Corrections apportées aux documents générés",
+        "actions": ["detection_patterns", "proposition_mise_a_jour"]
+      }
+    ],
+    "format_feedback": {
+      "type": "object",
+      "properties": {
+        "action": {"enum": ["ajouter", "modifier", "supprimer", "deplacer"]},
+        "cible": {"type": "string", "description": "ID de la section ou clause"},
+        "contenu": {"type": "string", "description": "Nouveau contenu si ajout/modification"},
+        "raison": {"type": "string", "description": "Explication du notaire"},
+        "source_notaire": {"type": "string"},
+        "date": {"type": "string", "format": "date-time"},
+        "approuve": {"type": "boolean", "default": false}
+      }
+    }
+  }
+}

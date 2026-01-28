@@ -135,6 +135,29 @@ class PatternsAvances:
         (r'suivant\s+contrat\s+(?:de\s+mariage\s+)?re[çc]u\s+par\s+M(?:e|a[îi]tre)\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)\s+(?:,\s*)?(?:notaire\s+)?(?:[àa]\s+[A-ZÉÈÊËa-zéèêë\-\s]+\s+)?le\s+(\d{1,2}[/\-]\d{1,2}[/\-]\d{4}|\d{1,2}\s+[a-zéèêë]+\s+\d{4})', 'contrat_mariage', 0.95),
     ]
 
+    # ========== CONJOINT ==========
+
+    PATTERNS_CONJOINT = [
+        # "marié(e) à Marie DUPONT" / "marié(e) avec Marie DUPONT"
+        (r'mari[ée]e?\s+(?:à|avec)\s+(?:Mme|Madame|M\.|Monsieur)?\s*([A-ZÉÈÊËa-zéèêë\-]+(?:\s+[A-ZÉÈÊËa-zéèêë\-]+)*)\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'conjoint_marie_a', 0.95),
+        # "époux de Marie DUPONT" / "épouse de Jean DUPONT"
+        (r'[ée]poux?\s+(?:de|d\')\s+(?:Mme|Madame|M\.|Monsieur)?\s*([A-ZÉÈÊËa-zéèêë\-]+(?:\s+[A-ZÉÈÊËa-zéèêë\-]+)*)\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'conjoint_epoux_de', 0.95),
+        # "son époux/son épouse, Marie DUPONT"
+        (r'son\s+[ée]poux?(?:se)?\s*,?\s*(?:Mme|Madame|M\.|Monsieur)?\s*([A-ZÉÈÊËa-zéèêë\-]+(?:\s+[A-ZÉÈÊËa-zéèêë\-]+)*)\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'conjoint_son_epoux', 0.90),
+        # "et son conjoint/et sa conjointe, Marie DUPONT"
+        (r'(?:et\s+)?(?:son|sa)\s+conjoint(?:e)?\s*,?\s*(?:Mme|Madame|M\.|Monsieur)?\s*([A-ZÉÈÊËa-zéèêë\-]+(?:\s+[A-ZÉÈÊËa-zéèêë\-]+)*)\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'conjoint_et_conjoint', 0.90),
+        # "né(e) MARTIN" (nom de naissance de l'épouse)
+        (r'n[ée]e?\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'nom_naissance', 0.85),
+        # "demeurant ensemble à" (indique que le conjoint vit avec)
+        (r'demeurant\s+ensemble\s+[àa]', 'conjoint_meme_domicile', 0.80),
+        # "ci-après désignés les époux DUPONT"
+        (r'ci-apr[èe]s\s+d[ée]sign[ée]s?\s+(?:les\s+)?[ée]poux\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'epoux_designation', 0.85),
+        # Pacsé avec
+        (r'pacs[ée]\s+(?:à|avec)\s+(?:Mme|Madame|M\.|Monsieur)?\s*([A-ZÉÈÊËa-zéèêë\-]+(?:\s+[A-ZÉÈÊËa-zéèêë\-]+)*)\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'partenaire_pacs', 0.95),
+        # "son partenaire, Jean DUPONT"
+        (r'son\s+partenaire\s*,?\s*(?:Mme|Madame|M\.|Monsieur)?\s*([A-ZÉÈÊËa-zéèêë\-]+(?:\s+[A-ZÉÈÊËa-zéèêë\-]+)*)\s+([A-ZÉÈÊË][A-ZÉÈÊË\-]+)', 'partenaire_son', 0.90),
+    ]
+
     # ========== QUOTITES ==========
 
     PATTERNS_QUOTITE = [
@@ -424,6 +447,59 @@ class PatternsAvances:
         return resultats
 
     @classmethod
+    def extraire_conjoint(cls, texte: str) -> List[PatternResult]:
+        """
+        Extrait les informations du conjoint/partenaire.
+
+        Returns:
+            Liste de PatternResult avec les données du conjoint:
+            - prenoms: Prénom(s) du conjoint
+            - nom: Nom de famille du conjoint
+            - type: 'epoux', 'epouse', 'partenaire'
+            - nom_naissance: Nom de naissance si différent (pour l'épouse)
+        """
+        resultats = []
+        for pattern, pattern_id, confiance in cls.PATTERNS_CONJOINT:
+            for match in re.finditer(pattern, texte, re.IGNORECASE):
+                if pattern_id in ['conjoint_marie_a', 'conjoint_epoux_de', 'conjoint_son_epoux',
+                                  'conjoint_et_conjoint', 'partenaire_pacs', 'partenaire_son']:
+                    # Déterminer le type de conjoint
+                    type_conjoint = 'partenaire' if 'partenaire' in pattern_id else 'epoux'
+
+                    resultats.append(PatternResult(
+                        valeur={
+                            'prenoms': match.group(1).strip(),
+                            'nom': match.group(2).strip(),
+                            'type': type_conjoint
+                        },
+                        confiance=confiance,
+                        source=match.group(0),
+                        pattern_id=pattern_id
+                    ))
+                elif pattern_id == 'nom_naissance':
+                    resultats.append(PatternResult(
+                        valeur={'nom_naissance': match.group(1).strip()},
+                        confiance=confiance,
+                        source=match.group(0),
+                        pattern_id=pattern_id
+                    ))
+                elif pattern_id == 'epoux_designation':
+                    resultats.append(PatternResult(
+                        valeur={'nom_famille': match.group(1).strip()},
+                        confiance=confiance,
+                        source=match.group(0),
+                        pattern_id=pattern_id
+                    ))
+                elif pattern_id == 'conjoint_meme_domicile':
+                    resultats.append(PatternResult(
+                        valeur={'meme_domicile': True},
+                        confiance=confiance,
+                        source=match.group(0),
+                        pattern_id=pattern_id
+                    ))
+        return resultats
+
+    @classmethod
     def extraire_tout(cls, texte: str) -> Dict[str, List[PatternResult]]:
         """Extrait toutes les informations du texte."""
         return {
@@ -433,7 +509,8 @@ class PatternsAvances:
             'personnes': cls.extraire_personnes(texte),
             'lots': cls.extraire_lots(texte),
             'prix': cls.extraire_prix(texte),
-            'regimes_matrimoniaux': cls.extraire_regime_matrimonial(texte)
+            'regimes_matrimoniaux': cls.extraire_regime_matrimonial(texte),
+            'conjoints': cls.extraire_conjoint(texte)
         }
 
 
@@ -445,4 +522,5 @@ extraire_personnes = PatternsAvances.extraire_personnes
 extraire_lots = PatternsAvances.extraire_lots
 extraire_prix = PatternsAvances.extraire_prix
 extraire_regime_matrimonial = PatternsAvances.extraire_regime_matrimonial
+extraire_conjoint = PatternsAvances.extraire_conjoint
 extraire_tout = PatternsAvances.extraire_tout

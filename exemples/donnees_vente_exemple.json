@@ -382,6 +382,72 @@
     "centre_impots_vendeur": {
       "nom": "CALUIRE",
       "adresse": "1 rue CLAUDE BAUDRAND BOITE POSTALE 236 - 69732 CALUIRE"
+    },
+    "contribution_securite_immobiliere": {
+      "montant": 125,
+      "exoneration": false
+    },
+    "avantage_fiscal": {
+      "existe": false,
+      "engagement_location": false
+    }
+  },
+  "impots": {
+    "locaux": {
+      "a_jour": true,
+      "taxe_fonciere": 1200,
+      "taxe_habitation": null
+    },
+    "plus_value": {
+      "applicable": false,
+      "motif_exoneration": "residence_principale"
+    }
+  },
+  "aide_logement": {
+    "apl": {
+      "conventionnement": false
+    },
+    "anah": {
+      "convention": false
+    }
+  },
+  "travaux": {
+    "existence": false,
+    "recents": [],
+    "garantie_decennale": {
+      "applicable": false,
+      "travaux_moins_10_ans": false
+    },
+    "article_1792": true
+  },
+  "dommages_ouvrage": {
+    "existe": false,
+    "motif_absence": "Aucune opération de construction soumise à l'obligation d'assurance dommages-ouvrage n'a été réalisée"
+  },
+  "garanties": {
+    "decennale": {
+      "applicable": false
+    }
+  },
+  "assurance": {
+    "multirisque": {
+      "existe": true,
+      "assureur": "AXA",
+      "numero_contrat": "1234567890"
+    }
+  },
+  "obligation_declarative": {
+    "proprietaire_habitation": {
+      "declaration_faite": true,
+      "date_declaration": "2024-01-15"
+    }
+  },
+  "aides": {
+    "apl": {
+      "conventionnement": false
+    },
+    "anah": {
+      "convention": false
     }
   },
   "diagnostics": {

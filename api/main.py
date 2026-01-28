@@ -798,6 +798,617 @@ async def get_current_etude(auth: AuthContext = Depends(verify_api_key)):
 
 
 # =============================================================================
+# Endpoints Clauses Intelligentes (Promesse de Vente)
+# =============================================================================
+
+@app.get("/clauses/sections", tags=["Clauses"])
+async def lister_sections_clauses(
+    type_sections: Optional[str] = None,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Liste les sections disponibles pour la promesse de vente.
+
+    - **type_sections**: fixes, variables, ou None pour toutes
+
+    Retourne les sections avec leurs conditions et priorités.
+    """
+    try:
+        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+
+        gestionnaire = GestionnaireClausesIntelligent()
+        catalogue = gestionnaire.catalogue
+
+        result = {"fixes": [], "variables": []}
+
+        # Sections fixes
+        if not type_sections or type_sections == "fixes":
+            sections_fixes = catalogue.get("sections_fixes", {}).get("sections", [])
+            result["fixes"] = [
+                {
+                    "id": s.get("id"),
+                    "titre": s.get("titre"),
+                    "niveau": s.get("niveau"),
+                    "obligatoire": True
+                }
+                for s in sections_fixes
+            ]
+
+        # Sections variables
+        if not type_sections or type_sections == "variables":
+            sections_vars = catalogue.get("sections_variables", {}).get("sections", [])
+            result["variables"] = [
+                {
+                    "id": s.get("id"),
+                    "titre": s.get("titre"),
+                    "condition": s.get("condition"),
+                    "description": s.get("description"),
+                    "priorite": s.get("priorite", "moyenne")
+                }
+                for s in sections_vars
+            ]
+
+        return {
+            "total_fixes": len(result["fixes"]),
+            "total_variables": len(result["variables"]),
+            "sections": result
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur chargement sections: {e}")
+
+
+@app.get("/clauses/profils", tags=["Clauses"])
+async def lister_profils_clauses(auth: AuthContext = Depends(verify_api_key)):
+    """
+    Liste les profils pré-configurés pour la génération de promesses.
+
+    Profils disponibles:
+    - standard_simple: 1 vendeur → 1 acquéreur
+    - standard_couple: 2 vendeurs → 2 acquéreurs
+    - complexe_investisseur: Avec vente préalable, séquestre
+    - sans_pret: Paiement comptant
+    """
+    try:
+        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+
+        gestionnaire = GestionnaireClausesIntelligent()
+        profils = gestionnaire.catalogue.get("profils_type", {}).get("profils", [])
+
+        return {
+            "count": len(profils),
+            "profils": profils
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur chargement profils: {e}")
+
+
+@app.post("/clauses/analyser", tags=["Clauses"])
+async def analyser_donnees_clauses(
+    donnees: Dict[str, Any],
+    profil: Optional[str] = None,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Analyse les données d'un dossier et sélectionne les sections appropriées.
+
+    - **donnees**: Données du dossier (vendeurs, acquéreurs, bien, etc.)
+    - **profil**: Profil pré-configuré optionnel
+
+    Retourne la liste des sections à inclure avec leurs conditions évaluées.
+    """
+    try:
+        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+
+        gestionnaire = GestionnaireClausesIntelligent()
+        resultat = gestionnaire.selectionner_sections(donnees, profil)
+
+        return {
+            "profil_utilise": profil,
+            "sections_selectionnees": resultat.get("sections_actives", []),
+            "sections_exclues": resultat.get("sections_exclues", []),
+            "total_actives": len(resultat.get("sections_actives", [])),
+            "total_exclues": len(resultat.get("sections_exclues", []))
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur analyse: {e}")
+
+
+@app.post("/clauses/feedback", tags=["Clauses"])
+async def soumettre_feedback_clause(
+    action: str,
+    cible: str,
+    contenu: Optional[str] = None,
+    raison: str = "",
+    background_tasks: BackgroundTasks = None,
+    auth: AuthContext = Depends(require_write_permission)
+):
+    """
+    Soumet un feedback pour améliorer le catalogue de clauses.
+
+    - **action**: ajouter, modifier, supprimer
+    - **cible**: ID de la section concernée
+    - **contenu**: Nouveau contenu (pour ajouter/modifier)
+    - **raison**: Justification du changement
+
+    Le feedback est enregistré et pourra être approuvé par un admin.
+    """
+    try:
+        from execution.gestionnaire_clauses_intelligent import (
+            GestionnaireClausesIntelligent,
+            FeedbackNotaire
+        )
+
+        gestionnaire = GestionnaireClausesIntelligent()
+
+        feedback = FeedbackNotaire(
+            action=action,
+            cible=cible,
+            contenu=contenu,
+            raison=raison,
+            source_notaire=auth.etude_nom,
+            dossier_reference=None,
+            approuve=False  # Nécessite validation admin
+        )
+
+        resultat = gestionnaire.enregistrer_feedback(feedback)
+
+        # Logger dans Supabase aussi
+        if background_tasks:
+            background_tasks.add_task(
+                log_clause_feedback,
+                etude_id=auth.etude_id,
+                feedback_id=resultat.get("feedback_id"),
+                action=action,
+                cible=cible,
+                contenu=contenu,
+                raison=raison
+            )
+
+        return {
+            "succes": True,
+            "feedback_id": resultat.get("feedback_id"),
+            "message": f"Feedback '{action}' sur '{cible}' enregistré",
+            "statut": "en_attente_validation"
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur feedback: {e}")
+
+
+@app.get("/clauses/suggestions", tags=["Clauses"])
+async def obtenir_suggestions_clauses(
+    contexte: str,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Propose des suggestions de clauses basées sur le contexte.
+
+    - **contexte**: Description textuelle (ex: "vente avec prêt bancaire")
+
+    Retourne les sections les plus pertinentes pour ce contexte.
+    """
+    try:
+        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+
+        gestionnaire = GestionnaireClausesIntelligent()
+        sections = gestionnaire.catalogue.get("sections_variables", {}).get("sections", [])
+
+        suggestions = []
+        contexte_lower = contexte.lower()
+
+        for section in sections:
+            titre = section.get("titre", "").lower()
+            description = section.get("description", "").lower()
+
+            # Score simple basé sur les mots-clés
+            score = sum(
+                2 if mot in titre else 1 if mot in description else 0
+                for mot in contexte_lower.split()
+            )
+
+            if score > 0:
+                suggestions.append({
+                    "section_id": section.get("id"),
+                    "titre": section.get("titre"),
+                    "description": section.get("description"),
+                    "score": score,
+                    "condition": section.get("condition")
+                })
+
+        # Trier par score décroissant
+        suggestions.sort(key=lambda x: x["score"], reverse=True)
+
+        return {
+            "contexte": contexte,
+            "suggestions": suggestions[:5]
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur suggestions: {e}")
+
+
+async def log_clause_feedback(
+    etude_id: str,
+    feedback_id: str,
+    action: str,
+    cible: str,
+    contenu: Optional[str],
+    raison: str
+):
+    """Log le feedback de clause dans Supabase."""
+    supabase = get_supabase_client()
+
+    if supabase:
+        try:
+            supabase.table("audit_logs").insert({
+                "etude_id": etude_id,
+                "action": f"clause_feedback_{action}",
+                "resource_type": "clause",
+                "resource_id": cible,
+                "details": {
+                    "feedback_id": feedback_id,
+                    "action": action,
+                    "cible": cible,
+                    "contenu": contenu,
+                    "raison": raison,
+                    "timestamp": datetime.now().isoformat()
+                }
+            }).execute()
+        except Exception:
+            pass
+
+
+# =============================================================================
+# Endpoints Génération de Promesses
+# =============================================================================
+
+@app.post("/promesses/generer", tags=["Promesses"])
+async def generer_promesse(
+    donnees: Dict[str, Any],
+    type_force: Optional[str] = None,
+    profil: Optional[str] = None,
+    auth: AuthContext = Depends(require_write_permission)
+):
+    """
+    Génère une promesse de vente.
+
+    - **donnees**: Données complètes (promettants, bénéficiaires, bien, prix, etc.)
+    - **type_force**: Forcer un type (standard, premium, avec_mobilier, multi_biens)
+    - **profil**: Utiliser un profil prédéfini
+
+    Détecte automatiquement le type si non spécifié.
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses, TypePromesse
+
+        supabase = get_supabase_client()
+        gestionnaire = GestionnairePromesses(supabase_client=supabase)
+
+        # Appliquer profil si spécifié
+        if profil:
+            donnees = gestionnaire.appliquer_profil(donnees, profil)
+
+        # Forcer le type si spécifié
+        type_promesse = TypePromesse(type_force) if type_force else None
+
+        # Générer
+        resultat = gestionnaire.generer(donnees, type_promesse)
+
+        return {
+            "succes": resultat.succes,
+            "type_promesse": resultat.type_promesse.value,
+            "fichier_md": resultat.fichier_md,
+            "fichier_docx": resultat.fichier_docx,
+            "sections_incluses": resultat.sections_incluses,
+            "duree_generation": resultat.duree_generation,
+            "erreurs": resultat.erreurs,
+            "warnings": resultat.warnings,
+            "metadata": resultat.metadata
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur génération promesse: {e}")
+
+
+@app.post("/promesses/detecter-type", tags=["Promesses"])
+async def detecter_type_promesse(
+    donnees: Dict[str, Any],
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Détecte automatiquement le type de promesse approprié.
+
+    Analyse les données et retourne:
+    - Le type recommandé (standard, premium, avec_mobilier, multi_biens)
+    - La raison de la détection
+    - Le score de confiance
+    - Les sections recommandées
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses
+
+        gestionnaire = GestionnairePromesses()
+        resultat = gestionnaire.detecter_type(donnees)
+
+        return {
+            "type_promesse": resultat.type_promesse.value,
+            "raison": resultat.raison,
+            "confiance": resultat.confiance,
+            "sections_recommandees": resultat.sections_recommandees,
+            "warnings": resultat.warnings
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur détection: {e}")
+
+
+@app.post("/promesses/valider", tags=["Promesses"])
+async def valider_donnees_promesse(
+    donnees: Dict[str, Any],
+    type_promesse: Optional[str] = None,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Valide les données avant génération.
+
+    Retourne les erreurs, warnings et suggestions d'amélioration.
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses, TypePromesse
+
+        gestionnaire = GestionnairePromesses()
+        type_enum = TypePromesse(type_promesse) if type_promesse else None
+
+        resultat = gestionnaire.valider(donnees, type_enum)
+
+        return {
+            "valide": resultat.valide,
+            "erreurs": resultat.erreurs,
+            "warnings": resultat.warnings,
+            "champs_manquants": resultat.champs_manquants,
+            "suggestions": resultat.suggestions
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur validation: {e}")
+
+
+@app.get("/promesses/profils", tags=["Promesses"])
+async def lister_profils_promesse(auth: AuthContext = Depends(verify_api_key)):
+    """
+    Liste les profils prédéfinis disponibles.
+
+    Profils:
+    - particulier_simple: 1 vendeur → 1 acquéreur, standard
+    - particulier_meuble: Avec liste de mobilier
+    - agence_premium: Documentation complète, diagnostics exhaustifs
+    - investisseur_multi: Plusieurs biens, faculté substitution
+    - sans_pret: Achat comptant
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses
+
+        gestionnaire = GestionnairePromesses()
+        profils = gestionnaire.get_profils_disponibles()
+
+        return {
+            "count": len(profils),
+            "profils": profils
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur chargement profils: {e}")
+
+
+@app.get("/promesses/types", tags=["Promesses"])
+async def lister_types_promesse(auth: AuthContext = Depends(verify_api_key)):
+    """
+    Liste les types de promesse disponibles avec leurs caractéristiques.
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses
+
+        gestionnaire = GestionnairePromesses()
+        types_info = gestionnaire.catalogue.get("types_promesse", {})
+
+        return {
+            "count": len(types_info),
+            "types": [
+                {
+                    "id": tid,
+                    "nom": tdata.get("nom"),
+                    "description": tdata.get("description"),
+                    "cas_usage": tdata.get("cas_usage", []),
+                    "bookmarks": tdata.get("bookmarks")
+                }
+                for tid, tdata in types_info.items()
+            ]
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur chargement types: {e}")
+
+
+# =============================================================================
+# Endpoints Titres de Propriété
+# =============================================================================
+
+@app.get("/titres", tags=["Titres"])
+async def lister_titres(
+    limit: int = 20,
+    offset: int = 0,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Liste les titres de propriété de l'étude.
+    """
+    supabase = get_supabase_client()
+    if not supabase:
+        raise HTTPException(status_code=503, detail="Supabase non disponible")
+
+    try:
+        response = supabase.table("titres_propriete")\
+            .select("id, reference, proprietaires, bien, created_at")\
+            .eq("etude_id", auth.etude_id)\
+            .order("created_at", desc=True)\
+            .range(offset, offset + limit - 1)\
+            .execute()
+
+        return {
+            "count": len(response.data),
+            "titres": response.data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur listing titres: {e}")
+
+
+@app.get("/titres/{titre_id}", tags=["Titres"])
+async def get_titre(
+    titre_id: str,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Récupère un titre de propriété par son ID.
+    """
+    supabase = get_supabase_client()
+    if not supabase:
+        raise HTTPException(status_code=503, detail="Supabase non disponible")
+
+    try:
+        response = supabase.table("titres_propriete")\
+            .select("*")\
+            .eq("id", titre_id)\
+            .eq("etude_id", auth.etude_id)\
+            .single()\
+            .execute()
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Titre non trouvé")
+
+        return response.data
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur récupération titre: {e}")
+
+
+@app.get("/titres/recherche/adresse", tags=["Titres"])
+async def rechercher_titre_adresse(
+    adresse: str,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Recherche des titres par adresse (recherche floue).
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses
+
+        supabase = get_supabase_client()
+        gestionnaire = GestionnairePromesses(supabase_client=supabase)
+
+        resultats = gestionnaire.rechercher_titre_par_adresse(adresse)
+
+        return {
+            "query": adresse,
+            "count": len(resultats),
+            "resultats": resultats
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur recherche: {e}")
+
+
+@app.get("/titres/recherche/proprietaire", tags=["Titres"])
+async def rechercher_titre_proprietaire(
+    nom: str,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Recherche des titres par nom de propriétaire.
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses
+
+        supabase = get_supabase_client()
+        gestionnaire = GestionnairePromesses(supabase_client=supabase)
+
+        resultats = gestionnaire.rechercher_titre_par_proprietaire(nom)
+
+        return {
+            "query": nom,
+            "count": len(resultats),
+            "resultats": resultats
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur recherche: {e}")
+
+
+@app.post("/titres/{titre_id}/vers-promesse", tags=["Titres"])
+async def convertir_titre_en_promesse(
+    titre_id: str,
+    beneficiaires: List[Dict[str, Any]],
+    prix: Dict[str, Any],
+    financement: Optional[Dict[str, Any]] = None,
+    options: Optional[Dict[str, Any]] = None,
+    auth: AuthContext = Depends(require_write_permission)
+):
+    """
+    Génère une promesse à partir d'un titre de propriété existant.
+
+    - **titre_id**: ID du titre source
+    - **beneficiaires**: Liste des bénéficiaires
+    - **prix**: Informations de prix
+    - **financement**: Financement optionnel (prêt, etc.)
+    - **options**: Options supplémentaires (mobilier, conditions, etc.)
+    """
+    try:
+        from execution.gestionnaire_promesses import GestionnairePromesses
+
+        supabase = get_supabase_client()
+        gestionnaire = GestionnairePromesses(supabase_client=supabase)
+
+        # Charger le titre
+        titre_response = supabase.table("titres_propriete")\
+            .select("*")\
+            .eq("id", titre_id)\
+            .eq("etude_id", auth.etude_id)\
+            .single()\
+            .execute()
+
+        if not titre_response.data:
+            raise HTTPException(status_code=404, detail="Titre non trouvé")
+
+        titre_data = titre_response.data
+
+        # Générer la promesse
+        donnees, resultat = gestionnaire.generer_depuis_titre(
+            titre_data=titre_data,
+            beneficiaires=beneficiaires,
+            prix=prix,
+            financement=financement,
+            options=options
+        )
+
+        return {
+            "succes": resultat.succes,
+            "type_promesse": resultat.type_promesse.value,
+            "fichier_docx": resultat.fichier_docx,
+            "donnees_generees": donnees,
+            "erreurs": resultat.erreurs,
+            "warnings": resultat.warnings
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur conversion: {e}")
+
+
+# =============================================================================
 # Fonctions d'arrière-plan (apprentissage continu)
 # =============================================================================
 

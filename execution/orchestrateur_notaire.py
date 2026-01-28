@@ -48,6 +48,17 @@ except ImportError:
         HistoriqueActes = None
         Acte = None
 
+# Import du gestionnaire de promesses (v1.5.1)
+try:
+    from execution.gestionnaire_promesses import GestionnairePromesses
+    GESTIONNAIRE_PROMESSES_DISPONIBLE = True
+except ImportError:
+    try:
+        from gestionnaire_promesses import GestionnairePromesses
+        GESTIONNAIRE_PROMESSES_DISPONIBLE = True
+    except ImportError:
+        GESTIONNAIRE_PROMESSES_DISPONIBLE = False
+
 # Configuration encodage Windows
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -645,8 +656,30 @@ class OrchestratorNotaire:
         promesse: Dict[str, Any],
         complements: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Convertit une promesse en acte de vente."""
+        """
+        Convertit une promesse en acte de vente.
 
+        Utilise le GestionnairePromesses (v1.5.1) si disponible pour:
+        - Deep copy sécurisé
+        - Préservation des diagnostics
+        - Tracking des conventions antérieures
+        - Génération automatique des quotités
+        """
+        # Utiliser le gestionnaire avancé si disponible
+        if GESTIONNAIRE_PROMESSES_DISPONIBLE:
+            try:
+                gestionnaire = GestionnairePromesses()
+                vente = gestionnaire.promesse_vers_vente(
+                    promesse,
+                    modifications=complements,
+                    date_vente=datetime.now().strftime("%Y-%m-%d")
+                )
+                self._log("Conversion via GestionnairePromesses", "success")
+                return vente
+            except Exception as e:
+                self._log(f"Erreur gestionnaire: {e} - fallback basique", "warning")
+
+        # Fallback: conversion basique
         vente = {
             "acte": {
                 "type": "vente",
@@ -655,10 +688,10 @@ class OrchestratorNotaire:
             },
 
             # Vendeurs = promettants de la promesse
-            "vendeurs": promesse.get('promettants', []),
+            "vendeurs": promesse.get('promettants', promesse.get('vendeurs', [])),
 
             # Acquéreurs = bénéficiaires de la promesse
-            "acquereurs": promesse.get('beneficiaires', []),
+            "acquereurs": promesse.get('beneficiaires', promesse.get('acquereurs', [])),
 
             # Quotités
             "quotites_vendues": promesse.get('quotites_vendues', []),
@@ -673,6 +706,9 @@ class OrchestratorNotaire:
             # Origine de propriété
             "origine_propriete": promesse.get('origine_propriete', {}),
 
+            # Diagnostics
+            "diagnostics": promesse.get('diagnostics', {}),
+
             # Prix (confirmé)
             "prix": promesse.get('prix', {}),
 
@@ -683,7 +719,7 @@ class OrchestratorNotaire:
             }),
 
             # Prêts
-            "prets": complements.get('prets', []),
+            "prets": complements.get('prets', promesse.get('financement', {}).get('prets', [])),
 
             # Conditions réalisées
             "conditions_realisees": complements.get('conditions_realisees', [
@@ -691,7 +727,7 @@ class OrchestratorNotaire:
             ]),
 
             # Notaire
-            "notaire": promesse.get('notaire', {})
+            "notaire": promesse.get('notaire', promesse.get('acte', {}).get('notaire', {}))
         }
 
         # Ajouter quotités acquises si manquantes
@@ -701,6 +737,15 @@ class OrchestratorNotaire:
             vente['quotites_acquises'] = [
                 {"fraction": f"{quote_part:.2f}%", "type": "pleine_propriete"}
                 for _ in range(nb_acq)
+            ]
+
+        # Ajouter quotités vendues si manquantes
+        if not vente['quotites_vendues'] and vente['vendeurs']:
+            nb_vend = len(vente['vendeurs'])
+            quote_part = 100 / nb_vend
+            vente['quotites_vendues'] = [
+                {"fraction": f"{quote_part:.2f}%", "type": "pleine_propriete"}
+                for _ in range(nb_vend)
             ]
 
         return vente

@@ -1,7 +1,56 @@
 {
   "titre": "Questions pour Promesse Unilatérale de Vente - Lots de Copropriété",
   "description": "Questions structurées à poser au notaire pour collecter les informations nécessaires à la rédaction d'une promesse unilatérale de vente de lots de copropriété",
+  "version": "2.0.0",
+  "date_modification": "2026-01-28",
+  "note_multi_templates": "Ce questionnaire supporte 4 types de promesses (standard, premium, avec_mobilier, multi_biens). Les questions conditionnelles s'adaptent automatiquement.",
   "sections": {
+    "0_detection_type": {
+      "titre": "Détection du type de promesse",
+      "note": "Ces questions permettent de détecter automatiquement le type de template à utiliser",
+      "questions": [
+        {
+          "id": "type_promesse_force",
+          "question": "Souhaitez-vous forcer un type de promesse spécifique ?",
+          "type": "choix",
+          "options": ["Détection automatique (recommandé)", "Standard", "Premium", "Avec mobilier", "Multi-biens"],
+          "obligatoire": true,
+          "defaut": "Détection automatique (recommandé)",
+          "variable": "_metadata.type_promesse"
+        },
+        {
+          "id": "nombre_biens",
+          "question": "Combien de biens distincts sont concernés par la promesse ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "minimum": 1,
+          "maximum": 10,
+          "note": "Si > 1, le type multi-biens sera automatiquement sélectionné",
+          "declencheur_type": {
+            "si_superieur_a_1": "multi_biens"
+          }
+        },
+        {
+          "id": "mobilier_inclus",
+          "question": "Y a-t-il du mobilier vendu avec le bien ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "note": "Si oui, le type avec_mobilier sera automatiquement sélectionné",
+          "declencheur_type": {
+            "si_oui": "avec_mobilier"
+          }
+        },
+        {
+          "id": "profil_acquereur",
+          "question": "Quel est le profil de l'acquéreur ?",
+          "type": "choix",
+          "options": ["Particulier simple", "Particulier avec mobilier", "Via agence (premium)", "Investisseur (multi-biens)", "Achat comptant (sans prêt)"],
+          "obligatoire": false,
+          "variable": "_metadata.profil_applique",
+          "note": "Permet d'appliquer un profil prédéfini"
+        }
+      ]
+    },
     "1_acte": {
       "titre": "Informations sur l'acte",
       "questions": [
@@ -975,6 +1024,116 @@
           "obligatoire": true,
           "defaut": false,
           "variable": "clauses_optionnelles.substitution_autorisee"
+        }
+      ]
+    },
+
+    "20b_mobilier": {
+      "titre": "Mobilier vendu avec le bien",
+      "condition": "mobilier.existe == true",
+      "note": "Section pour promesse de type avec_mobilier",
+      "questions": [
+        {
+          "id": "mobilier_existe",
+          "question": "Confirmez-vous la vente de mobilier avec le bien ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "mobilier.existe"
+        },
+        {
+          "id": "mobilier_prix_total",
+          "question": "Prix total du mobilier vendu (en EUR) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "mobilier.prix_total",
+          "note": "Ce montant sera inclus dans le prix global"
+        },
+        {
+          "id": "mobilier_liste",
+          "question": "Liste détaillée du mobilier vendu",
+          "type": "tableau",
+          "colonnes": ["Désignation", "État", "Valeur estimée (EUR)"],
+          "obligatoire": true,
+          "variable": "mobilier.liste",
+          "minimum_lignes": 1,
+          "note": "Détailler chaque meuble ou équipement vendu"
+        },
+        {
+          "id": "mobilier_garantie",
+          "question": "Le promettant garantit-il être propriétaire exclusif du mobilier ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "defaut": true,
+          "variable": "mobilier.garantie_propriete"
+        }
+      ]
+    },
+
+    "20c_multi_biens": {
+      "titre": "Biens multiples",
+      "condition": "biens.length > 1",
+      "note": "Section pour promesse de type multi_biens",
+      "questions": [
+        {
+          "id": "biens_ventilation",
+          "question": "Souhaitez-vous une ventilation du prix par bien ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "defaut": true,
+          "variable": "prix.ventilation_par_bien"
+        },
+        {
+          "id": "biens_details",
+          "question": "Détails de chaque bien",
+          "type": "repetition",
+          "repeter_pour": "biens",
+          "sous_questions": [
+            {
+              "id": "bien_adresse",
+              "question": "Adresse du bien n°{index} ?",
+              "type": "texte",
+              "obligatoire": true,
+              "variable": "biens[].adresse"
+            },
+            {
+              "id": "bien_nature",
+              "question": "Nature du bien (Appartement, Parking, Cave, etc.) ?",
+              "type": "choix",
+              "options": ["Appartement", "Parking", "Cave", "Local commercial", "Bureau", "Autre"],
+              "obligatoire": true,
+              "variable": "biens[].nature"
+            },
+            {
+              "id": "bien_cadastre",
+              "question": "Références cadastrales (section, numéro) ?",
+              "type": "cadastre",
+              "obligatoire": true,
+              "variable": "biens[].cadastre"
+            },
+            {
+              "id": "bien_lots",
+              "question": "Numéro(s) de lot de copropriété ?",
+              "type": "array",
+              "obligatoire": false,
+              "variable": "biens[].lots"
+            },
+            {
+              "id": "bien_prix",
+              "question": "Prix individuel de ce bien (EUR) ?",
+              "type": "nombre",
+              "obligatoire": true,
+              "variable": "biens[].prix"
+            }
+          ]
+        },
+        {
+          "id": "substitution_multi",
+          "question": "Autoriser la faculté de substitution (fréquent pour investisseurs) ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "defaut": true,
+          "variable": "substitution.autorisee",
+          "note": "Permet au bénéficiaire de se faire substituer par un tiers"
         }
       ]
     },

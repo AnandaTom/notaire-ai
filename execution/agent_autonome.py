@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Agent Autonome NotaireAI v1.1
+Agent Autonome NotaireAI v1.2
 
 Ce module implémente l'agent autonome capable de:
 - Parser des demandes en langage naturel
-- Support multi-parties: "Martin & Pierre → Dupont & Thomas" (NOUVEAU v1.1)
-- Validation intégrée avant génération (NOUVEAU v1.1)
-- Score de confiance détaillé avec suggestions (NOUVEAU v1.1)
+- Support multi-parties: "Martin & Pierre → Dupont & Thomas" (v1.1)
+- Validation intégrée avant génération avec 12 règles métier (v1.2)
+- Score de confiance détaillé avec suggestions (v1.1)
+- Validation avancée: quotités, cadastre, diagnostics, plus-value (v1.2)
 - Rechercher dans Supabase si un dossier existe
 - Générer ou modifier des actes en une seule commande
 - Sauvegarder l'historique dans Supabase
@@ -50,6 +51,18 @@ if sys.platform == 'win32':
 # Chemins
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
+
+# Import du validateur avancé
+try:
+    from valider_acte import ValidateurActe, RapportValidation, NiveauErreur
+    VALIDATEUR_AVANCE_DISPONIBLE = True
+except ImportError:
+    try:
+        from execution.valider_acte import ValidateurActe, RapportValidation, NiveauErreur
+        VALIDATEUR_AVANCE_DISPONIBLE = True
+    except ImportError:
+        VALIDATEUR_AVANCE_DISPONIBLE = False
+        print("⚠️ Validateur avancé non disponible - utilisation validation basique")
 
 
 class IntentionAgent(Enum):
@@ -797,7 +810,9 @@ class AgentNotaire:
 
     def valider_donnees(self, donnees: Dict[str, Any], type_acte: str) -> ResultatValidation:
         """
-        Valide les données avant génération.
+        Valide les données avant génération avec validation avancée v1.5.1.
+
+        Utilise le ValidateurActe complet si disponible, sinon validation basique.
 
         Args:
             donnees: Données à valider
@@ -810,6 +825,44 @@ class AgentNotaire:
         avertissements = []
         champs_manquants = []
         suggestions = []
+
+        # =========================================================================
+        # VALIDATION AVANCÉE (v1.5.1) si disponible
+        # =========================================================================
+        if VALIDATEUR_AVANCE_DISPONIBLE:
+            try:
+                validateur = ValidateurActe(type_acte)
+                rapport: RapportValidation = validateur.valider_complet(donnees)
+
+                # Convertir le rapport avancé vers le format agent
+                for err in rapport.erreurs:
+                    erreurs.append(f"[{err.code}] {err.message}")
+                    if err.chemin:
+                        champs_manquants.append(err.chemin.split('.')[0])
+                    if err.suggestion:
+                        suggestions.append(err.suggestion)
+
+                for warn in rapport.avertissements:
+                    avertissements.append(f"[{warn.code}] {warn.message}")
+                    if warn.suggestion:
+                        suggestions.append(warn.suggestion)
+
+                # Dédupliquer les suggestions
+                suggestions = list(dict.fromkeys(suggestions))[:8]
+
+                return ResultatValidation(
+                    valide=rapport.valide,
+                    erreurs=erreurs,
+                    avertissements=avertissements,
+                    champs_manquants=list(set(champs_manquants)),
+                    suggestions=suggestions
+                )
+            except Exception as e:
+                print(f"⚠️ Erreur validation avancée: {e} - fallback validation basique")
+
+        # =========================================================================
+        # VALIDATION BASIQUE (fallback)
+        # =========================================================================
 
         # Champs obligatoires par type d'acte
         champs_obligatoires = {
@@ -1123,31 +1176,45 @@ class AgentNotaire:
         # Déterminer le type d'acte
         type_acte = self._resoudre_type_acte(analyse)
 
-        # Valider les données avant génération
-        etapes.append("Validation des données")
+        # Valider les données avant génération (v1.5.1 - validation avancée)
+        etapes.append("Validation des données (v1.5.1)")
         validation = self.valider_donnees(donnees, type_acte)
 
+        # Afficher le résultat de validation de manière structurée
+        print(f"\n{'─'*50}")
+        print(f"📋 VALIDATION MÉTIER" + (" (avancée)" if VALIDATEUR_AVANCE_DISPONIBLE else ""))
+        print(f"{'─'*50}")
+
         if not validation.valide:
-            print(f"\n⚠️ Erreurs de validation:")
-            for erreur in validation.erreurs:
-                print(f"   ❌ {erreur}")
+            print(f"\n❌ ERREURS BLOQUANTES ({len(validation.erreurs)}):")
+            for erreur in validation.erreurs[:10]:
+                print(f"   • {erreur}")
+
+            if len(validation.erreurs) > 10:
+                print(f"   ... et {len(validation.erreurs) - 10} autres erreurs")
+
             return ResultatAgent(
                 succes=False,
-                message=f"Validation échouée: {', '.join(validation.erreurs)}",
-                intention=analyse.intention
+                message=f"Validation échouée: {len(validation.erreurs)} erreur(s)",
+                intention=analyse.intention,
+                donnees=donnees
             )
+
+        print(f"✅ Validation réussie")
 
         # Afficher les avertissements
         if validation.avertissements:
-            print(f"\n⚠️ Avertissements:")
-            for avert in validation.avertissements:
-                print(f"   ⚠️ {avert}")
+            print(f"\n⚠️ AVERTISSEMENTS ({len(validation.avertissements)}):")
+            for avert in validation.avertissements[:5]:
+                print(f"   • {avert}")
 
         # Afficher les suggestions
         if validation.suggestions:
-            print(f"\n💡 Suggestions:")
-            for suggestion in validation.suggestions[:3]:
+            print(f"\n💡 SUGGESTIONS ({len(validation.suggestions)}):")
+            for suggestion in validation.suggestions[:4]:
                 print(f"   → {suggestion}")
+
+        print(f"{'─'*50}")
 
         # Générer la référence
         reference = f"{datetime.now().strftime('%Y')}-{datetime.now().strftime('%m%d%H%M')}"
@@ -1653,6 +1720,72 @@ class AgentNotaire:
             'mois': now.month,
             'annee': now.year
         }
+
+        # Générer les quotités si multi-parties (v1.2)
+        donnees = self._generer_quotites_multi_parties(donnees, type_acte)
+
+        return donnees
+
+    def _generer_quotites_multi_parties(self, donnees: Dict[str, Any], type_acte: str) -> Dict[str, Any]:
+        """
+        Génère les quotités vendues/acquises pour multi-parties.
+
+        Répartition égale par défaut (ex: 2 vendeurs → 50%/50%).
+        """
+        import copy
+
+        # Déterminer les clés selon le type d'acte
+        if type_acte == 'promesse_vente':
+            cle_vendeurs = 'promettants'
+            cle_acquereurs = 'beneficiaires'
+        else:
+            cle_vendeurs = 'vendeurs'
+            cle_acquereurs = 'acquereurs'
+
+        vendeurs = donnees.get(cle_vendeurs, [])
+        acquereurs = donnees.get(cle_acquereurs, [])
+
+        # Quotités vendues
+        if len(vendeurs) > 1 and 'quotites_vendues' not in donnees:
+            nb = len(vendeurs)
+            quotites = []
+            for i, v in enumerate(vendeurs):
+                nom = v.get('nom', '')
+                prenom = v.get('prenom', v.get('prenoms', ''))
+                pp = v.get('personne_physique', {})
+                if pp:
+                    nom = pp.get('nom', nom)
+                    prenom = pp.get('prenom', pp.get('prenoms', prenom))
+
+                quotites.append({
+                    'nom': f"{prenom} {nom}".strip(),
+                    'pourcentage': round(100 / nb, 2),
+                    'fraction': f"1/{nb}",
+                    'type_droit': 'pleine propriété'
+                })
+            donnees['quotites_vendues'] = quotites
+            print(f"   📊 Quotités vendues générées: {nb} vendeurs → {100/nb:.1f}% chacun")
+
+        # Quotités acquises
+        if len(acquereurs) > 1 and 'quotites_acquises' not in donnees:
+            nb = len(acquereurs)
+            quotites = []
+            for i, a in enumerate(acquereurs):
+                nom = a.get('nom', '')
+                prenom = a.get('prenom', a.get('prenoms', ''))
+                pp = a.get('personne_physique', {})
+                if pp:
+                    nom = pp.get('nom', nom)
+                    prenom = pp.get('prenom', pp.get('prenoms', prenom))
+
+                quotites.append({
+                    'nom': f"{prenom} {nom}".strip(),
+                    'pourcentage': round(100 / nb, 2),
+                    'fraction': f"1/{nb}",
+                    'type_droit': 'pleine propriété'
+                })
+            donnees['quotites_acquises'] = quotites
+            print(f"   📊 Quotités acquises générées: {nb} acquéreurs → {100/nb:.1f}% chacun")
 
         return donnees
 

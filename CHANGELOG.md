@@ -7,6 +7,87 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.5.1] - 2026-01-28
+
+### 🎯 Objectif de cette Release
+Validation métier avancée avec 12 règles, support personnes morales, et API validation temps réel.
+
+### ✨ Ajouté
+
+#### Validation Métier Avancée (12 règles)
+- **Validation quotités croisées** - Vérifie que vendeurs ET acquéreurs totalisent 100%
+- **Validation cohérence cadastre** - Section, numéro, commune correspondant à l'adresse
+- **Validation plus-value immobilière** - Résidence principale, durée détention, exonérations
+- **Validation intervention conjoint** - Erreur si communauté sans signature conjoint
+- **Validation diagnostics** - DPE expiration 10 ans, audit si passoire thermique (F/G)
+- **Validation cohérence dates promesse** - Délai réalisation vs date prêt
+- **Validation prix cohérent** - Prix/m² aberrant (alertes)
+
+#### Support Personnes Morales
+- **SCI, SARL, SAS, SA, SNC** - Validation complète dans les schémas
+- **Validation SIREN** - Format 9 chiffres obligatoire
+- **Représentant légal** - Qualité, nom, pouvoirs requis
+- **RCS recommandé** - Pour sociétés commerciales
+
+#### API Validation Temps Réel
+- **`execution/api_validation.py`** - Endpoints FastAPI pour frontend
+  - `POST /validation/donnees` - Validation complète
+  - `POST /validation/champ` - Validation champ individuel
+  - `GET /validation/schema/{type_acte}` - Récupérer schéma
+- **MAPPING_CHAMPS_UI** - Noms lisibles pour interface
+
+#### Tests Unitaires
+- **`tests/test_exporter_docx.py`** - ~400 lignes, 35+ tests
+  - Nettoyage XML, détection tableaux, marqueurs variables
+  - Tests performance et contenu notarial
+- **`tests/test_valider_acte.py`** - ~500 lignes, 50+ tests
+  - Validation quotités, cadastre, diagnostics
+  - Personnes morales (SCI, SARL)
+  - Dates promesse, intervention conjoint
+
+### 🔧 Amélioré
+
+#### Agent Autonome v1.2
+- **Intégration ValidateurActe** - Validation avancée avant génération
+- **Génération quotités multi-parties** - Répartition automatique égale
+- **Affichage structuré validation** - Erreurs/Avertissements/Suggestions
+
+#### Orchestrateur
+- **Import GestionnairePromesses** - Pour conversion promesse → vente
+- **`_convertir_promesse_vers_vente` améliorée** - Deep copy, diagnostics, quotités auto
+
+#### Schémas
+- **`schemas/variables_vente.json`** - Ajout `personne_morale` dans `$defs`
+- **vendeurs/acquereurs** - Support `oneOf` personne_physique | personne_morale
+
+### 📁 Fichiers Modifiés/Créés
+
+| Fichier | Action | Lignes |
+|---------|--------|--------|
+| `execution/valider_acte.py` | Modifié | +280 |
+| `execution/api_validation.py` | Créé | ~450 |
+| `execution/agent_autonome.py` | Modifié | +100 |
+| `execution/orchestrateur_notaire.py` | Modifié | +50 |
+| `schemas/variables_vente.json` | Modifié | +60 |
+| `tests/test_exporter_docx.py` | Créé | ~400 |
+| `tests/test_valider_acte.py` | Créé | ~500 |
+| `docs/data/dashboard.json` | Modifié | Version 1.5.1 |
+
+### ✅ Tests
+
+```bash
+# Tests validation
+pytest tests/test_valider_acte.py -v
+
+# Tests export DOCX
+pytest tests/test_exporter_docx.py -v
+
+# Validation complète
+python execution/valider_acte.py --donnees exemples/donnees_vente_exemple.json
+```
+
+---
+
 ## [1.2.1] - 2026-01-22
 
 ### 🔧 Corrections Export DOCX

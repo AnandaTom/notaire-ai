@@ -1,8 +1,48 @@
 # Directive : Création d'une Promesse Unilatérale de Vente - Lots de Copropriété
 
+**Version**: 2.0.0 | **Date**: 2026-01-28
+
+---
+
 ## Objectif
 
-Guider la création complète d'une **promesse unilatérale de vente** de lots de copropriété, de la collecte des informations jusqu'à l'export DOCX fidèle à la trame originale.
+Guider la création complète d'une **promesse unilatérale de vente** de lots de copropriété, avec support de **4 types de promesses** adaptés aux différents cas d'usage.
+
+---
+
+## 🆕 Système Multi-Templates (v1.4.0)
+
+Le système détecte automatiquement le type de promesse approprié:
+
+| Type | Template | Cas d'usage | Bookmarks |
+|------|----------|-------------|-----------|
+| **Standard** | `promesse_standard.md` | 1 bien simple, pas de mobilier | 298 |
+| **Premium** | `promesse_premium.md` | Diagnostics exhaustifs, agences | 359 |
+| **Avec mobilier** | `promesse_avec_mobilier.md` | Vente meublée | 312 |
+| **Multi-biens** | `promesse_multi_biens.md` | Lot + parking + cave | 423 |
+
+### Détection Automatique
+
+```python
+from execution.gestionnaire_promesses import GestionnairePromesses
+
+gestionnaire = GestionnairePromesses()
+detection = gestionnaire.detecter_type(donnees)
+
+# Résultat:
+# type_promesse: "avec_mobilier"
+# confiance: 0.85
+# sections_recommandees: ["entete", "mobilier_vendu", ...]
+```
+
+### Règles de Détection
+
+| Priorité | Condition | Type |
+|----------|-----------|------|
+| 1 | `len(biens) > 1` | multi_biens |
+| 2 | `mobilier.existe == True` | avec_mobilier |
+| 3 | `diagnostics.exhaustifs == True` | premium |
+| 4 | Par défaut | standard |
 
 ---
 
@@ -23,17 +63,18 @@ Guider la création complète d'une **promesse unilatérale de vente** de lots d
 
 | Ressource | Chemin |
 |-----------|--------|
+| **Gestionnaire principal** | `execution/gestionnaire_promesses.py` |
+| **Catalogue unifié** | `schemas/promesse_catalogue_unifie.json` |
 | Template DOCX original | `docs_originels/Trame promesse unilatérale de vente lots de copropriété.docx` |
-| Template Jinja2 | `templates/promesse_vente_lots_copropriete.md` |
+| Templates spécialisés | `templates/promesse/*.md` |
 | Schéma variables | `schemas/variables_promesse_vente.json` |
 | Questions notaire | `schemas/questions_promesse_vente.json` |
 | Script assemblage | `execution/assembler_acte.py` |
 | Script export DOCX | `execution/exporter_docx.py` |
-| Script validation | `execution/valider_acte.py` |
 
 ---
 
-## Flux de travail
+## Flux de Travail Principal
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -41,274 +82,347 @@ Guider la création complète d'une **promesse unilatérale de vente** de lots d
 ├────────────────────────────────────────────────────────────────────────┤
 │                                                                        │
 │  1. COLLECTE DES INFORMATIONS                                          │
-│     ├─► Consulter schemas/questions_promesse_vente.json                │
-│     ├─► Poser les questions au notaire par sections                    │
-│     └─► Sauvegarder dans .tmp/donnees_client.json                      │
+│     ├─► Via dialogue: schemas/questions_promesse_vente.json            │
+│     ├─► Via titre: extraire_titre_propriete.py                         │
+│     └─► Via API: POST /titres/{id}/vers-promesse                       │
 │                                                                        │
-│  2. VALIDATION DES DONNÉES                                             │
-│     ├─► Exécuter valider_acte.py                                       │
-│     ├─► Vérifier quotités = 100%                                       │
-│     ├─► Vérifier indemnité immobilisation (généralement 10%)           │
-│     ├─► Vérifier cohérence prêt/prix                                   │
-│     └─► Vérifier délais (réalisation > date obtention prêt)            │
+│  2. DÉTECTION DU TYPE                                                  │
+│     ├─► Exécuter gestionnaire_promesses.detecter_type()                │
+│     └─► Résultat: standard | premium | avec_mobilier | multi_biens     │
 │                                                                        │
-│  3. ASSEMBLAGE MARKDOWN                                                │
-│     ├─► Exécuter assembler_acte.py                                     │
-│     └─► Template promesse_vente_lots_copropriete.md + données          │
+│  3. VALIDATION DES DONNÉES                                             │
+│     ├─► Exécuter gestionnaire_promesses.valider()                      │
+│     ├─► Règles obligatoires (promettants, prix, délai)                 │
+│     └─► Règles conditionnelles (prêt, mobilier, multi-biens)           │
 │                                                                        │
-│  4. EXPORT DOCX                                                        │
-│     ├─► Exécuter exporter_docx.py                                      │
-│     └─► Formatage 100% fidèle à la trame originale                     │
+│  4. GÉNÉRATION                                                         │
+│     ├─► Exécuter gestionnaire_promesses.generer()                      │
+│     ├─► Sélection automatique du template                              │
+│     └─► Export DOCX fidèle à la trame                                  │
+│                                                                        │
+│  5. ARCHIVAGE (optionnel)                                              │
+│     └─► Sauvegarde dans Supabase (titres_propriete, promesses_generees)│
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Étape 1 : Collecte des informations
+## Méthode 1: Génération Rapide (CLI)
 
-### Sections obligatoires
-
-1. **Informations sur l'acte** - Date, référence, notaires
-2. **Promettant(s)** - Identité complète, situation matrimoniale
-3. **Bénéficiaire(s)** - Identité complète, situation matrimoniale
-4. **Quotités acquises** - Répartition ou à déterminer
-5. **Désignation du bien** - Adresse, cadastre
-6. **Lots de copropriété** - Numéro, tantièmes, Carrez
-7. **Copropriété** - EDD, syndic, immatriculation
-8. **Prix** - Montant, modalités
-9. **Négociation** - Agent immobilier (si applicable)
-10. **Indemnité d'immobilisation** - Montant, versement
-11. **Délais** - Réalisation, rétractation
-12. **Conditions suspensives** - Prêt, préemption, autres
-13. **Financement** - Apport, prêt sollicité
-14. **Usage du bien** - Actuel, destination
-15. **Origine de propriété** - Chaîne de propriété
-16. **Diagnostics** - DDT complet
-17. **Travaux** - Si réalisés par le promettant
-18. **Urbanisme** - Notes, certificats
-19. **Clauses optionnelles** - Exécution forcée, substitution
-
-### Points critiques spécifiques à la promesse
-
-| Point | Vérification |
-|-------|--------------|
-| **Indemnité d'immobilisation** | Généralement 10% du prix - vérifier avec le notaire |
-| **Délai de réalisation** | Doit être postérieur à la date d'obtention du prêt |
-| **Délai de rétractation** | 10 jours légaux - ne pas réduire |
-| **Condition suspensive prêt** | Montant, taux, durée doivent être cohérents |
-| **Quotités** | Peuvent être "à déterminer" lors de la réitération |
-| **Séquestre** | Préciser qui séquestre l'indemnité (généralement le notaire) |
-
-### Exemple de dialogue
-
-```
-Agent: Bonjour, je vais vous aider à créer une promesse unilatérale
-       de vente. Commençons par les informations générales.
-
-Agent: Quelle est la date prévue de signature de la promesse ?
-Notaire: Le 15 mars 2025
-
-Agent: Y a-t-il un notaire assistant le bénéficiaire ?
-Notaire: Non, je suis seul
-
-Agent: Passons au promettant (vendeur). Combien de promettants ?
-Notaire: Un seul, Madame MARTIN
-
-Agent: [... suite des questions selon questions_promesse_vente.json ...]
-
-Agent: Pour l'indemnité d'immobilisation, quel montant est prévu ?
-Notaire: 24 500 euros, soit 10% du prix
-
-Agent: Comment sera-t-elle versée ?
-Notaire: Par virement séquestre chez moi dans les 15 jours suivant
-         l'expiration du délai de rétractation
-
-Agent: Quelle est la date limite de réalisation ?
-Notaire: Le 30 juin 2025
-```
-
----
-
-## Étape 2 : Validation des données
-
-### Commande
+### Depuis des données complètes
 
 ```bash
-python execution/valider_acte.py \
-    --donnees .tmp/donnees_client.json \
-    --schema schemas/variables_promesse_vente.json \
-    --type promesse_vente
+python notaire.py promesse-avancee generer \
+    --donnees donnees_promesse.json \
+    --output promesse_client.docx
 ```
 
-### Règles de validation spécifiques
-
-1. **Indemnité d'immobilisation**
-   - Généralement entre 5% et 10% du prix
-   - Alerte si < 5% ou > 15%
-
-2. **Délais cohérents**
-   ```
-   Date signature < Date obtention prêt < Date réalisation
-   ```
-
-3. **Conditions suspensives**
-   - Si prêt : montant + apport >= prix + frais estimés
-   - Taux maximum réaliste (vérifier marché actuel)
-
-4. **Quotités**
-   - Si déterminées : doivent totaliser 100%
-   - Si "à déterminer" : acceptable
-
----
-
-## Étape 3 : Assemblage Markdown
-
-### Commande
+### Depuis un titre de propriété
 
 ```bash
-python execution/assembler_acte.py \
-    --template promesse_vente_lots_copropriete.md \
-    --donnees .tmp/donnees_client.json \
-    --output .tmp/actes_generes/
+# 1. Extraire le titre
+python notaire.py extraire titre.pdf -o titre.json
+
+# 2. Générer la promesse
+python notaire.py promesse-avancee depuis-titre \
+    --titre titre.json \
+    --beneficiaires beneficiaires.json \
+    --prix 250000 \
+    --output promesse_client.docx
 ```
 
-### Sections conditionnelles du template
-
-Le template inclut des sections conditionnelles selon les données :
-
-| Section | Condition |
-|---------|-----------|
-| Notaire assistant | `acte.notaire_beneficiaire` présent |
-| Meubles et mobilier | `meubles.inclus == true` |
-| Négociation | `negociation.avec_agent == true` |
-| Division cadastrale | `bien.division_cadastrale` présent |
-| Travaux réalisés | `travaux.travaux_realises` non vide |
-| Condition prêt | `conditions_suspensives.pret.applicable == true` |
-
----
-
-## Étape 4 : Export DOCX
-
-### Commande
+### Avec profil prédéfini
 
 ```bash
-python execution/exporter_docx.py \
-    --input .tmp/actes_generes/{id}/acte.md \
-    --output outputs/promesse_vente_{client}.docx
+python notaire.py promesse-avancee generer \
+    --donnees donnees.json \
+    --profil agence_premium \
+    --output promesse_premium.docx
 ```
 
-### Formatage DOCX (identique à la trame)
-
-| Paramètre | Valeur |
-|-----------|--------|
-| Police | Times New Roman 11pt |
-| Marges | G=60mm, D=15mm, H/B=25mm |
-| Retrait 1ère ligne | 12.51mm |
-| Interligne | Simple |
-| Heading 1 | Bold, ALL CAPS, underline, centré |
-| Heading 2 | Bold, small caps, underline, centré |
-| Heading 3 | Bold, underline, centré |
-| Heading 4 | Bold only, 6pt avant |
-
-**IMPORTANT** : Ces valeurs sont codées en dur dans `exporter_docx.py` et ne doivent **JAMAIS** être modifiées.
-
 ---
 
-## Annexes standards
+## Méthode 2: Via API
 
-Liste des annexes généralement jointes à une promesse de vente :
-
-1. Plans cadastral et géoportail
-2. Plans des lots et plan de masse
-3. Diagnostic Carrez
-4. Note d'urbanisme
-5. Note de voirie
-6. Certificat de non-péril
-7. Factures travaux et attestation décennale (si applicable)
-8. Diagnostic amiante parties privatives
-9. Diagnostic amiante parties communes
-10. État de l'installation intérieure d'électricité
-11. Diagnostic de performances énergétiques (DPE)
-12. État des risques
-13. Données environnementales (BASIAS, BASOL, Géorisques)
-14. Attestation de mise à jour annuelle copropriété
-15. Carnet d'entretien
-16. Fiche synthétique
-17. Procès-verbaux AG des trois dernières années
-
-### Flexibilité des annexes
-
-L'agent peut **ajouter ou retirer** des annexes selon le contexte :
-
-- **Ajouter** : Mandat de l'agent, attestation de garantie financière, etc.
-- **Retirer** : Diagnostic plomb si immeuble post-1949, etc.
-
----
-
-## Clauses optionnelles
-
-### Clauses fréquemment incluses
-
-- **Exécution forcée** (art. 1221 Code civil) - par défaut incluse
-- **Réserve du droit de préemption** - généralement incluse
-- **Convention sur les charges de copropriété**
-- **Convention sur les travaux votés**
-
-### Clauses pouvant être ajoutées
-
-- **Clause de substitution** - permet au bénéficiaire de se faire substituer
-- **Clause pénale** - pénalité en cas de non-exécution
-- **Condition suspensive particulière** - vente d'un autre bien, obtention d'un permis, etc.
-
-### Clauses pouvant être retirées
-
-- **Condition suspensive de prêt** - si paiement comptant intégral
-- **Sections diagnostics** - si non applicables (ex: plomb pour immeuble récent)
-
----
-
-## Erreurs fréquentes à éviter
-
-| Erreur | Conséquence | Vérification |
-|--------|-------------|--------------|
-| Quotités ne totalisant pas 100% | Acte invalide | Validation automatique |
-| Indemnité trop faible | Risque pour le promettant | Alerte si < 5% |
-| Date réalisation < date obtention prêt | Condition impossible | Validation automatique |
-| Oubli du délai de rétractation | Illégal | Toujours 10 jours minimum |
-| Carrez manquant pour appartement | Non-conforme | Obligatoire si > 8m² |
-
----
-
-## Pipeline complet
-
-### Commande en une ligne
+### Générer une promesse
 
 ```bash
-# 1. Valider
-python execution/valider_acte.py --donnees .tmp/donnees_client.json --schema schemas/variables_promesse_vente.json && \
-# 2. Assembler
-python execution/assembler_acte.py --template promesse_vente_lots_copropriete.md --donnees .tmp/donnees_client.json --output .tmp/actes_generes/ && \
-# 3. Exporter
-python execution/exporter_docx.py --input .tmp/actes_generes/*/acte.md --output outputs/promesse_vente.docx
+curl -X POST "https://notaire-ai--fastapi-app.modal.run/promesses/generer" \
+    -H "X-API-Key: votre_cle" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "promettants": [...],
+        "beneficiaires": [...],
+        "bien": {...},
+        "prix": {"montant": 250000},
+        "delai_realisation": "2026-06-30"
+    }'
+```
+
+### Depuis un titre existant
+
+```bash
+curl -X POST "https://notaire-ai--fastapi-app.modal.run/titres/{titre_id}/vers-promesse" \
+    -H "X-API-Key: votre_cle" \
+    -d '{
+        "beneficiaires": [...],
+        "prix": {"montant": 250000},
+        "financement": {"pret": true, "montant": 200000}
+    }'
 ```
 
 ---
 
-## Mises à jour de cette directive
+## Méthode 3: Via Python
 
-| Date | Modification | Auteur |
-|------|--------------|--------|
-| 2025-01-19 | Création initiale | Agent |
+```python
+from execution.gestionnaire_promesses import GestionnairePromesses
+
+gestionnaire = GestionnairePromesses()
+
+# Option A: Depuis des données
+resultat = gestionnaire.generer(donnees)
+
+# Option B: Depuis un titre
+donnees, resultat = gestionnaire.generer_depuis_titre(
+    titre_data=titre,
+    beneficiaires=[{"nom": "DUPONT", "prenoms": "Jean", ...}],
+    prix={"montant": 250000},
+    financement={"pret": True, "montant": 200000, "taux_max": 4.5},
+    options={
+        "mobilier": {"existe": True, "liste": [...]},
+        "indemnite": {"montant": 25000},
+        "delai_realisation": "2026-06-30"
+    }
+)
+
+print(f"Type: {resultat.type_promesse.value}")
+print(f"DOCX: {resultat.fichier_docx}")
+```
+
+---
+
+## Structure des Données par Type
+
+### Type Standard (minimal)
+
+```json
+{
+    "promettants": [{
+        "nom": "MARTIN",
+        "prenoms": "Pierre",
+        "date_naissance": "1960-05-20",
+        "adresse": "5 rue du Commerce, 69002 Lyon",
+        "situation_matrimoniale": "marie"
+    }],
+    "beneficiaires": [{
+        "nom": "DUPONT",
+        "prenoms": "Jean",
+        "date_naissance": "1985-03-15",
+        "adresse": "10 rue des Lilas, 69001 Lyon"
+    }],
+    "bien": {
+        "adresse": "25 avenue Jean Jaurès",
+        "code_postal": "69007",
+        "ville": "Lyon",
+        "copropriete": true,
+        "lots": [{
+            "numero": 12,
+            "nature": "Appartement",
+            "tantiemes": 150,
+            "carrez": 75.50
+        }]
+    },
+    "prix": {"montant": 250000},
+    "financement": {"pret": true, "montant": 200000},
+    "delai_realisation": "2026-06-30"
+}
+```
+
+### Type Avec Mobilier
+
+Ajouter la section mobilier:
+
+```json
+{
+    "mobilier": {
+        "existe": true,
+        "prix_total": 15000,
+        "liste": [
+            {"designation": "Cuisine équipée", "etat": "Bon", "valeur": 8000},
+            {"designation": "Réfrigérateur Samsung", "etat": "Très bon", "valeur": 1200},
+            {"designation": "Lave-vaisselle Bosch", "etat": "Bon", "valeur": 800}
+        ]
+    }
+}
+```
+
+### Type Multi-Biens
+
+Remplacer `bien` par `biens`:
+
+```json
+{
+    "biens": [
+        {
+            "adresse": "25 avenue Jean Jaurès, Apt 12",
+            "nature": "Appartement",
+            "cadastre": {"section": "AB", "numero": "123"},
+            "lots": [{"numero": 12, "tantiemes": 150}],
+            "prix": 230000
+        },
+        {
+            "adresse": "25 avenue Jean Jaurès, Parking 45",
+            "nature": "Parking",
+            "lots": [{"numero": 45, "tantiemes": 10}],
+            "prix": 15000
+        },
+        {
+            "adresse": "25 avenue Jean Jaurès, Cave 8",
+            "nature": "Cave",
+            "lots": [{"numero": 8, "tantiemes": 5}],
+            "prix": 5000
+        }
+    ]
+}
+```
+
+### Type Premium
+
+Ajouter les sections exhaustives:
+
+```json
+{
+    "bien": {
+        "localisation_detaillee": true,
+        "lieu_dit": "Les Brotteaux",
+        "voie_acces": "Par la rue de la République",
+        "coordonnees_gps": "45.7640° N, 4.8357° E"
+    },
+    "diagnostics": {
+        "exhaustifs": true,
+        "dpe": {"date": "2026-01-15", "classe": "C"},
+        "amiante": {"date": "2026-01-15", "presence": false},
+        "plomb": {"date": "2026-01-15"},
+        "electricite": {"date": "2026-01-15"},
+        "gaz": {"date": "2026-01-15"},
+        "termites": {"date": "2026-01-15"},
+        "erp": {"date": "2026-01-15"}
+    }
+}
+```
+
+---
+
+## Profils Prédéfinis
+
+| Profil | Type | Description |
+|--------|------|-------------|
+| `particulier_simple` | standard | 1 vendeur → 1 acquéreur |
+| `particulier_meuble` | avec_mobilier | Avec liste de mobilier |
+| `agence_premium` | premium | Documentation complète |
+| `investisseur_multi` | multi_biens | Plusieurs biens, substitution |
+| `sans_pret` | standard | Achat comptant |
+
+```python
+# Appliquer un profil
+donnees = gestionnaire.appliquer_profil(donnees, "agence_premium")
+resultat = gestionnaire.generer(donnees)
+```
+
+---
+
+## Validation
+
+### Règles Obligatoires
+
+| Champ | Règle | Message |
+|-------|-------|---------|
+| `promettants` | Au moins 1 | "Au moins un promettant requis" |
+| `beneficiaires` | Au moins 1 | "Au moins un bénéficiaire requis" |
+| `bien.adresse` | Non vide | "Adresse du bien requise" |
+| `prix.montant` | > 0 | "Prix de vente requis" |
+| `delai_realisation` | Non vide | "Délai de réalisation requis" |
+
+### Règles Conditionnelles
+
+| Condition | Champs requis |
+|-----------|---------------|
+| `financement.pret == true` | montant, taux_max, duree |
+| `mobilier.existe == true` | liste, prix_total |
+| `len(biens) > 1` | adresse et cadastre pour chaque bien |
+
+---
+
+## Sections Conditionnelles
+
+| Section | Condition | Types |
+|---------|-----------|-------|
+| Mobilier vendu | `mobilier.existe == true` | avec_mobilier |
+| Localisation détaillée | `bien.localisation_detaillee == true` | premium |
+| Multi-biens | `len(biens) > 1` | multi_biens |
+| Condition prêt | `financement.pret == true` | tous |
+| Condition vente préalable | `conditions_suspensives.vente_prealable == true` | tous |
+| Diagnostics exhaustifs | `diagnostics.exhaustifs == true` | premium |
+| Diagnostics tableau | `diagnostics.format_tableau == true` | avec_mobilier |
+| Agent immobilier | `agent_immobilier.intervient == true` | premium |
+| Faculté substitution | `substitution.autorisee == true` | multi_biens |
+
+---
+
+## Erreurs Fréquentes
+
+| Erreur | Conséquence | Solution |
+|--------|-------------|----------|
+| Mobilier sans liste | Validation échoue | Remplir `mobilier.liste` |
+| Multi-biens < 2 biens | Type incorrect | Vérifier `biens` array |
+| Délai réalisation < date prêt | Incohérent | Ajuster les dates |
+| Indemnité < 5% | Warning | Confirmer avec notaire |
+| Carrez manquant | Non-conforme | Obligatoire si > 8m² |
+
+---
+
+## Intégration Frontend
+
+### Workflow recommandé
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   Frontend   │────▶│  API /titres │────▶│  Supabase    │
+│  Upload PDF  │     │  /extraire   │     │  stockage    │
+└──────────────┘     └──────────────┘     └──────────────┘
+       │                                         │
+       │    ┌──────────────────────────────────┘
+       ▼    ▼
+┌──────────────────────────────────────────────────────┐
+│   Données pré-remplies (promettants, bien, cadastre) │
+│   + Complétion par utilisateur (bénéficiaires, prix) │
+└──────────────────────────────────────────────────────┘
+       │
+       ▼
+┌──────────────────────────────────────────────────────┐
+│   POST /promesses/generer                            │
+│   → Type détecté auto                                │
+│   → DOCX généré + stocké                             │
+└──────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## Voir aussi
 
-- [directives/creer_acte.md](creer_acte.md) - Création d'un acte de vente définitif
-- [directives/collecte_informations.md](collecte_informations.md) - Guide de collecte
-- [directives/formatage_docx.md](formatage_docx.md) - Spécifications formatage
-- [directives/validation_donnees.md](validation_donnees.md) - Règles de validation
-- [schemas/variables_promesse_vente.json](../schemas/variables_promesse_vente.json) - Schéma des variables
-- [schemas/questions_promesse_vente.json](../schemas/questions_promesse_vente.json) - Questions à poser
-- [templates/promesse_vente_lots_copropriete.md](../templates/promesse_vente_lots_copropriete.md) - Template Jinja2
+- [directives/generation_promesses_avancee.md](generation_promesses_avancee.md) - Documentation complète v1.4
+- [directives/analyse_trames_promesse.md](analyse_trames_promesse.md) - Analyse des 4 trames
+- [directives/creer_acte.md](creer_acte.md) - Création acte de vente
+- [schemas/promesse_catalogue_unifie.json](../schemas/promesse_catalogue_unifie.json) - Catalogue unifié
+- [execution/gestionnaire_promesses.py](../execution/gestionnaire_promesses.py) - Gestionnaire principal
+
+---
+
+## Historique
+
+| Date | Version | Modification |
+|------|---------|--------------|
+| 2025-01-19 | 1.0 | Création initiale |
+| 2026-01-28 | 2.0 | Système multi-templates (4 types), détection auto, Supabase |

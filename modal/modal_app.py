@@ -6,17 +6,19 @@ Ce fichier configure le déploiement sur Modal.com pour:
 - Scaling automatique (0 → N instances)
 - Multi-tenant (isolation par étude via Supabase RLS)
 - Apprentissage continu (feedback centralisé)
+- Jobs CRON (daily_learning_job, weekly_catalog_sync)
 
 Déploiement:
-    modal deploy api/modal_app.py
+    modal deploy modal/modal_app.py
 
 Test local:
-    modal serve api/modal_app.py
+    modal serve modal/modal_app.py
 
 Endpoints déployés:
-    https://notaire-ai--api.modal.run/agent/execute
-    https://notaire-ai--api.modal.run/dossiers
-    https://notaire-ai--api.modal.run/health
+    https://notaire-ai--fastapi-app.modal.run/agent/execute
+    https://notaire-ai--fastapi-app.modal.run/dossiers
+    https://notaire-ai--fastapi-app.modal.run/clauses/sections
+    https://notaire-ai--fastapi-app.modal.run/health
 """
 
 import modal
