@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-28T06:36:08.707223",
+    "generated_at": "2026-01-28T08:41:12.135491",
     "version": "1.3.0",
     "dashboard_version": "2.5"
   },
@@ -8,23 +8,23 @@
     "templates_count": 4,
     "templates_prod": 3,
     "avg_conformity": 80.8,
-    "scripts_count": 72,
+    "scripts_count": 75,
     "schemas_count": 15,
     "generation_time": "5.7s",
-    "commits": 90
+    "commits": 96
   },
   "git": {
-    "branch": "master",
+    "branch": "tom/dev",
     "last_commit": {
-      "hash": "f6d0c6f",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-01-27"
+      "hash": "4ae987e",
+      "message": "Merge origin/master into tom/dev",
+      "date": "2026-01-28"
     },
-    "total_commits": 90,
+    "total_commits": 96,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 63
+        "commits": 64
       },
       {
         "name": "augustinfrance-aico",
@@ -32,7 +32,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 9
+        "commits": 10
       },
       {
         "name": "Payoss",
@@ -83,16 +83,21 @@
     }
   ],
   "scripts": {
-    "total": 72,
-    "total_lines": 40714,
+    "total": 75,
+    "total_lines": 42718,
     "categories": {
-      "utils": 46,
+      "utils": 49,
       "generation": 10,
       "export": 12,
       "tests": 3,
       "validation": 1
     },
     "scripts": [
+      {
+        "name": "agent_autonome.py",
+        "lines": 1901,
+        "path": "execution/agent_autonome.py"
+      },
       {
         "name": "exporter_docx.py",
         "lines": 1896,
@@ -127,11 +132,6 @@
         "name": "exporter_docx_28pages_final.py",
         "lines": 1651,
         "path": "execution/archive_exporter/exporter_docx_28pages_final.py"
-      },
-      {
-        "name": "agent_autonome.py",
-        "lines": 1417,
-        "path": "execution/agent_autonome.py"
       },
       {
         "name": "orchestrateur_notaire.py",
@@ -234,6 +234,7 @@
       "pipeline_generation.md",
       "lecons_apprises.md",
       "formatage_docx.md",
+      "workflow_agent_optimise.md",
       "creer_modificatif_edd.md",
       "creer_acte.md",
       "workflow_titre_promesse_vente.md",
@@ -243,7 +244,7 @@
       "creer_promesse_vente.md"
     ],
     "total_legal": 5,
-    "total_directives": 21
+    "total_directives": 22
   },
   "tasks": {
     "todo": [
@@ -530,6 +531,56 @@
   ],
   "activity": [
     {
+      "hash": "4ae987e",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "Merge origin/master into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "c54ab16",
+      "author": "github-actions[bot]",
+      "date": "2026-01-28",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "11a9f7c",
+      "author": "github-actions[bot]",
+      "date": "2026-01-27",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "cb90991",
+      "author": "Tom",
+      "date": "2026-01-27",
+      "message": "Merge branch 'tom/dev' of https://github.com/AnandaTom/notaire-ai into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "c653856",
+      "author": "Tom",
+      "date": "2026-01-27",
+      "message": "Fin de journee - 27/01/2026 23:07:34,35",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "f6d0c6f",
       "author": "github-actions[bot]",
       "date": "2026-01-27",
@@ -558,6 +609,16 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
+    },
+    {
+      "hash": "b029b08",
+      "author": "github-actions[bot]",
+      "date": "2026-01-27",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "9649c04",
@@ -664,66 +725,6 @@
       "author": "github-actions[bot]",
       "date": "2026-01-27",
       "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "8fd8ff3",
-      "author": "Tom",
-      "date": "2026-01-27",
-      "message": "add dynamic dashboard with auto-update",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "35864bb",
-      "author": "Augustin",
-      "date": "2026-01-27",
-      "message": "Merge origin/master into augustin/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "7fc958d",
-      "author": "Augustin",
-      "date": "2026-01-26",
-      "message": "WIP before pull",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "7141a0a",
-      "author": "Tom",
-      "date": "2026-01-26",
-      "message": "Fin de journee - 26/01/2026 20:45:52,37",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "660bb79",
-      "author": "Tom",
-      "date": "2026-01-26",
-      "message": "add launch & legal section to dashboard + CGU template",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "3058392",
-      "author": "Tom",
-      "date": "2026-01-24",
-      "message": "Fin de journee - 24/01/2026 22:18:16,63",
       "type": "chore",
       "type_label": "Maintenance",
       "type_icon": "🔧",
@@ -1323,7 +1324,7 @@
         "action": "Maintenir CLAUDE.md et CHANGELOG.md"
       }
     ],
-    "last_updated": "2026-01-28 06:36"
+    "last_updated": "2026-01-28 08:41"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1495,6 +1496,6 @@
     },
     "week": "27 Janvier - 2 Février 2026",
     "sprint": "Sprint 1",
-    "last_updated": "2026-01-28 06:36"
+    "last_updated": "2026-01-28 08:41"
   }
 }
