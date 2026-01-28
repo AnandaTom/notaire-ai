@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-28T15:05:23.564404",
+    "generated_at": "2026-01-28T15:05:46.078547",
     "version": "1.3.0",
     "dashboard_version": "2.5"
   },
@@ -8,23 +8,23 @@
     "templates_count": 4,
     "templates_prod": 3,
     "avg_conformity": 80.8,
-    "scripts_count": 83,
+    "scripts_count": 84,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 101
+    "commits": 104
   },
   "git": {
-    "branch": "tom/dev",
+    "branch": "master",
     "last_commit": {
-      "hash": "b068739",
-      "message": "feat: add new promesse sections and improve validation",
+      "hash": "d4a5730",
+      "message": "Merge branch 'tom/dev'",
       "date": "2026-01-28"
     },
-    "total_commits": 101,
+    "total_commits": 104,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 67
+        "commits": 68
       },
       {
         "name": "augustinfrance-aico",
@@ -32,7 +32,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 12
+        "commits": 13
       },
       {
         "name": "Payoss",
@@ -83,10 +83,10 @@
     }
   ],
   "scripts": {
-    "total": 83,
-    "total_lines": 49191,
+    "total": 84,
+    "total_lines": 49806,
     "categories": {
-      "utils": 56,
+      "utils": 57,
       "generation": 10,
       "validation": 2,
       "export": 12,
@@ -543,6 +543,16 @@
   ],
   "activity": [
     {
+      "hash": "d4a5730",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
       "hash": "b068739",
       "author": "Tom",
       "date": "2026-01-28",
@@ -551,6 +561,16 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
+    },
+    {
+      "hash": "da2c959",
+      "author": "Payoss",
+      "date": "2026-01-28",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
     },
     {
       "hash": "bb88ee9",
@@ -581,6 +601,16 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
+    },
+    {
+      "hash": "956330f",
+      "author": "Payoss",
+      "date": "2026-01-28",
+      "message": "Ajout dashboard, frontend chatbot et architecture",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
     },
     {
       "hash": "33078b7",
@@ -711,36 +741,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "64ffaba",
-      "author": "Tom",
-      "date": "2026-01-27",
-      "message": "add Chef de Projet briefing section to dashboard",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "f0f4dd4",
-      "author": "github-actions[bot]",
-      "date": "2026-01-27",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "b23516f",
-      "author": "Tom",
-      "date": "2026-01-27",
-      "message": "add comprehensive project overview section to dashboard",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
     }
   ],
   "recommendations": {
@@ -1360,7 +1360,7 @@
         ],
         "quick_wins": [
           "Lancer comparer_documents.py sur promesses anonymisées",
-          "Identifier sections manquantes dans docs_original/"
+          "Identifier sections manquantes dans docs_originels/"
         ],
         "blocked_by": null
       },
