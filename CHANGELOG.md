@@ -45,6 +45,22 @@ Validation métier avancée avec 12 règles, support personnes morales, et API v
   - Personnes morales (SCI, SARL)
   - Dates promesse, intervention conjoint
 
+### 📝 Template Promesse Amélioré (60.9% → 69.7%)
+
+#### 5 Nouvelles Sections Créées
+- **`section_condition_vente_prealable.md`** - Condition suspensive vente bien préalable (complet)
+- **`section_faculte_substitution.md`** - Faculté de substitution avec tous les cas (autorisée/refusée)
+- **`section_indemnite_immobilisation_detaillee.md`** - Indemnité avec restitution, séquestre, clause pénale
+- **`section_prorogation.md`** - Prorogation de la promesse (conditions, durée, forme)
+- **`section_clause_penale.md`** - Clause pénale réciproque (promettant et bénéficiaire)
+
+#### Variables Promesse Ajoutées
+- `conditions_suspensives.vente_bien_prealable.*` - Description, adresse, date limite, notification
+- `faculte_substitution.*` - Autorisée, conditions, délai notification, SCI
+- `indemnite_immobilisation.version_detaillee` - Active la section complète
+- `delais.prorogation.*` - Possible, durée max, conditions, forme
+- `clause_penale.*` - Applicable, montants, cumul, mise en demeure
+
 ### 🔧 Amélioré
 
 #### Agent Autonome v1.2
@@ -72,6 +88,12 @@ Validation métier avancée avec 12 règles, support personnes morales, et API v
 | `tests/test_exporter_docx.py` | Créé | ~400 |
 | `tests/test_valider_acte.py` | Créé | ~500 |
 | `docs/data/dashboard.json` | Modifié | Version 1.5.1 |
+| `templates/sections/section_condition_vente_prealable.md` | Créé | ~60 |
+| `templates/sections/section_faculte_substitution.md` | Créé | ~100 |
+| `templates/sections/section_indemnite_immobilisation_detaillee.md` | Créé | ~120 |
+| `templates/sections/section_prorogation.md` | Créé | ~80 |
+| `templates/sections/section_clause_penale.md` | Créé | ~110 |
+| `templates/sections/partie_developpee_promesse.md` | Modifié | +30 |
 
 ### ✅ Tests
 

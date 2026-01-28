@@ -6,9 +6,7 @@
 {% if quotites_acquises|length > 1 %}
 ### FIXATION DE LA PROPORTION DE PROPRIÉTÉ INDIVISE
 
-#### Proportions entre les acquéreurs
-
-Les **ACQUEREURS** font la présente acquisition sous les proportions indivises suivantes :
+**Proportions entre les acquéreurs** - Les **ACQUEREURS** font la présente acquisition sous les proportions indivises suivantes :
 
 {% for quotite in quotites_acquises %}
 - {{ acquereurs[quotite.personne_index].civilite }} {{ acquereurs[quotite.personne_index].prenoms }} {{ acquereurs[quotite.personne_index].nom }} à concurrence de **{{ quotite.pourcentage }} %**
@@ -16,14 +14,9 @@ Les **ACQUEREURS** font la présente acquisition sous les proportions indivises 
 
 Ces quotités sont définitives et déterminent le droit de propriété de chacun des **ACQUEREURS**, elles concordent avec la répartition de l'effort de financement entre eux tel que prévu ci-dessous.
 
-#### Détermination de la contribution des acquéreurs au financement
+**Détermination de la contribution des acquéreurs au financement** - Les **ACQUEREURS** détaillent leurs apports, leurs obligations aux charges vis-à-vis des créanciers et fixent leurs contributions respectives à celles-ci et ce afin d'établir si nécessaire, lors de la liquidation de l'indivision qui s'effectuera au moment de la vente ou du partage du bien, l'existence de créances liées à un excès de contribution. Ils déclarent que les quotités d'acquisition ont été calculées tenant compte du coût global de l'opération et de la prise en charge de chacun quant à son financement, ainsi qu'il est détaillé ci-après.
 
-Les **ACQUEREURS** détaillent leurs apports, leurs obligations aux charges vis-à-vis des créanciers et fixent leurs contributions respectives à celles-ci et ce afin d'établir si nécessaire, lors de la liquidation de l'indivision qui s'effectuera au moment de la vente ou du partage du bien, l'existence de créances liées à un excès de contribution.
-Ils déclarent que les quotités d'acquisition ont été calculées tenant compte du coût global de l'opération et de la prise en charge de chacun quant à son financement, ainsi qu'il est détaillé ci-après.
-
-#### Coût et financement de l'opération
-
-Le coût et le financement de l'opération sont les suivants :
+**Coût et financement de l'opération** - Le coût et le financement de l'opération sont les suivants :
 
 | | |
 | :---- | ----: |

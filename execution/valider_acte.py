@@ -721,8 +721,16 @@ class ValidateurActe:
             return
 
         adresse = donnees['bien'].get('adresse', {})
-        code_postal = str(adresse.get('code_postal', ''))
-        commune = adresse.get('commune', '')
+
+        # Si adresse est une string, extraire code postal si possible
+        if isinstance(adresse, str):
+            # Essayer d'extraire un code postal français (5 chiffres)
+            match = re.search(r'\b(\d{5})\b', adresse)
+            code_postal = match.group(1) if match else ''
+            commune = ''
+        else:
+            code_postal = str(adresse.get('code_postal', ''))
+            commune = adresse.get('commune', '')
 
         # Vérifier format code postal français
         if code_postal and not re.match(r'^\d{5}$', code_postal):
@@ -1102,6 +1110,32 @@ class ValidateurActe:
                     suggestion="Réaliser un audit énergétique avant la vente (obligation depuis avril 2023)"
                 ))
 
+    def _extraire_pourcentage_quotite(self, q) -> float:
+        """
+        Extrait le pourcentage d'une quotité (dict ou string).
+
+        Supporte:
+        - Dict: {"pourcentage": 50} ou {"fraction": "1/2"}
+        - String: "50%" ou "1/2" ou "moitié"
+        """
+        if isinstance(q, dict):
+            return q.get('pourcentage', 0) or self._fraction_to_pct(q.get('fraction', ''))
+        elif isinstance(q, str):
+            # String comme "50%", "100%", "1/2"
+            q = q.strip()
+            if q.endswith('%'):
+                try:
+                    return float(q[:-1])
+                except ValueError:
+                    return 0
+            elif '/' in q:
+                return self._fraction_to_pct(q)
+            elif q.lower() in ('moitié', 'moitie'):
+                return 50.0
+            elif q.lower() == 'totalité':
+                return 100.0
+        return 0
+
     def _valider_quotites_croisees(self, donnees: Dict[str, Any]):
         """
         Vérifie la cohérence croisée des quotités vendeurs/acquéreurs.
@@ -1116,9 +1150,9 @@ class ValidateurActe:
         quotites_vendues = donnees.get('quotites_vendues', [])
 
         if quotites_vendues:
-            # Calculer le total
+            # Calculer le total (supporte dict et string)
             total_vendues = sum(
-                q.get('pourcentage', 0) or self._fraction_to_pct(q.get('fraction', ''))
+                self._extraire_pourcentage_quotite(q)
                 for q in quotites_vendues
             )
 
@@ -1147,7 +1181,7 @@ class ValidateurActe:
 
         if quotites_acquises:
             total_acquises = sum(
-                q.get('pourcentage', 0) or self._fraction_to_pct(q.get('fraction', ''))
+                self._extraire_pourcentage_quotite(q)
                 for q in quotites_acquises
             )
 

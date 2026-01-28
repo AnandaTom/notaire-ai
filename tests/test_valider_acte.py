@@ -737,11 +737,12 @@ class TestValidationPersonnesMorales:
 
     def test_representant_manquant(self, validateur, donnees_avec_sci):
         """Erreur si représentant manquant."""
+        # Un dict vide est falsy en Python, donc REPRESENTANT_MANQUANT
         donnees_avec_sci["vendeurs"][0]["representant"] = {}
         rapport = validateur.valider_complet(donnees_avec_sci)
 
         codes_erreurs = [e.code for e in rapport.erreurs]
-        assert "QUALITE_REPRESENTANT_MANQUANTE" in codes_erreurs
+        assert "REPRESENTANT_MANQUANT" in codes_erreurs
 
     def test_sarl_sans_rcs(self, validateur, donnees_avec_sci):
         """Avertissement si SARL sans RCS."""

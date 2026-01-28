@@ -85,21 +85,10 @@ Aucun meuble ou objet mobilier n'est compris dans la présente vente.
 ## CARENCE
 
 {% if carence %}
-### En l'absence de levée d'option ou de signature de l'acte de vente
+**En l'absence de levée d'option ou de signature de l'acte de vente** - En l'absence de levée d'option par le **BÉNÉFICIAIRE** ou à défaut de signature de l'acte de vente dans le délai ci-après fixé, la présente promesse sera **caduque de plein droit** sans qu'il soit besoin d'aucune mise en demeure ni d'aucune formalité judiciaire. Dans ce cas : le **PROMETTANT** reprendra sa pleine et entière liberté de disposer du **BIEN** ; l'indemnité d'immobilisation versée lui restera acquise à titre de dédommagement forfaitaire.
 
-En l'absence de levée d'option par le **BÉNÉFICIAIRE** ou à défaut de signature de l'acte de vente dans le délai ci-après fixé, la présente promesse sera **caduque de plein droit** sans qu'il soit besoin d'aucune mise en demeure ni d'aucune formalité judiciaire.
-
-Dans ce cas :
-* le **PROMETTANT** reprendra sa pleine et entière liberté de disposer du **BIEN** ;
-* l'indemnité d'immobilisation versée lui restera acquise à titre de dédommagement forfaitaire.
-
-### En cas de levée d'option dans le délai
-
-Si le **BÉNÉFICIAIRE** lève l'option dans le délai imparti et si les conditions suspensives sont réalisées, la **VENTE** sera formée et les parties seront tenues de la réitérer par acte authentique.
-
+**En cas de levée d'option dans le délai** - Si le **BÉNÉFICIAIRE** lève l'option dans le délai imparti et si les conditions suspensives sont réalisées, la **VENTE** sera formée et les parties seront tenues de la réitérer par acte authentique.
 {% else %}
-### Dispositions en cas de carence
-
 À défaut de réalisation de la vente dans les délais convenus, les parties conviennent que la présente promesse deviendra caduque de plein droit, sans qu'il soit besoin d'aucune mise en demeure ni formalité judiciaire.
 {% endif %}
 
@@ -162,32 +151,15 @@ Cette somme sera versée par virement bancaire sur le compte séquestre du notai
 {% if sequestre %}
 ### SÉQUESTRE
 
-#### 1. Constitution d'un mandataire commun
+**1. Constitution d'un mandataire commun** - Les parties constituent le notaire soussigné mandataire commun pour recevoir et conserver les sommes qui lui seront versées au titre de la présente promesse, notamment l'indemnité d'immobilisation.
 
-Les parties constituent le notaire soussigné mandataire commun pour recevoir et conserver les sommes qui lui seront versées au titre de la présente promesse, notamment l'indemnité d'immobilisation.
+**2. Mission du séquestre** - Le notaire soussigné, en sa qualité de séquestre, aura pour mission de : recevoir les sommes versées par le **BÉNÉFICIAIRE** ; les conserver jusqu'à la réalisation ou la caducité de la présente promesse ; les restituer ou les remettre à qui de droit selon les termes de la présente promesse.
 
-#### 2. Mission du séquestre
+**3. Difficultés entre les parties** - En cas de difficultés entre les parties sur l'attribution des sommes séquestrées, le notaire soussigné : conservera ces sommes jusqu'à ce qu'un accord intervienne entre les parties ; ou jusqu'à ce qu'une décision de justice passée en force de chose jugée lui soit notifiée. Le notaire soussigné ne pourra en aucun cas être tenu responsable des conséquences de ce différend.
 
-Le notaire soussigné, en sa qualité de séquestre, aura pour mission de :
-* recevoir les sommes versées par le **BÉNÉFICIAIRE** ;
-* les conserver jusqu'à la réalisation ou la caducité de la présente promesse ;
-* les restituer ou les remettre à qui de droit selon les termes de la présente promesse.
+**4. Acceptation** - Le notaire soussigné accepte cette mission de séquestre.
 
-#### 3. Difficultés entre les parties
-
-En cas de difficultés entre les parties sur l'attribution des sommes séquestrées, le notaire soussigné :
-* conservera ces sommes jusqu'à ce qu'un accord intervienne entre les parties ;
-* ou jusqu'à ce qu'une décision de justice passée en force de chose jugée lui soit notifiée.
-
-Le notaire soussigné ne pourra en aucun cas être tenu responsable des conséquences de ce différend.
-
-#### 4. Acceptation
-
-Le notaire soussigné accepte cette mission de séquestre.
-
-#### 5. Décharge
-
-Le notaire soussigné sera déchargé de sa mission de séquestre par la remise des fonds à qui de droit conformément aux stipulations de la présente promesse ou à la décision de justice intervenue.
+**5. Décharge** - Le notaire soussigné sera déchargé de sa mission de séquestre par la remise des fonds à qui de droit conformément aux stipulations de la présente promesse ou à la décision de justice intervenue.
 {% endif %}
 
 ## Force exécutoire de la promesse
@@ -608,78 +580,26 @@ Le **PROMETTANT** déclare que ces détecteurs sont en état de fonctionnement.
 Le **PROMETTANT** s'engage à faire installer un détecteur de fumée conforme à la norme NF EN 14604 avant la signature de l'acte de vente, conformément à la loi n° 2010-238 du 9 mars 2010.
 {% endif %}
 
-#### Alarme
+**Alarme** - {% if bien.equipements and bien.equipements.alarme %}Le **BIEN** est équipé d'un système d'alarme intrusion. Le **BÉNÉFICIAIRE** pourra reprendre tout contrat d'entretien éventuel à sa charge s'il le souhaite.{% else %}Le **BIEN** n'est pas équipé d'un système d'alarme.{% endif %}
 
-{% if bien.equipements and bien.equipements.alarme %}
-Le **BIEN** est équipé d'un système d'alarme intrusion.
+**Vidéosurveillance** - {% if bien.equipements and bien.equipements.videosurveillance %}Le **BIEN** est équipé d'un système de vidéosurveillance. Le **PROMETTANT** déclare que ce système est conforme à la réglementation en vigueur, notamment en ce qui concerne la déclaration à la CNIL.{% else %}Le **BIEN** n'est pas équipé d'un système de vidéosurveillance.{% endif %}
 
-Le **BÉNÉFICIAIRE** pourra reprendre tout contrat d'entretien éventuel à sa charge s'il le souhaite.
-{% else %}
-Le **BIEN** n'est pas équipé d'un système d'alarme.
-{% endif %}
+**Broyeur** - {% if bien.equipements and bien.equipements.wc_broyeur %}Le **BIEN** est équipé d'un broyeur sanitaire. Le **PROMETTANT** déclare que cet équipement est en état de fonctionnement. Le **BÉNÉFICIAIRE** est informé des contraintes d'entretien spécifiques à ce type d'équipement.{% else %}Le **BIEN** n'est pas équipé d'un broyeur sanitaire.{% endif %}
 
-#### Vidéosurveillance
-
-{% if bien.equipements and bien.equipements.videosurveillance %}
-Le **BIEN** est équipé d'un système de vidéosurveillance.
-
-Le **PROMETTANT** déclare que ce système est conforme à la réglementation en vigueur, notamment en ce qui concerne la déclaration à la CNIL.
-{% else %}
-Le **BIEN** n'est pas équipé d'un système de vidéosurveillance.
-{% endif %}
-
-#### Broyeur
-
-{% if bien.equipements and bien.equipements.wc_broyeur %}
-Le **BIEN** est équipé d'un broyeur sanitaire. Le **PROMETTANT** déclare que cet équipement est en état de fonctionnement.
-
-Le **BÉNÉFICIAIRE** est informé des contraintes d'entretien spécifiques à ce type d'équipement.
-{% else %}
-Le **BIEN** n'est pas équipé d'un broyeur sanitaire.
-{% endif %}
-
-#### Climatisation
-
-{% if bien.equipements and bien.equipements.climatisation %}
-Le **BIEN** est équipé d'un système de climatisation.
-
-Le **PROMETTANT** déclare que ce système est en état de fonctionnement et que les contrôles obligatoires ont été réalisés.
-{% else %}
-Le **BIEN** n'est pas équipé d'un système de climatisation.
-{% endif %}
+**Climatisation** - {% if bien.equipements and bien.equipements.climatisation %}Le **BIEN** est équipé d'un système de climatisation. Le **PROMETTANT** déclare que ce système est en état de fonctionnement et que les contrôles obligatoires ont été réalisés.{% else %}Le **BIEN** n'est pas équipé d'un système de climatisation.{% endif %}
 
 ## Règlementation - Ascenseurs
 
 {% if copropriete and copropriete.ascenseurs %}
 L'immeuble est pourvu d'un ou plusieurs ascenseurs soumis aux dispositions du décret n° 2004-964 du 9 septembre 2004 et de ses textes d'application.
 
-### Sécurité
+**Sécurité** - Le **PROMETTANT** déclare que les travaux de mise en sécurité prescrits par la réglementation ont été réalisés ou sont programmés conformément aux échéances réglementaires.
 
-Le **PROMETTANT** déclare que les travaux de mise en sécurité prescrits par la réglementation ont été réalisés ou sont programmés conformément aux échéances réglementaires.
+**Contrôle technique** - L'ascenseur fait l'objet des contrôles techniques périodiques obligatoires conformément aux articles R. 125-2-1 et suivants du Code de la construction et de l'habitation. Le dernier contrôle technique a été effectué{% if copropriete.ascenseurs.date_dernier_controle %} le {{ copropriete.ascenseurs.date_dernier_controle | format_date }}{% endif %}.
 
-### Contrôle technique
-
-L'ascenseur fait l'objet des contrôles techniques périodiques obligatoires conformément aux articles R. 125-2-1 et suivants du Code de la construction et de l'habitation.
-
-Le dernier contrôle technique a été effectué{% if copropriete.ascenseurs.date_dernier_controle %} le {{ copropriete.ascenseurs.date_dernier_controle | format_date }}{% endif %}.
-
-### Contrat d'entretien et de maintenance
-
-L'ascenseur fait l'objet d'un contrat d'entretien conformément aux articles R. 125-2 et suivants du Code de la construction et de l'habitation{% if copropriete.ascenseurs.prestataire_entretien %}, conclu avec {{ copropriete.ascenseurs.prestataire_entretien }}{% endif %}.
+**Contrat d'entretien et de maintenance** - L'ascenseur fait l'objet d'un contrat d'entretien conformément aux articles R. 125-2 et suivants du Code de la construction et de l'habitation{% if copropriete.ascenseurs.prestataire_entretien %}, conclu avec {{ copropriete.ascenseurs.prestataire_entretien }}{% endif %}.
 {% else %}
-L'immeuble n'est pas pourvu d'ascenseur.
-
-### Sécurité
-
-Sans objet.
-
-### Contrôle technique
-
-Sans objet.
-
-### Contrat d'entretien et de maintenance
-
-Sans objet.
+L'immeuble n'est pas pourvu d'ascenseur. Sans objet pour la sécurité, le contrôle technique et le contrat d'entretien.
 {% endif %}
 
 ## Domicile fiscal
@@ -699,6 +619,36 @@ Sans objet.
 En cas de décès du **PROMETTANT** avant la réitération de la vente par acte authentique, ses ayants droit seront tenus de reprendre l'engagement résultant de la présente promesse.
 
 La présente promesse conservera tous ses effets à l'égard des héritiers et ayants droit du **PROMETTANT**, lesquels seront tenus solidairement de toutes les obligations qui en découlent.
+
+{# ============================================================================
+   SECTIONS AVANCÉES PROMESSE DE VENTE (v1.5.1)
+   Ajout de sections détaillées pour améliorer la conformité
+   ============================================================================ #}
+
+{# Condition suspensive - Vente d'un bien préalable (version détaillée) #}
+{% if conditions_suspensives and conditions_suspensives.vente_bien_prealable and conditions_suspensives.vente_bien_prealable.existe %}
+{% include 'sections/section_condition_vente_prealable.md' %}
+{% endif %}
+
+{# Faculté de substitution - Version complète #}
+{% if faculte_substitution is defined %}
+{% include 'sections/section_faculte_substitution.md' %}
+{% endif %}
+
+{# Indemnité d'immobilisation - Version détaillée avec tous les cas #}
+{% if indemnite_immobilisation and indemnite_immobilisation.version_detaillee %}
+{% include 'sections/section_indemnite_immobilisation_detaillee.md' %}
+{% endif %}
+
+{# Prorogation de la promesse #}
+{% if delais and delais.prorogation %}
+{% include 'sections/section_prorogation.md' %}
+{% endif %}
+
+{# Clause pénale réciproque #}
+{% if clause_penale and clause_penale.applicable %}
+{% include 'sections/section_clause_penale.md' %}
+{% endif %}
 
 {# ============================================================================
    INCLUSION DE LA PARTIE DÉVELOPPÉE COMMUNE
