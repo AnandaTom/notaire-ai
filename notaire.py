@@ -153,7 +153,7 @@ def main():
     commande = sys.argv[1]
 
     # Importer l'orchestrateur
-    from execution.orchestrateur_notaire import OrchestratorNotaire
+    from execution.gestionnaires.orchestrateur import OrchestratorNotaire
 
     # Détecter verbose
     verbose = '-v' in sys.argv or '--verbose' in sys.argv
@@ -314,7 +314,7 @@ def main():
     # =========================================================================
     elif commande == 'clauses':
         import argparse
-        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+        from execution.gestionnaires.gestionnaire_clauses import GestionnaireClausesIntelligent
 
         parser = argparse.ArgumentParser(prog='notaire.py clauses')
         subparsers = parser.add_subparsers(dest='action', help='Action sur les clauses')
@@ -459,7 +459,7 @@ def main():
         import argparse
         import json
         from pathlib import Path
-        from execution.gestionnaire_promesses import GestionnairePromesses, TypePromesse
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses, TypePromesse
 
         parser = argparse.ArgumentParser(prog='notaire.py promesse-avancee')
         subparsers = parser.add_subparsers(dest='action', help='Action')

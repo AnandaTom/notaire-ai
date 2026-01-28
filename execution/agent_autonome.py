@@ -770,7 +770,7 @@ class AgentNotaire:
 
         # Import de l'orchestrateur
         try:
-            from execution.orchestrateur_notaire import OrchestratorNotaire
+            from execution.gestionnaires.orchestrateur import OrchestratorNotaire
             self.orchestrateur = OrchestratorNotaire(verbose=True)
         except ImportError:
             try:

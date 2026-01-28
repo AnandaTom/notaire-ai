@@ -17,7 +17,7 @@ Il intègre:
 - Intégration Supabase pour stockage/récupération
 
 Usage:
-    from execution.gestionnaire_promesses import GestionnairePromesses
+    from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
     gestionnaire = GestionnairePromesses()
 

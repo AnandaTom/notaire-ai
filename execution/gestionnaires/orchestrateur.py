@@ -20,7 +20,7 @@ Usage CLI:
     python orchestrateur_notaire.py status
 
 Usage Python:
-    from execution.orchestrateur_notaire import OrchestratorNotaire
+    from execution.gestionnaires.orchestrateur import OrchestratorNotaire
 
     orch = OrchestratorNotaire()
     result = orch.generer_acte_complet('vente', donnees, output='acte.docx')
@@ -50,7 +50,7 @@ except ImportError:
 
 # Import du gestionnaire de promesses (v1.5.1)
 try:
-    from execution.gestionnaire_promesses import GestionnairePromesses
+    from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
     GESTIONNAIRE_PROMESSES_DISPONIBLE = True
 except ImportError:
     try:
