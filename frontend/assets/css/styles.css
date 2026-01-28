@@ -948,11 +948,149 @@ body {
 }
 
 /* ============================================
+   SIDEBAR TOGGLE SYSTEM
+   ============================================ */
+
+/* Zone de détection pour afficher le toggle (bord gauche) */
+.sidebar-hover-zone {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 100vh;
+    z-index: 999;
+    /* Debug: background: rgba(255,0,0,0.1); */
+}
+
+/* Bouton toggle sidebar */
+.sidebar-toggle {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) translateX(-100%);
+    width: 24px;
+    height: 60px;
+    background: linear-gradient(180deg, var(--ink-black) 0%, var(--ink-deep) 100%);
+    border: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold-primary);
+    font-size: 0.9rem;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-toggle:hover {
+    background: var(--ink-deep);
+}
+
+/* Afficher le toggle quand on survole la zone */
+.sidebar-hover-zone:hover + .sidebar-toggle,
+.sidebar-toggle:hover {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+}
+
+/* Toggle visible quand sidebar est fermée */
+.sidebar-toggle.visible {
+    transform: translateY(-50%) translateX(0);
+    opacity: 0.7;
+}
+
+.sidebar-toggle.visible:hover {
+    opacity: 1;
+}
+
+/* Flèche dans le toggle */
+.sidebar-toggle .toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-toggle.open .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Sidebar rétractable */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, var(--ink-black) 0%, var(--ink-deep) 100%);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, width 0.3s ease, margin-left 0.3s ease;
+    z-index: 1000;
+}
+
+/* État fermé de la sidebar */
+.sidebar.collapsed {
+    transform: translateX(-100%);
+    margin-left: -280px;
+}
+
+/* Overlay pour fermer en cliquant ailleurs (mobile) */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 22, 40, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
+
+/* Tablettes et petits écrans */
+@media (max-width: 1024px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        transform: translateX(0);
+        margin-left: 0;
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+        margin-left: 0;
+    }
+
+    /* Afficher le toggle par défaut sur petits écrans */
+    .sidebar-toggle {
+        transform: translateY(-50%) translateX(0);
+        opacity: 0.8;
+    }
+
+    .sidebar-toggle.open {
+        left: 280px;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
 @media (max-width: 768px) {
     .sidebar {
-        display: none;
+        width: 280px;
+    }
+
+    .sidebar-toggle.open {
+        left: 280px;
     }
 
     .message-content {
@@ -967,5 +1105,10 @@ body {
 
     .smart-suggestion {
         flex-shrink: 0;
+    }
+
+    .security-footer {
+        flex-direction: column;
+        gap: var(--space-sm);
     }
 }

@@ -17,9 +17,20 @@
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
+    <!-- Zone de détection hover pour le toggle -->
+    <div class="sidebar-hover-zone"></div>
+
+    <!-- Bouton toggle sidebar -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Afficher/Masquer le menu">
+        <span class="toggle-icon">›</span>
+    </button>
+
+    <!-- Overlay pour fermer la sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <div class="logo-seal">N</div>
                 <div class="logo-text">
@@ -192,5 +203,96 @@
 
     <!-- JavaScript -->
     <script src="../assets/js/app.js"></script>
+
+    <!-- Sidebar Toggle Logic -->
+    <script>
+        // Gestion de la sidebar rétractable
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.toggle('collapsed');
+            toggle.classList.toggle('open');
+            toggle.classList.toggle('visible');
+
+            // Afficher overlay sur mobile
+            if (window.innerWidth <= 1024) {
+                overlay.classList.toggle('visible', !sidebar.classList.contains('collapsed'));
+            }
+
+            // Sauvegarder la préférence
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.add('collapsed');
+            toggle.classList.remove('open');
+            toggle.classList.add('visible');
+            overlay.classList.remove('visible');
+
+            localStorage.setItem('sidebarCollapsed', 'true');
+        }
+
+        function openSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.remove('collapsed');
+            toggle.classList.add('open');
+            toggle.classList.remove('visible');
+
+            if (window.innerWidth <= 1024) {
+                overlay.classList.add('visible');
+            }
+
+            localStorage.setItem('sidebarCollapsed', 'false');
+        }
+
+        // Initialiser l'état de la sidebar
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+
+            // Vérifier la taille de l'écran
+            const isSmallScreen = window.innerWidth <= 1024;
+            const savedState = localStorage.getItem('sidebarCollapsed');
+
+            // Sur petits écrans, fermer par défaut sauf si explicitement ouvert
+            if (isSmallScreen) {
+                if (savedState !== 'false') {
+                    sidebar.classList.add('collapsed');
+                    toggle.classList.add('visible');
+                } else {
+                    toggle.classList.add('open');
+                }
+            } else {
+                // Sur grands écrans, respecter la préférence sauvegardée
+                if (savedState === 'true') {
+                    sidebar.classList.add('collapsed');
+                    toggle.classList.add('visible');
+                }
+            }
+        });
+
+        // Gérer le redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const isSmallScreen = window.innerWidth <= 1024;
+
+            if (isSmallScreen && !sidebar.classList.contains('collapsed')) {
+                overlay.classList.add('visible');
+            } else {
+                overlay.classList.remove('visible');
+            }
+        });
+    </script>
 </body>
 </html>
