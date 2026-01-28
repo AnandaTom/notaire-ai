@@ -58,7 +58,7 @@ try:
     VALIDATEUR_AVANCE_DISPONIBLE = True
 except ImportError:
     try:
-        from execution.valider_acte import ValidateurActe, RapportValidation, NiveauErreur
+        from execution.core.valider_acte import ValidateurActe, RapportValidation, NiveauErreur
         VALIDATEUR_AVANCE_DISPONIBLE = True
     except ImportError:
         VALIDATEUR_AVANCE_DISPONIBLE = False

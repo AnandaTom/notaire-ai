@@ -872,7 +872,7 @@ class GestionnairePromesses:
 
         # 6. Générer le markdown via assembler_acte.py
         try:
-            from execution.assembler_acte import assembler_acte
+            from execution.core.assembler_acte import assembler_acte
 
             # Enrichir les données avec les sections actives
             donnees_enrichies = copy.deepcopy(donnees)
@@ -908,7 +908,7 @@ class GestionnairePromesses:
         # 7. Exporter en DOCX
         fichier_docx = None
         try:
-            from execution.exporter_docx import exporter_docx
+            from execution.core.exporter_docx import exporter_docx
 
             fichier_docx = output_dir / f"{output_name}.docx"
             exporter_docx(fichier_md, fichier_docx)
