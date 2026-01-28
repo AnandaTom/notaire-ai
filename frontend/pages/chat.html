@@ -24,7 +24,7 @@
                 <div class="logo-seal">N</div>
                 <div class="logo-text">
                     <h1>Notomai</h1>
-                    <p>Redaction et creation<br>d'actes notaries</p>
+                    <p>Rédaction et création<br>d'actes notariés</p>
                 </div>
             </div>
 
@@ -48,11 +48,11 @@
                 <div class="nav-title">Actions rapides</div>
                 <a href="#" class="nav-item" onclick="quickAction('creer_vente')">
                     <span class="icon">📄</span>
-                    <span>Creer une vente</span>
+                    <span>Créer une vente</span>
                 </a>
                 <a href="#" class="nav-item" onclick="quickAction('creer_promesse')">
                     <span class="icon">📝</span>
-                    <span>Creer une promesse</span>
+                    <span>Créer une promesse</span>
                 </a>
                 <a href="#" class="nav-item" onclick="quickAction('rechercher')">
                     <span class="icon">🔍</span>
@@ -64,10 +64,10 @@
             <div class="security-badge">
                 <div class="badge-header">
                     <span>🔒</span>
-                    <span>Donnees securisees</span>
+                    <span>Données sécurisées</span>
                 </div>
                 <div class="badge-text">
-                    Chiffrement AES-256 - Hebergement UE - Conforme RGPD
+                    Chiffrement AES-256 - Hébergement UE - Conforme RGPD
                 </div>
             </div>
 
@@ -77,7 +77,7 @@
                     <div class="user-details">
                         <div class="user-name" id="userName">Me Charlotte Diaz</div>
                         <div class="user-role" id="userRole">Notaire</div>
-                        <div class="user-etude" id="userEtude">Etude Diaz & Associes</div>
+                        <div class="user-etude" id="userEtude">Étude Diaz & Associés</div>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                 <div class="header-right">
                     <div class="security-indicator">
                         <span class="dot"></span>
-                        <span>Connexion securisee</span>
+                        <span>Connexion sécurisée</span>
                     </div>
                 </div>
             </header>
@@ -109,7 +109,7 @@
                         <span></span>
                         <span></span>
                     </div>
-                    <span>L'assistant redige...</span>
+                    <span>L'assistant rédige...</span>
                 </div>
             </div>
 
@@ -117,7 +117,7 @@
             <div class="smart-suggestions">
                 <div class="smart-suggestions-title">
                     <span>💡</span>
-                    <span>Suggestions basees sur votre activite</span>
+                    <span>Suggestions basées sur votre activité</span>
                 </div>
                 <div class="smart-suggestions-list" id="smartSuggestions">
                     <!-- Suggestions dynamiques -->
@@ -130,7 +130,7 @@
                         <textarea
                             class="chat-input"
                             id="chatInput"
-                            placeholder="Decrivez ce que vous souhaitez faire..."
+                            placeholder="Décrivez ce que vous souhaitez faire..."
                             rows="1"
                         ></textarea>
                         <div class="file-upload-area" id="fileUploadArea">
@@ -143,7 +143,7 @@
                         <button class="action-btn" id="uploadBtn" onclick="toggleUpload()" title="Joindre un fichier">
                             📎
                         </button>
-                        <button class="action-btn" id="voiceBtn" onclick="toggleVoice()" title="Dictee vocale">
+                        <button class="action-btn" id="voiceBtn" onclick="toggleVoice()" title="Dictée vocale">
                             🎤
                         </button>
                     </div>
@@ -155,7 +155,7 @@
                 <!-- Security footer -->
                 <div class="security-footer">
                     <span>🔒 Chiffrement de bout en bout</span>
-                    <span>🇪🇺 Donnees hebergees en Europe</span>
+                    <span>🇪🇺 Données hébergées en Europe</span>
                     <span>✓ Conforme RGPD & secret professionnel</span>
                 </div>
             </div>
@@ -168,20 +168,20 @@
     <!-- Modal de feedback -->
     <div class="modal-overlay" id="feedbackModal">
         <div class="modal">
-            <h3>Aidez-nous a nous ameliorer</h3>
+            <h3>Aidez-nous à nous améliorer</h3>
             <div class="modal-field">
-                <label>Type de probleme</label>
+                <label>Type de problème</label>
                 <select id="feedbackType">
                     <option value="vocabulaire">Vocabulaire incorrect</option>
-                    <option value="intention">Mauvaise comprehension</option>
-                    <option value="erreur_donnees">Erreur dans les donnees</option>
-                    <option value="suggestion">Suggestion d'amelioration</option>
+                    <option value="intention">Mauvaise compréhension</option>
+                    <option value="erreur_donnees">Erreur dans les données</option>
+                    <option value="suggestion">Suggestion d'amélioration</option>
                     <option value="autre">Autre</option>
                 </select>
             </div>
             <div class="modal-field">
-                <label>Quelle aurait ete la bonne reponse ?</label>
-                <textarea id="feedbackCorrection" placeholder="Decrivez ce qui aurait du etre dit ou fait..."></textarea>
+                <label>Quelle aurait été la bonne réponse ?</label>
+                <textarea id="feedbackCorrection" placeholder="Décrivez ce qui aurait dû être dit ou fait..."></textarea>
             </div>
             <div class="modal-actions">
                 <button class="modal-btn secondary" onclick="closeFeedbackModal()">Annuler</button>

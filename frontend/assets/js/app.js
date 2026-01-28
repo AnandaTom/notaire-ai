@@ -20,7 +20,7 @@ try {
     if (window.supabase) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     } else {
-        console.warn('Supabase non charge - mode demo uniquement');
+        console.warn('Supabase non chargé - mode démo uniquement');
     }
 } catch (e) {
     console.warn('Erreur init Supabase:', e);
@@ -41,14 +41,14 @@ let state = {
 };
 
 // ============================================
-// DONNEES NOTAIRE (par defaut Charlotte Diaz)
+// DONNÉES NOTAIRE (par défaut Charlotte Diaz)
 // ============================================
 const DEFAULT_NOTAIRE = {
     prenom: 'Charlotte',
     nom: 'Diaz',
     titre: 'Me',
     role: 'Notaire',
-    etude: 'Etude Diaz & Associes'
+    etude: 'Étude Diaz & Associés'
 };
 
 // ============================================
@@ -59,8 +59,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Charger l'utilisateur (ou mode demo)
         await initUser();
     } catch (error) {
-        console.warn('Erreur initUser, mode demo active:', error);
-        // Utiliser les valeurs par defaut
+        console.warn('Erreur initUser, mode démo activé:', error);
+        // Utiliser les valeurs par défaut
         state.user = { ...DEFAULT_NOTAIRE, id: 'demo-user' };
         state.etude = { id: 'demo-etude', nom: DEFAULT_NOTAIRE.etude };
         const userNameEl = document.getElementById('userName');
@@ -75,8 +75,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Afficher message de bienvenue (si sur page chat)
     if (typeof addAssistantMessage === 'function' && state.user) {
         addAssistantMessage(
-            `Bonjour ${state.user.titre} ${state.user.nom}, comment puis-je vous aider aujourd'hui ?\n\nJe peux vous aider a :\n- Creer des actes (vente, promesse, reglement)\n- Rechercher des dossiers ou clients\n- Repondre a vos questions`,
-            ['Creer un acte de vente', 'Voir mes dossiers en cours', 'Rechercher un client']
+            `Bonjour ${state.user.titre} ${state.user.nom}, comment puis-je vous aider aujourd'hui ?\n\nJe peux vous aider à :\n- Créer des actes (vente, promesse, règlement)\n- Rechercher des dossiers ou clients\n- Répondre à vos questions`,
+            ['Créer un acte de vente', 'Voir mes dossiers en cours', 'Rechercher un client']
         );
     }
 
@@ -97,11 +97,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         initVoiceRecognition();
     }
 
-    console.log('Notomai initialise OK');
+    console.log('Notomai initialisé OK');
 });
 
 async function initUser() {
-    // Essayer de recuperer l'utilisateur connecte
+    // Essayer de récupérer l'utilisateur connecté
     let user = null;
     try {
         if (supabaseClient) {
@@ -113,7 +113,7 @@ async function initUser() {
     }
 
     if (user) {
-        // Utilisateur connecte - charger ses infos
+        // Utilisateur connecté - charger ses infos
         const { data: etudeUser } = await supabaseClient
             .from('etude_users')
             .select('role, etude_id, etudes(nom)')
@@ -135,10 +135,10 @@ async function initUser() {
         };
         state.etude = {
             id: etudeUser?.etude_id,
-            nom: etudeUser?.etudes?.nom || 'Mon etude'
+            nom: etudeUser?.etudes?.nom || 'Mon étude'
         };
     } else {
-        // Mode demo avec Charlotte Diaz
+        // Mode démo avec Charlotte Diaz
         state.user = {
             id: 'demo-user',
             ...DEFAULT_NOTAIRE
@@ -149,7 +149,7 @@ async function initUser() {
         };
     }
 
-    // Mettre a jour l'UI
+    // Mettre à jour l'UI
     updateUserUI();
 }
 
@@ -219,7 +219,7 @@ function loadSmartSuggestions() {
 function handleSmartSuggestion(action) {
     const actions = {
         'continuer_dossier_dupont': 'Je souhaite continuer le dossier Dupont',
-        'creer_vente': 'Je veux creer un acte de vente',
+        'creer_vente': 'Je veux créer un acte de vente',
         'continuer_promesse_martin': 'Je souhaite reprendre la promesse Martin',
         'rechercher': 'Je veux rechercher un client'
     };
@@ -258,7 +258,7 @@ function addMessage(role, content, suggestions = []) {
                             👍 Utile
                         </button>
                         <button class="feedback-btn negative" onclick="handleFeedback(${messageIndex}, -1)">
-                            👎 A ameliorer
+                            👎 À améliorer
                         </button>
                     </div>
                     ${suggestions.length > 0 ? `
@@ -299,7 +299,7 @@ function formatTime(date) {
 // ENVOI DE MESSAGE
 // ============================================
 async function sendMessage() {
-    console.log('sendMessage appele');
+    console.log('sendMessage appelé');
     const input = document.getElementById('chatInput');
     if (!input) return;
 
@@ -311,7 +311,7 @@ async function sendMessage() {
         return;
     }
 
-    // Construire le message avec fichiers si presents
+    // Construire le message avec fichiers si présents
     let messageContent = content;
     if (state.uploadedFiles.length > 0) {
         const fileNames = state.uploadedFiles.map(f => f.name).join(', ');
@@ -341,10 +341,10 @@ async function sendMessage() {
         // Cacher l'indicateur
         showTyping(false);
 
-        // Afficher la reponse
+        // Afficher la réponse
         addAssistantMessage(response.content, response.suggestions || []);
 
-        // Mettre a jour les suggestions intelligentes
+        // Mettre à jour les suggestions intelligentes
         updateSmartSuggestions(response);
 
         // Sauvegarder la conversation dans Supabase
@@ -354,15 +354,15 @@ async function sendMessage() {
         console.error('Erreur:', error);
         showTyping(false);
         addAssistantMessage(
-            "Desole, une erreur s'est produite. Pouvez-vous reformuler votre demande ?",
-            ['Reessayer', 'Aide']
+            "Désolé, une erreur s'est produite. Pouvez-vous reformuler votre demande ?",
+            ['Réessayer', 'Aide']
         );
     }
 }
 
 async function callChatAPI(message) {
     if (MODAL_ENDPOINT) {
-        // Appel reel a Modal
+        // Appel réel à Modal
         const response = await fetch(MODAL_ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -376,7 +376,7 @@ async function callChatAPI(message) {
         });
         return await response.json();
     } else {
-        // Mode demo - reponses simulees
+        // Mode démo - réponses simulées
         return simulateResponse(message);
     }
 }
@@ -386,49 +386,49 @@ function simulateResponse(message) {
 
     if (msgLower.includes('vente') || msgLower.includes('creer')) {
         return {
-            content: `Je vais vous aider a creer un acte de vente, ${state.user.titre} ${state.user.nom}.\n\nPour commencer, j'ai besoin de quelques informations :\n\n1. **Quel est le nom du vendeur ?**\n2. **Quel type de bien s'agit-il ?** (appartement, maison, terrain)`,
-            suggestions: ['Appartement en copropriete', 'Maison individuelle', 'Annuler']
+            content: `Je vais vous aider à créer un acte de vente, ${state.user.titre} ${state.user.nom}.\n\nPour commencer, j'ai besoin de quelques informations :\n\n1. **Quel est le nom du vendeur ?**\n2. **Quel type de bien s'agit-il ?** (appartement, maison, terrain)`,
+            suggestions: ['Appartement en copropriété', 'Maison individuelle', 'Annuler']
         };
     }
 
     if (msgLower.includes('dossier') || msgLower.includes('dupont')) {
         return {
-            content: `Voici vos dossiers en cours :\n\n- **Dossier 2026-001** - Vente Dupont (en cours)\n- **Dossier 2026-002** - Promesse Martin (brouillon)\n- **Dossier 2025-089** - Succession Leroy (termine)\n\nQue souhaitez-vous faire ?`,
-            suggestions: ['Ouvrir Dossier 2026-001', 'Creer un nouveau dossier', 'Rechercher']
+            content: `Voici vos dossiers en cours :\n\n- **Dossier 2026-001** - Vente Dupont (en cours)\n- **Dossier 2026-002** - Promesse Martin (brouillon)\n- **Dossier 2025-089** - Succession Leroy (terminé)\n\nQue souhaitez-vous faire ?`,
+            suggestions: ['Ouvrir Dossier 2026-001', 'Créer un nouveau dossier', 'Rechercher']
         };
     }
 
     if (msgLower.includes('client') || msgLower.includes('rechercher')) {
         return {
-            content: `Quel client recherchez-vous ? Vous pouvez me donner :\n\n- Un nom (ex: Dupont)\n- Un numero de dossier\n- Une adresse de bien`,
+            content: `Quel client recherchez-vous ? Vous pouvez me donner :\n\n- Un nom (ex: Dupont)\n- Un numéro de dossier\n- Une adresse de bien`,
             suggestions: []
         };
     }
 
     if (msgLower.includes('aide') || msgLower.includes('help')) {
         return {
-            content: `Je peux vous aider a :\n\n📄 **Creer des actes** - vente, promesse, reglement de copropriete\n📁 **Gerer vos dossiers** - creer, modifier, rechercher\n👥 **Gerer vos clients** - ajouter, rechercher, modifier\n🔍 **Rechercher** - dossiers, clients, actes\n\nQue souhaitez-vous faire ?`,
-            suggestions: ['Creer un acte', 'Voir mes dossiers', 'Rechercher un client']
+            content: `Je peux vous aider à :\n\n📄 **Créer des actes** - vente, promesse, règlement de copropriété\n📁 **Gérer vos dossiers** - créer, modifier, rechercher\n👥 **Gérer vos clients** - ajouter, rechercher, modifier\n🔍 **Rechercher** - dossiers, clients, actes\n\nQue souhaitez-vous faire ?`,
+            suggestions: ['Créer un acte', 'Voir mes dossiers', 'Rechercher un client']
         };
     }
 
     if (msgLower.includes('fichier') || msgLower.includes('joint')) {
         return {
-            content: `J'ai bien recu vos fichiers. Je vais les analyser.\n\n🔒 **Securite** : Vos documents sont chiffres et ne quittent jamais nos serveurs europeens.`,
-            suggestions: ['Extraire les informations', 'Creer un acte a partir du document']
+            content: `J'ai bien reçu vos fichiers. Je vais les analyser.\n\n🔒 **Sécurité** : Vos documents sont chiffrés et ne quittent jamais nos serveurs européens.`,
+            suggestions: ['Extraire les informations', 'Créer un acte à partir du document']
         };
     }
 
-    // Reponse par defaut
+    // Réponse par défaut
     return {
-        content: `J'ai bien compris votre demande, ${state.user.titre} ${state.user.nom}.\n\nEn mode demonstration, mes capacites sont limitees. En production, je pourrai :\n- Comprendre vos demandes en langage naturel\n- Acceder a vos dossiers et clients\n- Creer et modifier des actes\n- Apprendre de vos corrections`,
-        suggestions: ['Creer une vente', 'Voir mes dossiers', 'Aide']
+        content: `J'ai bien compris votre demande, ${state.user.titre} ${state.user.nom}.\n\nEn mode démonstration, mes capacités sont limitées. En production, je pourrai :\n- Comprendre vos demandes en langage naturel\n- Accéder à vos dossiers et clients\n- Créer et modifier des actes\n- Apprendre de vos corrections`,
+        suggestions: ['Créer une vente', 'Voir mes dossiers', 'Aide']
     };
 }
 
 function updateSmartSuggestions(response) {
-    // Mettre a jour les suggestions basees sur la conversation
-    // En production, cela serait plus sophistique
+    // Mettre à jour les suggestions basées sur la conversation
+    // En production, cela serait plus sophistiqué
 }
 
 // ============================================
@@ -436,11 +436,11 @@ function updateSmartSuggestions(response) {
 // ============================================
 function quickAction(action) {
     const actions = {
-        'creer_vente': 'Je souhaite creer un acte de vente',
-        'creer_promesse': 'Je souhaite creer une promesse de vente',
+        'creer_vente': 'Je souhaite créer un acte de vente',
+        'creer_promesse': 'Je souhaite créer une promesse de vente',
         'mes_dossiers': 'Montre-moi mes dossiers en cours',
         'rechercher': 'Je veux rechercher un client',
-        'aide': 'Aide-moi a comprendre ce que tu peux faire'
+        'aide': 'Aide-moi à comprendre ce que tu peux faire'
     };
 
     const message = actions[action];
@@ -523,7 +523,7 @@ function handleFiles(files) {
 
     Array.from(files).forEach(file => {
         if (file.size > maxSize) {
-            alert(`Le fichier ${file.name} depasse la taille maximale de 10 Mo`);
+            alert(`Le fichier ${file.name} dépasse la taille maximale de 10 Mo`);
             return;
         }
 
@@ -588,7 +588,7 @@ function initVoiceRecognition() {
 
 function toggleVoice() {
     if (!state.recognition) {
-        alert('La reconnaissance vocale n\'est pas supportee par votre navigateur');
+        alert('La reconnaissance vocale n\'est pas supportée par votre navigateur');
         return;
     }
 
@@ -648,7 +648,7 @@ async function submitFeedback() {
     closeFeedbackModal();
 
     addAssistantMessage(
-        `Merci pour votre retour, ${state.user.titre} ${state.user.nom} ! Il m'aidera a m'ameliorer.`,
+        `Merci pour votre retour, ${state.user.titre} ${state.user.nom} ! Il m'aidera à m'améliorer.`,
         []
     );
 }
@@ -744,7 +744,7 @@ function handleKeyDown(e) {
 // ============================================
 async function login(email, password) {
     if (!supabaseClient) {
-        console.error('Supabase non initialise');
+        console.error('Supabase non initialisé');
         return { error: 'Service non disponible' };
     }
 
@@ -764,7 +764,7 @@ async function login(email, password) {
 
 async function loginWithMagicLink(email) {
     if (!supabaseClient) {
-        console.error('Supabase non initialise');
+        console.error('Supabase non initialisé');
         return { error: 'Service non disponible' };
     }
 
@@ -779,7 +779,7 @@ async function loginWithMagicLink(email) {
         return { error: error.message };
     }
 
-    return { data, message: 'Verifiez votre boite mail !' };
+    return { data, message: 'Vérifiez votre boîte mail !' };
 }
 
 async function logout() {

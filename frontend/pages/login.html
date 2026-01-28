@@ -52,8 +52,8 @@
             <div id="magicLinkMessage" style="color: var(--success); font-size: 0.85rem; display: none; margin-top: var(--space-md); text-align: center;"></div>
 
             <div class="login-footer">
-                <p>Pas encore de compte ? <a href="#">Demander un acces</a></p>
-                <p style="margin-top: var(--space-sm);"><a href="../index.html">Retour a l'accueil</a></p>
+                <p>Pas encore de compte ? <a href="#">Demander un accès</a></p>
+                <p style="margin-top: var(--space-sm);"><a href="../index.html">Retour à l'accueil</a></p>
             </div>
         </div>
     </div>
@@ -72,7 +72,7 @@
             console.warn('Erreur init Supabase:', e);
         }
 
-        // Verifier si deja connecte
+        // Vérifier si déjà connecté
         document.addEventListener('DOMContentLoaded', async () => {
             if (supabaseClient) {
                 const { data } = await supabaseClient.auth.getUser();
@@ -95,12 +95,12 @@
             loginBtn.disabled = true;
 
             if (!supabaseClient) {
-                errorDiv.textContent = 'Service temporairement indisponible. Essayez le mode demo.';
+                errorDiv.textContent = 'Service temporairement indisponible. Essayez le mode démo.';
                 errorDiv.style.display = 'block';
                 loginBtn.textContent = 'Se connecter';
                 loginBtn.disabled = false;
 
-                // Redirection vers le chat en mode demo apres 2 secondes
+                // Redirection vers le chat en mode démo après 2 secondes
                 setTimeout(() => {
                     window.location.href = 'chat.html';
                 }, 2000);
@@ -123,11 +123,11 @@
                     return;
                 }
 
-                // Connexion reussie
+                // Connexion réussie
                 window.location.href = 'chat.html';
 
             } catch (error) {
-                errorDiv.textContent = 'Une erreur est survenue. Veuillez reessayer.';
+                errorDiv.textContent = 'Une erreur est survenue. Veuillez réessayer.';
                 errorDiv.style.display = 'block';
                 loginBtn.textContent = 'Se connecter';
                 loginBtn.disabled = false;
@@ -168,11 +168,11 @@
                     return;
                 }
 
-                magicLinkMessage.textContent = 'Un lien de connexion a ete envoye a ' + email;
+                magicLinkMessage.textContent = 'Un lien de connexion a été envoyé à ' + email;
                 magicLinkMessage.style.display = 'block';
 
             } catch (error) {
-                errorDiv.textContent = 'Une erreur est survenue. Veuillez reessayer.';
+                errorDiv.textContent = 'Une erreur est survenue. Veuillez réessayer.';
                 errorDiv.style.display = 'block';
             }
         }
