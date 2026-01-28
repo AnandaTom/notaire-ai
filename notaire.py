@@ -131,7 +131,7 @@ OPTIONS GLOBALES:
 EXEMPLES:
 
   # Extraire un titre et sauvegarder
-  python notaire.py extraire docs_originels/titre.pdf -o titre.json
+  python notaire.py extraire docs_original/titre.pdf -o titre.json
 
   # Générer une promesse depuis un titre
   python notaire.py promesse --titre titre.pdf --beneficiaires acq.json --prix 250000

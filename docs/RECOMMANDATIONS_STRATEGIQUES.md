@@ -418,7 +418,7 @@ def test_generation_complete(demande, expected_type, min_conformite):
     assert resultat.fichier_genere is not None
 
     # Vérifier conformité
-    score = comparer_documents(resultat.fichier_genere, f"docs_originels/{expected_type}.docx")
+    score = comparer_documents(resultat.fichier_genere, f"docs_original/{expected_type}.docx")
     assert score >= min_conformite, f"Conformité {score:.0%} < {min_conformite:.0%}"
 ```
 

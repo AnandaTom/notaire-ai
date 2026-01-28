@@ -200,7 +200,7 @@ acquereur = {"type": "personne_physique"}
 1. **Analyser le document original DOCX**
    ```bash
    python execution/extraire_bookmarks_contenu.py \
-       --input docs_originels/nouveau_template.docx \
+       --input docs_original/nouveau_template.docx \
        --output schemas/variables_nouveau.json
    ```
 
@@ -224,7 +224,7 @@ acquereur = {"type": "personne_physique"}
    python execution/generer_donnees_test.py --type nouveau --output .tmp/test.json
    python execution/assembler_acte.py -t nouveau.md -d .tmp/test.json -o .tmp/out
    python execution/exporter_docx.py --input .tmp/out/*/acte.md --output test.docx
-   python execution/comparer_documents.py --original docs_originels/nouveau.docx --genere test.docx
+   python execution/comparer_documents.py --original docs_original/nouveau.docx --genere test.docx
    ```
 
 6. **Itérer jusqu'à ≥80% conformité**
@@ -353,7 +353,7 @@ except ValueError as e:
 3. Ne PAS oublier les champs obligatoires (quotités, copropriété, etc.)
 4. Ne PAS créer de monolithe - un script = une responsabilité
 5. Ne PAS commit `.tmp/` dans git
-6. Ne PAS modifier `docs_originels/` (référence absolue)
+6. Ne PAS modifier `docs_original/` (référence absolue)
 7. Ne PAS générer personnes morales si template ne les gère pas
 8. Ne PAS ignorer les warnings de conformité <80%
 

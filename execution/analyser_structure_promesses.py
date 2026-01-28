@@ -326,7 +326,7 @@ def generer_rapport(structures: list, comparaison: dict) -> str:
 
 def main():
     # Chemins des fichiers
-    base_dir = Path(__file__).parent.parent / "docs_originels"
+    base_dir = Path(__file__).parent.parent / "docs_original"
     fichiers = [
         base_dir / "Trame_promesse_A.docx",
         base_dir / "Trame_promesse_B.docx",

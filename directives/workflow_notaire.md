@@ -204,7 +204,7 @@ python execution/exporter_docx.py \
 
 ```bash
 python execution/comparer_documents.py \
-    --original "docs_originels/Trame vente lots de copropriété.docx" \
+    --original "docs_original/Trame vente lots de copropriété.docx" \
     --genere outputs/acte_client_001.docx \
     --rapport .tmp/dossier_client_001/conformite.json
 ```
@@ -262,7 +262,7 @@ if edge_case:
 python execution/collecter_informations.py --type reglement --output .tmp/client.json && \
 python execution/assembler_acte.py -t reglement_copropriete_edd.md -d .tmp/client.json -o .tmp/out --zones-grisees && \
 python execution/exporter_docx.py --input .tmp/out/*/acte.md --output outputs/acte_final.docx && \
-python execution/comparer_documents.py --original "docs_originels/Trame reglement copropriete EDD.docx" --genere outputs/acte_final.docx
+python execution/comparer_documents.py --original "docs_original/Trame reglement copropriete EDD.docx" --genere outputs/acte_final.docx
 ```
 
 **Temps total**: ~30 secondes pour collecte + 2-3s pour génération = **<1 minute** pour acte complet validé.
@@ -443,7 +443,7 @@ python notaire.py promesse-avancee depuis-titre \
 ```bash
 # 1. Comparer structure
 python execution/comparer_documents.py \
-    --original docs_originels/trame.docx \
+    --original docs_original/trame.docx \
     --genere outputs/acte.docx \
     --rapport .tmp/diff.json
 
@@ -452,7 +452,7 @@ jq '.differences[] | select(.type == "titre_manquant")' .tmp/diff.json
 
 # 3. Extraire sections manquantes du DOCX original
 python execution/extraire_bookmarks_contenu.py \
-    --input docs_originels/trame.docx \
+    --input docs_original/trame.docx \
     --sections-manquantes .tmp/diff.json \
     --output .tmp/sections_a_ajouter.md
 
@@ -498,7 +498,7 @@ python execution/extraire_bookmarks_contenu.py \
 
 1. ❌ **JAMAIS** générer avec données incomplètes
 2. ❌ **JAMAIS** promettre conformité 100% si template <80%
-3. ❌ **JAMAIS** modifier `docs_originels/` (référence absolue)
+3. ❌ **JAMAIS** modifier `docs_original/` (référence absolue)
 4. ❌ **JAMAIS** livrer DOCX sans validation conformité
 5. ❌ **JAMAIS** oublier d'enrichir les catalogues
 

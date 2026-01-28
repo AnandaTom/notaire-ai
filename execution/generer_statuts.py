@@ -25,7 +25,7 @@ def generer_statuts_final():
 
     # Charger le document original
     print('\n1. Chargement document original...')
-    doc = Document('docs_originels/Statuts (1).docx')
+    doc = Document('docs_original/Statuts (1).docx')
     print(f'   OK - {len(doc.paragraphs)} paragraphes')
 
     # Dictionnaire de remplacements - ORDRE IMPORTANT (plus spécifique en premier)

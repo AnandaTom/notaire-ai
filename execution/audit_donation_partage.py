@@ -19,7 +19,7 @@ from docx.shared import Pt, Mm
 
 def audit_pdf():
     """Audit du PDF original"""
-    pdf_path = Path('docs_originels/Donation partage (2).pdf')
+    pdf_path = Path('docs_original/Donation partage (2).pdf')
 
     print("="*80)
     print("AUDIT DONATION-PARTAGE - PDF ORIGINAL")
@@ -86,7 +86,7 @@ def audit_pdf():
 
 def analyser_structure_encadres():
     """Analyser précisément où sont les encadrés"""
-    pdf_path = Path('docs_originels/Donation partage (2).pdf')
+    pdf_path = Path('docs_original/Donation partage (2).pdf')
 
     print(f"\n{'='*80}")
     print("ANALYSE DES ENCADRÉS")

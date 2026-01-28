@@ -13,8 +13,8 @@ Améliorations v2:
 - Conformité fonctionnelle plutôt que similarité structurelle brute
 
 Usage:
-    python comparer_documents_v2.py --original docs_originels/trame.docx --genere outputs/acte.docx
-    python comparer_documents_v2.py --original docs_originels/trame.docx --genere outputs/acte.docx --rapport .tmp/rapport.json
+    python comparer_documents_v2.py --original docs_original/trame.docx --genere outputs/acte.docx
+    python comparer_documents_v2.py --original docs_original/trame.docx --genere outputs/acte.docx --rapport .tmp/rapport.json
 """
 
 import argparse
@@ -743,8 +743,8 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples:
-  python comparer_documents_v2.py --original docs_originels/trame.docx --genere outputs/acte.docx
-  python comparer_documents_v2.py -o docs_originels/trame.docx -g outputs/acte.docx --rapport .tmp/rapport.json
+  python comparer_documents_v2.py --original docs_original/trame.docx --genere outputs/acte.docx
+  python comparer_documents_v2.py -o docs_original/trame.docx -g outputs/acte.docx --rapport .tmp/rapport.json
 
 Améliorations v2:
   - Scoring pondéré: H1=3pts, H2=2pts, H3/H4=1pt, Tableaux=5pts

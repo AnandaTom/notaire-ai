@@ -155,7 +155,7 @@ python execution/exporter_docx.py \
 ### Étape 5 : Validation conformité
 ```bash
 python execution/comparer_documents.py \
-    --original "docs_originels/Donation partage (2).pdf" \
+    --original "docs_original/Donation partage (2).pdf" \
     --genere outputs/donation_partage_client.docx \
     --seuil 80
 ```
@@ -297,7 +297,7 @@ python execution/exporter_docx.py \
 | [`directives/mise_a_jour_statuts_donation.md`](../directives/mise_a_jour_statuts_donation.md) | ⭐ **Mise à jour statuts** |
 | [`execution/mettre_a_jour_statuts.py`](../execution/mettre_a_jour_statuts.py) | Script mise à jour statuts |
 | [`exemples/donnees_donation_partage_exemple.json`](../exemples/donnees_donation_partage_exemple.json) | Données test |
-| [`docs_originels/Donation partage (2).pdf`](../docs_originels/Donation%20partage%20(2).pdf) | Trame référence |
+| [`docs_original/Donation partage (2).pdf`](../docs_original/Donation%20partage%20(2).pdf) | Trame référence |
 
 ## 🎯 Fonctionnalité Unique : Mise à Jour Automatique des Statuts
 
@@ -313,7 +313,7 @@ python execution/exporter_docx.py --input .tmp/actes/{id}/acte.md --output outpu
 # 2. 🚀 NOUVEAU : Mettre à jour automatiquement les statuts
 python execution/mettre_a_jour_statuts.py \
     --acte outputs/donation_partage.docx \
-    --statuts docs_originels/Statuts_SOCIETE.docx \
+    --statuts docs_original/Statuts_SOCIETE.docx \
     --output outputs/Statuts_SOCIETE_modifies.docx
 ```
 

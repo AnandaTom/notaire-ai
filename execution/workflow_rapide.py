@@ -286,8 +286,8 @@ Dossiers de sortie:
     # 4. Validation (optionnelle)
     if args.validate:
         originals = {
-            'vente': 'docs_originels/Trame vente lots de copropriété.docx',
-            'promesse_vente': 'docs_originels/Trame promesse unilatérale de vente lots de copropriété.docx'
+            'vente': 'docs_original/Trame vente lots de copropriété.docx',
+            'promesse_vente': 'docs_original/Trame promesse unilatérale de vente lots de copropriété.docx'
         }
 
         original = originals.get(args.type)

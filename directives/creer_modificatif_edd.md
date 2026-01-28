@@ -26,7 +26,7 @@ Générer un acte modificatif de l'EDD/RC pour modifier la composition d'une cop
 | `templates/modificatif_edd.md` | Template Markdown avec variables Jinja2 |
 | `schemas/variables_modificatif_edd.json` | Structure des données attendues |
 | `schemas/questions_modificatif_edd.json` | Questions à poser au notaire |
-| `docs_originels/trame modificatif.docx` | Trame originale - NE JAMAIS MODIFIER |
+| `docs_original/trame modificatif.docx` | Trame originale - NE JAMAIS MODIFIER |
 
 ---
 

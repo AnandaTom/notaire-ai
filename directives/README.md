@@ -135,10 +135,10 @@ Ce dossier contient les SOPs (Standard Operating Procedures) pour la génératio
 
 | Document | Bookmarks | Type d'acte |
 |----------|-----------|-------------|
-| `docs_originels/Trame vente lots de copropriété.docx` | 361 | Vente |
-| `docs_originels/Trame promesse unilatérale de vente lots de copropriété.docx` | 298 | Promesse |
-| `docs_originels/Trame reglement copropriete EDD.docx` | 116 | EDD/RC |
-| `docs_originels/trame modificatif.docx` | 60 | Modificatif |
+| `docs_original/Trame vente lots de copropriété.docx` | 361 | Vente |
+| `docs_original/Trame promesse unilatérale de vente lots de copropriété.docx` | 298 | Promesse |
+| `docs_original/Trame reglement copropriete EDD.docx` | 116 | EDD/RC |
+| `docs_original/trame modificatif.docx` | 60 | Modificatif |
 
 **NE JAMAIS MODIFIER ces trames originales.**
 

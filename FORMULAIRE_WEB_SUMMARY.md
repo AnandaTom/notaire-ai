@@ -186,7 +186,7 @@ python execution/workflow_rapide.py \
 
 # 3. Validation
 python execution/comparer_documents.py \
-    --original docs_originels/Trame\ vente\ lots\ de\ copropriété.docx \
+    --original docs_original/Trame\ vente\ lots\ de\ copropriété.docx \
     --genere outputs/acte_dupont.docx
 ```
 

@@ -78,5 +78,5 @@ Write-Host "✅ VALIDATION COMPLÈTE - Template $Type prêt" -ForegroundColor Gr
 Write-Host ""
 Write-Host "💡 Pour tester conformité:" -ForegroundColor Cyan
 Write-Host "   python execution/comparer_documents_v2.py \"
-Write-Host "     --original `"docs_originels/Trame $Type lots de copropriété.docx`" \"
+Write-Host "     --original `"docs_original/Trame $Type lots de copropriété.docx`" \"
 Write-Host "     --genere .tmp/valid_test.docx"

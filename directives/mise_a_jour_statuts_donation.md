@@ -90,7 +90,7 @@ Le bénéfice social et le report à nouveau bénéficiaire provenant d'un résu
 ```bash
 python execution/mettre_a_jour_statuts.py \
     --acte outputs/donation_partage_client.docx \
-    --statuts docs_originels/Statuts_SOCIETE.docx \
+    --statuts docs_original/Statuts_SOCIETE.docx \
     --output outputs/Statuts_SOCIETE_modifies.docx
 ```
 
@@ -111,7 +111,7 @@ python execution/exporter_docx.py \
 # Étape 3: Mettre à jour les statuts
 python execution/mettre_a_jour_statuts.py \
     --acte outputs/donation_partage_client.docx \
-    --statuts docs_originels/Statuts_BLOUGE.docx \
+    --statuts docs_original/Statuts_BLOUGE.docx \
     --output outputs/Statuts_BLOUGE_modifies.docx
 
 # Étape 4: Valider les statuts modifiés
@@ -209,7 +209,7 @@ Les statuts modifiés contiennent :
 ```bash
 python execution/mettre_a_jour_statuts.py \
     --acte outputs/donation_partage.docx \
-    --statuts docs_originels/Statuts.docx \
+    --statuts docs_original/Statuts.docx \
     --output outputs/Statuts_modifies.docx \
     --article-11-debut "Ligne 456" \
     --article-11-fin "Ligne 489"
@@ -234,8 +234,8 @@ python execution/mettre_a_jour_statuts.py \
 ```bash
 pip install pdf2docx
 python execution/convertir_pdf_vers_docx.py \
-    --input docs_originels/Statuts.pdf \
-    --output docs_originels/Statuts.docx
+    --input docs_original/Statuts.pdf \
+    --output docs_original/Statuts.docx
 ```
 
 ## Validation
@@ -255,7 +255,7 @@ python execution/convertir_pdf_vers_docx.py \
 ```bash
 # Comparer les statuts avant/après
 python execution/comparer_statuts.py \
-    --original docs_originels/Statuts_BLOUGE.docx \
+    --original docs_original/Statuts_BLOUGE.docx \
     --modifie outputs/Statuts_BLOUGE_modifies.docx \
     --articles-modifies "7,11,21"
 ```
@@ -330,7 +330,7 @@ python execution/exporter_docx.py \
 # Mettre à jour les statuts
 python execution/mettre_a_jour_statuts.py \
     --acte outputs/donation_partage_auvray.docx \
-    --statuts docs_originels/Statuts_BLOUGE.docx \
+    --statuts docs_original/Statuts_BLOUGE.docx \
     --output outputs/Statuts_BLOUGE_2025.docx
 ```
 
@@ -338,7 +338,7 @@ python execution/mettre_a_jour_statuts.py \
 
 ```
 [INFO] Lecture de l'acte: outputs/donation_partage_auvray.docx
-[INFO] Lecture des statuts: docs_originels/Statuts_BLOUGE.docx
+[INFO] Lecture des statuts: docs_original/Statuts_BLOUGE.docx
 [INFO] Extraction des modifications depuis l'acte...
 [INFO] Modification Article 7 - CAPITAL SOCIAL
        Nouvelle répartition : 1000 parts entre 4 associés

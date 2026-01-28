@@ -9,7 +9,7 @@ et génère une nouvelle version des statuts en conservant la présentation d'or
 Usage:
     python execution/mettre_a_jour_statuts.py \
         --acte outputs/donation_partage.docx \
-        --statuts docs_originels/Statuts.docx \
+        --statuts docs_original/Statuts.docx \
         --output outputs/Statuts_modifies.docx
 
 Auteur: NotaireAI
@@ -374,13 +374,13 @@ Exemples:
     # Mise à jour simple
     python execution/mettre_a_jour_statuts.py \\
         --acte outputs/donation_partage.docx \\
-        --statuts docs_originels/Statuts.docx \\
+        --statuts docs_original/Statuts.docx \\
         --output outputs/Statuts_modifies.docx
 
     # Avec détection automatique des articles modifiés
     python execution/mettre_a_jour_statuts.py \\
         --acte outputs/donation_partage.docx \\
-        --statuts docs_originels/Statuts.docx \\
+        --statuts docs_original/Statuts.docx \\
         --output outputs/Statuts_modifies.docx \\
         --auto-detect
 """

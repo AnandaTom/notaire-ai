@@ -216,10 +216,10 @@ def main():
     t4 = time.time()
 
     original_map = {
-        'vente': 'docs_originels/Trame vente lots de copropriété.docx',
-        'promesse': 'docs_originels/Trame promesse de vente lots de copropriété.docx',
-        'reglement': 'docs_originels/Trame reglement copropriete EDD.docx',
-        'modificatif': 'docs_originels/trame modificatif.docx'
+        'vente': 'docs_original/Trame vente lots de copropriété.docx',
+        'promesse': 'docs_original/Trame promesse de vente lots de copropriété.docx',
+        'reglement': 'docs_original/Trame reglement copropriete EDD.docx',
+        'modificatif': 'docs_original/trame modificatif.docx'
     }
     original = original_map.get(args.type, original_map['vente'])
 
