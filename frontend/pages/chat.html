@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notomai | Assistant</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-seal">N</div>
+                <div class="logo-text">
+                    <h1>Notomai</h1>
+                    <p>Redaction et creation<br>d'actes notaries</p>
+                </div>
+            </div>
+
+            <nav class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="#" class="nav-item active">
+                    <span class="icon">💬</span>
+                    <span>Assistant</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">📁</span>
+                    <span>Mes dossiers</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>Clients</span>
+                </a>
+            </nav>
+
+            <nav class="nav-section">
+                <div class="nav-title">Actions rapides</div>
+                <a href="#" class="nav-item" onclick="quickAction('creer_vente')">
+                    <span class="icon">📄</span>
+                    <span>Creer une vente</span>
+                </a>
+                <a href="#" class="nav-item" onclick="quickAction('creer_promesse')">
+                    <span class="icon">📝</span>
+                    <span>Creer une promesse</span>
+                </a>
+                <a href="#" class="nav-item" onclick="quickAction('rechercher')">
+                    <span class="icon">🔍</span>
+                    <span>Rechercher</span>
+                </a>
+            </nav>
+
+            <!-- Security badge -->
+            <div class="security-badge">
+                <div class="badge-header">
+                    <span>🔒</span>
+                    <span>Donnees securisees</span>
+                </div>
+                <div class="badge-text">
+                    Chiffrement AES-256 - Hebergement UE - Conforme RGPD
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-card">
+                    <div class="user-avatar" id="userAvatar">C</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Me Charlotte Diaz</div>
+                        <div class="user-role" id="userRole">Notaire</div>
+                        <div class="user-etude" id="userEtude">Etude Diaz & Associes</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h2 id="headerTitle">Bonjour, Me Charlotte Diaz</h2>
+                    <p>Comment puis-je vous aider aujourd'hui ?</p>
+                </div>
+                <div class="header-right">
+                    <div class="security-indicator">
+                        <span class="dot"></span>
+                        <span>Connexion securisee</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="chat-container">
+                <div class="messages" id="messages">
+                    <!-- Messages s'affichent ici -->
+                </div>
+
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span>L'assistant redige...</span>
+                </div>
+            </div>
+
+            <!-- Smart suggestions -->
+            <div class="smart-suggestions">
+                <div class="smart-suggestions-title">
+                    <span>💡</span>
+                    <span>Suggestions basees sur votre activite</span>
+                </div>
+                <div class="smart-suggestions-list" id="smartSuggestions">
+                    <!-- Suggestions dynamiques -->
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea
+                            class="chat-input"
+                            id="chatInput"
+                            placeholder="Decrivez ce que vous souhaitez faire..."
+                            rows="1"
+                        ></textarea>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <p>📎 Glissez vos fichiers ici ou cliquez pour parcourir</p>
+                            <p class="formats">PDF, DOCX, JPG, PNG (max. 10 Mo)</p>
+                            <div class="uploaded-files" id="uploadedFiles"></div>
+                        </div>
+                    </div>
+                    <div class="input-actions">
+                        <button class="action-btn" id="uploadBtn" onclick="toggleUpload()" title="Joindre un fichier">
+                            📎
+                        </button>
+                        <button class="action-btn" id="voiceBtn" onclick="toggleVoice()" title="Dictee vocale">
+                            🎤
+                        </button>
+                    </div>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+
+                <!-- Security footer -->
+                <div class="security-footer">
+                    <span>🔒 Chiffrement de bout en bout</span>
+                    <span>🇪🇺 Donnees hebergees en Europe</span>
+                    <span>✓ Conforme RGPD & secret professionnel</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.jpg,.jpeg,.png" style="display:none" onchange="handleFileSelect(event)">
+
+    <!-- Modal de feedback -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal">
+            <h3>Aidez-nous a nous ameliorer</h3>
+            <div class="modal-field">
+                <label>Type de probleme</label>
+                <select id="feedbackType">
+                    <option value="vocabulaire">Vocabulaire incorrect</option>
+                    <option value="intention">Mauvaise comprehension</option>
+                    <option value="erreur_donnees">Erreur dans les donnees</option>
+                    <option value="suggestion">Suggestion d'amelioration</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label>Quelle aurait ete la bonne reponse ?</label>
+                <textarea id="feedbackCorrection" placeholder="Decrivez ce qui aurait du etre dit ou fait..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closeFeedbackModal()">Annuler</button>
+                <button class="modal-btn primary" onclick="submitFeedback()">Envoyer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>

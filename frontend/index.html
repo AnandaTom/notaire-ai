@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notomai | Assistant Notarial Intelligent</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+    <style>
+        /* Landing page specific styles */
+        .landing-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .landing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-lg) var(--space-xl);
+            background: var(--ink-black);
+        }
+
+        .landing-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .landing-logo .logo-seal {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+
+        .landing-logo h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--cream);
+        }
+
+        .landing-nav {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .landing-nav a {
+            color: var(--parchment-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .landing-nav a:hover {
+            color: var(--cream);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .landing-nav .btn-primary {
+            background: var(--gold-primary);
+            color: var(--ink-black);
+            font-weight: 600;
+        }
+
+        .landing-nav .btn-primary:hover {
+            background: var(--gold-light);
+        }
+
+        .landing-hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--ink-black) 0%, var(--ink-deep) 100%);
+            padding: var(--space-xl);
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero-content h2 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            color: var(--cream);
+            margin-bottom: var(--space-lg);
+            line-height: 1.2;
+        }
+
+        .hero-content h2 span {
+            color: var(--gold-primary);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--parchment-dark);
+            margin-bottom: var(--space-xl);
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+        }
+
+        .hero-cta .btn {
+            padding: var(--space-md) var(--space-xl);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .hero-cta .btn-primary {
+            background: var(--gold-primary);
+            color: var(--ink-black);
+        }
+
+        .hero-cta .btn-primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        .hero-cta .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--gold-primary);
+            color: var(--gold-primary);
+        }
+
+        .hero-cta .btn-secondary:hover {
+            background: rgba(201, 169, 98, 0.1);
+        }
+
+        .hero-features {
+            display: flex;
+            gap: var(--space-xl);
+            margin-top: var(--space-xl);
+            justify-content: center;
+        }
+
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--parchment-dark);
+            font-size: 0.9rem;
+        }
+
+        .hero-feature .icon {
+            font-size: 1.2rem;
+        }
+
+        .landing-footer {
+            padding: var(--space-lg);
+            background: var(--ink-black);
+            border-top: 1px solid var(--ink-medium);
+            text-align: center;
+        }
+
+        .landing-footer p {
+            color: var(--ink-medium);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .hero-features {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-container">
+        <header class="landing-header">
+            <div class="landing-logo">
+                <div class="logo-seal">N</div>
+                <h1>Notomai</h1>
+            </div>
+            <nav class="landing-nav">
+                <a href="#features">Fonctionnalites</a>
+                <a href="#securite">Securite</a>
+                <a href="pages/login.html">Connexion</a>
+                <a href="pages/chat.html" class="btn-primary">Demarrer</a>
+            </nav>
+        </header>
+
+        <main class="landing-hero">
+            <div class="hero-content">
+                <h2>L'assistant <span>intelligent</span> pour les notaires</h2>
+                <p>
+                    Creez vos actes notariaux en quelques minutes grace a l'intelligence artificielle.
+                    Notomai comprend vos demandes en langage naturel et genere des documents conformes.
+                </p>
+                <div class="hero-cta">
+                    <a href="pages/chat.html" class="btn btn-primary">Essayer gratuitement</a>
+                    <a href="pages/login.html" class="btn btn-secondary">Se connecter</a>
+                </div>
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <span class="icon">🔒</span>
+                        <span>Donnees chiffrees</span>
+                    </div>
+                    <div class="hero-feature">
+                        <span class="icon">🇪🇺</span>
+                        <span>Hebergement europeen</span>
+                    </div>
+                    <div class="hero-feature">
+                        <span class="icon">✓</span>
+                        <span>Conforme RGPD</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="landing-footer">
+            <p>2026 Notomai - Assistant Notarial Intelligent</p>
+        </footer>
+    </div>
+
+    <script>
+        // Redirection automatique si deja connecte
+        document.addEventListener('DOMContentLoaded', async () => {
+            const SUPABASE_URL = 'https://wcklvjckzktijtgakdrk.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indja2x2amNremt0aWp0Z2FrZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDI1NzksImV4cCI6MjA4NDU3ODU3OX0.lyfrGeuVSkivopQVWlq3tf6Uo5k4Z6BqOEPt5WuYXS4';
+
+            try {
+                if (window.supabase) {
+                    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    const { data } = await supabaseClient.auth.getUser();
+                    if (data?.user) {
+                        // Utilisateur connecte -> rediriger vers le chat
+                        window.location.href = 'pages/chat.html';
+                    }
+                }
+            } catch (e) {
+                console.warn('Pas de session active');
+            }
+        });
+    </script>
+</body>
+</html>

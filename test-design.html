@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notomai | Design Glassmorphism</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           VARIABLES - Glassmorphism + Notarial
+           ============================================ */
+        :root {
+            /* Couleurs de base */
+            --bg-primary: #0f1729;
+            --bg-secondary: #162033;
+            --bg-gradient: linear-gradient(135deg, #0f1729 0%, #1a2744 50%, #0f1729 100%);
+
+            /* Accents dorés */
+            --gold-primary: #d4af37;
+            --gold-light: #f4e4bc;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glass-blur: blur(12px);
+
+            /* Texte */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+
+            /* Status */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+
+            /* Fonts */
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           SIDEBAR - Glassmorphism
+           ============================================ */
+        .sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--glass-border);
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            opacity: 0.5;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding-bottom: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo-seal {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bg-primary);
+            box-shadow: 0 4px 20px var(--gold-glow);
+            transition: var(--transition-normal);
+        }
+
+        .logo-seal:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px var(--gold-glow);
+        }
+
+        .logo-text h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-top: 2px;
+        }
+
+        /* Navigation */
+        .nav-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .nav-title {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: var(--space-sm);
+            padding-left: var(--space-sm);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition-fast);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--gold-primary), transparent);
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+        }
+
+        .nav-item:hover::before {
+            opacity: 0.1;
+        }
+
+        .nav-item.active {
+            color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .nav-item .icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* User card */
+        .user-card {
+            margin-top: auto;
+            padding: var(--space-md);
+            background: var(--glass-bg);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            transition: var(--transition-normal);
+        }
+
+        .user-card:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--bg-primary);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-xl);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .header h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .header h2 span {
+            color: var(--gold-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        /* Status pill */
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-md);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--success);
+        }
+
+        .status-pill .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        /* ============================================
+           CHAT CONTAINER - Glassmorphism
+           ============================================ */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Glow effect on top */
+        .chat-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+
+        /* Messages area */
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-xl);
+        }
+
+        .message {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            animation: messageIn 0.4s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: var(--transition-fast);
+        }
+
+        .message-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .message.assistant .message-avatar {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            color: var(--bg-primary);
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message-bubble {
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .message.assistant .message-bubble {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px 16px 16px 4px;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px 16px 4px 16px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: var(--space-xs);
+            padding: 0 var(--space-sm);
+        }
+
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .suggestion-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: var(--space-sm) var(--space-md);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-family: var(--font-body);
+        }
+
+        .suggestion-btn:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gold-primary);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+
+        /* ============================================
+           INPUT AREA
+           ============================================ */
+        .input-area {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .input-container {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--text-primary);
+            resize: none;
+            outline: none;
+            transition: var(--transition-fast);
+            min-height: 52px;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .chat-input:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 3px var(--gold-glow);
+        }
+
+        .input-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .action-btn {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .send-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            color: var(--bg-primary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px var(--gold-glow);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 30px var(--gold-glow);
+        }
+
+        .send-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Security footer */
+        .security-footer {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            padding: var(--space-md);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .security-footer span {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            transition: var(--transition-fast);
+        }
+
+        .security-footer span:hover {
+            color: var(--gold-primary);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                padding: var(--space-md);
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-seal">N</div>
+                <div class="logo-text">
+                    <h1>Notomai</h1>
+                    <p>Assistant Notarial</p>
+                </div>
+            </div>
+
+            <nav class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="#" class="nav-item active">
+                    <span class="icon">💬</span>
+                    <span>Assistant</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">📁</span>
+                    <span>Mes dossiers</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>Clients</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Statistiques</span>
+                </a>
+            </nav>
+
+            <nav class="nav-section">
+                <div class="nav-title">Actions rapides</div>
+                <a href="#" class="nav-item">
+                    <span class="icon">📄</span>
+                    <span>Nouvelle vente</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">📝</span>
+                    <span>Nouvelle promesse</span>
+                </a>
+            </nav>
+
+            <div class="user-card">
+                <div class="user-avatar">C</div>
+                <div class="user-info">
+                    <div class="user-name">Me Charlotte Diaz</div>
+                    <div class="user-role">Notaire associee</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <header class="header">
+                <h2>Bonjour, <span>Charlotte</span></h2>
+                <div class="header-actions">
+                    <div class="status-pill">
+                        <span class="dot"></span>
+                        <span>Connexion securisee</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="chat-container">
+                <div class="messages" id="messages">
+                    <div class="message assistant">
+                        <div class="message-avatar">N</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                Bonjour Me Diaz, comment puis-je vous aider aujourd'hui ?<br><br>
+                                Je peux vous assister pour :<br>
+                                • Creer des actes (vente, promesse, reglement)<br>
+                                • Rechercher des dossiers ou clients<br>
+                                • Repondre a vos questions juridiques
+                            </div>
+                            <div class="message-time">10:30</div>
+                            <div class="suggestions">
+                                <button class="suggestion-btn">Creer un acte de vente</button>
+                                <button class="suggestion-btn">Voir mes dossiers</button>
+                                <button class="suggestion-btn">Rechercher un client</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message user">
+                        <div class="message-avatar">C</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                Je souhaite creer un acte de vente pour un appartement en copropriete
+                            </div>
+                            <div class="message-time">10:31</div>
+                        </div>
+                    </div>
+
+                    <div class="message assistant">
+                        <div class="message-avatar">N</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                Parfait ! Je vais vous guider pour creer cet acte de vente.<br><br>
+                                Pour commencer, j'ai besoin de quelques informations :<br><br>
+                                <strong>1. Qui est le vendeur ?</strong><br>
+                                Nom, prenom, date de naissance, adresse
+                            </div>
+                            <div class="message-time">10:31</div>
+                            <div class="suggestions">
+                                <button class="suggestion-btn">Client existant</button>
+                                <button class="suggestion-btn">Nouveau client</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="typing-indicator">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span>L'assistant redige...</span>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <div class="input-wrapper">
+                            <textarea
+                                class="chat-input"
+                                placeholder="Decrivez ce que vous souhaitez faire..."
+                                rows="1"
+                            ></textarea>
+                        </div>
+                        <div class="input-actions">
+                            <button class="action-btn" title="Joindre un fichier">📎</button>
+                            <button class="action-btn" title="Dictee vocale">🎤</button>
+                        </div>
+                        <button class="send-btn" title="Envoyer">➤</button>
+                    </div>
+                    <div class="security-footer">
+                        <span>🔒 Chiffrement E2E</span>
+                        <span>🇪🇺 Hebergement UE</span>
+                        <span>✓ RGPD</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
