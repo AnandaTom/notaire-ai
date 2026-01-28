@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotaireAI - Dashboard Notaire</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Dashboard specific styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: #e5e7eb;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin: 0 0 16px 0;
+            color: #1f2937;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .submissions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .submission-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .submission-item.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .submission-item.submitted {
+            border-left-color: #10b981;
+        }
+
+        .submission-item.processed {
+            border-left-color: #6b7280;
+        }
+
+        .submission-info h4 {
+            margin: 0 0 4px 0;
+            color: #1f2937;
+        }
+
+        .submission-info p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .submission-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.submitted {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.processed {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .link-display {
+            background: #f3f4f6;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .copy-btn {
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Login form */
+        .login-container {
+            max-width: 400px;
+            margin: 60px auto;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>NotaireAI</h1>
+            <p class="subtitle">Espace Notaire</p>
+        </header>
+
+        <!-- Login State -->
+        <div id="loginState" class="login-container">
+            <div class="card">
+                <h2>Connexion</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="apiKey">Clé API Notaire</label>
+                        <input type="password" id="apiKey" name="apiKey" required
+                               placeholder="nai_xxxxxxxxxxxxxxxx">
+                        <small style="color: #6b7280;">Fournie par votre administrateur</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Se connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard State -->
+        <div id="dashboardState" class="hidden">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userInitials">JD</div>
+                    <div>
+                        <strong id="userName">Jean Dupont</strong>
+                        <p style="margin: 0; font-size: 0.85rem; color: #6b7280;" id="etudeName">Étude de Paris</p>
+                    </div>
+                </div>
+                <button class="btn" onclick="logout()">Déconnexion</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('formulaires')">Formulaires clients</button>
+                <button class="tab" onclick="showTab('clients')">Fiches clients</button>
+            </div>
+
+            <!-- Tab: Formulaires -->
+            <div id="tab-formulaires">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statPending">0</div>
+                        <div class="stat-label">En attente</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statSubmitted">0</div>
+                        <div class="stat-label">Soumis</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statProcessed">0</div>
+                        <div class="stat-label">Traités</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0;">Mes formulaires</h3>
+                        <button class="btn btn-primary" onclick="openNewFormModal()">
+                            + Nouveau formulaire
+                        </button>
+                    </div>
+
+                    <div class="submissions-list" id="submissionsList">
+                        <p style="color: #6b7280; text-align: center;">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Clients -->
+            <div id="tab-clients" class="hidden">
+                <div class="card">
+                    <h3>Fiches clients</h3>
+                    <p style="color: #6b7280;">Les fiches clients enrichies apparaîtront ici.</p>
+                    <div id="clientsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Nouveau formulaire -->
+    <div class="modal" id="newFormModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Créer un formulaire client</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <form id="newFormForm">
+                <div class="form-group">
+                    <label for="clientNom">Nom du client *</label>
+                    <input type="text" id="clientNom" name="clientNom" required placeholder="DUPONT">
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPrenom">Prénom du client *</label>
+                    <input type="text" id="clientPrenom" name="clientPrenom" required placeholder="Jean">
+                </div>
+
+                <div class="form-group">
+                    <label for="typePartie">Type de partie *</label>
+                    <select id="typePartie" name="typePartie" required>
+                        <option value="">Sélectionner...</option>
+                        <option value="acquereur">Acquéreur</option>
+                        <option value="vendeur">Vendeur</option>
+                        <option value="vendeur_appartement">Vendeur (appartement)</option>
+                        <option value="vendeur_maison">Vendeur (maison)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dossierId">Dossier (optionnel)</label>
+                    <select id="dossierId" name="dossierId">
+                        <option value="">Aucun dossier lié</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="formLabel">Libellé / Référence</label>
+                    <input type="text" id="formLabel" name="formLabel"
+                           placeholder="Ex: Achat appartement rue Victor Hugo">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Générer le lien sécurisé
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Lien généré -->
+    <div class="modal" id="linkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Lien créé avec succès</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <p>Envoyez ce lien à votre client. Il pourra remplir le formulaire de manière sécurisée.</p>
+
+            <div class="link-display" id="generatedLink"></div>
+
+            <button class="btn btn-primary copy-btn" onclick="copyLink()">
+                Copier le lien
+            </button>
+
+            <div class="success-message" id="copySuccess">
+                Lien copié dans le presse-papier !
+            </div>
+
+            <div style="margin-top: 20px; padding: 16px; background: #fef3c7; border-radius: 8px;">
+                <strong>Important :</strong>
+                <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+                    <li>Ce lien est valide <strong>7 jours</strong></li>
+                    <li>Il ne peut être utilisé qu'une seule fois</li>
+                    <li>Les données sont chiffrées de bout en bout</li>
+                    <li>Seul vous pouvez les déchiffrer</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Voir soumission -->
+    <div class="modal" id="viewSubmissionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Détails de la soumission</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <div id="submissionDetails"></div>
+
+            <div id="importSection" class="hidden" style="margin-top: 20px;">
+                <button class="btn btn-primary" style="width: 100%;" onclick="importToClientFile()">
+                    Importer vers fiche client
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="crypto.js"></script>
+    <script src="supabase-client.js"></script>
+    <script>
+        // État global
+        let currentUser = null;
+        let currentEtude = null;
+        let submissions = [];
+        let generatedLinkData = null;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérifier si déjà connecté
+            const savedApiKey = localStorage.getItem('notaire_api_key');
+            if (savedApiKey) {
+                authenticate(savedApiKey);
+            }
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const apiKey = document.getElementById('apiKey').value;
+            await authenticate(apiKey);
+        });
+
+        async function authenticate(apiKey) {
+            try {
+                // Vérifier la clé API via Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/agent_api_keys?key_prefix=eq.${apiKey.substring(0, 12)}&select=*,etudes(*)`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!data || data.length === 0) {
+                    alert('Clé API invalide');
+                    return;
+                }
+
+                // Pour la démo, on accepte la clé
+                localStorage.setItem('notaire_api_key', apiKey);
+
+                // Récupérer infos utilisateur (simplifié)
+                currentUser = {
+                    id: data[0].created_by,
+                    apiKey: apiKey,
+                    etudeId: data[0].etude_id
+                };
+
+                currentEtude = data[0].etudes || { nom: 'Mon étude' };
+
+                showDashboard();
+                loadSubmissions();
+
+            } catch (error) {
+                console.error('Erreur authentification:', error);
+                alert('Erreur de connexion. Vérifiez votre clé API.');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('notaire_api_key');
+            currentUser = null;
+            currentEtude = null;
+            document.getElementById('dashboardState').classList.add('hidden');
+            document.getElementById('loginState').classList.remove('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginState').classList.add('hidden');
+            document.getElementById('dashboardState').classList.remove('hidden');
+
+            // Mettre à jour les infos utilisateur
+            document.getElementById('etudeName').textContent = currentEtude.nom || 'Mon étude';
+            document.getElementById('userInitials').textContent = 'NT';
+            document.getElementById('userName').textContent = 'Notaire';
+        }
+
+        // Charger les soumissions
+        async function loadSubmissions() {
+            try {
+                const data = await SupabaseClient.listSubmissions(currentUser.etudeId);
+                submissions = data || [];
+                renderSubmissions();
+                updateStats();
+            } catch (error) {
+                console.error('Erreur chargement soumissions:', error);
+            }
+        }
+
+        function renderSubmissions() {
+            const container = document.getElementById('submissionsList');
+
+            if (submissions.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; text-align: center;">Aucun formulaire envoyé</p>';
+                return;
+            }
+
+            container.innerHTML = submissions.map(sub => `
+                <div class="submission-item ${sub.status}">
+                    <div class="submission-info">
+                        <h4>${sub.client_nom || 'Client'} ${sub.client_prenom || ''}</h4>
+                        <p>${sub.label || sub.type_partie} - ${formatDate(sub.created_at)}</p>
+                    </div>
+                    <div class="submission-actions">
+                        <span class="status-badge ${sub.status}">${getStatusLabel(sub.status)}</span>
+                        ${sub.status === 'submitted' ? `
+                            <button class="btn" onclick="viewSubmission('${sub.id}')">Voir</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('statPending').textContent = submissions.filter(s => s.status === 'pending').length;
+            document.getElementById('statSubmitted').textContent = submissions.filter(s => s.status === 'submitted').length;
+            document.getElementById('statProcessed').textContent = submissions.filter(s => s.status === 'processed').length;
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'pending': 'En attente',
+                'submitted': 'Soumis',
+                'processed': 'Traité',
+                'expired': 'Expiré'
+            };
+            return labels[status] || status;
+        }
+
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Tabs
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+
+            document.getElementById('tab-formulaires').classList.toggle('hidden', tabName !== 'formulaires');
+            document.getElementById('tab-clients').classList.toggle('hidden', tabName !== 'clients');
+        }
+
+        // Modals
+        function openNewFormModal() {
+            document.getElementById('newFormModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+
+        // Créer nouveau formulaire
+        document.getElementById('newFormForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+
+            // Générer token et clé
+            const token = CryptoModule.generateToken();
+            const { key, keyBase64 } = await CryptoModule.generateKey();
+
+            // Créer la soumission dans Supabase
+            try {
+                await SupabaseClient.createSubmission({
+                    etudeId: currentUser.etudeId,
+                    notaireId: currentUser.id,
+                    dossierId: formData.get('dossierId') || null,
+                    clientId: null, // Sera créé à l'import
+                    typePartie: formData.get('typePartie'),
+                    label: formData.get('formLabel'),
+                    token: token
+                });
+
+                // Mettre à jour avec nom/prénom client (pour affichage)
+                await SupabaseClient.request(
+                    `/rest/v1/form_submissions?token=eq.${token}`,
+                    {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            client_nom: formData.get('clientNom'),
+                            client_prenom: formData.get('clientPrenom')
+                        })
+                    }
+                );
+
+                // Générer le lien
+                const baseUrl = window.location.origin + window.location.pathname.replace('dashboard-notaire.html', '');
+                const formType = formData.get('typePartie');
+
+                let formUrl;
+                if (formType === 'vendeur_appartement') {
+                    formUrl = `${baseUrl}questionnaires/vente-appartement.html`;
+                } else if (formType === 'vendeur_maison') {
+                    formUrl = `${baseUrl}questionnaires/vente-maison.html`;
+                } else if (formType === 'acquereur') {
+                    formUrl = `${baseUrl}fill.html`;
+                } else {
+                    formUrl = `${baseUrl}fill.html`;
+                }
+
+                generatedLinkData = {
+                    url: `${formUrl}?token=${token}#key=${keyBase64}`,
+                    key: keyBase64
+                };
+
+                // Afficher le lien
+                closeModal();
+                document.getElementById('generatedLink').textContent = generatedLinkData.url;
+                document.getElementById('linkModal').classList.add('active');
+
+                // Recharger la liste
+                loadSubmissions();
+
+                // Reset form
+                e.target.reset();
+
+            } catch (error) {
+                console.error('Erreur création formulaire:', error);
+                alert('Erreur lors de la création du formulaire');
+            }
+        });
+
+        function copyLink() {
+            navigator.clipboard.writeText(generatedLinkData.url).then(() => {
+                document.getElementById('copySuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        // Voir une soumission
+        async function viewSubmission(id) {
+            const submission = submissions.find(s => s.id === id);
+            if (!submission) return;
+
+            const details = document.getElementById('submissionDetails');
+
+            if (submission.status === 'submitted' && submission.data_encrypted) {
+                // Les données sont chiffrées - demander la clé
+                details.innerHTML = `
+                    <div class="form-group">
+                        <label>Clé de déchiffrement</label>
+                        <input type="text" id="decryptKey" placeholder="Collez la clé ici">
+                        <small style="color: #6b7280;">La clé se trouve dans le lien envoyé au client (après #key=)</small>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="decryptSubmission('${id}')">
+                        Déchiffrer les données
+                    </button>
+                `;
+                document.getElementById('importSection').classList.add('hidden');
+            } else {
+                details.innerHTML = `
+                    <p><strong>Client:</strong> ${submission.client_nom || '-'} ${submission.client_prenom || ''}</p>
+                    <p><strong>Type:</strong> ${submission.type_partie}</p>
+                    <p><strong>Statut:</strong> ${getStatusLabel(submission.status)}</p>
+                    <p><strong>Créé le:</strong> ${formatDate(submission.created_at)}</p>
+                `;
+            }
+
+            document.getElementById('viewSubmissionModal').classList.add('active');
+        }
+
+        // Déchiffrer une soumission
+        async function decryptSubmission(id) {
+            const submission = submissions.find(s => s.id === id);
+            const keyBase64 = document.getElementById('decryptKey').value.trim();
+
+            if (!keyBase64) {
+                alert('Veuillez entrer la clé de déchiffrement');
+                return;
+            }
+
+            try {
+                const key = await CryptoModule.importKey(keyBase64);
+                const decrypted = await CryptoModule.decrypt(
+                    submission.data_encrypted,
+                    submission.encryption_iv,
+                    key
+                );
+
+                // Afficher les données
+                const details = document.getElementById('submissionDetails');
+                details.innerHTML = `
+                    <h4>Données du client</h4>
+                    <pre style="background: #f3f4f6; padding: 16px; border-radius: 8px; overflow: auto; max-height: 400px;">${JSON.stringify(decrypted, null, 2)}</pre>
+                `;
+
+                // Stocker pour import
+                window.currentDecryptedData = {
+                    submissionId: id,
+                    data: decrypted
+                };
+
+                document.getElementById('importSection').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Erreur déchiffrement:', error);
+                alert('Impossible de déchiffrer. Vérifiez la clé.');
+            }
+        }
+
+        // Importer vers fiche client
+        async function importToClientFile() {
+            if (!window.currentDecryptedData) return;
+
+            try {
+                const result = await SupabaseClient.enrichClientFromSubmission(
+                    window.currentDecryptedData.submissionId,
+                    window.currentDecryptedData.data
+                );
+
+                if (result.success) {
+                    alert(`Fiche client ${result.action === 'created' ? 'créée' : 'mise à jour'} avec succès !`);
+                    closeModal();
+                    loadSubmissions();
+                } else {
+                    alert('Erreur: ' + (result.error || 'Import échoué'));
+                }
+            } catch (error) {
+                console.error('Erreur import:', error);
+                alert('Erreur lors de l\'import');
+            }
+        }
+
+        // Fermer modal en cliquant dehors
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+        });
+    </script>
+</body>
+</html>
