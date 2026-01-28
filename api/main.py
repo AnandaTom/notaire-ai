@@ -44,6 +44,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # Import des modules NotaireAI
 from execution.agent_autonome import AgentNotaire, ParseurDemandeNL, DemandeAnalysee
 from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+from execution.chat_handler import ChatHandler, create_chat_router
 
 # Import Supabase (optionnel - mode offline si non disponible)
 SUPABASE_AVAILABLE = False
@@ -350,6 +351,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Router du chatbot
+try:
+    chat_router = create_chat_router()
+    app.include_router(chat_router)
+except Exception as e:
+    print(f"⚠️ Chat router non disponible: {e}")
 
 
 # =============================================================================
