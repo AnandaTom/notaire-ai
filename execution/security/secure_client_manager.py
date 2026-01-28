@@ -34,7 +34,7 @@ if sys.platform == 'win32':
     sys.stderr.reconfigure(encoding='utf-8')
 
 # Import encryption service
-from encryption_service import (
+from .encryption_service import (
     EncryptionService,
     SENSITIVE_FIELDS,
     mask_pii,

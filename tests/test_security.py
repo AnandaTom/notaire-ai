@@ -14,8 +14,8 @@ from unittest.mock import Mock, patch, MagicMock
 
 import pytest
 
-# Add execution folder to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "execution"))
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 # =============================================================================
@@ -25,14 +25,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "execution"))
 @pytest.fixture
 def encryption_key():
     """Genere une cle de chiffrement de test."""
-    from encryption_service import EncryptionService
+    from execution.security.encryption_service import EncryptionService
     return EncryptionService.generate_master_key()
 
 
 @pytest.fixture
 def encryption_service(encryption_key):
     """Cree une instance du service de chiffrement."""
-    from encryption_service import EncryptionService
+    from execution.security.encryption_service import EncryptionService
     return EncryptionService(master_key=encryption_key)
 
 
@@ -71,7 +71,7 @@ class TestEncryptionService:
 
     def test_generate_key(self):
         """Test: la generation de cle produit une cle 256-bit valide."""
-        from encryption_service import EncryptionService
+        from execution.security.encryption_service import EncryptionService
         import base64
 
         key = EncryptionService.generate_master_key()
@@ -183,14 +183,14 @@ class TestEncryptionService:
 
     def test_invalid_key_raises_error(self):
         """Test: une cle invalide leve une erreur."""
-        from encryption_service import EncryptionService
+        from execution.security.encryption_service import EncryptionService
 
         with pytest.raises(ValueError):
             EncryptionService(master_key="invalid-key")
 
     def test_wrong_key_fails_decrypt(self, encryption_key):
         """Test: dechiffrer avec la mauvaise cle echoue."""
-        from encryption_service import EncryptionService
+        from execution.security.encryption_service import EncryptionService
 
         service1 = EncryptionService(master_key=encryption_key)
         encrypted = service1.encrypt("Secret data")
@@ -208,7 +208,7 @@ class TestMaskPII:
 
     def test_mask_short_values(self):
         """Test: masquage des valeurs courtes."""
-        from encryption_service import mask_pii
+        from execution.security.encryption_service import mask_pii
 
         data = {"nom": "Jo"}
         masked = mask_pii(data)
@@ -217,7 +217,7 @@ class TestMaskPII:
 
     def test_mask_long_values(self):
         """Test: masquage des valeurs longues."""
-        from encryption_service import mask_pii
+        from execution.security.encryption_service import mask_pii
 
         data = {"nom": "Dupont"}
         masked = mask_pii(data)
@@ -226,7 +226,7 @@ class TestMaskPII:
 
     def test_mask_preserves_non_sensitive(self):
         """Test: les champs non-sensibles ne sont pas masques."""
-        from encryption_service import mask_pii
+        from execution.security.encryption_service import mask_pii
 
         data = {
             "nom": "Dupont",
@@ -246,7 +246,7 @@ class TestSecureClientManager:
 
     def test_offline_mode_when_no_config(self, offline_env):
         """Test: mode offline active sans configuration."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test-etude")
 
@@ -254,7 +254,7 @@ class TestSecureClientManager:
 
     def test_client_data_encrypted_before_storage(self, offline_env):
         """Test: PII chiffre avant stockage."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test")
 
@@ -269,7 +269,7 @@ class TestSecureClientManager:
 
     def test_create_client_offline(self, offline_env):
         """Test: creation de client en mode offline."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test-etude")
 
@@ -284,7 +284,7 @@ class TestSecureClientManager:
 
     def test_get_client_offline(self, offline_env):
         """Test: recuperation de client en mode offline."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test-etude")
 
@@ -303,7 +303,7 @@ class TestSecureClientManager:
 
     def test_search_clients_offline(self, offline_env):
         """Test: recherche de clients en mode offline."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test-etude")
 
@@ -319,7 +319,7 @@ class TestSecureClientManager:
 
     def test_anonymize_client(self, offline_env):
         """Test: anonymisation de client."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test-etude")
 
@@ -343,7 +343,7 @@ class TestSecureClientManager:
 
     def test_scan_sensitive_data(self, offline_env):
         """Test: detection de donnees sensibles."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test")
 
@@ -373,7 +373,7 @@ class TestAgentClientAccess:
 
     def test_collect_field_valid(self, offline_env):
         """Test: collecte d'un champ valide."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -383,7 +383,7 @@ class TestAgentClientAccess:
 
     def test_collect_field_empty_required(self, offline_env):
         """Test: collecte d'un champ requis vide."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -393,7 +393,7 @@ class TestAgentClientAccess:
 
     def test_collect_field_invalid_email(self, offline_env):
         """Test: validation format email."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -403,7 +403,7 @@ class TestAgentClientAccess:
 
     def test_get_missing_fields(self, offline_env):
         """Test: detection des champs manquants."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -418,7 +418,7 @@ class TestAgentClientAccess:
 
     def test_get_next_question(self, offline_env):
         """Test: generation de questions."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -430,7 +430,7 @@ class TestAgentClientAccess:
 
     def test_collection_summary_masks_pii(self, offline_env):
         """Test: le resume masque les PII."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -444,7 +444,7 @@ class TestAgentClientAccess:
 
     def test_save_collected_client(self, offline_env):
         """Test: sauvegarde des donnees collectees."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -457,7 +457,7 @@ class TestAgentClientAccess:
 
     def test_save_incomplete_fails(self, offline_env):
         """Test: sauvegarde echoue si incomplet."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -470,7 +470,7 @@ class TestAgentClientAccess:
 
     def test_create_dossier(self, offline_env):
         """Test: creation de dossier."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -483,8 +483,8 @@ class TestAgentClientAccess:
 
     def test_client_to_variables(self, offline_env):
         """Test: conversion client vers variables template."""
-        from agent_client_access import AgentClientAccess
-        from secure_client_manager import ClientData
+        from execution.security.agent_client_access import AgentClientAccess
+        from execution.security.secure_client_manager import ClientData
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -512,7 +512,7 @@ class TestIntegration:
 
     def test_full_workflow_offline(self, offline_env):
         """Test: workflow complet en mode offline."""
-        from agent_client_access import AgentClientAccess
+        from execution.security.agent_client_access import AgentClientAccess
 
         agent = AgentClientAccess(etude_id="test-etude")
 
@@ -557,7 +557,7 @@ class TestIntegration:
 
     def test_gdpr_workflow(self, offline_env):
         """Test: workflow RGPD complet."""
-        from secure_client_manager import SecureClientManager
+        from execution.security.secure_client_manager import SecureClientManager
 
         manager = SecureClientManager(etude_id="test-etude")
 

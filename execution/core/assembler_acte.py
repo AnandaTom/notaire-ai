@@ -625,6 +625,41 @@ class AssembleurActe:
         return chemins
 
 
+def assembler_acte(template: str, donnees: Dict[str, Any], output_dir: str,
+                   zones_grisees: bool = False, acte_id: str = None) -> Dict[str, Path]:
+    """
+    Fonction de convénience pour assembler un acte.
+
+    Args:
+        template: Chemin vers le template ou nom du fichier
+        donnees: Données à injecter
+        output_dir: Dossier de sortie
+        zones_grisees: Si True, marque les variables pour fond gris
+        acte_id: Identifiant de l'acte (auto-généré si non fourni)
+
+    Returns:
+        Dictionnaire avec les chemins des fichiers générés
+    """
+    template_path = Path(template)
+
+    # Déterminer le dossier des templates
+    if template_path.is_absolute():
+        dossier_templates = template_path.parent
+        nom_template = template_path.name
+    else:
+        dossier_templates = Path(__file__).parent.parent.parent / 'templates'
+        nom_template = template
+
+    # Créer l'assembleur et générer
+    assembleur = AssembleurActe(dossier_templates, zones_grisees=zones_grisees)
+    return assembleur.generer_acte(
+        nom_template=nom_template,
+        donnees=donnees,
+        output_dir=Path(output_dir),
+        acte_id=acte_id
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Assemble un acte notarial à partir d'un template et de données"
@@ -654,7 +689,7 @@ def main():
     parser.add_argument(
         '--dossier-templates',
         type=Path,
-        default=Path(__file__).parent.parent / 'templates',
+        default=Path(__file__).parent.parent.parent / 'templates',  # execution/core/ -> execution/ -> projet/
         help="Dossier des templates"
     )
     parser.add_argument(

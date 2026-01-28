@@ -35,9 +35,9 @@ except ImportError:
 
 console = Console()
 
-# Configuration
+# Configuration (v1.5.0 - ajusté pour nouvelle structure execution/utils/)
 SCRIPT_DIR = Path(__file__).parent
-PROJECT_ROOT = SCRIPT_DIR.parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # execution/utils/ -> execution/ -> projet/
 SCHEMAS_DIR = PROJECT_ROOT / "schemas"
 CATALOGUE_PATH = SCHEMAS_DIR / "clauses_catalogue.json"
 
