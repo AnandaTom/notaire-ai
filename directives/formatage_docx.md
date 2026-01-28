@@ -2,7 +2,7 @@
 
 ## Objectif
 
-Garantir que tous les actes générés en format DOCX soient **100% fidèles** à la trame originale `docs_originels/Trame vente lots de copropriété.docx`. Cette directive documente les spécifications exactes extraites de l'analyse du document original.
+Garantir que tous les actes générés en format DOCX soient **100% fidèles** à la trame originale `docs_original/Trame vente lots de copropriété.docx`. Cette directive documente les spécifications exactes extraites de l'analyse du document original.
 
 ## IMPORTANT
 
@@ -351,4 +351,4 @@ python execution/exporter_docx.py --input <acte.md> --output <acte.docx>
 
 - [directives/creer_acte.md](creer_acte.md) - Flux complet de création d'acte
 - [execution/exporter_docx.py](../execution/exporter_docx.py) - Script d'export
-- [docs_originels/Trame vente lots de copropriété.docx](../docs_originels/Trame%20vente%20lots%20de%20copropriété.docx) - Document original de référence
+- [docs_original/Trame vente lots de copropriété.docx](../docs_original/Trame%20vente%20lots%20de%20copropriété.docx) - Document original de référence

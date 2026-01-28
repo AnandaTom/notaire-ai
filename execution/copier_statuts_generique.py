@@ -132,7 +132,7 @@ def generer_statuts_officiel():
 
     # Charger le document original
     print('\n1. Chargement du document original...')
-    doc_original = Document('docs_originels/Statuts (1).docx')
+    doc_original = Document('docs_original/Statuts (1).docx')
     print(f'   ✅ Chargé: {len(doc_original.paragraphs)} paragraphes, {len(doc_original.tables)} tableaux')
 
     # Remplacer les valeurs

@@ -58,7 +58,7 @@ try:
     VALIDATEUR_AVANCE_DISPONIBLE = True
 except ImportError:
     try:
-        from execution.valider_acte import ValidateurActe, RapportValidation, NiveauErreur
+        from execution.core.valider_acte import ValidateurActe, RapportValidation, NiveauErreur
         VALIDATEUR_AVANCE_DISPONIBLE = True
     except ImportError:
         VALIDATEUR_AVANCE_DISPONIBLE = False
@@ -770,7 +770,7 @@ class AgentNotaire:
 
         # Import de l'orchestrateur
         try:
-            from execution.orchestrateur_notaire import OrchestratorNotaire
+            from execution.gestionnaires.orchestrateur import OrchestratorNotaire
             self.orchestrateur = OrchestratorNotaire(verbose=True)
         except ImportError:
             try:

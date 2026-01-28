@@ -17,7 +17,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 EXECUTION_DIR = PROJECT_ROOT / "execution"
 sys.path.insert(0, str(EXECUTION_DIR))
 
-from exporter_docx import (
+from execution.core.exporter_docx import (
     nettoyer_texte_xml,
     detecter_tableau_markdown,
     ENTETES_TABLEAUX_CONNUS,
@@ -276,7 +276,7 @@ l'acquéreur {MARQUEUR_VAR_START}Mme MARTIN Marie{MARQUEUR_VAR_END}.
     def test_export_basique(self, markdown_simple, tmp_path):
         """Test d'export basique."""
         try:
-            from exporter_docx import main
+            from execution.core.exporter_docx import main
             output_file = tmp_path / "output.docx"
 
             # Simuler les arguments CLI
@@ -303,7 +303,7 @@ l'acquéreur {MARQUEUR_VAR_START}Mme MARTIN Marie{MARQUEUR_VAR_END}.
     def test_fichier_inexistant(self, tmp_path):
         """Test avec fichier d'entrée inexistant."""
         try:
-            from exporter_docx import main
+            from execution.core.exporter_docx import main
             import sys
             original_argv = sys.argv
             sys.argv = ['exporter_docx.py',
@@ -330,7 +330,7 @@ class TestFormatage:
     def test_appliquer_fond_gris(self):
         """Test de la fonction appliquer_fond_gris."""
         try:
-            from exporter_docx import appliquer_fond_gris
+            from execution.core.exporter_docx import appliquer_fond_gris
             from docx import Document
             from docx.shared import Pt
 

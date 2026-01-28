@@ -65,7 +65,7 @@ detection = gestionnaire.detecter_type(donnees)
 |-----------|--------|
 | **Gestionnaire principal** | `execution/gestionnaire_promesses.py` |
 | **Catalogue unifié** | `schemas/promesse_catalogue_unifie.json` |
-| Template DOCX original | `docs_originels/Trame promesse unilatérale de vente lots de copropriété.docx` |
+| Template DOCX original | `docs_original/Trame promesse unilatérale de vente lots de copropriété.docx` |
 | Templates spécialisés | `templates/promesse/*.md` |
 | Schéma variables | `schemas/variables_promesse_vente.json` |
 | Questions notaire | `schemas/questions_promesse_vente.json` |

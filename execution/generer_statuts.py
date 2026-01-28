@@ -1,35 +1,36 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-generer_statuts.py
-==================
+generer_statuts_final.py
+=========================
 
-Génère les statuts constitutifs en copiant l'original avec ajustements de mise en page.
+Copie EXACTE du document Statuts (1).docx avec uniquement les remplacements de texte.
+AUCUNE modification de formatage.
 """
 
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
-from pathlib import Path
 from docx import Document
+from pathlib import Path
 import comtypes.client
 import pythoncom
 
 
-def generer_statuts():
-    """Génère le document Statuts en copiant l'original et ajustant la mise en page."""
+def generer_statuts_final():
+    """Génère le document Statuts Officiel - copie exacte avec variables."""
 
     print('=' * 80)
-    print('GENERATION STATUTS OFFICIEL')
+    print('GENERATION STATUTS OFFICIEL - COPIE EXACTE')
     print('=' * 80)
 
     # Charger le document original
     print('\n1. Chargement document original...')
-    doc = Document('docs_originels/Statuts (1).docx')
-    print(f'   OK - {len(doc.paragraphs)} paragraphes, {len(doc.tables)} tableaux')
+    doc = Document('docs_original/Statuts (1).docx')
+    print(f'   OK - {len(doc.paragraphs)} paragraphes')
 
-    # Dictionnaire de remplacements - ORDRE IMPORTANT
+    # Dictionnaire de remplacements - ORDRE IMPORTANT (plus spécifique en premier)
     remplacements = {
-        # Organismes (avant les simples mots)
+        # Organismes (avant les simples mots pour éviter remplacement partiel)
         'FIDUCIAL SOFIRAL': 'CABINET_EXEMPLE',
         'Fiducial Sofiral': 'Cabinet_Exemple',
         'FIDUCIAL BANQUE': 'BANQUE_EXEMPLE',
@@ -37,13 +38,13 @@ def generer_statuts():
         'FIDUCIAL': 'CABINET',
         'Fiducial': 'Cabinet',
 
-        # Adresses complètes
+        # Adresses complètes (avant codes postaux)
         '29 Chemin du Panorama - 69570 DARDILLY': '00 rue Exemple - 00000 VILLE',
         '29 chemin du Panorama - 69570 DARDILLY': '00 rue Exemple - 00000 VILLE',
         '29 Chemin du Panorama': '00 rue Exemple',
         '29 chemin du Panorama': '00 rue Exemple',
 
-        # Villes avec apostrophe
+        # Villes avec apostrophe (avant autres villes)
         "TAIN L'HERMITAGE": 'VILLE_NAISSANCE',
         "Tain l'Hermitage": 'Ville_Naissance',
         'CHANTEMERLE-LES-BLES': 'VILLE_MARIAGE',
@@ -55,7 +56,7 @@ def generer_statuts():
         'BLOUGE': 'NOM_SOCIETE',
         'Blouge': 'Nom_Societe',
 
-        # Personnes
+        # Personnes - Noms
         'AUVRAY': 'NOM_FAMILLE',
         'Auvray': 'Nom_Famille',
         'ROBIN': 'NOM_NAISSANCE',
@@ -98,12 +99,13 @@ def generer_statuts():
         'lyon.avocat@fiducial.fr': 'email@exemple.fr',
     }
 
-    # Remplacer dans les paragraphes
+    # Remplacer dans les paragraphes - AUCUNE MODIFICATION DE FORMATAGE
     print('\n2. Remplacement dans paragraphes...')
     count_para = 0
     for para in doc.paragraphs:
         for run in para.runs:
             texte_orig = run.text
+            # Appliquer tous les remplacements
             for ancien, nouveau in remplacements.items():
                 run.text = run.text.replace(ancien, nouveau)
             if run.text != texte_orig:
@@ -111,7 +113,7 @@ def generer_statuts():
 
     print(f'   {count_para} modifications')
 
-    # Remplacer dans les tableaux
+    # Remplacer dans les tableaux - AUCUNE MODIFICATION DE FORMATAGE
     print('\n3. Remplacement dans tableaux...')
     count_table = 0
     for table in doc.tables:
@@ -120,6 +122,7 @@ def generer_statuts():
                 for para in cell.paragraphs:
                     for run in para.runs:
                         texte_orig = run.text
+                        # Appliquer tous les remplacements
                         for ancien, nouveau in remplacements.items():
                             run.text = run.text.replace(ancien, nouveau)
                         if run.text != texte_orig:
@@ -127,24 +130,8 @@ def generer_statuts():
 
     print(f'   {count_table} modifications')
 
-    # Ajuster la mise en page pour éviter page blanche
-    print('\n4. Ajustement mise en page...')
-
-    # Réduire l'espacement du paragraphe 1 pour tenir sur 1 page
-    # Original: 2730500 (7.6cm) → Réduire à ~4.5cm pour tenir avec le tableau STATUTS
-    from docx.shared import Pt
-    doc.paragraphs[1].paragraph_format.space_after = Pt(127)  # ~4.5cm
-
-    # Supprimer les paragraphes vides 2-6 qui créent trop d'espace
-    # On les remplace par un seul paragraphe avec espacement contrôlé
-    for i in range(5, 1, -1):  # Supprimer de la fin vers le début
-        p = doc.paragraphs[i]._element
-        p.getparent().remove(p)
-
-    print('   Espacement ajusté pour 20 pages')
-
     # Sauvegarder
-    print('\n5. Sauvegarde...')
+    print('\n4. Sauvegarde...')
     output_dir = Path('outputs')
     output_dir.mkdir(exist_ok=True)
 
@@ -153,7 +140,7 @@ def generer_statuts():
     print(f'   OK - {docx_path}')
 
     # Convertir en PDF
-    print('\n6. Conversion PDF...')
+    print('\n5. Conversion PDF...')
     pdf_path = output_dir / 'officiel statuts.pdf'
 
     pythoncom.CoInitialize()
@@ -195,26 +182,9 @@ def generer_statuts():
     trouves = [x for x in interdits if x in texte]
 
     if trouves:
-        print(f'\n! Valeurs spécifiques restantes: {trouves}')
+        print(f'\n! Valeurs specifiques restantes: {trouves}')
     else:
-        print(f'\n✅ Toutes variables génériques')
-
-    # Vérifier pages 1 et 2 du PDF
-    print('\n Vérification PDF:')
-    with open(str(pdf_path), 'rb') as f:
-        pdf = PyPDF2.PdfReader(f)
-        page1 = pdf.pages[0].extract_text()
-        page2 = pdf.pages[1].extract_text()
-
-        if 'STATUTS' in page1:
-            print('  ✅ Page 1: STATUTS présent')
-        else:
-            print('  ❌ Page 1: STATUTS manquant')
-
-        if 'SOUSSIGN' in page2:
-            print('  ✅ Page 2: LES SOUSSIGNÉS présent')
-        else:
-            print('  ❌ Page 2: LES SOUSSIGNÉS manquant')
+        print(f'\nOK - Toutes variables generiques')
 
     print('\n' + '=' * 80)
     print('TERMINE')
@@ -222,4 +192,4 @@ def generer_statuts():
 
 
 if __name__ == '__main__':
-    generer_statuts()
+    generer_statuts_final()

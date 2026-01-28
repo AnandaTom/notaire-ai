@@ -43,7 +43,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 # Import des modules NotaireAI
 from execution.agent_autonome import AgentNotaire, ParseurDemandeNL, DemandeAnalysee
-from execution.orchestrateur_notaire import OrchestratorNotaire
+from execution.gestionnaires.orchestrateur import OrchestratorNotaire
 from execution.chat_handler import ChatHandler, create_chat_router
 
 # Import Supabase (optionnel - mode offline si non disponible)
@@ -822,7 +822,7 @@ async def lister_sections_clauses(
     Retourne les sections avec leurs conditions et priorités.
     """
     try:
-        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+        from execution.gestionnaires.gestionnaire_clauses import GestionnaireClausesIntelligent
 
         gestionnaire = GestionnaireClausesIntelligent()
         catalogue = gestionnaire.catalogue
@@ -878,7 +878,7 @@ async def lister_profils_clauses(auth: AuthContext = Depends(verify_api_key)):
     - sans_pret: Paiement comptant
     """
     try:
-        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+        from execution.gestionnaires.gestionnaire_clauses import GestionnaireClausesIntelligent
 
         gestionnaire = GestionnaireClausesIntelligent()
         profils = gestionnaire.catalogue.get("profils_type", {}).get("profils", [])
@@ -907,7 +907,7 @@ async def analyser_donnees_clauses(
     Retourne la liste des sections à inclure avec leurs conditions évaluées.
     """
     try:
-        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+        from execution.gestionnaires.gestionnaire_clauses import GestionnaireClausesIntelligent
 
         gestionnaire = GestionnaireClausesIntelligent()
         resultat = gestionnaire.selectionner_sections(donnees, profil)
@@ -944,7 +944,7 @@ async def soumettre_feedback_clause(
     Le feedback est enregistré et pourra être approuvé par un admin.
     """
     try:
-        from execution.gestionnaire_clauses_intelligent import (
+        from execution.gestionnaires.gestionnaire_clauses import (
             GestionnaireClausesIntelligent,
             FeedbackNotaire
         )
@@ -999,7 +999,7 @@ async def obtenir_suggestions_clauses(
     Retourne les sections les plus pertinentes pour ce contexte.
     """
     try:
-        from execution.gestionnaire_clauses_intelligent import GestionnaireClausesIntelligent
+        from execution.gestionnaires.gestionnaire_clauses import GestionnaireClausesIntelligent
 
         gestionnaire = GestionnaireClausesIntelligent()
         sections = gestionnaire.catalogue.get("sections_variables", {}).get("sections", [])
@@ -1090,7 +1090,7 @@ async def generer_promesse(
     Détecte automatiquement le type si non spécifié.
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses, TypePromesse
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses, TypePromesse
 
         supabase = get_supabase_client()
         gestionnaire = GestionnairePromesses(supabase_client=supabase)
@@ -1136,7 +1136,7 @@ async def detecter_type_promesse(
     - Les sections recommandées
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
         gestionnaire = GestionnairePromesses()
         resultat = gestionnaire.detecter_type(donnees)
@@ -1165,7 +1165,7 @@ async def valider_donnees_promesse(
     Retourne les erreurs, warnings et suggestions d'amélioration.
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses, TypePromesse
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses, TypePromesse
 
         gestionnaire = GestionnairePromesses()
         type_enum = TypePromesse(type_promesse) if type_promesse else None
@@ -1197,7 +1197,7 @@ async def lister_profils_promesse(auth: AuthContext = Depends(verify_api_key)):
     - sans_pret: Achat comptant
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
         gestionnaire = GestionnairePromesses()
         profils = gestionnaire.get_profils_disponibles()
@@ -1217,7 +1217,7 @@ async def lister_types_promesse(auth: AuthContext = Depends(verify_api_key)):
     Liste les types de promesse disponibles avec leurs caractéristiques.
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
         gestionnaire = GestionnairePromesses()
         types_info = gestionnaire.catalogue.get("types_promesse", {})
@@ -1312,7 +1312,7 @@ async def rechercher_titre_adresse(
     Recherche des titres par adresse (recherche floue).
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
         supabase = get_supabase_client()
         gestionnaire = GestionnairePromesses(supabase_client=supabase)
@@ -1338,7 +1338,7 @@ async def rechercher_titre_proprietaire(
     Recherche des titres par nom de propriétaire.
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
         supabase = get_supabase_client()
         gestionnaire = GestionnairePromesses(supabase_client=supabase)
@@ -1374,7 +1374,7 @@ async def convertir_titre_en_promesse(
     - **options**: Options supplémentaires (mobilier, conditions, etc.)
     """
     try:
-        from execution.gestionnaire_promesses import GestionnairePromesses
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
         supabase = get_supabase_client()
         gestionnaire = GestionnairePromesses(supabase_client=supabase)

@@ -12,7 +12,7 @@ Les notaires doivent fournir le titre de propriété du vendeur (promettant) pou
 
 ### Document de référence analysé
 
-**Fichier**: `docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf`
+**Fichier**: `docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf`
 - **Type**: Acte authentique de vente du 27 juin 2017
 - **Notaire**: Maître Lionel MONJEAUD, Villeurbanne
 - **Vendeurs**: Thibault TARBOURIECH (54.30%) et Sabah KSOURI (45.70%)
@@ -529,7 +529,7 @@ Pour une succession, capturer le nom du défunt dans `vendeur_precedent`:
 Script d'extraction de l'origine de propriété depuis un titre de propriété PDF.
 
 Usage:
-    python execution/extraire_origine_titre.py --pdf docs_originels/titre.pdf --output .tmp/origine.json
+    python execution/extraire_origine_titre.py --pdf docs_original/titre.pdf --output .tmp/origine.json
 """
 
 import argparse
@@ -757,7 +757,7 @@ Vefa suivant acte reçu par Maître Sophie LEROY, notaire à Marseille le 5 sept
 - [schemas/variables_promesse_vente.json](../schemas/variables_promesse_vente.json) - Schéma des variables
 - [schemas/questions_promesse_vente.json](../schemas/questions_promesse_vente.json) - Questions à poser
 - [templates/promesse_vente_lots_copropriete.md](../templates/promesse_vente_lots_copropriete.md) - Template Jinja2
-- [docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf](../docs_originels/ACTE_AUTHENTIQUE_PAGES_1-39.pdf) - Document de référence analysé
+- [docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf](../docs_original/ACTE_AUTHENTIQUE_PAGES_1-39.pdf) - Document de référence analysé
 
 ---
 

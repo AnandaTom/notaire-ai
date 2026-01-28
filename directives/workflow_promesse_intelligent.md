@@ -188,7 +188,7 @@ python execution/exporter_docx.py \
 
 # 4. Valider la conformité
 python execution/comparer_documents_v2.py \
-    --original docs_originels/Trame_promesse_C.docx \
+    --original docs_original/Trame_promesse_C.docx \
     --genere outputs/promesse_client.docx
 ```
 

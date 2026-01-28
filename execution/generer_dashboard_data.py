@@ -875,7 +875,7 @@ def get_chef_projet_briefing() -> dict:
             ],
             "quick_wins": [
                 "Lancer comparer_documents.py sur promesses anonymisées",
-                "Identifier sections manquantes dans docs_originels/"
+                "Identifier sections manquantes dans docs_original/"
             ],
             "blocked_by": None
         },

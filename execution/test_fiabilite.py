@@ -36,8 +36,8 @@ TESTS = {
     },
     'promesse': {
         'template': 'promesse_vente_lots_copropriete.md',
-        'donnees_min': 'exemples/donnees_promesse_vente_exemple.json',
-        'donnees_max': None,
+        'donnees_min': 'exemples/donnees_promesse_exemple.json',
+        'donnees_max': None,  # Enriched data has missing variable
         'conformite_min': 75.0,
         'sections_obligatoires': ['Promettant', 'Bénéficiaire', 'Prix']
     }
@@ -68,7 +68,7 @@ class TestFiabilite:
         with tempfile.TemporaryDirectory() as tmpdir:
             cmd = [
                 sys.executable,
-                'execution/assembler_acte.py',
+                'execution/core/assembler_acte.py',
                 '--template', template,
                 '--donnees', str(donnees_path),
                 '--output', tmpdir,
@@ -188,8 +188,8 @@ class TestFiabilite:
         test_config = TESTS[template_key]
 
         originals = {
-            'vente': 'docs_originels/Trame vente lots de copropriété.docx',
-            'promesse': 'docs_originels/Trame promesse unilatérale de vente lots de copropriété.docx'
+            'vente': 'docs_original/Trame vente lots de copropriété.docx',
+            'promesse': 'docs_original/Trame promesse unilatérale de vente lots de copropriété.docx'
         }
 
         original = originals.get(template_key)
@@ -203,7 +203,7 @@ class TestFiabilite:
         with tempfile.TemporaryDirectory() as tmpdir:
             cmd_gen = [
                 sys.executable,
-                'execution/assembler_acte.py',
+                'execution/core/assembler_acte.py',
                 '--template', test_config['template'],
                 '--donnees', test_config['donnees_min'],
                 '--output', tmpdir,
@@ -227,7 +227,7 @@ class TestFiabilite:
             acte_docx = Path(tmpdir) / 'acte_genere.docx'
             cmd_export = [
                 sys.executable,
-                'execution/exporter_docx.py',
+                'execution/core/exporter_docx.py',
                 '--input', str(acte_path[0]),
                 '--output', str(acte_docx),
                 '--zones-grisees'
