@@ -13,7 +13,7 @@ Ce module fournit:
 
 Usage:
     # Depuis FastAPI endpoint
-    from execution.api_validation import ValidationAPI
+    from execution.api.api_validation import ValidationAPI
 
     api = ValidationAPI()
     result = await api.valider_donnees(donnees, type_acte="vente")
