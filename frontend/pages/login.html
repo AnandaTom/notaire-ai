@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notomai | Connexion</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="logo-seal">N</div>
+                <h1>Notomai</h1>
+                <p>Assistant Notarial Intelligent</p>
+            </div>
+
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Adresse email</label>
+                    <input type="email" id="email" name="email" placeholder="notaire@etude.fr" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+                </div>
+
+                <div id="errorMessage" style="color: var(--error); font-size: 0.85rem; display: none; margin-bottom: var(--space-md);"></div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    Se connecter
+                </button>
+            </form>
+
+            <div class="login-divider">ou</div>
+
+            <button class="magic-link-btn" onclick="handleMagicLink()">
+                Recevoir un lien de connexion par email
+            </button>
+
+            <div id="magicLinkMessage" style="color: var(--success); font-size: 0.85rem; display: none; margin-top: var(--space-md); text-align: center;"></div>
+
+            <div class="login-footer">
+                <p>Pas encore de compte ? <a href="#">Demander un acces</a></p>
+                <p style="margin-top: var(--space-sm);"><a href="../index.html">Retour a l'accueil</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Supabase
+        const SUPABASE_URL = 'https://wcklvjckzktijtgakdrk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indja2x2amNremt0aWp0Z2FrZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDI1NzksImV4cCI6MjA4NDU3ODU3OX0.lyfrGeuVSkivopQVWlq3tf6Uo5k4Z6BqOEPt5WuYXS4';
+
+        let supabaseClient = null;
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.warn('Erreur init Supabase:', e);
+        }
+
+        // Verifier si deja connecte
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (supabaseClient) {
+                const { data } = await supabaseClient.auth.getUser();
+                if (data?.user) {
+                    window.location.href = 'chat.html';
+                }
+            }
+        });
+
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const loginBtn = document.getElementById('loginBtn');
+
+            errorDiv.style.display = 'none';
+            loginBtn.textContent = 'Connexion en cours...';
+            loginBtn.disabled = true;
+
+            if (!supabaseClient) {
+                errorDiv.textContent = 'Service temporairement indisponible. Essayez le mode demo.';
+                errorDiv.style.display = 'block';
+                loginBtn.textContent = 'Se connecter';
+                loginBtn.disabled = false;
+
+                // Redirection vers le chat en mode demo apres 2 secondes
+                setTimeout(() => {
+                    window.location.href = 'chat.html';
+                }, 2000);
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) {
+                    errorDiv.textContent = error.message === 'Invalid login credentials'
+                        ? 'Email ou mot de passe incorrect'
+                        : error.message;
+                    errorDiv.style.display = 'block';
+                    loginBtn.textContent = 'Se connecter';
+                    loginBtn.disabled = false;
+                    return;
+                }
+
+                // Connexion reussie
+                window.location.href = 'chat.html';
+
+            } catch (error) {
+                errorDiv.textContent = 'Une erreur est survenue. Veuillez reessayer.';
+                errorDiv.style.display = 'block';
+                loginBtn.textContent = 'Se connecter';
+                loginBtn.disabled = false;
+            }
+        }
+
+        async function handleMagicLink() {
+            const email = document.getElementById('email').value;
+            const magicLinkMessage = document.getElementById('magicLinkMessage');
+            const errorDiv = document.getElementById('errorMessage');
+
+            if (!email) {
+                errorDiv.textContent = 'Veuillez entrer votre adresse email';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            errorDiv.style.display = 'none';
+            magicLinkMessage.style.display = 'none';
+
+            if (!supabaseClient) {
+                errorDiv.textContent = 'Service temporairement indisponible';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOtp({
+                    email,
+                    options: {
+                        emailRedirectTo: window.location.origin + '/frontend/pages/chat.html'
+                    }
+                });
+
+                if (error) {
+                    errorDiv.textContent = error.message;
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                magicLinkMessage.textContent = 'Un lien de connexion a ete envoye a ' + email;
+                magicLinkMessage.style.display = 'block';
+
+            } catch (error) {
+                errorDiv.textContent = 'Une erreur est survenue. Veuillez reessayer.';
+                errorDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
