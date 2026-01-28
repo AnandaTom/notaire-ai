@@ -16,6 +16,8 @@ Ce projet permet de générer des actes notariaux (vente, promesse de vente, rè
 
 **Développeur ?** Suivre [directives/bonnes_pratiques_templates.md](directives/bonnes_pratiques_templates.md) pour un développement 12x plus rapide.
 
+**Contributeur ?** Lire [CONTRIBUTING.md](CONTRIBUTING.md) pour les conventions de code et d'architecture.
+
 ### Workflow principal
 
 ```
@@ -65,31 +67,29 @@ python notaire.py dashboard
 | `directives/workflow_titre_promesse_vente.md` | 🆕 **WORKFLOW TITRE** - Titre → Promesse → Vente |
 | `directives/integration_titre_propriete.md` | 🆕 **INTÉGRATION TITRE** - Extraction et mapping des données |
 
-### Scripts d'exécution
+### Scripts d'exécution (v1.5.0)
 
+**Structure réorganisée en sous-dossiers :**
+
+| Module | Scripts | Fonction |
+|--------|---------|----------|
+| `execution/core/` | assembler_acte.py, exporter_docx.py, exporter_pdf.py, valider_acte.py | **CRITIQUE** - Fonctions de base |
+| `execution/gestionnaires/` | orchestrateur.py, gestionnaire_promesses.py, gestionnaire_titres.py, gestionnaire_clauses.py | Orchestration métier |
+| `execution/analyse/` | detecter_type_acte.py, comparer_documents.py, analyser_formatage.py | Scripts d'analyse |
+| `execution/generation/` | generer_donnees_test.py, generer_donnees_minimales.py, enrichir_prets.py | Génération de données |
+| `execution/database/` | supabase_client.py, historique.py, agent_database.py | Accès BDD |
+| `execution/utils/` | collecter_informations.py, suggerer_clauses.py, extraire_bookmarks.py, extraire_titre.py | Utilitaires |
+| `execution/extraction/` | patterns_avances.py, ml_extractor.py, ocr_processor.py | Module ML |
+| `execution/security/` | encryption_service.py, anonymiser_docx.py, secure_client_manager.py | Sécurité RGPD |
+| `execution/api/` | api_validation.py, api_feedback.py | Endpoints API internes |
+
+**Scripts à la racine de execution/ :**
 | Script | Fonction |
 |--------|----------|
-| `execution/assembler_acte.py` | Assemble template + données → Markdown (avec normalisation) |
-| `execution/exporter_docx.py` | Markdown → DOCX fidèle à l'original |
-| `execution/exporter_pdf.py` | Markdown → PDF |
-| `execution/valider_acte.py` | Valide les données avant génération |
-| `execution/extraire_bookmarks_contenu.py` | Analyse les variables d'un DOCX |
-| `execution/generer_donnees_test.py` | Génère données aléatoires réalistes (Faker) |
-| `execution/comparer_documents.py` | Valide conformité DOCX (≥80% requis) |
-| `execution/detecter_type_acte.py` | Détection automatique du type d'acte |
-| `execution/suggerer_clauses.py` | Intelligence de suggestion contextuelle |
-| `execution/collecter_informations.py` | CLI interactive avec questionary |
-| `execution/historique_supabase.py` | Sauvegarde historique (Supabase + offline) |
-| `execution/workflow_rapide.py` | 🚀 **Génération 1 commande** - Validation → Assemblage → Export → Score |
-| `execution/test_fiabilite.py` | ✅ **Tests automatisés** - Vérif min/max, zones grisées, conformité |
-| `execution/valider_rapide.ps1` / `.sh` | ⚡ **Validation pré-commit** - 4 tests en 10 secondes |
-| `execution/generer_donnees_minimales.py` | 🔧 Enrichit données avec 16 variables obligatoires |
-| `execution/enrichir_prets_existants.py` | 💰 Calcule mensualités et enrichit prêts |
-| `execution/orchestrateur_notaire.py` | **ORCHESTRATEUR** - Point d'entrée unifié pour tous workflows |
-| `execution/extraire_titre_propriete.py` | **EXTRACTION** - Extrait données d'un titre PDF/DOCX |
-| `execution/gestionnaire_titres_propriete.py` | **GESTIONNAIRE TITRES** - CRUD titres + conversion vers promesse/vente |
-| `execution/gestionnaire_promesses.py` | 🆕 **GESTIONNAIRE PROMESSES** - 4 types, détection auto, validation, Supabase |
-| `execution/extraction/` | **MODULE ML** - Patterns avancés, OCR, Machine Learning |
+| `execution/agent_autonome.py` | **AGENT PRINCIPAL** - Agent intelligent multi-parties |
+| `execution/workflow_rapide.py` | 🚀 **Génération 1 commande** - Validation → Assemblage → Export |
+| `execution/test_fiabilite.py` | ✅ **Tests automatisés** |
+| `execution/generer_dashboard_data.py` | Génération données dashboard |
 | `notaire.py` | **CLI SIMPLIFIÉ** - Point d'entrée racine (`python notaire.py`) |
 
 ### Schémas de données
