@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T14:52:11.332495",
+    "generated_at": "2026-01-29T15:48:48.444735",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 147
+    "commits": 149
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "98fa965",
-      "message": "merge: Sync avec master (dashboard.json auto-genere)",
+      "hash": "aa40ed1",
+      "message": "fix: workflow_rapide paths + diagnostic workflow doc",
       "date": "2026-01-29"
     },
-    "total_commits": 147,
+    "total_commits": 149,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 97
+        "commits": 98
       },
       {
         "name": "github-actions[bot]",
-        "commits": 20
+        "commits": 21
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "aa40ed1",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "workflow_rapide paths + diagnostic workflow doc",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "a69d708",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "98fa965",
       "author": "Tom",
       "date": "2026-01-29",
@@ -796,26 +816,6 @@
       "author": "Tom",
       "date": "2026-01-28",
       "message": "phase 5 - consolidation répertoires",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "c7693aa",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 4 - nettoyage scripts inutilisés",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "ec50fe1",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 3 - réorganisation complète execution/",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 14:52"
+    "last_updated": "2026-01-29 15:48"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 14:52"
+    "last_updated": "2026-01-29 15:48"
   },
   "conformity_details": {
     "promesse": {
