@@ -5,12 +5,22 @@ import Sidebar from '@/components/Sidebar'
 import ChatArea from '@/components/ChatArea'
 import Header from '@/components/Header'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ''
+
 export interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
   timestamp: Date
   section?: string
+  suggestions?: string[]
+  metadata?: {
+    fichier_url?: string
+    intention?: string
+    confiance?: number
+    [key: string]: unknown
+  }
 }
 
 export default function Home() {
@@ -18,7 +28,7 @@ export default function Home() {
     {
       id: '1',
       role: 'assistant',
-      content: `Bonjour Maître Diaz,
+      content: `Bonjour,
 
 Je suis votre assistant pour la rédaction d'actes notariaux. Je vous accompagne dans la création d'actes de vente et de promesses de vente conformes aux dispositions légales en vigueur.
 
@@ -27,7 +37,8 @@ Comment puis-je vous assister aujourd'hui ?`,
     },
   ])
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedFormat, setSelectedFormat] = useState<'pdf' | 'docx'>('pdf')
+  const [selectedFormat, setSelectedFormat] = useState<'pdf' | 'docx'>('docx')
+  const [conversationId] = useState(() => crypto.randomUUID())
 
   const sendMessage = async (content: string) => {
     const userMessage: Message = {
@@ -41,19 +52,29 @@ Comment puis-je vous assister aujourd'hui ?`,
     setIsLoading(true)
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(`${API_URL}/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(API_KEY ? { 'X-API-Key': API_KEY } : {}),
+        },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map((m) => ({
+          message: content,
+          conversation_id: conversationId,
+          history: messages.map((m) => ({
             role: m.role,
             content: m.content,
           })),
-          format: selectedFormat,
+          context: {
+            format: selectedFormat,
+          },
         }),
       })
 
-      if (!response.ok) throw new Error('Erreur de communication')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.detail || `Erreur ${response.status}`)
+      }
 
       const data = await response.json()
 
@@ -63,6 +84,13 @@ Comment puis-je vous assister aujourd'hui ?`,
         content: data.content,
         timestamp: new Date(),
         section: data.section,
+        suggestions: data.suggestions,
+        metadata: {
+          fichier_url: data.fichier_url,
+          intention: data.intention,
+          confiance: data.confiance,
+          ...(data.contexte_mis_a_jour || {}),
+        },
       }
 
       setMessages((prev) => [...prev, assistantMessage])
@@ -71,7 +99,9 @@ Comment puis-je vous assister aujourd'hui ?`,
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Désolé, une erreur est survenue. Veuillez réessayer.',
+        content: error instanceof Error
+          ? `Erreur de communication avec le serveur : ${error.message}`
+          : 'Désolé, une erreur est survenue. Veuillez réessayer.',
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, errorMessage])

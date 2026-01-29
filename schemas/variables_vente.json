@@ -425,6 +425,37 @@
       }
     },
 
+    "agent_immobilier": {
+      "type": "object",
+      "description": "Agent immobilier intervenant dans la vente",
+      "properties": {
+        "actif": { "type": "boolean", "description": "Si un agent immobilier intervient" },
+        "nom": { "type": "string" },
+        "adresse": { "type": "string" },
+        "carte_professionnelle": { "type": "string" },
+        "numero_carte": { "type": "string" },
+        "caisse_garantie": { "type": "string" },
+        "montant_garantie": { "type": "number" },
+        "honoraires": {
+          "type": "object",
+          "properties": {
+            "montant": { "type": "number" },
+            "pourcentage": { "type": "number" },
+            "charge_de": { "type": "string", "enum": ["vendeur", "acquereur", "partage"] },
+            "tva_incluse": { "type": "boolean" }
+          }
+        },
+        "mandat": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["simple", "exclusif", "semi-exclusif"] },
+            "date": { "type": "string" },
+            "numero": { "type": "string" }
+          }
+        }
+      }
+    },
+
     "diagnostics": {
       "type": "object",
       "description": "Dossier de diagnostics techniques",

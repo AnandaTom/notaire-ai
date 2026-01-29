@@ -37,6 +37,7 @@ image = modal.Image.debian_slim(python_version="3.11").pip_install(
     "pydantic>=2.5.0",
     "supabase>=2.0.0",
     "python-multipart>=0.0.6",
+    "sse-starlette>=1.6.0",
 )
 
 # Stub Modal

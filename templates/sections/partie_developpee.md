@@ -1436,6 +1436,10 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 {% include 'sections/section_diagnostics_environnementaux.md' %}
 {% endif %}
 
+{% if diagnostics and diagnostics.dpe %}
+{% include 'sections/section_performance_energetique.md' %}
+{% endif %}
+
 {% if obligation_declarative or aides %}
 {% include 'sections/section_obligation_declarative.md' %}
 {% endif %}

@@ -54,7 +54,7 @@ TYPES_ACTES = {
         "titre": "Acte de Vente de Lots de Copropriété"
     },
     "promesse": {
-        "schema": "questions_promesse.json",
+        "schema": "questions_promesse_vente.json",
         "titre": "Promesse de Vente"
     },
     "reglement": {

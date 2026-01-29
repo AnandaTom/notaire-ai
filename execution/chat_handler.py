@@ -500,6 +500,15 @@ class SimpleParseur:
 # API Endpoint (pour Modal/FastAPI)
 # =============================================================================
 
+def _get_supabase():
+    """Retourne un client Supabase si disponible."""
+    try:
+        from execution.database.supabase_client import get_supabase_client
+        return get_supabase_client()
+    except Exception:
+        return None
+
+
 def create_chat_router():
     """
     Cree le router FastAPI pour le chat.
@@ -513,8 +522,8 @@ def create_chat_router():
 
     class ChatRequest(BaseModel):
         message: str
-        user_id: str
-        etude_id: str
+        user_id: str = ""
+        etude_id: str = ""
         conversation_id: Optional[str] = None
         history: Optional[List[dict]] = None
         context: Optional[dict] = None
@@ -530,23 +539,100 @@ def create_chat_router():
     @router.post("/", response_model=ChatResponse)
     async def chat(request: ChatRequest):
         """
-        Endpoint principal du chatbot.
+        Endpoint principal du chatbot avec persistance conversationnelle.
 
         Securite:
         - Authentification via API key (geree par main.py)
         - RLS Supabase active (isolation par etude)
         - Aucune donnee sensible envoyee a un LLM externe
+
+        Persistance:
+        - Si conversation_id fourni, charge l'historique depuis Supabase
+        - Sauvegarde chaque message (user + assistant) dans conversation_messages
+        - Met a jour le contexte de la conversation
         """
         try:
             handler = ChatHandler(verbose=False)
+            historique = request.history or []
+            contexte = request.context or {}
+            conversation_id = request.conversation_id
+
+            # Charger l'historique depuis Supabase si conversation_id fourni
+            supabase = _get_supabase()
+            if supabase and conversation_id and request.etude_id:
+                try:
+                    conv_resp = supabase.table("conversations").select("*").eq(
+                        "id", conversation_id
+                    ).maybe_single().execute()
+
+                    if conv_resp.data:
+                        # Charger le contexte persiste
+                        stored_ctx = conv_resp.data.get("contexte") or {}
+                        contexte = {**stored_ctx, **contexte}
+
+                        # Charger les messages precedents
+                        msgs_resp = supabase.table("conversation_messages").select(
+                            "role, content"
+                        ).eq(
+                            "conversation_id", conversation_id
+                        ).order("created_at").execute()
+
+                        if msgs_resp.data:
+                            historique = msgs_resp.data
+                    else:
+                        # Creer la conversation
+                        supabase.table("conversations").insert({
+                            "id": conversation_id,
+                            "etude_id": request.etude_id,
+                            "user_id": request.user_id,
+                            "statut": "active",
+                            "contexte": contexte,
+                        }).execute()
+                except Exception:
+                    pass  # Fallback silencieux
 
             reponse = handler.traiter_message(
                 message=request.message,
                 user_id=request.user_id,
                 etude_id=request.etude_id,
-                historique=request.history,
-                contexte=request.context
+                historique=historique,
+                contexte=contexte
             )
+
+            # Persister les messages dans Supabase
+            if supabase and conversation_id and request.etude_id:
+                try:
+                    supabase.table("conversation_messages").insert([
+                        {
+                            "conversation_id": conversation_id,
+                            "role": "user",
+                            "content": request.message,
+                        },
+                        {
+                            "conversation_id": conversation_id,
+                            "role": "assistant",
+                            "content": reponse.content,
+                            "intention": reponse.intention_detectee,
+                            "confiance": reponse.confiance,
+                            "metadata": {
+                                "suggestions": reponse.suggestions,
+                            },
+                        },
+                    ]).execute()
+
+                    # Mettre a jour le contexte
+                    update_data = {}
+                    if reponse.contexte_mis_a_jour:
+                        update_data["contexte"] = reponse.contexte_mis_a_jour
+                        type_acte = reponse.contexte_mis_a_jour.get("type_acte_en_cours")
+                        if type_acte:
+                            update_data["type_acte"] = type_acte
+                    if update_data:
+                        supabase.table("conversations").update(update_data).eq(
+                            "id", conversation_id
+                        ).execute()
+                except Exception:
+                    pass  # Fallback silencieux
 
             return ChatResponse(
                 content=reponse.content,
@@ -554,7 +640,7 @@ def create_chat_router():
                 action=reponse.action,
                 intention=reponse.intention_detectee,
                 confiance=reponse.confiance,
-                conversation_id=request.conversation_id
+                conversation_id=conversation_id
             )
 
         except Exception as e:

@@ -95,18 +95,44 @@ def valider_donnees(donnees_path, type_acte):
 
     return True
 
+def _detecter_template_promesse(donnees_path):
+    """Utilise le gestionnaire de promesses pour détecter le bon template."""
+    try:
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
+        gestionnaire = GestionnairePromesses()
+
+        with open(donnees_path, 'r', encoding='utf-8') as f:
+            donnees = json.load(f)
+
+        detection = gestionnaire.detecter_type(donnees)
+        template_path = gestionnaire._selectionner_template(detection.type_promesse)
+
+        if template_path and template_path.exists():
+            print(f"  🔍 Type détecté: {detection.type_promesse.value} (confiance: {detection.confiance:.0%})")
+            print(f"  💡 Raison: {detection.raison}")
+            return template_path.name
+    except Exception as e:
+        print(f"  ⚠️  Détection auto échouée ({e}), fallback template principal")
+
+    return 'promesse_vente_lots_copropriete.md'
+
+
 def assembler_acte(type_acte, donnees_path, output_dir):
     """Assemble le template avec les données"""
     print_step(2, "Assemblage du template")
 
     templates = {
         'vente': 'vente_lots_copropriete.md',
-        'promesse_vente': 'promesse_vente_lots_copropriete.md',
         'reglement': 'reglement_copropriete_edd.md',
         'modificatif': 'modificatif_edd.md'
     }
 
-    template = templates.get(type_acte)
+    if type_acte == 'promesse_vente':
+        template = _detecter_template_promesse(donnees_path)
+    else:
+        template = templates.get(type_acte)
+
     if not template:
         print(f"❌ Type d'acte inconnu: {type_acte}")
         return None
