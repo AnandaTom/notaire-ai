@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T10:27:36.173562",
+    "generated_at": "2026-01-29T14:52:11.332495",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,20 +12,20 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 144
+    "commits": 147
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "9a13b27",
-      "message": "chore: Fin de journee - 29/01/2026 11:27:22,92",
+      "hash": "98fa965",
+      "message": "merge: Sync avec master (dashboard.json auto-genere)",
       "date": "2026-01-29"
     },
-    "total_commits": 144,
+    "total_commits": 147,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 96
+        "commits": 97
       },
       {
         "name": "github-actions[bot]",
@@ -41,7 +41,7 @@
       },
       {
         "name": "Automai",
-        "commits": 1
+        "commits": 2
       }
     ]
   },
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "98fa965",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "merge: Sync avec master (dashboard.json auto-genere)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ecd8f0a",
+      "author": "Automai",
+      "date": "2026-01-29",
+      "message": "Travail du 29/01/2026 (#17)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
       "hash": "9a13b27",
       "author": "Tom",
       "date": "2026-01-29",
@@ -630,6 +650,16 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
+    },
+    {
+      "hash": "7905871",
+      "author": "Automai",
+      "date": "2026-01-29",
+      "message": "Ajout trames promesse D, E, F (#16)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
     },
     {
       "hash": "090d6b9",
@@ -786,36 +816,6 @@
       "author": "Tom",
       "date": "2026-01-28",
       "message": "phase 3 - réorganisation complète execution/",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "f4108ff",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 3.2 - création execution/gestionnaires/",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "1cc14c0",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 3.1 - création execution/core/",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "6e2a5a9",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 2 - consolidation templates",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 10:27"
+    "last_updated": "2026-01-29 14:52"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 10:27"
+    "last_updated": "2026-01-29 14:52"
   },
   "conformity_details": {
     "promesse": {
