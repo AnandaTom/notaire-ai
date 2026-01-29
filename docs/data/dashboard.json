@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T16:22:51.018625",
+    "generated_at": "2026-01-29T16:53:15.664764",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 157
+    "commits": 161
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "3487b2a",
+      "hash": "bb26e17",
       "message": "Merge branch 'tom/dev'",
       "date": "2026-01-29"
     },
-    "total_commits": 157,
+    "total_commits": 161,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 102
+        "commits": 104
       },
       {
         "name": "github-actions[bot]",
-        "commits": 26
+        "commits": 28
       },
       {
         "name": "augustinfrance-aico",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 59,
-    "total_lines": 34732,
+    "total_lines": 34844,
     "categories": {
       "generation": 6,
       "utils": 45,
@@ -156,7 +156,7 @@
   },
   "schemas": {
     "total": 17,
-    "total_variables": 201,
+    "total_variables": 202,
     "schemas": [
       {
         "name": "questions_notaire.json",
@@ -164,7 +164,7 @@
       },
       {
         "name": "variables_vente.json",
-        "count": 22
+        "count": 23
       },
       {
         "name": "variables_reglement_copropriete.json",
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "bb26e17",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "3d553d4",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Sprint 2 batch - API, frontend, persistence, SSE, tests",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "25e26ae",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "3487b2a",
       "author": "Tom",
       "date": "2026-01-29",
@@ -630,6 +660,16 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
+    },
+    {
+      "hash": "87934e9",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "b388819",
@@ -775,46 +815,6 @@
       "hash": "d811302",
       "author": "github-actions[bot]",
       "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "fc7893b",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "merge: Sync avec master (dashboard.json)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "47aa3d1",
-      "author": "github-actions[bot]",
-      "date": "2026-01-28",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "bc7b36f",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "Fin de journee - 28/01/2026 18:41:20,84",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "308b9c7",
-      "author": "github-actions[bot]",
-      "date": "2026-01-28",
       "message": "auto-update dashboard data [skip ci]",
       "type": "chore",
       "type_label": "Maintenance",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 16:22"
+    "last_updated": "2026-01-29 16:53"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 16:22"
+    "last_updated": "2026-01-29 16:53"
   },
   "conformity_details": {
     "promesse": {
