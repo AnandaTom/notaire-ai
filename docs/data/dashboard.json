@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T20:35:39.486975",
+    "generated_at": "2026-01-29T21:40:46.392087",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 61,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 165
+    "commits": 167
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "112a32f",
-      "message": "Merge branch 'tom/dev'",
+      "hash": "8fc7f26",
+      "message": "fix(ci): register custom Jinja2 filters in template syntax test",
       "date": "2026-01-29"
     },
-    "total_commits": 165,
+    "total_commits": 167,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 106
+        "commits": 109
       },
       {
         "name": "github-actions[bot]",
-        "commits": 30
+        "commits": 32
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "8fc7f26",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "register custom Jinja2 filters in template syntax test",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "1ac7192",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "112a32f",
       "author": "Tom",
       "date": "2026-01-29",
@@ -800,26 +820,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "98fa965",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "merge: Sync avec master (dashboard.json auto-genere)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ecd8f0a",
-      "author": "Automai",
-      "date": "2026-01-29",
-      "message": "Travail du 29/01/2026 (#17)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 20:35"
+    "last_updated": "2026-01-29 21:40"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 20:35"
+    "last_updated": "2026-01-29 21:40"
   },
   "conformity_details": {
     "promesse": {
