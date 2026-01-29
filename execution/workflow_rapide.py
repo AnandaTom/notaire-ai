@@ -113,7 +113,7 @@ def assembler_acte(type_acte, donnees_path, output_dir):
 
     cmd = [
         sys.executable,
-        'execution/assembler_acte.py',
+        'execution/core/assembler_acte.py',
         '--template', template,
         '--donnees', str(donnees_path),
         '--output', str(output_dir),
@@ -143,7 +143,7 @@ def exporter_docx(acte_md_path, output_path):
 
     cmd = [
         sys.executable,
-        'execution/exporter_docx.py',
+        'execution/core/exporter_docx.py',
         '--input', str(acte_md_path),
         '--output', str(output_path),
         '--zones-grisees'
@@ -168,7 +168,7 @@ def valider_conformite(original_docx, generated_md):
 
     cmd = [
         sys.executable,
-        'execution/comparer_documents_v2.py',
+        'execution/analyse/comparer_documents.py',
         '--original', str(original_docx),
         '--genere', str(generated_md)
     ]
