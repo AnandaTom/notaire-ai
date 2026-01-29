@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T16:12:32.605836",
+    "generated_at": "2026-01-29T16:22:51.018625",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 153
+    "commits": 157
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "54607c3",
+      "hash": "3487b2a",
       "message": "Merge branch 'tom/dev'",
       "date": "2026-01-29"
     },
-    "total_commits": 153,
+    "total_commits": 157,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 100
+        "commits": 102
       },
       {
         "name": "github-actions[bot]",
-        "commits": 24
+        "commits": 26
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "3487b2a",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "b388819",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "ajout specs detaillees pour Augustin (formulaires, dashboard, commercial)",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "ab325cb",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "54607c3",
       "author": "Tom",
       "date": "2026-01-29",
@@ -630,6 +660,16 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
+    },
+    {
+      "hash": "ea18d1e",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "1412ce1",
@@ -780,46 +820,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "299b4ac",
-      "author": "Augustin",
-      "date": "2026-01-28",
-      "message": "système complet de formulaires clients sécurisés",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "8c02bd8",
-      "author": "github-actions[bot]",
-      "date": "2026-01-28",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "70176b5",
-      "author": "Payoss",
-      "date": "2026-01-28",
-      "message": "Ajout dashboard, frontend chatbot et architecture",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "77357ce",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "update paths and imports for v1.5.0 structure",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 16:12"
+    "last_updated": "2026-01-29 16:22"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 16:12"
+    "last_updated": "2026-01-29 16:22"
   },
   "conformity_details": {
     "promesse": {
