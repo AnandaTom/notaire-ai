@@ -1,2 +1,2 @@
-# Auto-generated files: always keep "ours" on merge to avoid conflicts
+# Auto-generated files: keep our version on merge conflicts
 docs/data/dashboard.json merge=ours
