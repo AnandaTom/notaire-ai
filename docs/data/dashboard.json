@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T21:29:12.173107",
+    "generated_at": "2026-01-29T21:46:13.140559",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 61,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 160
+    "commits": 162
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "64b3416",
-      "message": "chore: add .gitattributes with merge=ours for dashboard.json",
+      "hash": "c8f5c81",
+      "message": "chore: Fin de journee - 29/01/2026 22:45:54,21",
       "date": "2026-01-29"
     },
-    "total_commits": 160,
+    "total_commits": 162,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 108
+        "commits": 110
       },
       {
         "name": "github-actions[bot]",
-        "commits": 31
+        "commits": 33
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "c8f5c81",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Fin de journee - 29/01/2026 22:45:54,21",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "bd01ec1",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "64b3416",
       "author": "Tom",
       "date": "2026-01-29",
@@ -796,26 +816,6 @@
       "author": "Tom",
       "date": "2026-01-29",
       "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "d811302",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "fc7893b",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "merge: Sync avec master (dashboard.json)",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 21:29"
+    "last_updated": "2026-01-29 21:46"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 21:29"
+    "last_updated": "2026-01-29 21:46"
   },
   "conformity_details": {
     "promesse": {
