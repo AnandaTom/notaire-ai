@@ -55,6 +55,16 @@ jobs:
           import glob
 
           env = Environment(loader=FileSystemLoader('.'))
+
+          # Register custom filters as stubs for syntax validation
+          stub = lambda *a, **kw: ''
+          for name in [
+              'nombre_en_lettres', 'montant_en_lettres', 'format_nombre',
+              'format_date', 'date_en_lettres', 'annee_en_lettres',
+              'numero_lot_en_lettres', 'mois_en_lettres', 'jour_en_lettres',
+          ]:
+              env.filters[name] = stub
+
           errors = []
 
           for f in glob.glob('templates/**/*.md', recursive=True):
