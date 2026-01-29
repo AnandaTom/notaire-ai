@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T16:22:10.226441",
+    "generated_at": "2026-01-29T16:53:00.019539",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 153
+    "commits": 155
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "b388819",
-      "message": "docs: ajout specs detaillees pour Augustin (formulaires, dashboard, commercial)",
+      "hash": "3d553d4",
+      "message": "feat: Sprint 2 batch - API, frontend, persistence, SSE, tests",
       "date": "2026-01-29"
     },
-    "total_commits": 153,
+    "total_commits": 155,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 101
+        "commits": 103
       },
       {
         "name": "github-actions[bot]",
-        "commits": 25
+        "commits": 27
       },
       {
         "name": "augustinfrance-aico",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 59,
-    "total_lines": 34732,
+    "total_lines": 34844,
     "categories": {
       "generation": 6,
       "utils": 45,
@@ -156,7 +156,7 @@
   },
   "schemas": {
     "total": 17,
-    "total_variables": 201,
+    "total_variables": 202,
     "schemas": [
       {
         "name": "questions_notaire.json",
@@ -164,7 +164,7 @@
       },
       {
         "name": "variables_vente.json",
-        "count": 22
+        "count": 23
       },
       {
         "name": "variables_reglement_copropriete.json",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "3d553d4",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Sprint 2 batch - API, frontend, persistence, SSE, tests",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "87934e9",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "b388819",
       "author": "Tom",
       "date": "2026-01-29",
@@ -800,26 +820,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "70176b5",
-      "author": "Payoss",
-      "date": "2026-01-28",
-      "message": "Ajout dashboard, frontend chatbot et architecture",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "77357ce",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "update paths and imports for v1.5.0 structure",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 16:22"
+    "last_updated": "2026-01-29 16:53"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 16:22"
+    "last_updated": "2026-01-29 16:53"
   },
   "conformity_details": {
     "promesse": {
