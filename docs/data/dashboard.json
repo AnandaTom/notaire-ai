@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T11:19:46.868110",
+    "generated_at": "2026-01-29T10:27:36.173562",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,20 +12,20 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 143
+    "commits": 144
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "090d6b9",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "9a13b27",
+      "message": "chore: Fin de journee - 29/01/2026 11:27:22,92",
       "date": "2026-01-29"
     },
-    "total_commits": 143,
+    "total_commits": 144,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 97
+        "commits": 96
       },
       {
         "name": "github-actions[bot]",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 445,
-      "last_modified": "2026-01-28"
+      "last_modified": "2026-01-29"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-01-28"
+      "last_modified": "2026-01-29"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,69 +88,69 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-01-28"
+      "last_modified": "2026-01-29"
     }
   ],
   "scripts": {
     "total": 59,
     "total_lines": 34732,
     "categories": {
-      "utils": 45,
-      "export": 3,
       "generation": 6,
+      "utils": 45,
       "tests": 3,
+      "export": 3,
       "validation": 2
     },
     "scripts": [
       {
         "name": "agent_autonome.py",
         "lines": 2034,
-        "path": "execution\\agent_autonome.py"
+        "path": "execution/agent_autonome.py"
       },
       {
         "name": "exporter_docx.py",
         "lines": 1896,
-        "path": "execution\\core\\exporter_docx.py"
+        "path": "execution/core/exporter_docx.py"
       },
       {
         "name": "valider_acte.py",
         "lines": 1560,
-        "path": "execution\\core\\valider_acte.py"
+        "path": "execution/core/valider_acte.py"
       },
       {
         "name": "orchestrateur.py",
         "lines": 1425,
-        "path": "execution\\gestionnaires\\orchestrateur.py"
+        "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "gestionnaire_promesses.py",
         "lines": 1231,
-        "path": "execution\\gestionnaires\\gestionnaire_promesses.py"
+        "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
         "name": "generer_dashboard_data.py",
         "lines": 1080,
-        "path": "execution\\generer_dashboard_data.py"
+        "path": "execution/generer_dashboard_data.py"
       },
       {
         "name": "generer_donnees_test.py",
         "lines": 1049,
-        "path": "execution\\generation\\generer_donnees_test.py"
+        "path": "execution/generation/generer_donnees_test.py"
       },
       {
         "name": "secure_client_manager.py",
         "lines": 951,
-        "path": "execution\\security\\secure_client_manager.py"
+        "path": "execution/security/secure_client_manager.py"
       },
       {
         "name": "gestionnaire_titres.py",
         "lines": 919,
-        "path": "execution\\gestionnaires\\gestionnaire_titres.py"
+        "path": "execution/gestionnaires/gestionnaire_titres.py"
       },
       {
         "name": "comparer_documents.py",
         "lines": 859,
-        "path": "execution\\analyse\\comparer_documents.py"
+        "path": "execution/analyse/comparer_documents.py"
       }
     ]
   },
@@ -159,8 +159,56 @@
     "total_variables": 201,
     "schemas": [
       {
+        "name": "questions_notaire.json",
+        "count": 6
+      },
+      {
+        "name": "variables_vente.json",
+        "count": 22
+      },
+      {
+        "name": "variables_reglement_copropriete.json",
+        "count": 17
+      },
+      {
+        "name": "sections_catalogue.json",
+        "count": 7
+      },
+      {
+        "name": "questions_modificatif_edd.json",
+        "count": 2
+      },
+      {
+        "name": "questions_donation_partage.json",
+        "count": 6
+      },
+      {
+        "name": "questions_promesse_vente.json",
+        "count": 6
+      },
+      {
         "name": "annexes_catalogue.json",
         "count": 8
+      },
+      {
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
+        "name": "variables_promesse_vente.json",
+        "count": 28
+      },
+      {
+        "name": "promesse_catalogue_unifie.json",
+        "count": 10
       },
       {
         "name": "clauses_catalogue.json",
@@ -171,98 +219,50 @@
         "count": 9
       },
       {
-        "name": "promesse_catalogue_unifie.json",
-        "count": 10
-      },
-      {
-        "name": "questions_donation_partage.json",
-        "count": 6
-      },
-      {
-        "name": "questions_modificatif_edd.json",
-        "count": 2
-      },
-      {
-        "name": "questions_notaire.json",
-        "count": 6
-      },
-      {
-        "name": "questions_promesse_vente.json",
-        "count": 6
-      },
-      {
-        "name": "questions_reglement_copropriete.json",
-        "count": 2
-      },
-      {
-        "name": "sections_catalogue.json",
-        "count": 7
-      },
-      {
-        "name": "variables_donation_partage.json",
-        "count": 18
-      },
-      {
         "name": "variables_modificatif_edd.json",
         "count": 12
       },
       {
-        "name": "variables_promesse.json",
-        "count": 24
-      },
-      {
-        "name": "variables_promesse_vente.json",
-        "count": 28
-      },
-      {
-        "name": "variables_reglement_copropriete.json",
-        "count": 17
-      },
-      {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
-        "name": "variables_vente.json",
-        "count": 22
+        "name": "variables_donation_partage.json",
+        "count": 18
       }
     ]
   },
   "docs": {
     "legal": [
-      "BASES_LEGALES.md",
       "CGU_TEMPLATE.md",
-      "OBLIGATIONS_CSN.md",
       "POLITIQUE_CONFIDENTIALITE.md",
+      "BASES_LEGALES.md",
+      "OBLIGATIONS_CSN.md",
       "REGISTRE_TRAITEMENTS.md"
     ],
     "directives": [
-      "ajouter_template.md",
-      "analyse_trames_promesse.md",
-      "apprentissage_continu.md",
-      "bonnes_pratiques_templates.md",
-      "collecte_informations.md",
-      "creer_acte.md",
-      "creer_donation_partage.md",
-      "creer_modificatif_edd.md",
-      "creer_promesse_vente.md",
-      "creer_reglement_copropriete.md",
-      "etat_des_lieux.md",
-      "flexibilite_systeme.md",
-      "formatage_docx.md",
-      "generation_promesses_avancee.md",
-      "gestion_flexible.md",
-      "integration_titre_propriete.md",
-      "lecons_apprises.md",
-      "mise_a_jour_statuts_donation.md",
-      "modifier_acte.md",
-      "pipeline_generation.md",
-      "README.md",
       "validation_donnees.md",
-      "workflow_agent_optimise.md",
+      "modifier_acte.md",
+      "gestion_flexible.md",
+      "collecte_informations.md",
+      "mise_a_jour_statuts_donation.md",
+      "generation_promesses_avancee.md",
+      "creer_donation_partage.md",
+      "integration_titre_propriete.md",
+      "README.md",
+      "bonnes_pratiques_templates.md",
+      "apprentissage_continu.md",
       "workflow_notaire.md",
+      "pipeline_generation.md",
+      "lecons_apprises.md",
+      "formatage_docx.md",
+      "analyse_trames_promesse.md",
+      "workflow_agent_optimise.md",
+      "creer_modificatif_edd.md",
+      "creer_acte.md",
+      "workflow_titre_promesse_vente.md",
+      "ajouter_template.md",
+      "flexibilite_systeme.md",
+      "creer_reglement_copropriete.md",
       "workflow_promesse_intelligent.md",
-      "workflow_titre_promesse_vente.md"
+      "creer_promesse_vente.md",
+      "etat_des_lieux.md"
     ],
     "total_legal": 5,
     "total_directives": 26
@@ -622,6 +622,16 @@
   ],
   "activity": [
     {
+      "hash": "9a13b27",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Fin de journee - 29/01/2026 11:27:22,92",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "090d6b9",
       "author": "Tom",
       "date": "2026-01-29",
@@ -685,7 +695,7 @@
       "hash": "299b4ac",
       "author": "Augustin",
       "date": "2026-01-28",
-      "message": "systÃ¨me complet de formulaires clients sÃ©curisÃ©s",
+      "message": "système complet de formulaires clients sécurisés",
       "type": "feat",
       "type_label": "Feature",
       "type_icon": "✨",
@@ -745,7 +755,7 @@
       "hash": "b5bae73",
       "author": "Tom",
       "date": "2026-01-28",
-      "message": "phase 6 - mise Ã  jour documentation",
+      "message": "phase 6 - mise à jour documentation",
       "type": "docs",
       "type_label": "Documentation",
       "type_icon": "📝",
@@ -755,7 +765,7 @@
       "hash": "37f8c4a",
       "author": "Tom",
       "date": "2026-01-28",
-      "message": "phase 5 - consolidation rÃ©pertoires",
+      "message": "phase 5 - consolidation répertoires",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -765,7 +775,7 @@
       "hash": "c7693aa",
       "author": "Tom",
       "date": "2026-01-28",
-      "message": "phase 4 - nettoyage scripts inutilisÃ©s",
+      "message": "phase 4 - nettoyage scripts inutilisés",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -775,7 +785,7 @@
       "hash": "ec50fe1",
       "author": "Tom",
       "date": "2026-01-28",
-      "message": "phase 3 - rÃ©organisation complÃ¨te execution/",
+      "message": "phase 3 - réorganisation complète execution/",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -785,7 +795,7 @@
       "hash": "f4108ff",
       "author": "Tom",
       "date": "2026-01-28",
-      "message": "phase 3.2 - crÃ©ation execution/gestionnaires/",
+      "message": "phase 3.2 - création execution/gestionnaires/",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -795,7 +805,7 @@
       "hash": "1cc14c0",
       "author": "Tom",
       "date": "2026-01-28",
-      "message": "phase 3.1 - crÃ©ation execution/core/",
+      "message": "phase 3.1 - création execution/core/",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -806,16 +816,6 @@
       "author": "Tom",
       "date": "2026-01-28",
       "message": "phase 2 - consolidation templates",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "7a1e8d6",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 1 - nettoyage critique fichiers morts",
       "type": "refactor",
       "type_label": "Refactor",
       "type_icon": "♻️",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 11:19"
+    "last_updated": "2026-01-29 10:27"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 11:19"
+    "last_updated": "2026-01-29 10:27"
   },
   "conformity_details": {
     "promesse": {
