@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T16:11:50.606866",
+    "generated_at": "2026-01-29T16:22:10.226441",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 151
+    "commits": 153
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "1412ce1",
-      "message": "docs: DIAGNOSTIC_WORKFLOW enrichi avec specs détaillées pour Paul",
+      "hash": "b388819",
+      "message": "docs: ajout specs detaillees pour Augustin (formulaires, dashboard, commercial)",
       "date": "2026-01-29"
     },
-    "total_commits": 151,
+    "total_commits": 153,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 99
+        "commits": 101
       },
       {
         "name": "github-actions[bot]",
-        "commits": 23
+        "commits": 25
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "b388819",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "ajout specs detaillees pour Augustin (formulaires, dashboard, commercial)",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "ea18d1e",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "1412ce1",
       "author": "Tom",
       "date": "2026-01-29",
@@ -796,26 +816,6 @@
       "author": "Tom",
       "date": "2026-01-28",
       "message": "update paths and imports for v1.5.0 structure",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "a86ca4b",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "remove frontend-mockup folder",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "723bd70",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "corrections finales post-restructuration",
       "type": "fix",
       "type_label": "Fix",
       "type_icon": "🐛",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 16:11"
+    "last_updated": "2026-01-29 16:22"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 16:11"
+    "last_updated": "2026-01-29 16:22"
   },
   "conformity_details": {
     "promesse": {
