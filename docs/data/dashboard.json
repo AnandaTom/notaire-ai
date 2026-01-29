@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T16:53:00.019539",
+    "generated_at": "2026-01-29T20:34:48.348861",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,27 +9,27 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 59,
+    "scripts_count": 61,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 155
+    "commits": 157
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "3d553d4",
-      "message": "feat: Sprint 2 batch - API, frontend, persistence, SSE, tests",
+      "hash": "72d2937",
+      "message": "feat: Sprint 3+4 - Q&R interactif, pipeline E2E, conversion promesse→vente",
       "date": "2026-01-29"
     },
-    "total_commits": 155,
+    "total_commits": 157,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 103
+        "commits": 105
       },
       {
         "name": "github-actions[bot]",
-        "commits": 27
+        "commits": 29
       },
       {
         "name": "augustinfrance-aico",
@@ -54,7 +54,7 @@
       "bookmarks": 361,
       "sections": 37,
       "trames_source": 1,
-      "lines": 445,
+      "lines": 446,
       "last_modified": "2026-01-29"
     },
     {
@@ -92,11 +92,11 @@
     }
   ],
   "scripts": {
-    "total": 59,
-    "total_lines": 34844,
+    "total": 61,
+    "total_lines": 36389,
     "categories": {
       "generation": 6,
-      "utils": 45,
+      "utils": 47,
       "tests": 3,
       "export": 3,
       "validation": 2
@@ -104,7 +104,7 @@
     "scripts": [
       {
         "name": "agent_autonome.py",
-        "lines": 2034,
+        "lines": 2805,
         "path": "execution/agent_autonome.py"
       },
       {
@@ -114,7 +114,7 @@
       },
       {
         "name": "valider_acte.py",
-        "lines": 1560,
+        "lines": 1571,
         "path": "execution/core/valider_acte.py"
       },
       {
@@ -124,7 +124,7 @@
       },
       {
         "name": "gestionnaire_promesses.py",
-        "lines": 1231,
+        "lines": 1236,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "72d2937",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Sprint 3+4 - Q&R interactif, pipeline E2E, conversion promesse→vente",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "c6dc43e",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "3d553d4",
       "author": "Tom",
       "date": "2026-01-29",
@@ -793,26 +813,6 @@
     },
     {
       "hash": "308b9c7",
-      "author": "github-actions[bot]",
-      "date": "2026-01-28",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "299b4ac",
-      "author": "Augustin",
-      "date": "2026-01-28",
-      "message": "système complet de formulaires clients sécurisés",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "8c02bd8",
       "author": "github-actions[bot]",
       "date": "2026-01-28",
       "message": "auto-update dashboard data [skip ci]",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 16:53"
+    "last_updated": "2026-01-29 20:34"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 16:53"
+    "last_updated": "2026-01-29 20:34"
   },
   "conformity_details": {
     "promesse": {
