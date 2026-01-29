@@ -31,7 +31,7 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 |----------|-----------|--------|--------|
 | `reglement_copropriete_edd.md` | **85.5%** | ✅ PROD | Utiliser directement |
 | `modificatif_edd.md` | **91.7%** | ✅ PROD | Utiliser directement |
-| `vente_lots_copropriete.md` | **85.1%** | ✅ PROD | 37 sections, données enrichies requises |
+| `vente_lots_copropriete.md` | **80.2%** | ✅ PROD | 37 sections, données enrichies requises |
 
 #### 🆕 Promesses de Vente (Système Multi-Templates v1.4.0)
 
@@ -96,7 +96,7 @@ if conformite < 80:
 > "Je vais créer une promesse de vente. D'après les données, je détecte une vente **avec mobilier** (confiance 85%). Le template correspondant est prêt à 87.1%. Je génère le document."
 
 **Agent dit** (pour vente):
-> "Je vais créer un acte de vente. Le template est prêt à 85.1%. Voulez-vous que je collecte vos données ou utilise un exemple?"
+> "Je vais créer un acte de vente. Le template est prêt à 80.2%. Voulez-vous que je collecte vos données ou utilise un exemple?"
 
 ---
 
@@ -474,7 +474,7 @@ python execution/extraire_bookmarks_contenu.py \
 
 | Type | Templates | Conformité | Statut |
 |------|-----------|-----------|--------|
-| Vente | 1 | 85.1% | ✅ PROD |
+| Vente | 1 | 80.2% | ✅ PROD |
 | Promesse Standard | 1 | 88.9% | ✅ PROD |
 | Promesse Premium | 1 | 85.2% | ✅ PROD |
 | Promesse Mobilier | 1 | 87.1% | ✅ PROD |

@@ -35,6 +35,7 @@ from functools import lru_cache
 import re
 from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 
@@ -492,6 +493,88 @@ async def execute_agent(
         raise HTTPException(status_code=500, detail="Une erreur interne est survenue")
 
 
+@app.post("/agent/execute-stream", tags=["Agent"])
+async def execute_streaming(
+    request: Request,
+    auth: AuthContext = Depends(require_write_permission)
+):
+    """
+    Exécute une demande avec streaming SSE.
+
+    Envoie des événements progressifs pendant la génération :
+    - event: status → {"etape": "...", "message": "..."}
+    - event: result → résultat complet
+    - event: error → {"message": "..."}
+    """
+    import asyncio
+
+    body = await request.json()
+    demande = body.get("demande", body.get("texte", ""))
+
+    async def event_generator():
+        import time
+
+        yield {
+            "event": "status",
+            "data": json.dumps({"etape": "reception", "message": "Demande reçue..."})
+        }
+
+        yield {
+            "event": "status",
+            "data": json.dumps({"etape": "analyse", "message": "Analyse de la demande..."})
+        }
+
+        try:
+            debut = time.time()
+            agent = AgentNotaire()
+            parseur = ParseurDemandeNL()
+            analyse = parseur.analyser(demande)
+
+            yield {
+                "event": "status",
+                "data": json.dumps({
+                    "etape": "generation",
+                    "message": f"Génération en cours ({analyse.type_acte.value})..."
+                })
+            }
+
+            resultat = agent.executer(demande)
+            duree = int((time.time() - debut) * 1000)
+
+            fichier_url = None
+            if resultat.fichier_genere:
+                fichier_url = f"/files/{Path(resultat.fichier_genere).name}"
+
+            yield {
+                "event": "result",
+                "data": json.dumps({
+                    "succes": resultat.succes,
+                    "message": resultat.message,
+                    "intention": resultat.intention.value,
+                    "fichier_genere": resultat.fichier_genere,
+                    "fichier_url": fichier_url,
+                    "duree_ms": duree,
+                })
+            }
+
+        except Exception as e:
+            logger.error(f"Erreur streaming: {e}", exc_info=True)
+            yield {
+                "event": "error",
+                "data": json.dumps({"message": str(e)})
+            }
+
+    try:
+        from sse_starlette.sse import EventSourceResponse
+        return EventSourceResponse(event_generator())
+    except ImportError:
+        # Fallback si sse-starlette n'est pas installé
+        raise HTTPException(
+            status_code=501,
+            detail="Streaming SSE non disponible. Installer: pip install sse-starlette"
+        )
+
+
 @app.post("/agent/feedback", response_model=FeedbackResponse, tags=["Agent"])
 async def submit_feedback(
     feedback: FeedbackRequest,
@@ -797,6 +880,28 @@ async def health_check():
             "supabase": supabase_status
         }
     }
+
+
+@app.get("/files/{filename}", tags=["Fichiers"])
+async def download_file(filename: str, auth: AuthContext = Depends(verify_api_key)):
+    """Télécharge un fichier généré (DOCX/PDF)."""
+    output_dir = os.getenv("NOTAIRE_OUTPUT_DIR", "outputs")
+    file_path = os.path.join(output_dir, filename)
+
+    # Sécurité : empêcher path traversal
+    real_path = os.path.realpath(file_path)
+    real_output = os.path.realpath(output_dir)
+    if not real_path.startswith(real_output):
+        raise HTTPException(status_code=403, detail="Accès refusé")
+
+    if not os.path.isfile(real_path):
+        raise HTTPException(status_code=404, detail=f"Fichier non trouvé: {filename}")
+
+    return FileResponse(
+        path=real_path,
+        filename=filename,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
 
 
 @app.get("/stats", tags=["Système"])
