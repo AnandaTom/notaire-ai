@@ -45,7 +45,7 @@ Le financement du prix et des frais au moyen de leur apport personnel est réali
 {% if paiement.fonds_empruntes > 0 %}
 **Fonds empruntés**
 
-A ce financement personnel s'ajoute un financement extérieur à concurrence d'une somme empruntée pour un montant de **{{ paiement.fonds_empruntes_lettres }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})** auprès {{ paiement.prets[0].etablissement.nom }}.
+A ce financement personnel s'ajoute un financement extérieur à concurrence d'une somme empruntée pour un montant de **{{ paiement.fonds_empruntes_lettres }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})**{% if paiement.prets and paiement.prets[0] and paiement.prets[0].etablissement %} auprès {{ paiement.prets[0].etablissement.nom }}{% endif %}.
 Les **ACQUEREURS** sont, au titre de l'obligation à la dette, solidaires de leur remboursement.
 La prise en charge de ces remboursements sera assurée par eux de la façon suivante : {% for quotite in quotites_acquises %}**{{ acquereurs[quotite.personne_index].civilite }} {{ acquereurs[quotite.personne_index].prenoms }} {{ acquereurs[quotite.personne_index].nom }}** à concurrence de **{{ quotite.pourcentage }} %**{% if not loop.last %} et {% endif %}{% endfor %}.
 Cette convention est inopposable au créancier compte tenu de la solidarité rappelée ci-dessus.

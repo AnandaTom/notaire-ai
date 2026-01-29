@@ -329,9 +329,10 @@ L'**ACQUEREUR** a payé le prix comptant ce jour ainsi qu'il résulte de la comp
 {% if paiement and paiement.fonds_empruntes and paiement.fonds_empruntes > 0 %}
 # DECLARATION D'ORIGINE DES FONDS
 
-L'**ACQUEREUR** déclare que sur la somme ci-dessus payée, celle de **{{ paiement.fonds_empruntes_lettres|upper }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})** provient de fonds empruntés à cet effet suivant acte reçu par {{ paiement.prets[0].acte_pret.notaire }}, le {{ paiement.prets[0].acte_pret.date | format_date }}.
-
+L'**ACQUEREUR** déclare que sur la somme ci-dessus payée, celle de **{{ paiement.fonds_empruntes_lettres|upper }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})** provient de fonds empruntés à cet effet{% if paiement.prets and paiement.prets[0] and paiement.prets[0].acte_pret %} suivant acte reçu par {{ paiement.prets[0].acte_pret.notaire }}, le {{ paiement.prets[0].acte_pret.date | format_date }}{% endif %}.
+{% if paiement.prets and paiement.prets[0] and paiement.prets[0].etablissement %}
 Auprès de la **{{ paiement.prets[0].etablissement.nom|upper }}**, {{ paiement.prets[0].etablissement.forme_juridique }} dont le siège est à {{ paiement.prets[0].etablissement.siege }}, identifiée au SIREN sous le numéro {{ paiement.prets[0].etablissement.siren }} et immatriculée au Registre du Commerce et des Sociétés de {{ paiement.prets[0].etablissement.rcs }}
+{% endif %}
 {% for pret in paiement.prets %}
 Prêt {{ pret.reference }} d'un montant de {{ pret.montant_lettres|upper }} ({{ pret.montant|format_nombre }} {{ prix.devise }}), remboursable en {{ pret.duree_mois }} mois, au taux de {{ pret.taux }} %.
 Le paiement de la première échéance aura lieu le {{ pret.date_premiere_echeance }} et celui de la dernière échéance le {{ pret.date_derniere_echeance }}.

@@ -36,6 +36,7 @@ import sys
 import os
 import re
 import json
+import copy
 import hashlib
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -1956,6 +1957,698 @@ class AgentNotaire:
             print(f"⚠️ Erreur mise à jour: {e}")
             return False
 
+    # =========================================================================
+    # Mode Interactif Q&R (v1.3 - Sprint 3)
+    # =========================================================================
+
+    def executer_interactif(
+        self,
+        type_acte: str = 'promesse_vente',
+        prefill: Optional[Dict[str, Any]] = None,
+        mode: str = 'cli'
+    ) -> ResultatAgent:
+        """
+        Mode interactif Q&R: collecte les données par questions-réponses.
+
+        Charge le schéma de questions, parcourt les sections,
+        pré-remplit depuis les données existantes, puis génère l'acte.
+
+        Args:
+            type_acte: 'promesse_vente' ou 'vente'
+            prefill: Données pré-remplies (titre extrait, etc.)
+            mode: 'cli' (interactif), 'prefill_only' (auto, pas de questions)
+
+        Returns:
+            ResultatAgent
+        """
+        import time
+        debut = time.time()
+        etapes = ['Initialisation mode Q&R']
+
+        print(f"\n{'='*60}")
+        print(f"  AGENT NOTAIRE - Mode Interactif Q&R")
+        print(f"  Type: {type_acte}")
+        print(f"{'='*60}")
+
+        try:
+            collecteur = CollecteurInteractif(type_acte, prefill=prefill)
+            etapes.append('Schema questions charge')
+
+            donnees = collecteur.collecter(mode=mode)
+            etapes.append('Collecte terminee')
+
+            rapport = collecteur.rapport_json()
+
+            # Valider
+            etapes.append('Validation des donnees')
+            validation = self.valider_donnees(donnees, type_acte)
+
+            if not validation.valide:
+                print(f"\n  Validation echouee: {len(validation.erreurs)} erreur(s)")
+                for e in validation.erreurs[:5]:
+                    print(f"    - {e}")
+
+                return ResultatAgent(
+                    succes=False,
+                    message=f"Validation echouee apres collecte Q&R ({len(validation.erreurs)} erreurs)",
+                    intention=IntentionAgent.CREER,
+                    donnees=donnees
+                )
+
+            # Générer
+            etapes.append("Generation de l'acte")
+            reference = f"{datetime.now().strftime('%Y')}-{datetime.now().strftime('%m%d%H%M')}"
+            fichier_sortie = self.project_root / 'outputs' / f'{type_acte}_{reference}.docx'
+
+            if self.orchestrateur:
+                try:
+                    resultat_wf = self.orchestrateur.generer_acte_complet(
+                        type_acte, donnees, str(fichier_sortie)
+                    )
+                    succes = resultat_wf.statut == "succes"
+                except Exception as e:
+                    print(f"  Erreur orchestrateur: {e}")
+                    succes = False
+            else:
+                # Mode dégradé: sauvegarder les données
+                donnees_path = self.project_root / '.tmp' / 'dossiers' / f'{reference}.json'
+                donnees_path.parent.mkdir(parents=True, exist_ok=True)
+                donnees_path.write_text(
+                    json.dumps(donnees, ensure_ascii=False, indent=2),
+                    encoding='utf-8'
+                )
+                fichier_sortie = donnees_path
+                succes = True
+
+            duree = int((time.time() - debut) * 1000)
+
+            return ResultatAgent(
+                succes=succes,
+                message=f"{'Acte genere' if succes else 'Erreur generation'} via Q&R ({rapport['taux_preremplissage']}% pre-rempli)",
+                intention=IntentionAgent.CREER,
+                reference=reference,
+                fichier_genere=str(fichier_sortie),
+                donnees=donnees,
+                duree_ms=duree,
+                etapes=etapes
+            )
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return ResultatAgent(
+                succes=False,
+                message=f"Erreur Q&R: {str(e)}",
+                intention=IntentionAgent.CREER
+            )
+
+    def executer_depuis_titre(
+        self,
+        titre_data: Dict[str, Any],
+        beneficiaires: Optional[List[Dict]] = None,
+        prix: Optional[int] = None,
+        mode: str = 'cli'
+    ) -> ResultatAgent:
+        """
+        Génère une promesse depuis les données extraites d'un titre.
+
+        1. Mappe titre → données promesse (vendeur, bien, copropriété)
+        2. Pré-remplit avec bénéficiaires et prix si fournis
+        3. Lance le Q&R pour les champs manquants
+        4. Génère la promesse DOCX
+
+        Args:
+            titre_data: Données extraites du titre de propriété
+            beneficiaires: Info bénéficiaires (optionnel)
+            prix: Prix de vente (optionnel)
+            mode: 'cli' ou 'prefill_only'
+        """
+        print(f"\n{'='*60}")
+        print(f"  AGENT NOTAIRE - Titre -> Promesse")
+        print(f"{'='*60}")
+
+        prefill = self._mapper_titre_vers_promesse(titre_data, beneficiaires, prix)
+
+        nb_keys = len([k for k in prefill if prefill[k]])
+        print(f"  Donnees pre-remplies depuis titre: {nb_keys} sections")
+
+        return self.executer_interactif(
+            type_acte='promesse_vente',
+            prefill=prefill,
+            mode=mode
+        )
+
+    def _mapper_titre_vers_promesse(
+        self,
+        titre: Dict[str, Any],
+        beneficiaires: Optional[List[Dict]] = None,
+        prix: Optional[int] = None
+    ) -> Dict[str, Any]:
+        """
+        Mappe les données d'un titre de propriété vers le format promesse.
+
+        Le titre contient typiquement: vendeur, bien, copropriété, origine.
+        Les bénéficiaires et le prix sont fournis séparément.
+        """
+        promesse: Dict[str, Any] = {}
+
+        # Acte (notaire, date)
+        if 'acte' in titre:
+            promesse['acte'] = copy.deepcopy(titre['acte'])
+
+        # Promettants = propriétaires du titre (vendeurs)
+        for key in ('promettants', 'vendeurs', 'proprietaires'):
+            if key in titre and titre[key]:
+                promesse['promettants'] = copy.deepcopy(titre[key])
+                break
+
+        # Bénéficiaires (fournis séparément ou déjà dans le titre)
+        if beneficiaires:
+            promesse['beneficiaires'] = copy.deepcopy(beneficiaires)
+        else:
+            for key in ('beneficiaires', 'acquereurs'):
+                if key in titre and titre[key]:
+                    promesse['beneficiaires'] = copy.deepcopy(titre[key])
+                    break
+
+        # Bien immobilier
+        if 'bien' in titre:
+            promesse['bien'] = copy.deepcopy(titre['bien'])
+
+        # Copropriété
+        if 'copropriete' in titre:
+            promesse['copropriete'] = copy.deepcopy(titre['copropriete'])
+
+        # Diagnostics
+        if 'diagnostics' in titre:
+            promesse['diagnostics'] = copy.deepcopy(titre['diagnostics'])
+
+        # Origine de propriété
+        if 'origine_propriete' in titre:
+            promesse['origine_propriete'] = copy.deepcopy(titre['origine_propriete'])
+
+        # Prix
+        if prix:
+            promesse['prix'] = {'montant': prix, 'devise': 'EUR'}
+        elif 'prix' in titre:
+            promesse['prix'] = copy.deepcopy(titre['prix'])
+
+        # Financement
+        if 'financement' in titre:
+            promesse['financement'] = copy.deepcopy(titre['financement'])
+
+        # Conditions suspensives
+        if 'conditions_suspensives' in titre:
+            promesse['conditions_suspensives'] = copy.deepcopy(titre['conditions_suspensives'])
+        elif 'condition_suspensive_pret' in titre:
+            promesse['condition_suspensive_pret'] = copy.deepcopy(titre['condition_suspensive_pret'])
+
+        # Indemnité d'immobilisation
+        if 'indemnite_immobilisation' in titre:
+            promesse['indemnite_immobilisation'] = copy.deepcopy(titre['indemnite_immobilisation'])
+
+        # Urbanisme
+        if 'urbanisme' in titre:
+            promesse['urbanisme'] = copy.deepcopy(titre['urbanisme'])
+
+        # Fiscalité
+        if 'fiscalite' in titre:
+            promesse['fiscalite'] = copy.deepcopy(titre['fiscalite'])
+
+        # Négociation
+        if 'negociation' in titre:
+            promesse['negociation'] = copy.deepcopy(titre['negociation'])
+
+        # Délai de réalisation
+        if 'delai_realisation' in titre:
+            promesse['delai_realisation'] = titre['delai_realisation']
+
+        # RGPD
+        if 'rgpd' in titre:
+            promesse['rgpd'] = copy.deepcopy(titre['rgpd'])
+
+        # Champs promesse-spécifiques (délais, séquestre, clauses, etc.)
+        CHAMPS_PROMESSE = [
+            'delais', 'propriete_jouissance', 'meubles', 'sequestre',
+            'restitution', 'clause_penale', 'faculte_substitution',
+            'provision_frais', 'communication_pieces', 'carence',
+            'avenant_eventuel', 'quotites_a_determiner',
+            'situation_environnementale', 'travaux_recents',
+            'paiement', 'publication', 'avant_contrat', 'jouissance',
+            'quotites_vendues', 'quotites_acquises',
+        ]
+        for champ in CHAMPS_PROMESSE:
+            if champ in titre and champ not in promesse:
+                promesse[champ] = copy.deepcopy(titre[champ])
+
+        # Aliases vendeurs/acquereurs pour compatibilité validateur
+        # Le validateur attend vendeurs/acquereurs, la promesse utilise promettants/beneficiaires
+        if 'promettants' in promesse and 'vendeurs' not in promesse:
+            promesse['vendeurs'] = promesse['promettants']
+        if 'beneficiaires' in promesse and 'acquereurs' not in promesse:
+            promesse['acquereurs'] = promesse['beneficiaires']
+
+        return promesse
+
+
+# =============================================================================
+# Collecteur Interactif Q&R (v1.3 - Sprint 3)
+# =============================================================================
+
+class CollecteurInteractif:
+    """
+    Collecteur interactif de données par questions-réponses.
+
+    Charge les questions depuis les schémas JSON et guide l'utilisateur
+    section par section. Supporte le pré-remplissage depuis un titre
+    de propriété extrait ou des données existantes.
+
+    Usage:
+        collecteur = CollecteurInteractif('promesse_vente', prefill=titre_data)
+        donnees = collecteur.collecter(mode='cli')
+
+    Modes:
+        - 'cli': interactif avec input() pour chaque question manquante
+        - 'prefill_only': utilise uniquement les données pré-remplies + défauts
+    """
+
+    # Mapping singulier (schema) → pluriel (données pipeline)
+    PLURIELS = {
+        'promettant': 'promettants',
+        'beneficiaire': 'beneficiaires',
+        'vendeur': 'vendeurs',
+        'acquereur': 'acquereurs',
+    }
+
+    SCHEMAS = {
+        'promesse_vente': 'questions_promesse_vente.json',
+        'vente': 'questions_notaire.json',
+    }
+
+    def __init__(self, type_acte: str, prefill: Optional[Dict[str, Any]] = None):
+        self.type_acte = type_acte
+        self.prefill = prefill or {}
+        self.donnees = copy.deepcopy(self.prefill)
+        self.questions_posees = 0
+        self.questions_preremplies = 0
+        self.questions_ignorees = 0
+        self._compteurs_repeter: Dict[str, int] = {}
+
+        schema_nom = self.SCHEMAS.get(type_acte)
+        if not schema_nom:
+            raise ValueError(f"Type d'acte non supporte pour Q&R: {type_acte}. "
+                             f"Supportes: {list(self.SCHEMAS.keys())}")
+
+        schema_path = PROJECT_ROOT / 'schemas' / schema_nom
+        if not schema_path.exists():
+            raise FileNotFoundError(f"Schema Q&R introuvable: {schema_path}")
+
+        with open(schema_path, 'r', encoding='utf-8') as f:
+            self.schema = json.load(f)
+
+    def collecter(
+        self,
+        mode: str = 'cli',
+        sections_a_ignorer: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Collecte les données section par section.
+
+        Args:
+            mode: 'cli' ou 'prefill_only'
+            sections_a_ignorer: Clés de sections à sauter
+
+        Returns:
+            Dictionnaire de données complet pour le pipeline
+        """
+        sections = self.schema.get('sections', {})
+        ignorer = set(sections_a_ignorer or [])
+
+        print(f"\n{'='*60}")
+        print(f"  COLLECTE - {self.schema.get('titre', self.type_acte)}")
+        print(f"{'='*60}")
+
+        if self.prefill:
+            nb = len([k for k in self.prefill if self.prefill[k]])
+            print(f"  Donnees pre-remplies: {nb} sections detectees")
+            print(f"  Les champs deja renseignes seront auto-valides\n")
+
+        for section_key in sorted(sections.keys()):
+            if section_key in ignorer:
+                continue
+
+            section = sections[section_key]
+
+            # Ignorer les sections conditionnelles non applicables
+            condition = section.get('condition', '')
+            if condition and not self._evaluer_condition_section(condition):
+                continue
+
+            self._traiter_section(section_key, section, mode)
+
+        self._afficher_rapport()
+        return self.donnees
+
+    def _traiter_section(self, key: str, section: Dict, mode: str):
+        """Traite une section complète de questions."""
+        titre = section.get('titre', key)
+        questions = section.get('questions', [])
+
+        if not questions:
+            return
+
+        print(f"\n{'─'*50}")
+        print(f"  [{key}] {titre}")
+        print(f"{'─'*50}")
+
+        # Pré-scan: identifier les compteurs pour les questions répétées
+        self._prescan_compteurs(questions, mode)
+
+        for q in questions:
+            q_id = q.get('id', '')
+            repeter = q.get('repeter', '')
+
+            # Skip les compteurs déjà traités par le pre-scan
+            if '_nombre' in q_id and q.get('type') == 'nombre' and q.get('minimum', 0) >= 1:
+                continue
+
+            if repeter and repeter in self._compteurs_repeter:
+                count = self._compteurs_repeter[repeter]
+                group_label = repeter.replace('par_', '')
+                for idx in range(count):
+                    if count > 1:
+                        print(f"\n    --- {group_label} {idx+1}/{count} ---")
+                    self._traiter_question(q, mode, index=idx)
+            else:
+                self._traiter_question(q, mode)
+
+    def _prescan_compteurs(self, questions: List[Dict], mode: str = 'cli'):
+        """Pré-scanne les questions de comptage (nombre de parties, lots, etc.)."""
+        for q in questions:
+            q_id = q.get('id', '')
+            if '_nombre' not in q_id or q.get('type') != 'nombre':
+                continue
+            if q.get('minimum', 0) < 1:
+                continue
+
+            group = q_id.replace('_nombre', '')
+            repeter_key = f'par_{group}'
+
+            # Déjà compté?
+            if repeter_key in self._compteurs_repeter:
+                continue
+
+            # Vérifier depuis les données pré-remplies (top-level et nested)
+            prefill_key = self.PLURIELS.get(group, group + 's')
+            prefill_list = self.donnees.get(prefill_key, [])
+
+            # Aussi checker les listes imbriquées (ex: bien.lots)
+            if not prefill_list:
+                for parent_key in ('bien', 'copropriete', 'diagnostics'):
+                    parent = self.donnees.get(parent_key, {})
+                    if isinstance(parent, dict) and prefill_key in parent:
+                        nested = parent[prefill_key]
+                        if isinstance(nested, list) and nested:
+                            prefill_list = nested
+                            break
+
+            if prefill_list and isinstance(prefill_list, list):
+                count = len(prefill_list)
+                self._compteurs_repeter[repeter_key] = count
+                print(f"  [OK] Nombre de {group}s: {count}")
+                self.questions_preremplies += 1
+            elif mode == 'prefill_only':
+                # Mode auto: utiliser 1 par défaut
+                self._compteurs_repeter[repeter_key] = 1
+                self.questions_ignorees += 1
+            else:
+                # Demander le nombre
+                q_text = q.get('question', f"Combien de {group}s ?")
+                rep = input(f"  {q_text}: ").strip()
+                count = int(rep) if rep.isdigit() and int(rep) >= 1 else 1
+                self._compteurs_repeter[repeter_key] = count
+                self.questions_posees += 1
+
+                # Initialiser la liste
+                if prefill_key not in self.donnees:
+                    self.donnees[prefill_key] = [{} for _ in range(count)]
+
+    def _traiter_question(
+        self,
+        question: Dict,
+        mode: str,
+        index: Optional[int] = None
+    ) -> Any:
+        """Traite une question individuelle."""
+        variable = question.get('variable', '')
+        q_text = question.get('question', '?')
+        defaut = question.get('defaut', None)
+
+        # Vérifier pré-remplissage
+        if variable:
+            chemin = self._parse_variable(variable, index)
+            valeur_existante = self._get_deep(self.donnees, chemin)
+            if valeur_existante is not None:
+                self.questions_preremplies += 1
+                affichage = str(valeur_existante)
+                if len(affichage) > 60:
+                    affichage = affichage[:57] + '...'
+                print(f"  [OK] {q_text} -> {affichage}")
+
+                # Traiter les sous-questions même si pré-rempli
+                self._traiter_sous_questions(question, valeur_existante, mode, index)
+                return valeur_existante
+
+        # Poser la question ou utiliser le défaut
+        if mode == 'prefill_only':
+            if defaut is not None:
+                reponse = defaut
+                if variable:
+                    chemin = self._parse_variable(variable, index)
+                    self._set_deep(self.donnees, chemin, reponse)
+                self.questions_preremplies += 1
+            else:
+                self.questions_ignorees += 1
+                return None
+        else:
+            reponse = self._poser_question_cli(question)
+            self.questions_posees += 1
+
+            if reponse is not None and variable:
+                chemin = self._parse_variable(variable, index)
+                self._set_deep(self.donnees, chemin, reponse)
+
+        # Traiter les sous-questions
+        self._traiter_sous_questions(question, reponse, mode, index)
+        return reponse
+
+    def _traiter_sous_questions(
+        self,
+        question: Dict,
+        reponse: Any,
+        mode: str,
+        index: Optional[int]
+    ):
+        """Traite les sous-questions conditionnelles."""
+        sous_questions = question.get('sous_questions', {})
+        if not isinstance(sous_questions, dict) or reponse is None:
+            return
+
+        for condition_key, sq_list in sous_questions.items():
+            if self._evaluer_condition_reponse(condition_key, reponse):
+                for sq in sq_list:
+                    self._traiter_question(sq, mode, index)
+
+    def _parse_variable(self, variable: str, index: Optional[int] = None) -> List:
+        """
+        Parse un chemin de variable schema en chemin de données.
+
+        'promettant[].nom' + index=0 → ['promettants', 0, 'nom']
+        'bien.adresse.numero'        → ['bien', 'adresse', 'numero']
+        'prix.montant'               → ['prix', 'montant']
+        'bien.lots[].numero' + idx=1 → ['bien', 'lots', 1, 'numero']
+        """
+        parts = variable.split('.')
+        result = []
+
+        for part in parts:
+            if '[]' in part:
+                base = part.replace('[]', '')
+                # Mapper singulier → pluriel si applicable
+                plural = self.PLURIELS.get(base, base)
+                result.append(plural)
+                result.append(index if index is not None else 0)
+            else:
+                result.append(part)
+
+        return result
+
+    def _get_deep(self, data: Any, path: List) -> Any:
+        """Récupère une valeur profonde dans un dict/list imbriqué."""
+        current = data
+        for key in path:
+            if isinstance(key, int):
+                if isinstance(current, list) and key < len(current):
+                    current = current[key]
+                else:
+                    return None
+            elif isinstance(current, dict) and key in current:
+                current = current[key]
+            else:
+                return None
+        return current
+
+    def _set_deep(self, data: Dict, path: List, value: Any):
+        """Définit une valeur profonde dans un dict/list imbriqué."""
+        current = data
+        for i, key in enumerate(path[:-1]):
+            next_key = path[i + 1]
+            if isinstance(key, int):
+                while isinstance(current, list) and len(current) <= key:
+                    current.append({})
+                if isinstance(current, list):
+                    current = current[key]
+            else:
+                if key not in current:
+                    if isinstance(next_key, int):
+                        current[key] = []
+                    else:
+                        current[key] = {}
+                current = current[key]
+
+        final = path[-1]
+        if isinstance(final, int):
+            while isinstance(current, list) and len(current) <= final:
+                current.append(None)
+            if isinstance(current, list):
+                current[final] = value
+        else:
+            current[final] = value
+
+    def _poser_question_cli(self, question: Dict) -> Any:
+        """Pose une question en CLI avec input()."""
+        q_text = question.get('question', '?')
+        q_type = question.get('type', 'texte')
+        defaut = question.get('defaut', None)
+        options = question.get('options', [])
+
+        if q_type in ('choix', 'choix_unique') and options:
+            print(f"  {q_text}")
+            for i, opt in enumerate(options, 1):
+                marker = '*' if defaut and opt == defaut else ' '
+                print(f"   {marker}{i}. {opt}")
+            prompt = f"  > Choix (1-{len(options)})"
+            if defaut:
+                idx_defaut = next((i for i, o in enumerate(options, 1) if o == defaut), '')
+                prompt += f" [{idx_defaut}]"
+            rep = input(f"{prompt}: ").strip()
+            if rep.isdigit() and 1 <= int(rep) <= len(options):
+                return options[int(rep) - 1]
+            return defaut or (options[0] if options else None)
+
+        elif q_type == 'booleen':
+            default_str = 'O' if defaut else 'N'
+            rep = input(f"  {q_text} (O/N) [{default_str}]: ").strip().lower()
+            if rep in ('o', 'oui', 'y', 'yes', '1'):
+                return True
+            elif rep in ('n', 'non', 'no', '0'):
+                return False
+            return defaut if defaut is not None else False
+
+        elif q_type in ('nombre', 'nombre_decimal'):
+            prompt = f"  {q_text}"
+            if defaut is not None:
+                prompt += f" [{defaut}]"
+            rep = input(f"{prompt}: ").strip()
+            try:
+                val = float(rep.replace(',', '.'))
+                return int(val) if q_type == 'nombre' else val
+            except ValueError:
+                if defaut is not None:
+                    return int(defaut) if q_type == 'nombre' else float(defaut)
+                return None
+
+        else:  # texte, date, publication, contact, texte_long, etc.
+            prompt = f"  {q_text}"
+            if defaut is not None:
+                prompt += f" [{defaut}]"
+            rep = input(f"{prompt}: ").strip()
+            return rep if rep else (str(defaut) if defaut is not None else None)
+
+    def _evaluer_condition_reponse(self, condition_key: str, valeur: Any) -> bool:
+        """Évalue si une sous-condition est satisfaite."""
+        ck = condition_key.lower()
+        if ck == 'si_oui' and valeur is True:
+            return True
+        if ck == 'si_non' and valeur is False:
+            return True
+        if ck == 'si_marie' and isinstance(valeur, str) and 'marié' in valeur.lower():
+            return True
+        if ck == 'si_pacse' and isinstance(valeur, str) and 'pacsé' in valeur.lower():
+            return True
+        if ck.startswith('si_superieur_a_'):
+            try:
+                seuil = int(ck.split('_')[-1])
+                return isinstance(valeur, (int, float)) and valeur > seuil
+            except ValueError:
+                pass
+        return False
+
+    def _evaluer_condition_section(self, condition: str) -> bool:
+        """Évalue une condition de section (ex: 'mobilier.existe == true')."""
+        try:
+            match = re.match(r'([\w.]+)\s*(==|!=|>|<)\s*(.+)', condition)
+            if not match:
+                return True
+
+            var_path, op, val_attendue = match.groups()
+            val_attendue = val_attendue.strip().strip("'\"")
+            chemin = var_path.split('.')
+            val_actuelle = self._get_deep(self.donnees, chemin)
+
+            if val_actuelle is None:
+                return False
+
+            if op == '==':
+                return str(val_actuelle).lower() == val_attendue.lower()
+            elif op == '!=':
+                return str(val_actuelle).lower() != val_attendue.lower()
+            elif op == '>':
+                return float(val_actuelle) > float(val_attendue)
+            elif op == '<':
+                return float(val_actuelle) < float(val_attendue)
+        except Exception:
+            pass
+        return True
+
+    def _afficher_rapport(self):
+        """Affiche le rapport de collecte."""
+        total = self.questions_posees + self.questions_preremplies + self.questions_ignorees
+        print(f"\n{'='*60}")
+        print(f"  RAPPORT DE COLLECTE")
+        print(f"{'='*60}")
+        print(f"  Questions pre-remplies : {self.questions_preremplies}")
+        print(f"  Questions posees       : {self.questions_posees}")
+        print(f"  Questions ignorees     : {self.questions_ignorees}")
+        print(f"  Total                  : {total}")
+        if total > 0:
+            pct = (self.questions_preremplies / total) * 100
+            print(f"  Taux pre-remplissage   : {pct:.0f}%")
+        print(f"{'='*60}")
+
+    def rapport_json(self) -> Dict[str, Any]:
+        """Retourne le rapport sous forme de dict."""
+        total = self.questions_posees + self.questions_preremplies + self.questions_ignorees
+        return {
+            'questions_preremplies': self.questions_preremplies,
+            'questions_posees': self.questions_posees,
+            'questions_ignorees': self.questions_ignorees,
+            'total': total,
+            'taux_preremplissage': round(
+                (self.questions_preremplies / total) * 100
+            ) if total > 0 else 0
+        }
+
 
 # =============================================================================
 # CLI
@@ -1966,40 +2659,114 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description='Agent Autonome NotaireAI',
+        description='Agent Autonome NotaireAI v1.3',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples:
-  # Créer une promesse
+  # Créer une promesse (langage naturel)
   python agent_autonome.py creer "Promesse Martin→Dupont, appart 67m² Paris, 450000€"
 
-  # Modifier un acte
+  # Mode interactif Q&R (questions guidées)
+  python agent_autonome.py interactif-qr --type promesse_vente
+  python agent_autonome.py interactif-qr --type promesse_vente --prefill titre.json
+
+  # Demo: titre → promesse (avec pré-remplissage)
+  python agent_autonome.py demo --titre donnees.json --prix 450000
+
+  # Modifier un acte existant
   python agent_autonome.py modifier "Changer le prix à 460000€ dans le dossier 2026-001"
 
-  # Rechercher
-  python agent_autonome.py rechercher "Actes pour Martin"
-
-  # Générer un DOCX
-  python agent_autonome.py generer "2026-001"
-
-  # Mode interactif
+  # Mode interactif libre
   python agent_autonome.py
         """
     )
 
     parser.add_argument('commande', nargs='?', default='interactif',
-                        choices=['creer', 'modifier', 'rechercher', 'generer', 'lister', 'aide', 'interactif'],
+                        choices=['creer', 'modifier', 'rechercher', 'generer',
+                                 'lister', 'aide', 'interactif',
+                                 'interactif-qr', 'demo'],
                         help='Commande à exécuter')
     parser.add_argument('demande', nargs='*', help='Demande en langage naturel')
+    parser.add_argument('--type', '-t', default='promesse_vente',
+                        choices=['promesse_vente', 'vente'],
+                        help="Type d'acte pour le mode Q&R (defaut: promesse_vente)")
+    parser.add_argument('--prefill', '-p', type=str, default=None,
+                        help='Fichier JSON de pre-remplissage (titre extrait, etc.)')
+    parser.add_argument('--titre', type=str, default=None,
+                        help='Fichier JSON du titre de propriete (mode demo)')
+    parser.add_argument('--prix', type=int, default=None,
+                        help='Prix de vente en euros (mode demo)')
+    parser.add_argument('--output', '-o', type=str, default=None,
+                        help='Fichier de sortie JSON (sauvegarde des donnees collectees)')
+    parser.add_argument('--auto', action='store_true',
+                        help='Mode automatique sans questions (prefill + defauts uniquement)')
 
     args = parser.parse_args()
 
     agent = AgentNotaire()
 
-    if args.commande == 'interactif' or not args.demande:
-        # Mode interactif
-        print("\n🤖 Agent NotaireAI - Mode interactif")
-        print("   Tapez 'aide' pour voir les commandes, 'q' pour quitter\n")
+    if args.commande == 'interactif-qr':
+        # ─── Mode Q&R interactif ───
+        prefill = None
+        if args.prefill:
+            prefill_path = Path(args.prefill)
+            if prefill_path.exists():
+                with open(prefill_path, 'r', encoding='utf-8') as f:
+                    prefill = json.load(f)
+                print(f"  Pre-remplissage depuis: {prefill_path}")
+            else:
+                print(f"  Fichier prefill introuvable: {prefill_path}")
+
+        mode = 'prefill_only' if args.auto else 'cli'
+        resultat = agent.executer_interactif(
+            type_acte=args.type,
+            prefill=prefill,
+            mode=mode
+        )
+
+        # Sauvegarder les données collectées
+        if resultat.donnees and args.output:
+            output_path = Path(args.output)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_text(
+                json.dumps(resultat.donnees, ensure_ascii=False, indent=2),
+                encoding='utf-8'
+            )
+            print(f"  Donnees sauvegardees: {output_path}")
+
+    elif args.commande == 'demo':
+        # ─── Mode demo: titre → Q&R → promesse ───
+        titre_data = {}
+        if args.titre:
+            titre_path = Path(args.titre)
+            if titre_path.exists():
+                with open(titre_path, 'r', encoding='utf-8') as f:
+                    titre_data = json.load(f)
+                print(f"  Titre charge: {titre_path}")
+            else:
+                print(f"  Fichier titre introuvable: {titre_path}")
+                return 1
+
+        mode = 'prefill_only' if args.auto else 'cli'
+        resultat = agent.executer_depuis_titre(
+            titre_data=titre_data,
+            prix=args.prix,
+            mode=mode
+        )
+
+        if resultat.donnees and args.output:
+            output_path = Path(args.output)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_text(
+                json.dumps(resultat.donnees, ensure_ascii=False, indent=2),
+                encoding='utf-8'
+            )
+            print(f"  Donnees sauvegardees: {output_path}")
+
+    elif args.commande == 'interactif' or not args.demande:
+        # ─── Mode interactif libre (NL) ───
+        print("\n  Agent NotaireAI v1.3 - Mode interactif")
+        print("   Commandes: 'aide', 'qr' (mode Q&R), 'q' (quitter)\n")
 
         while True:
             try:
@@ -2008,6 +2775,11 @@ Exemples:
                 if demande.lower() in ('q', 'quit', 'exit'):
                     print("Au revoir!")
                     break
+
+                if demande.lower() in ('qr', 'q&r', 'interactif-qr'):
+                    print("  Lancement du mode Q&R...")
+                    agent.executer_interactif(type_acte='promesse_vente', mode='cli')
+                    continue
 
                 if not demande:
                     continue
@@ -2020,10 +2792,9 @@ Exemples:
             except EOFError:
                 break
     else:
-        # Mode commande directe
+        # ─── Mode commande directe ───
         demande_complete = ' '.join(args.demande)
 
-        # Préfixer avec la commande si pas déjà présent
         if args.commande not in demande_complete.lower():
             demande_complete = f"{args.commande} {demande_complete}"
 

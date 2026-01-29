@@ -30,7 +30,7 @@ import os
 import secrets
 import sys
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 # Ensure UTF-8 output on Windows
@@ -147,7 +147,7 @@ class EncryptionService:
             nonce=base64.b64encode(nonce).decode('ascii'),
             key_id=self.key_id,
             version=self.VERSION,
-            timestamp=datetime.utcnow().isoformat()
+            timestamp=datetime.now(timezone.utc).isoformat()
         )
 
         return json.dumps({

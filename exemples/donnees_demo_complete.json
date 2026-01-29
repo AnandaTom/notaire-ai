@@ -1,0 +1,465 @@
+{
+  "_meta": {
+    "description": "Jeu de données démo complet pour test end-to-end. Vendeur + Acquéreur + Bien + Prix + Financement + Diagnostics.",
+    "usage": "Utilisable pour promesse ET vente. Compatible avec le mapping formulaire d'Augustin.",
+    "scenario": "M. DUPONT vend son T3 à Mme MARTIN, 450 000 EUR, financement mixte (apport + prêt)."
+  },
+  "acte": {
+    "numero_repertoire": "100546200",
+    "reference_interne": "DEMO/2026/",
+    "date": {
+      "jour": 29,
+      "mois": 1,
+      "annee": 2026,
+      "en_lettres": "vingt-neuf janvier deux mille vingt-six"
+    },
+    "notaire": {
+      "civilite": "Maître",
+      "nom": "DIAZ",
+      "prenom": "Charlotte",
+      "societe": "SAS DES CEDRES",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "departement": "Rhône",
+      "code_postal": "69160",
+      "adresse": "93 avenue du 11 Novembre 1918",
+      "crpcen": "69182"
+    }
+  },
+  "vendeurs": [
+    {
+      "civilite": "Monsieur",
+      "nom": "DUPONT",
+      "prenoms": "Jean Pierre Marie",
+      "profession": "Cadre supérieur",
+      "adresse": "45 avenue des Champs-Élysées",
+      "code_postal": "75008",
+      "ville": "PARIS",
+      "date_naissance": "1965-03-15",
+      "lieu_naissance": "PARIS 12ème (75)",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "marie",
+        "regime_matrimonial": "separation_biens",
+        "date_mariage": "1990-06-20",
+        "lieu_mariage": "Paris 8ème (75)",
+        "contrat_mariage": {
+          "notaire": "Maître LEGRAND, notaire à PARIS",
+          "date": "15 juin 1990"
+        },
+        "conjoint": {
+          "civilite": "Madame",
+          "prenoms": "Catherine Anne",
+          "nom": "DUPONT",
+          "nom_naissance": "MOREAU",
+          "intervient": false
+        }
+      },
+      "coordonnees": {
+        "telephone": "06 12 34 56 78",
+        "email": "jean.dupont@email.com"
+      },
+      "coordonnees_bancaires": {
+        "iban": "FR76 3000 6000 0112 3456 7890 189",
+        "bic": "AGRIFRPP",
+        "nom_banque": "Crédit Agricole"
+      }
+    }
+  ],
+  "acquereurs": [
+    {
+      "civilite": "Madame",
+      "nom": "MARTIN",
+      "prenoms": "Sophie Anne",
+      "profession": "Architecte",
+      "adresse": "12 rue de la République",
+      "code_postal": "69002",
+      "ville": "LYON",
+      "date_naissance": "1982-08-22",
+      "lieu_naissance": "LYON 3ème (69)",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      },
+      "coordonnees": {
+        "telephone": "06 98 76 54 32",
+        "email": "sophie.martin@email.com"
+      }
+    }
+  ],
+  "promettants": [
+    {
+      "_comment": "Alias de vendeurs[0] pour compatibilité promesse",
+      "civilite": "Monsieur",
+      "nom": "DUPONT",
+      "prenoms": "Jean Pierre Marie",
+      "profession": "Cadre supérieur",
+      "adresse": "45 avenue des Champs-Élysées",
+      "code_postal": "75008",
+      "ville": "PARIS",
+      "date_naissance": "1965-03-15",
+      "lieu_naissance": "PARIS 12ème (75)",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "marie",
+        "regime_matrimonial": "separation_biens",
+        "date_mariage": "1990-06-20",
+        "lieu_mariage": "Paris 8ème (75)",
+        "contrat_mariage": {
+          "notaire": "Maître LEGRAND, notaire à PARIS",
+          "date": "15 juin 1990"
+        },
+        "conjoint": {
+          "civilite": "Madame",
+          "prenoms": "Catherine Anne",
+          "nom": "DUPONT",
+          "nom_naissance": "MOREAU",
+          "intervient": false
+        }
+      },
+      "coordonnees": {
+        "telephone": "06 12 34 56 78",
+        "email": "jean.dupont@email.com"
+      }
+    }
+  ],
+  "beneficiaires": [
+    {
+      "_comment": "Alias de acquereurs[0] pour compatibilité promesse",
+      "civilite": "Madame",
+      "nom": "MARTIN",
+      "prenoms": "Sophie Anne",
+      "profession": "Architecte",
+      "adresse": "12 rue de la République",
+      "code_postal": "69002",
+      "ville": "LYON",
+      "date_naissance": "1982-08-22",
+      "lieu_naissance": "LYON 3ème (69)",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      },
+      "coordonnees": {
+        "telephone": "06 98 76 54 32",
+        "email": "sophie.martin@email.com"
+      }
+    }
+  ],
+  "bien": {
+    "adresse": {
+      "numero": "12",
+      "voie": "rue de la Paix",
+      "code_postal": "75002",
+      "ville": "PARIS",
+      "departement": "PARIS"
+    },
+    "nom_residence": "RÉSIDENCE DE LA PAIX",
+    "description_ensemble": "Cet immeuble dénommé \"RÉSIDENCE DE LA PAIX\" est composé d'un seul bâtiment de sept étages sur sous-sol, desservi par un escalier et un ascenseur.",
+    "cadastre": [
+      {
+        "section": "AB",
+        "numero": "145",
+        "lieudit": "12 RUE DE LA PAIX",
+        "surface": "00 ha 05 a 30 ca"
+      }
+    ],
+    "lots": [
+      {
+        "numero": 45,
+        "type": "appartement",
+        "type_appartement": "T3",
+        "description": "un appartement composé d'une entrée, un séjour avec balcon, deux chambres, une cuisine équipée, une salle de bains, un WC séparé et un dégagement",
+        "etage": "troisième étage",
+        "orientation": "côté rue",
+        "tantiemes": {
+          "valeur": 125,
+          "base": 10000,
+          "base_unite": "dix-millièmes",
+          "type": "parties communes générales"
+        },
+        "surface_carrez": 67.50
+      },
+      {
+        "numero": 112,
+        "type": "cave",
+        "description": "une cave portant le numéro 12",
+        "etage": "sous-sol",
+        "numero_cave": "12",
+        "tantiemes": {
+          "valeur": 5,
+          "base": 10000,
+          "base_unite": "dix-millièmes",
+          "type": "parties communes générales"
+        }
+      }
+    ],
+    "superficie_carrez": {
+      "superficie_m2": 67.50,
+      "lot_concerne": "quarante-cinq (45)",
+      "date_mesurage": "2025-11-15",
+      "diagnostiqueur": "DIAGIMMO EXPERT - 23 boulevard Saint-Germain - 75005 PARIS"
+    },
+    "usage_actuel": "habitation",
+    "usage_futur": "residence_principale",
+    "annee_construction": 1975,
+    "chauffage": {
+      "type": "radiateurs",
+      "energie": "gaz",
+      "collectif": true,
+      "entretien": "le syndic"
+    },
+    "equipements": {
+      "detecteur_fumee": true,
+      "fibre": true,
+      "chaudiere_collective": true
+    }
+  },
+  "copropriete": {
+    "reglement": {
+      "notaire_origine": "Maître BERNARD, notaire à PARIS",
+      "date_origine": "12 mars 1975",
+      "publication": "PARIS 5, le 15 avril 1975, volume 3210 numéro 8"
+    },
+    "syndic": {
+      "nom": "FONCIA PARIS CENTRE",
+      "adresse": "15 rue de Rivoli",
+      "ville": "PARIS",
+      "code_postal": "75001"
+    },
+    "immatriculation": "AA1-234-567",
+    "fonds_travaux": {
+      "existe": true,
+      "montant_quote_part": 2500,
+      "derniere_cotisation": 500
+    },
+    "emprunt_collectif": {
+      "existe": false
+    },
+    "diagnostic_technique_global": false,
+    "plan_pluriannuel_travaux": false,
+    "derniere_ag": "15 mars 2025"
+  },
+  "prix": {
+    "montant": 450000,
+    "devise": "EUR"
+  },
+  "paiement": {
+    "mode": "mixte",
+    "fonds_personnels": 90000,
+    "prets": [
+      {
+        "etablissement": {
+          "nom": "BNP PARIBAS",
+          "siege": "16 boulevard des Italiens - 75009 PARIS",
+          "siren": "662042449"
+        },
+        "montant": 360000,
+        "duree_mois": 240,
+        "taux": 3.50,
+        "taux_nominal": 3.50,
+        "taux_effectif_global": 4.12,
+        "type_taux": "fixe",
+        "mensualite": 2087,
+        "type_garantie": "hypotheque_legale_preteur",
+        "garantie": {
+          "type": "hypotheque",
+          "montant_inscription": 432000,
+          "rang": "premier"
+        }
+      }
+    ]
+  },
+  "financement": {
+    "mode": "mixte",
+    "fonds_personnels": 90000,
+    "fonds_empruntes": 360000
+  },
+  "delai_realisation": "2026-05-29",
+  "indemnite_immobilisation": {
+    "montant": 45000,
+    "pourcentage": 10,
+    "depot_garantie": 45000
+  },
+  "condition_suspensive_pret": {
+    "existe": true,
+    "montant_maximal": 360000,
+    "duree_maximale_annees": 20,
+    "taux_maximal": 3.5,
+    "date_limite": "2026-03-29",
+    "nombre_refus_requis": 2
+  },
+  "conditions_suspensives": {
+    "pret": {
+      "applicable": true,
+      "montant": 360000,
+      "montant_lettres": "TROIS CENT SOIXANTE MILLE EUROS",
+      "duree_mois": 240,
+      "taux_max": 3.5,
+      "delai_jours": 60,
+      "date_butoir": "2026-03-29"
+    },
+    "droit_preemption": {
+      "applicable": true,
+      "titulaires": ["Ville de Paris"],
+      "delai": "DEUX"
+    }
+  },
+  "origine_propriete": [
+    {
+      "lots_concernes": ["45", "112"],
+      "origine_immediate": {
+        "type": "acquisition",
+        "notaire": "Maître LEFEVRE, notaire à PARIS",
+        "date": "3 septembre 2010",
+        "publication": {
+          "service": "PARIS 5",
+          "date": "20 septembre 2010",
+          "volume": "2010P",
+          "numero": "12345"
+        }
+      }
+    }
+  ],
+  "diagnostics": {
+    "diagnostiqueur": {
+      "nom": "DIAGIMMO EXPERT",
+      "adresse": "23 boulevard Saint-Germain - 75005 PARIS"
+    },
+    "dpe": {
+      "date": "2025-11-15",
+      "diagnostiqueur": "DIAGIMMO EXPERT",
+      "numero_ademe": "2569E1234567R",
+      "consommation_energie": 165,
+      "classe_energie": "D",
+      "emission_ges": 22,
+      "classe_ges": "C"
+    },
+    "plomb": {
+      "requis": true,
+      "date": "2025-11-15",
+      "diagnostiqueur": "DIAGIMMO EXPERT",
+      "resultat": "Présence de plomb à des concentrations inférieures au seuil réglementaire"
+    },
+    "amiante": {
+      "requis": true,
+      "date": "2025-11-10",
+      "diagnostiqueur": "DIAGIMMO EXPERT",
+      "resultat": "Absence d'amiante dans les matériaux et produits repérés",
+      "presence": false
+    },
+    "amiante_parties_privatives": {
+      "requis": true,
+      "date": "2025-11-10",
+      "diagnostiqueur": "DIAGIMMO EXPERT",
+      "resultat": "Absence d'amiante dans les matériaux et produits repérés"
+    },
+    "electricite": {
+      "requis": true,
+      "date": "2025-11-12",
+      "diagnostiqueur": "DIAGIMMO EXPERT",
+      "resultat": "Installation conforme"
+    },
+    "gaz": {
+      "requis": true,
+      "date": "2025-11-12",
+      "diagnostiqueur": "DIAGIMMO EXPERT",
+      "resultat": "Installation conforme"
+    },
+    "etat_risques": {
+      "date": "2025-11-15",
+      "sinistres_indemnises": false
+    },
+    "termites": {
+      "zone_concernee": false
+    },
+    "audit_energetique": {
+      "requis": false,
+      "existe": false
+    }
+  },
+  "negociation": {
+    "existe": false
+  },
+  "fiscalite": {
+    "plus_value": {
+      "exoneration": true,
+      "motif_exoneration": "residence_principale"
+    },
+    "primo_accedant": false
+  },
+  "urbanisme": {
+    "note_urbanisme": {
+      "date": "2025-10-20",
+      "droit_preemption": "Droit de préemption urbain simple"
+    }
+  },
+  "publication": {
+    "service_publicite_fonciere": "PARIS 5"
+  },
+  "avant_contrat": {
+    "type": "promesse_unilaterale",
+    "date": "29 janvier 2026",
+    "notaire": "Maître Charlotte DIAZ"
+  },
+  "jouissance": {
+    "date_propriete": "ce jour",
+    "date_jouissance": "ce jour",
+    "jouissance_anticipee": false
+  },
+  "rgpd": {
+    "consentement": true,
+    "traitement_donnees": "Notaire responsable de traitement",
+    "duree_conservation": "10 ans"
+  },
+  "delais": {
+    "expiration_promesse": {
+      "date": "2026-05-29",
+      "heure": "seize heures"
+    },
+    "delai_depot_garantie_jours": 15,
+    "delai_provision_frais_jours": 15
+  },
+  "propriete_jouissance": {
+    "libre": true,
+    "visites_autorisees": true
+  },
+  "meubles": {
+    "inclus": false,
+    "liste": [],
+    "valeur": null
+  },
+  "sequestre": true,
+  "restitution": {
+    "delai": "un mois",
+    "duree_conservation": 5,
+    "garantie_bancaire": false,
+    "sequestre": true
+  },
+  "clause_penale": {
+    "pourcentage": 10
+  },
+  "faculte_substitution": false,
+  "provision_frais": 15000,
+  "communication_pieces": {
+    "delai": "QUINZE"
+  },
+  "carence": true,
+  "avenant_eventuel": {
+    "frais_charge": "la partie qui en fera la demande"
+  },
+  "quotites_a_determiner": true,
+  "situation_environnementale": {
+    "basias": { "present": false },
+    "basol": { "present": false },
+    "sis": { "present": false },
+    "sites_identifies": []
+  },
+  "travaux_recents": {
+    "existe": false,
+    "liste": [],
+    "assurance_dommages_ouvrage": false
+  }
+}

@@ -86,11 +86,36 @@ python notaire.py dashboard
 **Scripts à la racine de execution/ :**
 | Script | Fonction |
 |--------|----------|
-| `execution/agent_autonome.py` | **AGENT PRINCIPAL** - Agent intelligent multi-parties |
+| `execution/agent_autonome.py` | **AGENT PRINCIPAL** - Agent intelligent multi-parties + Q&R interactif |
+| `execution/demo_titre_promesse.py` | 🆕 **DEMO** - Titre → Q&R → Promesse → DOCX |
+| `execution/utils/convertir_promesse_vente.py` | 🆕 **CONVERSION** - Promesse → Vente (conservation données) |
 | `execution/workflow_rapide.py` | 🚀 **Génération 1 commande** - Validation → Assemblage → Export |
-| `execution/test_fiabilite.py` | ✅ **Tests automatisés** |
+| `execution/test_fiabilite.py` | ✅ **Tests automatisés** (194 tests) |
 | `execution/generer_dashboard_data.py` | Génération données dashboard |
 | `notaire.py` | **CLI SIMPLIFIÉ** - Point d'entrée racine (`python notaire.py`) |
+
+### Skills Claude Code (commandes /slash)
+
+| Skill | Commande | Mode | Usage |
+|-------|----------|------|-------|
+| `/generer-acte` | `/generer-acte vente` | Manuel | Pipeline complet de génération d'acte |
+| `/generer-promesse` | `/generer-promesse standard` | Manuel | Workflow promesse avec détection auto |
+| `/test-pipeline` | `/test-pipeline` | Manuel | Lance tous les tests + conformité |
+| `/deploy-modal` | `/deploy-modal prod` | Manuel | Tests + déploiement Modal |
+| `/valider-template` | `/valider-template all` | Auto | Audit conformité templates vs trames |
+| `/review-pr` | `/review-pr 42` | Auto | Revue de code Notomai |
+| `/status` | `/status` | Auto | Dashboard complet du projet |
+| `/sprint-plan` | `/sprint-plan` | Auto | Planning sprint 3 devs |
+
+### Agents Claude Code (sous-agents spécialisés)
+
+| Agent | Déclencheur | Rôle |
+|-------|-------------|------|
+| `template-auditor` | Modification de templates Jinja2 | Audit conformité vs `docs_original/` |
+| `schema-validator` | Modification de schémas JSON | Validation cohérence cross-schemas |
+| `security-reviewer` | Code sécurité/RGPD | Revue PII, credentials, RLS |
+
+Voir [docs/SKILLS_AGENTS_GUIDE.md](docs/SKILLS_AGENTS_GUIDE.md) pour le guide complet.
 
 ### Schémas de données
 
@@ -446,6 +471,50 @@ modal serve modal/modal_app.py    # Test local
 ```
 
 Endpoint: `https://notaire-ai--fastapi-app.modal.run/`
+
+---
+
+## Version 1.6.0 - Collecte Q&R Interactive & Pipeline E2E (Janvier 2026)
+
+### 🆕 Sprint 3 (P3 + P4)
+
+1. **CollecteurInteractif** ([agent_autonome.py](execution/agent_autonome.py))
+   - Collecte schema-driven basée sur `schemas/questions_promesse_vente.json` (97 questions, 21 sections)
+   - Pré-remplissage automatique 64% depuis données existantes
+   - Mode `cli` (interactif) et `prefill_only` (automatique)
+   - Parsing des chemins variables: `promettant[].nom` → `promettants[0].nom`
+   - Conditions d'affichage des questions (si prêt applicable, si marié, etc.)
+
+2. **Conversion Promesse → Vente** ([convertir_promesse_vente.py](execution/utils/convertir_promesse_vente.py))
+   - Conservation automatique vendeurs, acquéreurs, bien, prix, copropriété, diagnostics
+   - Ajout champs vente: avant_contrat, paiement, jouissance, publication
+   - Complétude 100% avec données complémentaires
+
+3. **Démo Titre → Promesse → DOCX** ([demo_titre_promesse.py](execution/demo_titre_promesse.py))
+   - Pipeline 5 étapes: chargement → Q&R → assemblage → export → rapport
+   - Modes: `--auto`, `--titre`, `--beneficiaires`, `--prix`
+   - Fallback direct si orchestrateur échoue
+
+4. **Tests E2E** : **194 tests, 0 failures**
+   - Pipeline promesse complet: 92.8 Ko DOCX
+   - Pipeline vente complet: 72 Ko DOCX
+   - Conversion promesse→vente: 100% complétude
+
+### Commandes Sprint 3
+
+```bash
+# Collecte Q&R interactive
+python execution/agent_autonome.py interactif-qr --type promesse_vente
+python execution/agent_autonome.py interactif-qr --type promesse_vente --auto
+
+# Demo titre → promesse → DOCX
+python execution/demo_titre_promesse.py --auto
+python execution/demo_titre_promesse.py --titre mon_titre.json --prix 500000
+
+# Conversion promesse → vente
+python execution/utils/convertir_promesse_vente.py \
+    --promesse donnees_promesse.json --output donnees_vente.json
+```
 
 ---
 

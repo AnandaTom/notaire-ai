@@ -1364,6 +1364,9 @@ class ValidateurActe:
 
         # Vérifier durée de détention
         origine = donnees.get('origine_propriete', {})
+        # origine_propriete peut être une liste ou un dict
+        if isinstance(origine, list):
+            origine = origine[0].get('origine_immediate', {}) if origine else {}
         date_acquisition = origine.get('date', {})
 
         if date_acquisition and isinstance(date_acquisition, dict):
@@ -1507,6 +1510,11 @@ def main():
         help="Mode strict (toutes les erreurs sont bloquantes)"
     )
     parser.add_argument(
+        '--complet',
+        action='store_true',
+        help="Validation complète avec règles avancées (conjoint, diagnostics, prix/m², cadastre)"
+    )
+    parser.add_argument(
         '--json',
         action='store_true',
         help="Sortie au format JSON"
@@ -1530,7 +1538,10 @@ def main():
 
     # Valider
     validateur = ValidateurActe(schema)
-    rapport = validateur.valider(donnees, strict=args.strict)
+    if args.complet:
+        rapport = validateur.valider_complet(donnees, strict=args.strict)
+    else:
+        rapport = validateur.valider(donnees, strict=args.strict)
 
     # Afficher
     if args.json:

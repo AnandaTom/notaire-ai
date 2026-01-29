@@ -196,8 +196,9 @@ class ChatHandler:
                 "GENERER": IntentionChat.CONSULTER,
             }
 
+            raw_intention = analyse.intention.value if hasattr(analyse.intention, 'value') else str(analyse.intention)
             intention = intention_map.get(
-                analyse.intention.value if hasattr(analyse.intention, 'value') else str(analyse.intention),
+                raw_intention.upper(),
                 IntentionChat.INCONNU
             )
 
@@ -213,21 +214,34 @@ class ChatHandler:
             # Nettoyer les None
             entites = {k: v for k, v in entites.items() if v}
 
+            # Si le parseur retourne INCONNU, tenter le fallback par mots-cles
+            if intention == IntentionChat.INCONNU:
+                fallback = self._fallback_intention(msg_lower)
+                if fallback is not None:
+                    return fallback
+
             return intention, analyse.confiance, entites
 
         except Exception as e:
             if self.verbose:
                 print(f"[ChatHandler] Erreur parsing: {e}")
 
-            # Fallback sur detection simple
-            if "vente" in msg_lower or "créer" in msg_lower or "acte" in msg_lower:
-                return IntentionChat.CREER, 0.6, {}
-            if "dossier" in msg_lower or "voir" in msg_lower or "liste" in msg_lower:
-                return IntentionChat.CONSULTER, 0.6, {}
-            if "cherche" in msg_lower or "trouve" in msg_lower or "client" in msg_lower:
-                return IntentionChat.RECHERCHER, 0.6, {}
+            fallback = self._fallback_intention(msg_lower)
+            if fallback is not None:
+                return fallback
 
             return IntentionChat.INCONNU, 0.3, {}
+
+    def _fallback_intention(self, msg_lower: str):
+        """Detection d'intention par mots-cles quand le parseur echoue."""
+        if any(mot in msg_lower for mot in ["vente", "créer", "creer", "acte", "promesse", "générer", "generer"]):
+            return IntentionChat.CREER, 0.6, {}
+        # RECHERCHER avant CONSULTER car "cherche dossier" = recherche, pas consultation
+        if any(mot in msg_lower for mot in ["cherche", "trouve", "recherche"]):
+            return IntentionChat.RECHERCHER, 0.6, {}
+        if any(mot in msg_lower for mot in ["dossier", "voir", "liste", "consulter", "client"]):
+            return IntentionChat.CONSULTER, 0.6, {}
+        return None
 
     def _generer_reponse(
         self,
