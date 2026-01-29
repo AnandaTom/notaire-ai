@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T16:53:15.664764",
+    "generated_at": "2026-01-29T20:35:39.486975",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,27 +9,27 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 59,
+    "scripts_count": 61,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 161
+    "commits": 165
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "bb26e17",
+      "hash": "112a32f",
       "message": "Merge branch 'tom/dev'",
       "date": "2026-01-29"
     },
-    "total_commits": 161,
+    "total_commits": 165,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 104
+        "commits": 106
       },
       {
         "name": "github-actions[bot]",
-        "commits": 28
+        "commits": 30
       },
       {
         "name": "augustinfrance-aico",
@@ -54,7 +54,7 @@
       "bookmarks": 361,
       "sections": 37,
       "trames_source": 1,
-      "lines": 445,
+      "lines": 446,
       "last_modified": "2026-01-29"
     },
     {
@@ -92,11 +92,11 @@
     }
   ],
   "scripts": {
-    "total": 59,
-    "total_lines": 34844,
+    "total": 61,
+    "total_lines": 36389,
     "categories": {
       "generation": 6,
-      "utils": 45,
+      "utils": 47,
       "tests": 3,
       "export": 3,
       "validation": 2
@@ -104,7 +104,7 @@
     "scripts": [
       {
         "name": "agent_autonome.py",
-        "lines": 2034,
+        "lines": 2805,
         "path": "execution/agent_autonome.py"
       },
       {
@@ -114,7 +114,7 @@
       },
       {
         "name": "valider_acte.py",
-        "lines": 1560,
+        "lines": 1571,
         "path": "execution/core/valider_acte.py"
       },
       {
@@ -124,7 +124,7 @@
       },
       {
         "name": "gestionnaire_promesses.py",
-        "lines": 1231,
+        "lines": 1236,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "112a32f",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "72d2937",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Sprint 3+4 - Q&R interactif, pipeline E2E, conversion promesse→vente",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "d3c44e5",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "bb26e17",
       "author": "Tom",
       "date": "2026-01-29",
@@ -630,6 +660,16 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
+    },
+    {
+      "hash": "c6dc43e",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "3d553d4",
@@ -780,46 +820,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "9a13b27",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Fin de journee - 29/01/2026 11:27:22,92",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "7905871",
-      "author": "Automai",
-      "date": "2026-01-29",
-      "message": "Ajout trames promesse D, E, F (#16)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "090d6b9",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "d811302",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 16:53"
+    "last_updated": "2026-01-29 20:35"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 16:53"
+    "last_updated": "2026-01-29 20:35"
   },
   "conformity_details": {
     "promesse": {
