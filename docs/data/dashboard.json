@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T20:34:48.348861",
+    "generated_at": "2026-01-29T21:29:12.173107",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 61,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 157
+    "commits": 160
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "72d2937",
-      "message": "feat: Sprint 3+4 - Q&R interactif, pipeline E2E, conversion promesse→vente",
+      "hash": "64b3416",
+      "message": "chore: add .gitattributes with merge=ours for dashboard.json",
       "date": "2026-01-29"
     },
-    "total_commits": 157,
+    "total_commits": 160,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 105
+        "commits": 108
       },
       {
         "name": "github-actions[bot]",
-        "commits": 29
+        "commits": 31
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "64b3416",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "add .gitattributes with merge=ours for dashboard.json",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "abe79b0",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "register custom Jinja2 filters in template syntax test",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "f77ea23",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "72d2937",
       "author": "Tom",
       "date": "2026-01-29",
@@ -790,36 +820,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "47aa3d1",
-      "author": "github-actions[bot]",
-      "date": "2026-01-28",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "bc7b36f",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "Fin de journee - 28/01/2026 18:41:20,84",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "308b9c7",
-      "author": "github-actions[bot]",
-      "date": "2026-01-28",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 20:34"
+    "last_updated": "2026-01-29 21:29"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 20:34"
+    "last_updated": "2026-01-29 21:29"
   },
   "conformity_details": {
     "promesse": {
