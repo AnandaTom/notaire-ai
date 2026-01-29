@@ -10,14 +10,20 @@ echo   NotaireAI - Fin de Journee
 echo ========================================
 echo.
 
-REM 1. Dernier commit
+REM 1. Verification securite avant commit
 echo [1/3] Dernier commit...
-git add .
+git add --update
+git add templates/ schemas/ directives/ execution/ docs/ api/ modal/ clauses/ actes_finaux/ web/ dashboard/ frontend/ supabase/ tests/
+git add *.py *.md *.json *.ps1 *.bat *.html *.css *.js
+REM Ne jamais commiter les secrets
+git reset -- .env .env.* .mcp.json .claude/settings.local.json 2>nul
 git commit -m "chore: Fin de journee - %date% %time%"
 
-REM 2. Push
+REM 2. Pull puis Push
 echo [2/3] Push sur votre branche...
 FOR /F "tokens=*" %%i IN ('git rev-parse --abbrev-ref HEAD') DO SET BRANCH=%%i
+REM Pull d'abord pour eviter le rejet non-fast-forward
+git pull --rebase origin %BRANCH% 2>nul
 git push origin %BRANCH%
 
 REM 3. Creer PR si pas deja faite

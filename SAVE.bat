@@ -8,8 +8,10 @@ echo.
 
 cd /d "%~dp0"
 
-:: Ajouter tous les fichiers
-git add -A
+:: Ajouter les fichiers modifies (pas les nouveaux non tracked)
+git add --update
+:: Securite: retirer les fichiers sensibles du staging
+git reset -- .env .env.* .mcp.json .claude/settings.local.json 2>nul
 
 :: Commit avec message automatique (date/heure)
 set MSG=Auto-save %date% %time:~0,5%

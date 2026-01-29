@@ -1,34 +1,35 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T06:46:29.296661",
-    "version": "1.3.0",
-    "dashboard_version": "2.5"
+    "generated_at": "2026-01-29T10:27:36.173562",
+    "version": "1.5.0",
+    "dashboard_version": "3.0",
+    "config_source": "docs/data/project_config.json"
   },
   "metrics": {
     "templates_count": 4,
-    "templates_prod": 3,
-    "avg_conformity": 80.8,
+    "templates_prod": 4,
+    "avg_conformity": 87.9,
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 122
+    "commits": 144
   },
   "git": {
-    "branch": "master",
+    "branch": "tom/dev",
     "last_commit": {
-      "hash": "6f86a46",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-01-28"
+      "hash": "9a13b27",
+      "message": "chore: Fin de journee - 29/01/2026 11:27:22,92",
+      "date": "2026-01-29"
     },
-    "total_commits": 122,
+    "total_commits": 144,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 94
+        "commits": 96
       },
       {
         "name": "github-actions[bot]",
-        "commits": 19
+        "commits": 20
       },
       {
         "name": "augustinfrance-aico",
@@ -37,6 +38,10 @@
       {
         "name": "Payoss",
         "commits": 13
+      },
+      {
+        "name": "Automai",
+        "commits": 1
       }
     ]
   },
@@ -44,21 +49,23 @@
     {
       "file": "vente_lots_copropriete.md",
       "name": "Vente lots copropriété",
-      "conformity": 85.1,
+      "conformity": 80.2,
       "status": "prod",
       "bookmarks": 361,
       "sections": 37,
+      "trames_source": 1,
       "lines": 445,
       "last_modified": "2026-01-29"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
       "name": "Promesse de vente",
-      "conformity": 60.9,
-      "status": "dev",
+      "conformity": 94.3,
+      "status": "prod",
       "bookmarks": 298,
-      "sections": 127,
-      "lines": 1530,
+      "sections": 165,
+      "trames_source": 7,
+      "lines": 1536,
       "last_modified": "2026-01-29"
     },
     {
@@ -68,6 +75,7 @@
       "status": "prod",
       "bookmarks": 116,
       "sections": 111,
+      "trames_source": 1,
       "lines": 1683,
       "last_modified": "2026-01-29"
     },
@@ -78,13 +86,14 @@
       "status": "prod",
       "bookmarks": 60,
       "sections": 13,
+      "trames_source": 1,
       "lines": 295,
       "last_modified": "2026-01-29"
     }
   ],
   "scripts": {
     "total": 59,
-    "total_lines": 34831,
+    "total_lines": 34732,
     "categories": {
       "generation": 6,
       "utils": 45,
@@ -120,7 +129,7 @@
       },
       {
         "name": "generer_dashboard_data.py",
-        "lines": 1179,
+        "lines": 1080,
         "path": "execution/generer_dashboard_data.py"
       },
       {
@@ -281,9 +290,14 @@
         "assignee": "Tom"
       },
       {
-        "task": "Intégration extraction titre propriété",
-        "priority": "low",
-        "assignee": "Payoss"
+        "task": "Documentation API frontend (pour Paul)",
+        "priority": "medium",
+        "assignee": "Tom"
+      },
+      {
+        "task": "Validation métier avancée (conjoint, diagnostics)",
+        "priority": "high",
+        "assignee": "Tom"
       },
       {
         "task": "Label ETIK (optionnel)",
@@ -293,66 +307,117 @@
     ],
     "in_progress": [
       {
-        "task": "Enrichir template promesse (60.9% → 80%)",
-        "dev": "Tom",
-        "progress": 60
-      },
-      {
-        "task": "Formulaires web notaire",
+        "task": "Formulaires web notaire v2",
         "dev": "Augustin",
-        "progress": 40
+        "progress": 50
       },
       {
         "task": "API backend génération",
+        "dev": "Payoss",
+        "progress": 40
+      },
+      {
+        "task": "Chat fonctionnel sur Modal",
         "dev": "Payoss",
         "progress": 30
       }
     ],
     "done": [
       {
-        "task": "Template vente 85% conformité",
-        "dev": "Tom",
-        "path": "templates/vente_lots_copropriete.md"
+        "task": "Template vente 80.2% conformité",
+        "dev": "Tom"
+      },
+      {
+        "task": "Template promesse 94.3% conformité (v3.0)",
+        "dev": "Tom"
       },
       {
         "task": "Pipeline génération rapide",
-        "dev": "Tom",
-        "path": "execution/workflow_rapide.py"
+        "dev": "Tom"
       },
       {
         "task": "Documentation RGPD",
-        "dev": "Tom",
-        "path": "docs/legal/REGISTRE_TRAITEMENTS.md"
+        "dev": "Tom"
       },
       {
         "task": "Template CGU créé",
-        "dev": "Tom",
-        "path": "docs/legal/CGU_TEMPLATE.md"
+        "dev": "Tom"
       },
       {
-        "task": "Dashboard v2.4 dynamique",
-        "dev": "Tom",
-        "path": "docs/index.html"
+        "task": "Dashboard v2.5 dynamique",
+        "dev": "Tom"
       },
       {
         "task": "Tests automatisés",
-        "dev": "Payoss",
-        "path": "execution/test_fiabilite.py"
+        "dev": "Payoss"
       },
       {
         "task": "Analyse obligations CSN",
-        "dev": "Tom",
-        "path": "docs/legal/OBLIGATIONS_CSN.md"
+        "dev": "Tom"
       },
       {
         "task": "Script génération dashboard",
-        "dev": "Tom",
-        "path": "execution/generer_dashboard_data.py"
+        "dev": "Tom"
       },
       {
         "task": "GitHub Actions auto-update",
-        "dev": "Tom",
-        "path": ".github/workflows/update-dashboard.yml"
+        "dev": "Tom"
+      },
+      {
+        "task": "Template promesse sections spécifiques",
+        "dev": "Tom"
+      },
+      {
+        "task": "Enrichissement 7 trames promesse",
+        "dev": "Tom"
+      },
+      {
+        "task": "Support multi-parties (A & B → C)",
+        "dev": "Tom"
+      },
+      {
+        "task": "Score confiance détaillé",
+        "dev": "Tom"
+      },
+      {
+        "task": "Validation intégrée dans agent",
+        "dev": "Tom"
+      },
+      {
+        "task": "Système formulaires clients sécurisés",
+        "dev": "Augustin"
+      },
+      {
+        "task": "Intégration Supabase MCP",
+        "dev": "Tom"
+      },
+      {
+        "task": "Historique Supabase",
+        "dev": "Payoss"
+      },
+      {
+        "task": "Gestionnaire promesses avancé (4 types)",
+        "dev": "Tom"
+      },
+      {
+        "task": "Catalogue unifié promesse",
+        "dev": "Tom"
+      },
+      {
+        "task": "Workflow Titre → Promesse → Vente",
+        "dev": "Tom"
+      },
+      {
+        "task": "Extraction titre propriété (OCR+ML)",
+        "dev": "Tom"
+      },
+      {
+        "task": "Anonymisation DOCX (RGPD)",
+        "dev": "Tom"
+      },
+      {
+        "task": "Architecture v1.5.0 restructuration",
+        "dev": "Tom"
       }
     ]
   },
@@ -360,7 +425,13 @@
     {
       "icon": "📄",
       "name": "Générer actes",
-      "description": "DOCX/PDF fidèles aux trames",
+      "description": "4 types: vente, promesse, EDD, modificatif",
+      "active": true
+    },
+    {
+      "icon": "📋",
+      "name": "4 types promesses",
+      "description": "Standard, Premium, Mobilier, Multi-biens",
       "active": true
     },
     {
@@ -372,37 +443,55 @@
     {
       "icon": "✅",
       "name": "Validation",
-      "description": "Cohérence et complétude",
+      "description": "Cohérence, complétude, quotités",
       "active": true
     },
     {
       "icon": "🔍",
       "name": "Détection auto",
-      "description": "Type d'acte automatique",
+      "description": "Type d'acte + type promesse",
       "active": true
     },
     {
       "icon": "💡",
       "name": "Suggestions",
-      "description": "Clauses contextuelles",
+      "description": "Clauses contextuelles intelligentes",
       "active": true
     },
     {
       "icon": "📊",
       "name": "Conformité",
-      "description": "Score automatique vs trame",
+      "description": "Score automatique vs 7 trames",
       "active": true
     },
     {
       "icon": "🗄️",
       "name": "Historique",
-      "description": "Supabase + mode offline",
+      "description": "Supabase + chiffrement E2E",
       "active": true
     },
     {
       "icon": "⚡",
       "name": "Pipeline rapide",
       "description": "~6 secondes / acte",
+      "active": true
+    },
+    {
+      "icon": "📑",
+      "name": "Extraction titre",
+      "description": "PDF/DOCX → JSON (OCR+ML)",
+      "active": true
+    },
+    {
+      "icon": "🔄",
+      "name": "Workflow chaîné",
+      "description": "Titre → Promesse → Vente",
+      "active": true
+    },
+    {
+      "icon": "🔐",
+      "name": "Sécurité RGPD",
+      "description": "Anonymisation + chiffrement AES-256",
       "active": true
     }
   ],
@@ -533,7 +622,47 @@
   ],
   "activity": [
     {
-      "hash": "6f86a46",
+      "hash": "9a13b27",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Fin de journee - 29/01/2026 11:27:22,92",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "090d6b9",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "d811302",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "fc7893b",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "merge: Sync avec master (dashboard.json)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "47aa3d1",
       "author": "github-actions[bot]",
       "date": "2026-01-28",
       "message": "auto-update dashboard data [skip ci]",
@@ -543,137 +672,17 @@
       "type_color": "blue"
     },
     {
-      "hash": "52cf56e",
+      "hash": "bc7b36f",
       "author": "Tom",
       "date": "2026-01-28",
-      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "27e826f",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "architecture v1.5.0 - restructuration complète",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "ebb076a",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "update paths and imports for v1.5.0 structure",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "a587876",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "remove frontend-mockup folder",
+      "message": "Fin de journee - 28/01/2026 18:41:20,84",
       "type": "chore",
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
     },
     {
-      "hash": "a536d9c",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "corrections finales post-restructuration",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "fc58ede",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 6 - mise à jour documentation",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
-    },
-    {
-      "hash": "6911fad",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 5 - consolidation répertoires",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "b334230",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 4 - nettoyage scripts inutilisés",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "05a3b94",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 3 - réorganisation complète execution/",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "e54e135",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 3.2 - création execution/gestionnaires/",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "063fbbd",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 3.1 - création execution/core/",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "dd19d23",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 2 - consolidation templates",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "60b4b72",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 1 - nettoyage critique fichiers morts",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "814230c",
+      "hash": "308b9c7",
       "author": "github-actions[bot]",
       "date": "2026-01-28",
       "message": "auto-update dashboard data [skip ci]",
@@ -683,17 +692,7 @@
       "type_color": "blue"
     },
     {
-      "hash": "523de5f",
-      "author": "Augustin",
-      "date": "2026-01-28",
-      "message": "Merge branch 'augustin/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "e5ed3d4",
+      "hash": "299b4ac",
       "author": "Augustin",
       "date": "2026-01-28",
       "message": "système complet de formulaires clients sécurisés",
@@ -703,7 +702,7 @@
       "type_color": "green"
     },
     {
-      "hash": "959d707",
+      "hash": "8c02bd8",
       "author": "github-actions[bot]",
       "date": "2026-01-28",
       "message": "auto-update dashboard data [skip ci]",
@@ -713,24 +712,114 @@
       "type_color": "blue"
     },
     {
-      "hash": "d4a5730",
-      "author": "Tom",
+      "hash": "70176b5",
+      "author": "Payoss",
       "date": "2026-01-28",
-      "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "b068739",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "add new promesse sections and improve validation",
+      "message": "Ajout dashboard, frontend chatbot et architecture",
       "type": "feat",
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
+    },
+    {
+      "hash": "77357ce",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "update paths and imports for v1.5.0 structure",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "a86ca4b",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "remove frontend-mockup folder",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "723bd70",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "corrections finales post-restructuration",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "b5bae73",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "phase 6 - mise à jour documentation",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "37f8c4a",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "phase 5 - consolidation répertoires",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "c7693aa",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "phase 4 - nettoyage scripts inutilisés",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "ec50fe1",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "phase 3 - réorganisation complète execution/",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "f4108ff",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "phase 3.2 - création execution/gestionnaires/",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "1cc14c0",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "phase 3.1 - création execution/core/",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "6e2a5a9",
+      "author": "Tom",
+      "date": "2026-01-28",
+      "message": "phase 2 - consolidation templates",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
     }
   ],
   "recommendations": {
@@ -745,25 +834,24 @@
         "color": "#f59e0b",
         "items": [
           {
-            "task": "Intégrer validation dans l'agent",
-            "dev": "Payoss",
-            "effort": "2j",
-            "impact": 4,
-            "details": "Ajouter _valider_donnees() dans executer() avant génération"
+            "task": "Validation métier avancée (conjoint, diagnostics)",
+            "dev": "Tom",
+            "impact": 4
           },
           {
-            "task": "Support multi-parties (A & B → C)",
+            "task": "API backend + Chat Modal",
             "dev": "Payoss",
-            "effort": "3j",
-            "impact": 4,
-            "details": "Parser 'Martin & Pierre → Dupont' avec PATTERN_FLECHE_MULTI"
+            "impact": 4
           },
           {
-            "task": "Formulaires web collecte données",
+            "task": "Formulaires web v2",
             "dev": "Augustin",
-            "effort": "5j",
-            "impact": 4,
-            "details": "Interface React/Vue pour questionnaire notaire interactif"
+            "impact": 4
+          },
+          {
+            "task": "Améliorer vente (80.2% → 85%+)",
+            "dev": "Tom",
+            "impact": 4
           }
         ]
       },
@@ -772,178 +860,20 @@
         "color": "#10b981",
         "items": [
           {
-            "task": "Mode interactif agent",
-            "dev": "Payoss",
-            "effort": "3j",
-            "impact": 3,
-            "details": "Dialogue multi-tour avec questions/réponses"
-          },
-          {
-            "task": "Suggestions contextuelles clauses",
+            "task": "Template donation-partage",
             "dev": "Tom",
-            "effort": "2j",
-            "impact": 3,
-            "details": "Suggérer clauses basées sur contexte (multi-acquéreurs, prix, etc.)"
+            "impact": 3
           },
           {
             "task": "Dashboard analytics temps réel",
             "dev": "Augustin",
-            "effort": "3j",
-            "impact": 3,
-            "details": "Graphiques d'utilisation, métriques génération"
-          }
-        ]
-      }
-    },
-    "dev_recommendations": {
-      "Tom": {
-        "role": "Lead Dev / Templates",
-        "focus": "Templates & Conformité",
-        "current_sprint": "Sprint 1",
-        "priorities": [
-          {
-            "task": "Suggestions contextuelles clauses",
-            "dev": "Tom",
-            "effort": "2j",
-            "impact": 3,
-            "details": "Suggérer clauses basées sur contexte (multi-acquéreurs, prix, etc.)",
-            "priority": "P2",
-            "priority_label": "NICE TO HAVE",
-            "priority_color": "#10b981"
-          }
-        ],
-        "checklist": [
-          {
-            "item": "Ajouter {% include 'sections/partie_developpee_promesse.md' %}",
-            "done": true
+            "impact": 3
           },
           {
-            "item": "Créer sections spécifiques promesse",
-            "done": true
-          },
-          {
-            "item": "Tester conformité ≥85%",
-            "done": false
-          },
-          {
-            "item": "Standardiser variables promesse/vente",
-            "done": false
-          }
-        ],
-        "next_actions": [
-          "Créer partie_developpee_promesse.md avec conditions suspensives",
-          "Ajouter indemnité d'immobilisation et délai réalisation",
-          "Valider avec comparer_documents.py"
-        ]
-      },
-      "Augustin": {
-        "role": "Frontend / Formulaires",
-        "focus": "Interface Utilisateur",
-        "current_sprint": "Sprint 2",
-        "priorities": [
-          {
-            "task": "Formulaires web collecte données",
-            "dev": "Augustin",
-            "effort": "5j",
-            "impact": 4,
-            "details": "Interface React/Vue pour questionnaire notaire interactif",
-            "priority": "P1",
-            "priority_label": "IMPORTANT",
-            "priority_color": "#f59e0b"
-          },
-          {
-            "task": "Dashboard analytics temps réel",
-            "dev": "Augustin",
-            "effort": "3j",
-            "impact": 3,
-            "details": "Graphiques d'utilisation, métriques génération",
-            "priority": "P2",
-            "priority_label": "NICE TO HAVE",
-            "priority_color": "#10b981"
-          }
-        ],
-        "checklist": [
-          {
-            "item": "Maquette formulaire collecte",
-            "done": false
-          },
-          {
-            "item": "Composants React/Vue questionnaire",
-            "done": false
-          },
-          {
-            "item": "Intégration API backend",
-            "done": false
-          },
-          {
-            "item": "Validation côté client",
-            "done": false
-          }
-        ],
-        "next_actions": [
-          "Designer wireframes formulaire notaire",
-          "Créer composants pour 100+ questions",
-          "Implémenter navigation conditionnelle"
-        ]
-      },
-      "Payoss": {
-        "role": "Backend / Scripts",
-        "focus": "Agent & API",
-        "current_sprint": "Sprint 1-2",
-        "priorities": [
-          {
-            "task": "Intégrer validation dans l'agent",
+            "task": "Optimisation performance (<3s)",
             "dev": "Payoss",
-            "effort": "2j",
-            "impact": 4,
-            "details": "Ajouter _valider_donnees() dans executer() avant génération",
-            "priority": "P1",
-            "priority_label": "IMPORTANT",
-            "priority_color": "#f59e0b"
-          },
-          {
-            "task": "Support multi-parties (A & B → C)",
-            "dev": "Payoss",
-            "effort": "3j",
-            "impact": 4,
-            "details": "Parser 'Martin & Pierre → Dupont' avec PATTERN_FLECHE_MULTI",
-            "priority": "P1",
-            "priority_label": "IMPORTANT",
-            "priority_color": "#f59e0b"
-          },
-          {
-            "task": "Mode interactif agent",
-            "dev": "Payoss",
-            "effort": "3j",
-            "impact": 3,
-            "details": "Dialogue multi-tour avec questions/réponses",
-            "priority": "P2",
-            "priority_label": "NICE TO HAVE",
-            "priority_color": "#10b981"
+            "impact": 3
           }
-        ],
-        "checklist": [
-          {
-            "item": "Validation intégrée dans agent",
-            "done": false
-          },
-          {
-            "item": "Pattern multi-parties",
-            "done": false
-          },
-          {
-            "item": "Score confiance détaillé",
-            "done": false
-          },
-          {
-            "item": "API REST génération",
-            "done": false
-          }
-        ],
-        "next_actions": [
-          "Ajouter _valider_donnees() dans agent_autonome.py",
-          "Créer PATTERN_FLECHE_MULTI pour couples/indivisions",
-          "Implémenter ScoreConfianceDetaille dataclass"
         ]
       }
     },
@@ -952,62 +882,59 @@
         "name": "Sprint 1",
         "weeks": "Semaine 1-2",
         "objective": "Template promesse ≥85%",
-        "status": "in_progress",
+        "status": "done",
         "tasks": [
           {
-            "task": "Compléter template promesse",
+            "task": "Template promesse 94.3%",
             "dev": "Tom",
-            "effort": "3j",
-            "status": "in_progress"
+            "status": "done"
           },
           {
-            "task": "Créer partie_developpee_promesse.md",
+            "task": "Enrichissement 7 trames",
             "dev": "Tom",
-            "effort": "2j",
-            "status": "pending"
+            "status": "done"
           },
           {
-            "task": "Intégrer validation agent",
-            "dev": "Payoss",
-            "effort": "2j",
-            "status": "pending"
+            "task": "Validation intégrée agent",
+            "dev": "Tom",
+            "status": "done"
           },
           {
-            "task": "Tests génération promesse",
-            "dev": "Payoss",
-            "effort": "1j",
-            "status": "pending"
+            "task": "Support multi-parties",
+            "dev": "Tom",
+            "status": "done"
           }
         ]
       },
       {
         "name": "Sprint 2",
         "weeks": "Semaine 3-4",
-        "objective": "Agent gère 90% des cas",
-        "status": "pending",
+        "objective": "API + Formulaires + Validation métier",
+        "status": "in_progress",
         "tasks": [
           {
-            "task": "Support multi-parties",
-            "dev": "Payoss",
-            "effort": "3j",
-            "status": "pending"
-          },
-          {
-            "task": "Score confiance détaillé",
-            "dev": "Payoss",
-            "effort": "2j",
-            "status": "pending"
-          },
-          {
-            "task": "Formulaires web v1",
-            "dev": "Augustin",
-            "effort": "5j",
-            "status": "pending"
-          },
-          {
-            "task": "Documentation API",
+            "task": "Validation métier avancée",
             "dev": "Tom",
-            "effort": "2j",
+            "status": "pending"
+          },
+          {
+            "task": "API backend génération",
+            "dev": "Payoss",
+            "status": "in_progress"
+          },
+          {
+            "task": "Chat Modal fonctionnel",
+            "dev": "Payoss",
+            "status": "in_progress"
+          },
+          {
+            "task": "Formulaires web v2",
+            "dev": "Augustin",
+            "status": "in_progress"
+          },
+          {
+            "task": "Documentation API frontend",
+            "dev": "Tom",
             "status": "pending"
           }
         ]
@@ -1015,31 +942,22 @@
       {
         "name": "Sprint 3",
         "weeks": "Semaine 5-6",
-        "objective": "UX excellente, <2s",
+        "objective": "UX excellente, donation-partage",
         "status": "pending",
         "tasks": [
           {
-            "task": "Mode interactif",
-            "dev": "Payoss",
-            "effort": "3j",
-            "status": "pending"
-          },
-          {
-            "task": "Suggestions contextuelles",
+            "task": "Template donation-partage",
             "dev": "Tom",
-            "effort": "2j",
             "status": "pending"
           },
           {
             "task": "Dashboard analytics",
             "dev": "Augustin",
-            "effort": "3j",
             "status": "pending"
           },
           {
             "task": "Optimisations perf",
             "dev": "Payoss",
-            "effort": "2j",
             "status": "pending"
           }
         ]
@@ -1047,58 +965,68 @@
     ],
     "system_scores": {
       "architecture": {
-        "score": 9,
+        "score": 9.5,
         "max": 10,
         "label": "Architecture 3 couches"
       },
       "documentation": {
-        "score": 8,
+        "score": 9,
         "max": 10,
         "label": "Documentation"
       },
+      "templates_promesse": {
+        "score": 9.4,
+        "max": 10,
+        "label": "Templates Promesse"
+      },
       "templates_vente": {
-        "score": 8.5,
+        "score": 8,
         "max": 10,
         "label": "Templates Vente"
       },
       "agent": {
-        "score": 7,
+        "score": 8,
         "max": 10,
         "label": "Agent Autonome"
       },
       "pipeline": {
-        "score": 8,
+        "score": 8.5,
         "max": 10,
         "label": "Pipeline Performance"
+      },
+      "securite": {
+        "score": 9.5,
+        "max": 10,
+        "label": "Sécurité & RGPD"
       }
     },
     "weaknesses": [
       {
-        "problem": "Template Promesse incomplet (60.9%)",
-        "impact": "Bloque production",
-        "priority": "P0"
-      },
-      {
-        "problem": "Agent sans validation intégrée",
-        "impact": "Erreurs silencieuses",
+        "problem": "Pas de validation conjoint/diagnostics",
+        "impact": "Erreurs possibles",
         "priority": "P1"
       },
       {
-        "problem": "Pas de support multi-parties",
-        "impact": "Limite cas réels",
-        "priority": "P1"
+        "problem": "Template vente conformité 80.2%",
+        "impact": "Marge d'amélioration",
+        "priority": "P2"
       },
       {
-        "problem": "Pas de dialogue multi-tour",
+        "problem": "Pas de template donation-partage",
+        "impact": "Limite types d'actes",
+        "priority": "P2"
+      },
+      {
+        "problem": "Pas de dialogue multi-tour web",
         "impact": "UX limitée",
         "priority": "P2"
       }
     ],
-    "source_file": "docs/RECOMMANDATIONS_STRATEGIQUES.md",
+    "source_file": "docs/data/project_config.json",
     "last_updated": "2026-01-29"
   },
   "overview": {
-    "overall_score": 65,
+    "overall_score": 67,
     "phase": {
       "name": "Beta",
       "color": "#06b6d4",
@@ -1106,7 +1034,7 @@
     },
     "scores": {
       "tech": {
-        "score": 95,
+        "score": 100,
         "label": "Technique",
         "icon": "⚙️"
       },
@@ -1130,9 +1058,15 @@
       },
       {
         "name": "Templates Production",
-        "status": "in_progress",
-        "progress": 75,
-        "description": "3/4 templates ≥80% conformité"
+        "status": "done",
+        "progress": 100,
+        "description": "4/4 templates >=80% conformite"
+      },
+      {
+        "name": "Enrichissement 7 trames promesse",
+        "status": "done",
+        "date": "2026-01",
+        "description": "Promesse a 87.9% conformite (v3.0.0)"
       },
       {
         "name": "Premier client payant",
@@ -1152,13 +1086,19 @@
         "key_results": [
           {
             "kr": "Template promesse ≥85%",
-            "current": 60.9,
+            "current": 94.3,
+            "target": 85,
+            "unit": "%"
+          },
+          {
+            "kr": "Template vente ≥85%",
+            "current": 80.2,
             "target": 85,
             "unit": "%"
           },
           {
             "kr": "Tests e2e couvrant 90% des cas",
-            "current": 60,
+            "current": 75,
             "target": 90,
             "unit": "%"
           },
@@ -1219,40 +1159,21 @@
       }
     ],
     "current_sprint": {
-      "name": "Sprint 1",
+      "name": "Sprint 2",
       "start_date": "2026-01-27",
       "end_date": "2026-02-09",
-      "days_remaining": 13,
-      "progress": 25,
-      "velocity_target": 20,
-      "velocity_current": 5,
-      "burndown": [
-        {
-          "day": 1,
-          "remaining": 20,
-          "ideal": 20
-        },
-        {
-          "day": 2,
-          "remaining": 18,
-          "ideal": 18.5
-        },
-        {
-          "day": 3,
-          "remaining": 15,
-          "ideal": 17
-        }
-      ],
+      "objective": "API + Formulaires + Validation métier",
+      "status": "in_progress",
       "blockers": [
         {
-          "issue": "Template promesse incomplet",
-          "assigned": "Tom",
+          "issue": "Structure juridique manquante",
+          "assigned": "Fondateur",
           "severity": "high"
         }
       ],
       "risks": [
         {
-          "risk": "Délai structure juridique",
+          "risk": "Delai structure juridique",
           "probability": "high",
           "impact": "Bloque facturation"
         }
@@ -1261,126 +1182,136 @@
     "remaining_work": {
       "critical": [
         {
-          "task": "Compléter template promesse",
-          "effort": "3j",
-          "assigned": "Tom"
+          "task": "Creer structure juridique",
+          "assigned": null
         },
         {
-          "task": "Créer structure juridique",
-          "effort": "2j",
+          "task": "Souscrire RC Pro",
           "assigned": null
+        },
+        {
+          "task": "Validation metier avancee (conjoint, diagnostics)",
+          "assigned": "Tom"
         }
       ],
       "important": [
         {
-          "task": "Intégrer validation dans agent",
-          "effort": "2j",
+          "task": "Ameliorer template vente (80.2% -> 85%+)",
+          "assigned": "Tom"
+        },
+        {
+          "task": "API backend + Chat Modal",
           "assigned": "Payoss"
         },
         {
-          "task": "Souscrire RC Pro",
-          "effort": "1j",
-          "assigned": null
+          "task": "Formulaires web v2",
+          "assigned": "Augustin"
         },
         {
-          "task": "Formulaires web v1",
-          "effort": "5j",
-          "assigned": "Augustin"
+          "task": "Documentation API frontend",
+          "assigned": "Tom"
         }
       ],
       "nice_to_have": [
         {
-          "task": "Mode interactif agent",
-          "effort": "3j",
-          "assigned": "Payoss"
+          "task": "Template donation-partage",
+          "assigned": "Tom"
         },
         {
           "task": "Dashboard analytics",
-          "effort": "3j",
           "assigned": "Augustin"
         },
         {
           "task": "Label ETIK",
-          "effort": "60j",
           "assigned": null
         }
       ]
     },
     "suggestions": [
       {
+        "type": "tech",
+        "priority": "low",
+        "message": "Conformite moyenne a 87.9% - Excellent! 4/4 templates en prod.",
+        "action": "Focus sur validation metier et optimisations"
+      },
+      {
         "type": "business",
         "priority": "high",
         "message": "Structure juridique manquante - Bloque la facturation",
-        "action": "Créer SASU via Legalstart ou Infogreffe"
+        "action": "Creer SASU via Legalstart ou Infogreffe"
       },
       {
         "type": "growth",
         "priority": "medium",
-        "message": "Aucun client actif - Démarrer les démos",
-        "action": "Contacter 3 notaires pour démo cette semaine"
-      },
-      {
-        "type": "quick_win",
-        "priority": "low",
-        "message": "Documentation à jour - Continuer sur cette lancée",
-        "action": "Maintenir CLAUDE.md et CHANGELOG.md"
+        "message": "Aucun client actif - Demarrer les demos",
+        "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 06:46"
+    "last_updated": "2026-01-29 10:27"
   },
   "chef_projet": {
     "dev_priorities": {
       "Tom": {
         "role": "Lead Dev / Templates",
-        "focus": "Template Promesse",
+        "focus": "Validation metier + Vente",
         "color": "#6366f1",
         "this_week": [
           {
-            "task": "Compléter template promesse → 85%",
+            "task": "Validation metier avancee",
             "priority": "critical",
             "subtasks": [
-              "Créer partie_developpee_promesse.md",
-              "Ajouter conditions suspensives",
-              "Ajouter indemnité d'immobilisation",
-              "Tester avec comparer_documents.py"
+              "Validation conjoint (communaute)",
+              "Validation diagnostics expires",
+              "Validation coherence dates",
+              "Tests unitaires"
             ],
-            "deadline": "Vendredi",
-            "progress": 60
+            "progress": 0
+          },
+          {
+            "task": "Ameliorer template vente (80.2% -> 85%+)",
+            "priority": "important",
+            "subtasks": [
+              "Analyser sections manquantes vs trame originale",
+              "Ajouter sections agent immobilier, plus-value",
+              "Tester conformite"
+            ],
+            "progress": 0
           }
         ],
-        "quick_wins": [
-          "Lancer comparer_documents.py sur promesses anonymisées",
-          "Identifier sections manquantes dans docs_original/"
+        "achievements": [
+          "Template promesse a 94.3% (objectif 85% depasse!)",
+          "Enrichissement depuis 7 trames originales",
+          "40+ nouvelles sections ajoutees (v3.0.0)",
+          "7 bugs templates corriges"
         ],
         "blocked_by": null
       },
       "Augustin": {
         "role": "Frontend / Formulaires",
-        "focus": "Maquette Formulaires",
+        "focus": "Formulaires web v2",
         "color": "#06b6d4",
         "this_week": [
           {
-            "task": "Maquette formulaire collecte notaire",
+            "task": "Formulaires web collecte notaire v2",
             "priority": "important",
             "subtasks": [
-              "Identifier 20 questions critiques",
-              "Créer wireframe Figma/Excalidraw",
-              "Proposer navigation conditionnelle",
-              "Valider avec Tom"
+              "Composants React/Vue questionnaire",
+              "Navigation conditionnelle",
+              "Integration API backend",
+              "Validation cote client"
             ],
-            "deadline": "Mercredi",
-            "progress": 20
+            "progress": 50
           }
         ],
-        "quick_wins": [
-          "Lire schemas/questions_promesse_vente.json",
-          "Commencer par formulaire promesse (plus simple)"
+        "achievements": [
+          "Systeme formulaires clients securises",
+          "Dashboard notaire HTML"
         ],
         "blocked_by": null
       },
       "Payoss": {
         "role": "Backend / Chat / Modal",
-        "focus": "Déploiement Modal",
+        "focus": "API + Chat Modal",
         "color": "#10b981",
         "this_week": [
           {
@@ -1388,56 +1319,46 @@
             "priority": "critical",
             "subtasks": [
               "Endpoint /generate qui appelle l'agent",
-              "Streaming de réponses",
+              "Streaming de reponses",
               "Gestion d'erreurs avec fallback",
-              "URL de démo partageable"
+              "URL de demo partageable"
             ],
-            "deadline": "Vendredi",
             "progress": 30
           },
           {
-            "task": "Intégrer validation dans l'agent",
+            "task": "API backend generation",
             "priority": "important",
             "subtasks": [
-              "Ajouter _valider_donnees() avant génération",
-              "Retourner erreurs structurées"
+              "Endpoints promesse/vente",
+              "Validation donnees API",
+              "Documentation OpenAPI"
             ],
-            "deadline": "Sprint 1",
-            "progress": 0
+            "progress": 40
           }
         ],
-        "quick_wins": [
-          "Tester modal deploy modal_app.py",
-          "Vérifier que le setup fonctionne"
+        "achievements": [
+          "Historique Supabase",
+          "Tests automatises"
         ],
         "blocked_by": null
       }
     },
     "business_actions": [
       {
-        "action": "Créer SASU sur Legalstart",
-        "effort": "2h + 150€",
-        "impact": "Débloquer facturation",
+        "action": "Creer SASU sur Legalstart",
+        "impact": "Debloquer facturation",
         "owner": "Fondateur",
-        "status": "todo",
-        "url": "https://www.legalstart.fr/creation-entreprise/sasu/"
+        "status": "todo"
       },
       {
         "action": "Souscrire RC Pro",
-        "effort": "1h + ~1000€/an",
         "impact": "Couvrir risques",
         "owner": "Fondateur",
         "status": "blocked",
-        "blocked_by": "SASU",
-        "options": [
-          "MACSF",
-          "Hiscox",
-          "AXA"
-        ]
+        "blocked_by": "SASU"
       },
       {
-        "action": "Contacter 3 notaires pour démo",
-        "effort": "2h",
+        "action": "Contacter 3 notaires pour demo",
         "impact": "Pipeline prospects",
         "owner": "Tom",
         "status": "todo"
@@ -1445,9 +1366,10 @@
     ],
     "sprint_objectives": [
       {
-        "objective": "Template promesse ≥85% conformité",
+        "objective": "Template promesse >=85% conformite",
         "owner": "Tom",
-        "status": "in_progress"
+        "status": "done",
+        "result": "94.3%"
       },
       {
         "objective": "Chat fonctionnel sur Modal",
@@ -1455,49 +1377,45 @@
         "status": "in_progress"
       },
       {
-        "objective": "Maquette formulaire validée",
+        "objective": "Formulaires web v2",
         "owner": "Augustin",
         "status": "in_progress"
       },
       {
-        "objective": "SASU créée",
-        "owner": "Business",
-        "status": "todo"
-      },
-      {
-        "objective": "1-2 démos notaires programmées",
+        "objective": "Validation metier avancee",
         "owner": "Tom",
         "status": "pending"
-      }
-    ],
-    "rituals": [
-      {
-        "name": "Daily async",
-        "frequency": "Quotidien 9h",
-        "duration": "2min",
-        "format": "Slack: Hier/Aujourd'hui/Bloqué"
       },
       {
-        "name": "Démo vendredi",
-        "frequency": "Vendredi 14h",
-        "duration": "30min",
-        "format": "Call + screen share"
-      },
-      {
-        "name": "Sprint review",
-        "frequency": "Bi-hebdo",
-        "duration": "45min",
-        "format": "Rétro + planning"
+        "objective": "SASU creee",
+        "owner": "Business",
+        "status": "todo"
       }
     ],
     "main_alert": {
-      "type": "warning",
-      "message": "Sans structure juridique, impossible de facturer. C'est le vrai bloqueur.",
-      "action": "Créer SASU cette semaine",
-      "icon": "⚠️"
+      "type": "success",
+      "message": "Template promesse a 94.3% - Objectif Sprint 1 depasse! 4/4 templates en PROD.",
+      "action": "Focus: structure juridique + API + validation metier",
+      "icon": "🎉"
     },
-    "week": "27 Janvier - 2 Février 2026",
-    "sprint": "Sprint 1",
-    "last_updated": "2026-01-29 06:46"
+    "sprint": "Sprint 2",
+    "last_updated": "2026-01-29 10:27"
+  },
+  "conformity_details": {
+    "promesse": {
+      "titres_score": 97.2,
+      "tableaux_score": 86.0,
+      "sections_critiques_score": 100.0,
+      "longueur_score": 96.2,
+      "weighted_total": 94.3,
+      "weights": {
+        "titres": 0.4,
+        "tableaux": 0.3,
+        "sections_critiques": 0.2,
+        "longueur": 0.1
+      },
+      "last_tested": "2026-01-29",
+      "test_command": "python execution/analyse/comparer_documents.py --original docs_original/Trame_promesse_Principale.docx --genere .tmp/actes_generes/*/acte.docx"
+    }
   }
 }

@@ -8,7 +8,11 @@ param(
     [string]$BRANCH = "tom/dev"
 )
 
-$projectPath = "c:\Users\tomra\OneDrive\Dokumente\Agence IA Automatisation\Agentic Workflows\Agent AI Création & Modification d'actes notariaux"
+# Chemin relatif au script (fonctionne pour tous les collaborateurs)
+$projectPath = $PSScriptRoot
+if ([string]::IsNullOrEmpty($projectPath)) {
+    $projectPath = Get-Location
+}
 $syncSeconds = $SYNC_INTERVAL_MINUTES * 60
 $pushSeconds = $PUSH_INTERVAL_MINUTES * 60
 $lastSync = Get-Date
@@ -71,7 +75,8 @@ while ($true) {
             Write-Host "[$timestamp] 📤 Changes detected, committing and pushing..."
 
             # Add all changes
-            git add .
+            git add --update
+            git reset -- .env .env.* .mcp.json .claude/settings.local.json 2>$null
 
             # Commit with timestamp
             git commit -m "auto: Sauvegarde automatique sur $BRANCH - $timestamp"
