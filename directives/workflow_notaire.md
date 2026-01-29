@@ -2,13 +2,30 @@
 
 > Cette directive décrit le workflow complet pour qu'un notaire génère un acte avec NotaireAI.
 
-**Version**: 2.0.0 | **Date**: 2026-01-28
+**Version**: 2.3.0 | **Date**: 2026-01-29
 
 ---
 
 ## 🎯 Objectif
 
 Générer des actes notariaux **100% identiques** aux trames originales en suivant un processus guidé, fiable et rapide.
+
+---
+
+## ⚡ Raccourcis Claude Code (Skills)
+
+Les workflows les plus courants sont accessibles via des commandes `/slash` dans Claude Code:
+
+| Besoin | Commande | Ce qui se passe |
+|--------|----------|----------------|
+| Générer un acte | `/generer-acte vente` | Pipeline complet: validation → assemblage → DOCX |
+| Générer une promesse | `/generer-promesse standard` | Détection auto du type + génération |
+| Tester le pipeline | `/test-pipeline` | pytest + conformité templates |
+| Auditer un template | `/valider-template all` | Comparaison vs trames originales |
+| Déployer en prod | `/deploy-modal prod` | Tests → deploy Modal |
+| Voir le status | `/status` | Dashboard complet du projet |
+
+Ces skills appellent les mêmes scripts Python que le workflow ci-dessous, mais automatisent l'enchainement.
 
 ---
 
@@ -63,6 +80,47 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 | **TOTAL** | **~8s** | Titre → DOCX en une commande |
 
 **Si template <80%**: Utiliser les exemples fournis dans `exemples/` jusqu'à enrichissement complet.
+
+### 🆕 Collecte Interactive Q&R Sprint 3 (v1.6.0)
+
+Le `CollecteurInteractif` dans `agent_autonome.py` permet une collecte schema-driven:
+
+| Mode | Description | Pré-remplissage |
+|------|-------------|-----------------|
+| `cli` | Questions interactives terminal | 64% depuis données existantes |
+| `prefill_only` | Automatique, pas de questions | 100% (données + défauts) |
+
+```bash
+# Mode interactif (pose les questions manquantes)
+python execution/agent_autonome.py interactif-qr --type promesse_vente
+
+# Mode automatique (pré-remplit tout)
+python execution/agent_autonome.py interactif-qr --type promesse_vente --auto
+
+# Demo complète: titre → Q&R → promesse → DOCX
+python execution/demo_titre_promesse.py --auto
+python execution/demo_titre_promesse.py --titre titre.json --prix 500000
+```
+
+**Pipeline démo complet**: ~26s pour titre → collecte → validation → assemblage → DOCX.
+
+### 🆕 Intégration Backend Sprint 2 (v1.5.1)
+
+| Fonctionnalité | Endpoint | Statut |
+|----------------|----------|--------|
+| Streaming SSE | `POST /agent/execute-stream` | ✅ Déployé |
+| Téléchargement DOCX | `GET /files/{filename}` | ✅ Déployé |
+| Persistance conversations | `POST /chat` + Supabase | ✅ Déployé |
+| Validation pré-génération | `POST /promesses/valider` | ✅ Déployé |
+
+**Flux complet :**
+```
+Dashboard/Chat → POST /promesses/generer → DOCX → GET /files/{name} → Download
+                 ↑                                        ↑
+        X-API-Key header                          X-API-Key header
+```
+
+**Donnée de démo complète** : `exemples/donnees_demo_complete.json` (vendeur + acquéreur + bien complet)
 
 ---
 
@@ -462,13 +520,17 @@ python execution/extraire_bookmarks_contenu.py \
 
 ### Métriques de Succès
 
-| Métrique | Objectif | Actuel (v1.4.0) |
+| Métrique | Objectif | Actuel (v1.6.0) |
 |----------|----------|-----------------|
 | Templates PROD (≥80%) | 8/8 | **7/8** ✅ |
 | Conformité moyenne | ≥85% | **86.2%** ✅ |
 | Temps génération | <1 min | ~8s |
 | Taux erreur | <5% | ~1.5% |
 | Promesses avec détection auto | 100% | **100%** ✅ |
+| Tests automatisés | 100% pass | **194/194** ✅ |
+| Pipeline E2E promesse→DOCX | OK | **92.8 Ko** ✅ |
+| Pipeline E2E vente→DOCX | OK | **72 Ko** ✅ |
+| Collecte Q&R pré-remplissage | ≥60% | **64%** ✅ |
 
 #### Détail par type d'acte
 
@@ -602,16 +664,68 @@ if titres:
 
 ---
 
+---
+
+## 🔄 Workflow Promesse → Vente (v1.5.1)
+
+Lorsqu'une promesse a été signée, le notaire peut convertir les données de la promesse pour générer l'acte de vente définitif. Ce workflow conserve automatiquement les données déjà collectées.
+
+```
+Données Promesse                     Données Vente
+┌─────────────────┐                  ┌─────────────────┐
+│ promettants[] ──────────────────►  │ vendeurs[]       │
+│ beneficiaires[] ────────────────►  │ acquereurs[]     │
+│ bien {}  ───────────────────────►  │ bien {}          │
+│ prix {}  ───────────────────────►  │ prix {}          │
+│ copropriete {} ─────────────────►  │ copropriete {}   │
+│ diagnostics {} ─────────────────►  │ diagnostics {}   │
+│ origine_propriete {} ───────────►  │ origine {} + ref │
+│ conditions_suspensives ─────────►  │ avant_contrat {} │
+└─────────────────┘                  └─────────────────┘
+                                     + paiement{}
+                                     + jouissance{}
+                                     + fiscalite{}
+                                     + publication{}
+```
+
+### Utilisation
+
+```bash
+# Convertir une promesse en données de vente
+python execution/utils/convertir_promesse_vente.py \
+    --promesse exemples/donnees_promesse_exemple.json \
+    --output .tmp/donnees_vente_depuis_promesse.json
+
+# Compléter les données spécifiques à la vente puis générer
+python execution/workflow_rapide.py --type vente \
+    --donnees .tmp/donnees_vente_depuis_promesse.json
+```
+
+### Champs ajoutés automatiquement
+
+| Champ vente | Source |
+|-------------|--------|
+| `avant_contrat.type` | `"promesse_unilaterale"` |
+| `avant_contrat.date` | date de la promesse |
+| `paiement.mode` | déduit de `financement` |
+| `jouissance.date_propriete` | `"ce jour"` (par défaut) |
+| `fiscalite.plus_value` | conservé de la promesse |
+| `publication` | service de publicité foncière |
+
+---
+
 ## Voir aussi
 
 - [directives/creer_promesse_vente.md](creer_promesse_vente.md) - Création promesses (4 types)
 - [directives/generation_promesses_avancee.md](generation_promesses_avancee.md) - Documentation complète v1.4
 - [directives/workflow_titre_promesse_vente.md](workflow_titre_promesse_vente.md) - Workflow titre → promesse → vente
 - [execution/gestionnaire_promesses.py](../execution/gestionnaire_promesses.py) - Gestionnaire principal
+- [execution/utils/convertir_promesse_vente.py](../execution/utils/convertir_promesse_vente.py) - Conversion promesse → vente
 - [schemas/promesse_catalogue_unifie.json](../schemas/promesse_catalogue_unifie.json) - Catalogue unifié
 
 ---
 
-**Version**: 2.0.0
-**Dernière mise à jour**: 2026-01-28
+**Version**: 2.3.0
+**Dernière mise à jour**: 2026-01-29
+**Sprint 3 (P3+P4)**: Collecte Q&R interactive, démo titre→promesse→DOCX, conversion promesse→vente, 194 tests
 **Prochaine révision**: Quand support autres types d'actes (donation, succession)

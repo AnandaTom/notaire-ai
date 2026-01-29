@@ -31,7 +31,7 @@ import os
 import re
 import sys
 from dataclasses import dataclass, asdict, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
@@ -253,7 +253,7 @@ class AgentClientAccess:
             self._collected.client_data[field_name] = value
             self._collected.collected_at.append({
                 "field": field_name,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "conversation_id": self.conversation_id
             })
         else:
@@ -467,7 +467,7 @@ class AgentClientAccess:
         variables["_meta"] = {
             "type_acte": type_acte,
             "dossier_numero": dossier_numero,
-            "generated_at": datetime.utcnow().isoformat(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
             "etude_id": self.etude_id
         }
 

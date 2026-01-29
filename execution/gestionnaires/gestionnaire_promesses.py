@@ -44,7 +44,7 @@ if sys.platform == "win32":
 
 # Chemins
 SCRIPT_DIR = Path(__file__).parent
-PROJECT_ROOT = SCRIPT_DIR.parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # execution/gestionnaires/ -> execution/ -> racine
 SCHEMAS_DIR = PROJECT_ROOT / "schemas"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 
@@ -946,21 +946,26 @@ class GestionnairePromesses:
         )
 
     def _selectionner_template(self, type_promesse: TypePromesse) -> Optional[Path]:
-        """Sélectionne le template approprié."""
-        type_str = type_promesse.value
+        """Sélectionne le template approprié.
 
-        # Chercher template spécialisé
-        if type_str in self.templates_disponibles:
-            return self.templates_disponibles[type_str]
-
-        # Fallback vers template standard
-        if "standard" in self.templates_disponibles:
-            return self.templates_disponibles["standard"]
-
-        # Fallback vers template principal
+        Note: Les templates spécialisés dans promesse/ (standard, premium,
+        avec_mobilier, multi_biens) sont des placeholders qui référencent
+        34 fichiers section manquants (sections/promesse/*.md).
+        On utilise toujours le template monolithique principal (88.9% conformité)
+        jusqu'à création des sections.
+        """
+        # Template principal monolithique (fiable, 88.9% conformité)
         main_template = TEMPLATES_DIR / "promesse_vente_lots_copropriete.md"
         if main_template.exists():
             return main_template
+
+        # Fallback: chercher template spécialisé
+        type_str = type_promesse.value
+        if type_str in self.templates_disponibles:
+            return self.templates_disponibles[type_str]
+
+        if "standard" in self.templates_disponibles:
+            return self.templates_disponibles["standard"]
 
         return None
 

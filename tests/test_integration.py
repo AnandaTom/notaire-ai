@@ -36,6 +36,7 @@ class TestPipelineGeneration:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
@@ -65,6 +66,7 @@ class TestPipelineGeneration:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
@@ -97,6 +99,7 @@ class TestPipelineGeneration:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
@@ -125,6 +128,7 @@ class TestPipelineGeneration:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
@@ -152,6 +156,7 @@ class TestPipelineGeneration:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
@@ -180,6 +185,7 @@ class TestPipelineGeneration:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
@@ -217,6 +223,7 @@ class TestValidationDonnees:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
@@ -243,6 +250,7 @@ class TestHistorique:
             ],
             capture_output=True,
             text=True,
+            encoding="utf-8",
             cwd=str(PROJECT_ROOT)
         )
 
