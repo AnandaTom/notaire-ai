@@ -32,10 +32,36 @@ from typing import Dict, List, Optional, Any
 from contextlib import asynccontextmanager
 from functools import lru_cache
 
+import re
 from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
+
+import logging
+logger = logging.getLogger(__name__)
+
+
+# =============================================================================
+# Utilitaires de sécurité
+# =============================================================================
+
+def sanitize_identifier(value: str) -> str:
+    """Nettoie un identifiant pour éviter les injections dans les requêtes Supabase."""
+    if not value or not isinstance(value, str):
+        return ""
+    # N'autorise que alphanumérique, tirets et underscores
+    cleaned = re.sub(r'[^a-zA-Z0-9\-_.]', '', value)
+    if len(cleaned) > 200:
+        cleaned = cleaned[:200]
+    return cleaned
+
+
+def escape_like_pattern(pattern: str) -> str:
+    """Échappe les caractères spéciaux dans un pattern LIKE/ILIKE."""
+    if not pattern or not isinstance(pattern, str):
+        return ""
+    return pattern.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
 
 # Ajouter le projet au path
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -343,13 +369,27 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS pour le front-end
+# CORS pour le front-end - domaines autorisés uniquement
+ALLOWED_ORIGINS = [
+    "https://anandatom.github.io",
+    "https://notaire-ai--fastapi-app.modal.run",
+]
+# Mode développement: autoriser localhost
+if os.getenv("NOTOMAI_DEV_MODE") == "1":
+    ALLOWED_ORIGINS.extend([
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+    ])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En prod: restreindre aux domaines autorisés
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-API-Key"],
+    max_age=3600,
 )
 
 # Router du chatbot
@@ -448,7 +488,8 @@ async def execute_agent(
         )
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Erreur interne: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Une erreur interne est survenue")
 
 
 @app.post("/agent/feedback", response_model=FeedbackResponse, tags=["Agent"])
@@ -494,7 +535,8 @@ async def submit_feedback(
         )
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Erreur interne: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Une erreur interne est survenue")
 
 
 # =============================================================================
@@ -562,13 +604,21 @@ async def get_dossier(
 ):
     """Récupère un dossier par son ID ou numéro."""
     supabase = get_supabase_client()
+    safe_id = sanitize_identifier(dossier_id)
+    if not safe_id:
+        raise HTTPException(status_code=400, detail="Identifiant de dossier invalide")
 
     if supabase:
         try:
-            # Essayer par ID d'abord, puis par numéro
+            # Essayer par ID d'abord, puis par numéro (inputs sanitisés)
             result = supabase.table("dossiers").select("*").eq(
                 "etude_id", auth.etude_id
-            ).or_(f"id.eq.{dossier_id},numero.eq.{dossier_id}").execute()
+            ).eq("id", safe_id).execute()
+
+            if not result.data:
+                result = supabase.table("dossiers").select("*").eq(
+                    "etude_id", auth.etude_id
+                ).eq("numero", safe_id).execute()
 
             if result.data:
                 d = result.data[0]
@@ -628,7 +678,8 @@ async def create_dossier(
 
         except Exception as e:
             print(f"⚠️ Erreur Supabase création: {e}")
-            raise HTTPException(status_code=500, detail=f"Erreur création dossier: {e}")
+            logger.error(f"Erreur création dossier: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la création du dossier")
 
     # Mode offline
     return DossierResponse(
@@ -685,7 +736,8 @@ async def update_dossier(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur mise à jour: {e}")
+        logger.error(f"Erreur mise à jour: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la mise à jour")
 
 
 @app.delete("/dossiers/{dossier_id}", tags=["Dossiers"])
@@ -713,7 +765,8 @@ async def delete_dossier(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur suppression: {e}")
+        logger.error(f"Erreur suppression: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la suppression")
 
 
 # =============================================================================
@@ -863,7 +916,8 @@ async def lister_sections_clauses(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur chargement sections: {e}")
+        logger.error(f"Erreur chargement sections: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du chargement")
 
 
 @app.get("/clauses/profils", tags=["Clauses"])
@@ -889,7 +943,8 @@ async def lister_profils_clauses(auth: AuthContext = Depends(verify_api_key)):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur chargement profils: {e}")
+        logger.error(f"Erreur chargement profils: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du chargement")
 
 
 @app.post("/clauses/analyser", tags=["Clauses"])
@@ -921,7 +976,8 @@ async def analyser_donnees_clauses(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur analyse: {e}")
+        logger.error(f"Erreur analyse: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de l'analyse")
 
 
 @app.post("/clauses/feedback", tags=["Clauses"])
@@ -983,7 +1039,8 @@ async def soumettre_feedback_clause(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur feedback: {e}")
+        logger.error(f"Erreur feedback: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de l'enregistrement du feedback")
 
 
 @app.get("/clauses/suggestions", tags=["Clauses"])
@@ -1035,7 +1092,8 @@ async def obtenir_suggestions_clauses(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur suggestions: {e}")
+        logger.error(f"Erreur suggestions: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la recherche de suggestions")
 
 
 async def log_clause_feedback(
@@ -1118,7 +1176,8 @@ async def generer_promesse(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur génération promesse: {e}")
+        logger.error(f"Erreur génération promesse: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la génération")
 
 
 @app.post("/promesses/detecter-type", tags=["Promesses"])
@@ -1150,7 +1209,8 @@ async def detecter_type_promesse(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur détection: {e}")
+        logger.error(f"Erreur détection: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la détection")
 
 
 @app.post("/promesses/valider", tags=["Promesses"])
@@ -1181,7 +1241,8 @@ async def valider_donnees_promesse(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur validation: {e}")
+        logger.error(f"Erreur validation: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la validation")
 
 
 @app.get("/promesses/profils", tags=["Promesses"])
@@ -1208,7 +1269,8 @@ async def lister_profils_promesse(auth: AuthContext = Depends(verify_api_key)):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur chargement profils: {e}")
+        logger.error(f"Erreur chargement profils: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du chargement")
 
 
 @app.get("/promesses/types", tags=["Promesses"])
@@ -1237,7 +1299,8 @@ async def lister_types_promesse(auth: AuthContext = Depends(verify_api_key)):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur chargement types: {e}")
+        logger.error(f"Erreur chargement types: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du chargement")
 
 
 # =============================================================================
@@ -1271,7 +1334,8 @@ async def lister_titres(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur listing titres: {e}")
+        logger.error(f"Erreur listing titres: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la recherche")
 
 
 @app.get("/titres/{titre_id}", tags=["Titres"])
@@ -1300,7 +1364,8 @@ async def get_titre(
         return response.data
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur récupération titre: {e}")
+        logger.error(f"Erreur récupération titre: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la recherche")
 
 
 @app.get("/titres/recherche/adresse", tags=["Titres"])
@@ -1326,7 +1391,8 @@ async def rechercher_titre_adresse(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur recherche: {e}")
+        logger.error(f"Erreur recherche: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la recherche")
 
 
 @app.get("/titres/recherche/proprietaire", tags=["Titres"])
@@ -1352,7 +1418,8 @@ async def rechercher_titre_proprietaire(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur recherche: {e}")
+        logger.error(f"Erreur recherche: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la recherche")
 
 
 @app.post("/titres/{titre_id}/vers-promesse", tags=["Titres"])
@@ -1413,7 +1480,8 @@ async def convertir_titre_en_promesse(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur conversion: {e}")
+        logger.error(f"Erreur conversion: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la conversion")
 
 
 # =============================================================================
