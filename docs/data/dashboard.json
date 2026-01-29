@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T15:49:57.593462",
+    "generated_at": "2026-01-29T16:12:32.605836",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 59,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 149
+    "commits": 153
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "aa40ed1",
-      "message": "fix: workflow_rapide paths + diagnostic workflow doc",
+      "hash": "54607c3",
+      "message": "Merge branch 'tom/dev'",
       "date": "2026-01-29"
     },
-    "total_commits": 149,
+    "total_commits": 153,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 98
+        "commits": 100
       },
       {
         "name": "github-actions[bot]",
-        "commits": 22
+        "commits": 24
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,46 @@
   ],
   "activity": [
     {
+      "hash": "54607c3",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "1412ce1",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "DIAGNOSTIC_WORKFLOW enrichi avec specs détaillées pour Paul",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "b2cf1ba",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "23f28a2",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "aa40ed1",
       "author": "Tom",
       "date": "2026-01-29",
@@ -780,46 +820,6 @@
       "type_label": "Fix",
       "type_icon": "🐛",
       "type_color": "red"
-    },
-    {
-      "hash": "a86ca4b",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "remove frontend-mockup folder",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "723bd70",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "corrections finales post-restructuration",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "b5bae73",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 6 - mise à jour documentation",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
-    },
-    {
-      "hash": "37f8c4a",
-      "author": "Tom",
-      "date": "2026-01-28",
-      "message": "phase 5 - consolidation répertoires",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 15:49"
+    "last_updated": "2026-01-29 16:12"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 15:49"
+    "last_updated": "2026-01-29 16:12"
   },
   "conformity_details": {
     "promesse": {
