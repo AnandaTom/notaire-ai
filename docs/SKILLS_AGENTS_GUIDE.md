@@ -106,7 +106,7 @@ Audit de conformite des templates Jinja2 vs trames originales.
 ```
 /valider-template all                          # Tous les templates
 /valider-template vente                        # Template vente
-/valider-template promesse/promesse_standard   # Template specifique
+/valider-template promesse_hors_copropriete    # Template specifique
 ```
 
 **Auto-declenchement**: Claude l'utilise quand vous mentionnez "conformite", "audit template", "verifier template".

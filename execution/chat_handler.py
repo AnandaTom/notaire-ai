@@ -549,6 +549,9 @@ def create_chat_router():
         intention: str
         confiance: float
         conversation_id: Optional[str] = None
+        section: Optional[str] = None
+        fichier_url: Optional[str] = None
+        contexte_mis_a_jour: Optional[dict] = None
 
     @router.post("/", response_model=ChatResponse)
     async def chat(request: ChatRequest):
@@ -648,13 +651,26 @@ def create_chat_router():
                 except Exception:
                     pass  # Fallback silencieux
 
+            # Extraire fichier_url depuis action si présent
+            fichier_url = None
+            if reponse.action and isinstance(reponse.action, dict):
+                fichier_url = reponse.action.get("fichier_url")
+
+            # Extraire section depuis le contexte
+            section = None
+            if reponse.contexte_mis_a_jour:
+                section = reponse.contexte_mis_a_jour.get("etape_workflow")
+
             return ChatResponse(
                 content=reponse.content,
                 suggestions=reponse.suggestions,
                 action=reponse.action,
                 intention=reponse.intention_detectee,
                 confiance=reponse.confiance,
-                conversation_id=conversation_id
+                conversation_id=conversation_id,
+                section=section,
+                fichier_url=fichier_url,
+                contexte_mis_a_jour=reponse.contexte_mis_a_jour,
             )
 
         except Exception as e:

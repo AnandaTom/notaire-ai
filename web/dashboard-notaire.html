@@ -236,6 +236,73 @@
 
         .hidden { display: none !important; }
 
+        .btn-generate {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .generation-progress {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border: 1px solid #bbf7d0;
+        }
+
+        .generation-progress .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #10b981;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .download-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
         /* Login form */
         .login-container {
             max-width: 400px;
@@ -433,6 +500,55 @@
         </div>
     </div>
 
+    <!-- Modal: Générer un acte -->
+    <div class="modal" id="generateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Générer un acte</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <div id="generateForm">
+                <p id="generateClientInfo"></p>
+
+                <div class="form-group">
+                    <label for="generateType">Type d'acte *</label>
+                    <select id="generateType" required>
+                        <option value="promesse_vente">Promesse de vente</option>
+                        <option value="vente">Acte de vente définitif</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="generateFormat">Format de sortie</label>
+                    <select id="generateFormat">
+                        <option value="docx">Word (.docx)</option>
+                        <option value="pdf">PDF (.pdf)</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" id="generateBtn" style="width: 100%;" onclick="executeGeneration()">
+                    Générer l'acte
+                </button>
+
+                <div class="generation-progress" id="generateProgress">
+                    <span class="spinner"></span>
+                    <span id="generateProgressText">Génération en cours...</span>
+                </div>
+
+                <div id="generateResult" class="hidden" style="margin-top: 16px;">
+                    <div style="padding: 16px; background: #d1fae5; border-radius: 8px; color: #065f46;">
+                        <strong>Acte généré avec succès !</strong>
+                        <p id="generateResultInfo" style="margin: 8px 0 0;"></p>
+                    </div>
+                    <a id="generateDownloadLink" class="download-link" href="#" download>
+                        Télécharger le document
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="crypto.js"></script>
     <script src="supabase-client.js"></script>
     <script>
@@ -544,6 +660,7 @@
                         <span class="status-badge ${sub.status}">${getStatusLabel(sub.status)}</span>
                         ${sub.status === 'submitted' ? `
                             <button class="btn" onclick="viewSubmission('${sub.id}')">Voir</button>
+                            <button class="btn-generate" onclick="openGenerateModal('${sub.id}')">Générer l'acte</button>
                         ` : ''}
                     </div>
                 </div>
@@ -765,6 +882,141 @@
             } catch (error) {
                 console.error('Erreur import:', error);
                 alert('Erreur lors de l\'import');
+            }
+        }
+
+        // =====================================================
+        // Génération d'actes
+        // =====================================================
+
+        let currentGenerationSubmission = null;
+
+        const API_BASE_URL = window.NOTOMAI_API_URL || 'https://notaire-ai--fastapi-app.modal.run';
+
+        function openGenerateModal(submissionId) {
+            const submission = submissions.find(s => s.id === submissionId);
+            if (!submission) return;
+
+            currentGenerationSubmission = submission;
+
+            document.getElementById('generateClientInfo').innerHTML =
+                `<strong>Client :</strong> ${submission.client_nom || ''} ${submission.client_prenom || ''}<br>` +
+                `<strong>Type de partie :</strong> ${submission.type_partie || '-'}`;
+
+            // Pré-sélectionner le type d'acte selon le type de partie
+            const typeSelect = document.getElementById('generateType');
+            if (submission.type_partie === 'acquereur') {
+                typeSelect.value = 'promesse_vente';
+            }
+
+            // Réinitialiser l'état
+            document.getElementById('generateResult').classList.add('hidden');
+            document.getElementById('generateProgress').style.display = 'none';
+            document.getElementById('generateBtn').disabled = false;
+
+            document.getElementById('generateModal').classList.add('active');
+        }
+
+        async function executeGeneration() {
+            if (!currentGenerationSubmission) return;
+
+            const typeActe = document.getElementById('generateType').value;
+            const format = document.getElementById('generateFormat').value;
+            const btn = document.getElementById('generateBtn');
+            const progress = document.getElementById('generateProgress');
+            const progressText = document.getElementById('generateProgressText');
+            const resultDiv = document.getElementById('generateResult');
+
+            btn.disabled = true;
+            progress.style.display = 'block';
+            resultDiv.classList.add('hidden');
+            progressText.textContent = 'Préparation des données...';
+
+            try {
+                // Construire la demande en langage naturel pour l'agent
+                const sub = currentGenerationSubmission;
+                const demande = buildGenerationPrompt(sub, typeActe);
+
+                progressText.textContent = 'Génération de l\'acte en cours...';
+
+                const response = await fetch(`${API_BASE_URL}/agent/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': currentUser.apiKey
+                    },
+                    body: JSON.stringify({
+                        texte: demande,
+                        options: {
+                            format: format,
+                            submission_id: sub.id,
+                            type_acte: typeActe
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => null);
+                    throw new Error(errorData?.detail || `Erreur ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.succes && result.fichier_url) {
+                    progressText.textContent = 'Acte généré !';
+                    progress.style.display = 'none';
+
+                    // Afficher le résultat
+                    document.getElementById('generateResultInfo').textContent =
+                        `Référence : ${result.reference || result.dossier_id || '-'} | Durée : ${result.duree_ms}ms`;
+
+                    const downloadLink = document.getElementById('generateDownloadLink');
+                    downloadLink.href = `${API_BASE_URL}${result.fichier_url}`;
+                    downloadLink.textContent = `Télécharger (${format.toUpperCase()})`;
+
+                    resultDiv.classList.remove('hidden');
+
+                    // Mettre à jour le statut de la soumission
+                    await markSubmissionProcessed(sub.id);
+
+                } else {
+                    throw new Error(result.message || 'La génération a échoué');
+                }
+
+            } catch (error) {
+                console.error('Erreur génération:', error);
+                progress.style.display = 'none';
+                alert('Erreur lors de la génération : ' + error.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function buildGenerationPrompt(submission, typeActe) {
+            const nom = submission.client_nom || 'Client';
+            const prenom = submission.client_prenom || '';
+            const typeLabel = typeActe === 'promesse_vente' ? 'promesse de vente' : 'acte de vente';
+
+            if (submission.type_partie === 'acquereur') {
+                return `Crée une ${typeLabel} pour l'acquéreur ${prenom} ${nom}`;
+            } else if (submission.type_partie && submission.type_partie.startsWith('vendeur')) {
+                return `Crée une ${typeLabel} pour le vendeur ${prenom} ${nom}`;
+            }
+            return `Crée une ${typeLabel} pour ${prenom} ${nom}`;
+        }
+
+        async function markSubmissionProcessed(submissionId) {
+            try {
+                await SupabaseClient.request(
+                    `/rest/v1/form_submissions?id=eq.${submissionId}`,
+                    {
+                        method: 'PATCH',
+                        body: JSON.stringify({ status: 'processed' })
+                    }
+                );
+                loadSubmissions();
+            } catch (error) {
+                console.error('Erreur mise à jour statut:', error);
             }
         }
 

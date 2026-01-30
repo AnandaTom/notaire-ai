@@ -897,10 +897,20 @@ async def download_file(filename: str, auth: AuthContext = Depends(verify_api_ke
     if not os.path.isfile(real_path):
         raise HTTPException(status_code=404, detail=f"Fichier non trouvé: {filename}")
 
+    # Détection du type MIME selon l'extension
+    ext = os.path.splitext(filename)[1].lower()
+    media_types = {
+        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".pdf": "application/pdf",
+        ".json": "application/json",
+        ".md": "text/markdown",
+    }
+    media_type = media_types.get(ext, "application/octet-stream")
+
     return FileResponse(
         path=real_path,
         filename=filename,
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        media_type=media_type
     )
 
 
@@ -1406,6 +1416,690 @@ async def lister_types_promesse(auth: AuthContext = Depends(verify_api_key)):
     except Exception as e:
         logger.error(f"Erreur chargement types: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Erreur lors du chargement")
+
+
+# =============================================================================
+# Endpoints Questions & Réponses (Q&R) - Collecte interactive
+# =============================================================================
+
+# Import CollecteurInteractif (optionnel, graceful fallback)
+COLLECTEUR_DISPONIBLE = False
+try:
+    from execution.agent_autonome import CollecteurInteractif
+    COLLECTEUR_DISPONIBLE = True
+except ImportError:
+    logger.warning("CollecteurInteractif non disponible")
+
+
+class AnswerSubmission(BaseModel):
+    """Soumission de réponses Q&R."""
+    dossier_id: str = Field(..., description="ID du dossier / session Q&R")
+    answers: Dict[str, Any] = Field(..., description="Dict {question_id ou variable: valeur}")
+
+
+class PrefillRequest(BaseModel):
+    """Pré-remplissage de données."""
+    categorie_bien: str = Field("copropriete", description="copropriete, hors_copropriete, terrain_a_batir")
+    titre_data: Optional[Dict[str, Any]] = Field(None, description="Données extraites d'un titre")
+    beneficiaires: Optional[List[Dict[str, Any]]] = Field(None, description="Liste des bénéficiaires")
+    prix: Optional[Dict[str, Any]] = Field(None, description="Données de prix")
+    donnees: Optional[Dict[str, Any]] = Field(None, description="Données libres à pré-remplir")
+
+
+def _get_or_create_collecteur(
+    dossier_id: str,
+    categorie_bien: str = "copropriete",
+    prefill: Optional[Dict[str, Any]] = None,
+) -> 'CollecteurInteractif':
+    """Charge ou crée une session de collecte Q&R."""
+    # Essayer de charger une session existante
+    collecteur = CollecteurInteractif.load_state(dossier_id)
+    if collecteur:
+        return collecteur
+
+    # Créer une nouvelle session avec pré-remplissage
+    prefill_data = prefill or {}
+    # Injecter la catégorie dans les métadonnées
+    if '_metadata' not in prefill_data:
+        prefill_data['_metadata'] = {}
+    prefill_data['_metadata']['categorie_bien'] = categorie_bien
+
+    collecteur = CollecteurInteractif('promesse_vente', prefill=prefill_data)
+    # Sauvegarder immédiatement
+    collecteur.save_state(dossier_id)
+    return collecteur
+
+
+@app.get("/questions/promesse", tags=["Questions"])
+async def get_questions(
+    categorie: str = "copropriete",
+    section: Optional[str] = None,
+    dossier_id: Optional[str] = None,
+    auth: AuthContext = Depends(verify_api_key),
+):
+    """
+    Retourne les questions de promesse filtrées par catégorie et section.
+
+    - **categorie**: copropriete, hors_copropriete, terrain_a_batir
+    - **section**: Clé de section optionnelle (ex: 2_promettant)
+    - **dossier_id**: ID de session existante pour récupérer les valeurs déjà saisies
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    try:
+        # Charger ou créer le collecteur
+        if dossier_id:
+            collecteur = _get_or_create_collecteur(dossier_id, categorie)
+        else:
+            prefill = {'_metadata': {'categorie_bien': categorie}}
+            collecteur = CollecteurInteractif('promesse_vente', prefill=prefill)
+
+        if section:
+            # Questions d'une section spécifique
+            questions = collecteur.get_questions_for_section(section)
+            return {
+                "section": section,
+                "categorie": categorie,
+                "questions": questions,
+                "count": len(questions),
+            }
+        else:
+            # Liste des sections avec statut
+            sections = collecteur.get_sections_list()
+            return {
+                "categorie": categorie,
+                "sections": sections,
+                "count": len(sections),
+            }
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Erreur Q&R questions: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du chargement des questions")
+
+
+@app.post("/questions/promesse/answer", tags=["Questions"])
+async def submit_answers(
+    submission: AnswerSubmission,
+    background_tasks: BackgroundTasks,
+    auth: AuthContext = Depends(require_write_permission),
+):
+    """
+    Soumet des réponses pour des questions de promesse.
+
+    - **dossier_id**: ID du dossier / session
+    - **answers**: Dict {question_id ou chemin_variable: valeur}
+
+    Retourne les questions suivantes non répondues et la progression.
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    dossier_id = sanitize_identifier(submission.dossier_id)
+    if not dossier_id:
+        raise HTTPException(status_code=400, detail="dossier_id invalide")
+
+    try:
+        collecteur = _get_or_create_collecteur(dossier_id)
+
+        # Soumettre les réponses
+        result = collecteur.submit_answers(submission.answers)
+
+        # Sauvegarder l'état
+        collecteur.save_state(dossier_id)
+
+        # Progression mise à jour
+        progress = collecteur.get_progress()
+
+        # Log en arrière-plan
+        background_tasks.add_task(
+            _log_qr_activity, auth.etude_id, dossier_id,
+            "answer", len(submission.answers)
+        )
+
+        return {
+            "succes": result['accepted'] > 0,
+            "accepted": result['accepted'],
+            "errors": result['errors'],
+            "progress": progress,
+        }
+
+    except Exception as e:
+        logger.error(f"Erreur Q&R answer: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la soumission")
+
+
+@app.get("/questions/promesse/progress/{dossier_id}", tags=["Questions"])
+async def get_progress(
+    dossier_id: str,
+    auth: AuthContext = Depends(verify_api_key),
+):
+    """
+    Retourne la progression de collecte pour un dossier.
+
+    - **dossier_id**: ID du dossier / session Q&R
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    dossier_id = sanitize_identifier(dossier_id)
+    if not dossier_id:
+        raise HTTPException(status_code=400, detail="dossier_id invalide")
+
+    try:
+        collecteur = CollecteurInteractif.load_state(dossier_id)
+        if not collecteur:
+            raise HTTPException(status_code=404, detail="Session Q&R non trouvée")
+
+        progress = collecteur.get_progress()
+        return {
+            "dossier_id": dossier_id,
+            "donnees": collecteur.donnees,
+            **progress,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur Q&R progress: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du chargement")
+
+
+@app.post("/questions/promesse/prefill", tags=["Questions"])
+async def prefill_questions(
+    request: PrefillRequest,
+    auth: AuthContext = Depends(require_write_permission),
+):
+    """
+    Pré-remplit les données d'une session Q&R depuis des données existantes.
+
+    Crée une nouvelle session avec les données pré-remplies et retourne
+    le taux de couverture et les champs manquants.
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    try:
+        # Construire les données de pré-remplissage
+        prefill = request.donnees or {}
+
+        # Intégrer titre si fourni
+        if request.titre_data:
+            for key, value in request.titre_data.items():
+                if key not in prefill and value:
+                    prefill[key] = value
+
+        # Intégrer bénéficiaires
+        if request.beneficiaires:
+            prefill['beneficiaires'] = request.beneficiaires
+
+        # Intégrer prix
+        if request.prix:
+            prefill['prix'] = request.prix
+
+        # Générer un dossier_id unique
+        import uuid
+        dossier_id = f"qr-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8]}"
+
+        collecteur = _get_or_create_collecteur(
+            dossier_id, request.categorie_bien, prefill
+        )
+
+        progress = collecteur.get_progress()
+
+        return {
+            "dossier_id": dossier_id,
+            "categorie_bien": request.categorie_bien,
+            "progress": progress,
+        }
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Erreur Q&R prefill: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du pré-remplissage")
+
+
+async def _log_qr_activity(
+    etude_id: str, dossier_id: str, action: str, count: int
+):
+    """Log d'activité Q&R en arrière-plan."""
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "etude_id": etude_id,
+        "dossier_id": dossier_id,
+        "action": f"qr_{action}",
+        "count": count,
+    }
+
+    logs_dir = PROJECT_ROOT / ".tmp" / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    log_file = logs_dir / f"qr_activity_{datetime.now().strftime('%Y%m%d')}.jsonl"
+
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+
+
+# =============================================================================
+# Endpoints Workflow Promesse (orchestration complète)
+# =============================================================================
+
+# État en mémoire des workflows (en prod: Supabase)
+_workflow_states: Dict[str, Dict[str, Any]] = {}
+
+
+class WorkflowStartRequest(BaseModel):
+    """Démarrage d'un workflow de promesse."""
+    categorie_bien: str = Field("copropriete", description="copropriete, hors_copropriete, terrain_a_batir")
+    titre_id: Optional[str] = Field(None, description="ID du titre source (pré-remplissage)")
+    prefill: Optional[Dict[str, Any]] = Field(None, description="Données de pré-remplissage")
+
+
+class WorkflowSubmitRequest(BaseModel):
+    """Soumission de réponses dans un workflow."""
+    answers: Dict[str, Any] = Field(..., description="Dict {question_id ou variable: valeur}")
+
+
+@app.post("/workflow/promesse/start", tags=["Workflow"])
+async def workflow_start(
+    request: WorkflowStartRequest,
+    background_tasks: BackgroundTasks,
+    auth: AuthContext = Depends(require_write_permission),
+):
+    """
+    Démarre un workflow de génération de promesse.
+
+    Retourne un workflow_id, les premières questions et les données pré-remplies.
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    try:
+        import uuid
+        workflow_id = f"wf-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8]}"
+
+        # Charger données de pré-remplissage
+        prefill = request.prefill or {}
+        titre_data = None
+
+        if request.titre_id:
+            supabase = get_supabase_client()
+            if supabase:
+                titre_resp = supabase.table("titres_propriete")\
+                    .select("*")\
+                    .eq("id", request.titre_id)\
+                    .eq("etude_id", auth.etude_id)\
+                    .single()\
+                    .execute()
+                if titre_resp.data:
+                    titre_data = titre_resp.data
+                    for key, value in titre_data.items():
+                        if key not in prefill and value and key not in ('id', 'etude_id', 'created_at'):
+                            prefill[key] = value
+
+        # Créer le collecteur
+        collecteur = _get_or_create_collecteur(
+            workflow_id, request.categorie_bien, prefill
+        )
+
+        # Première section avec questions
+        sections = collecteur.get_sections_list()
+        first_section = sections[0] if sections else None
+        first_questions = []
+        if first_section:
+            first_questions = collecteur.get_questions_for_section(first_section['key'])
+
+        progress = collecteur.get_progress()
+
+        # Sauvegarder l'état du workflow
+        _workflow_states[workflow_id] = {
+            'etude_id': auth.etude_id,
+            'categorie_bien': request.categorie_bien,
+            'titre_id': request.titre_id,
+            'status': 'collecting',
+            'current_section_idx': 0,
+            'created_at': datetime.now().isoformat(),
+            'steps_completed': ['start'],
+        }
+
+        background_tasks.add_task(
+            _log_qr_activity, auth.etude_id, workflow_id, "workflow_start", 0
+        )
+
+        return {
+            "workflow_id": workflow_id,
+            "categorie_bien": request.categorie_bien,
+            "status": "collecting",
+            "sections": sections,
+            "current_section": first_section,
+            "questions": first_questions,
+            "progress": progress,
+        }
+
+    except Exception as e:
+        logger.error(f"Erreur workflow start: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors du démarrage du workflow")
+
+
+@app.post("/workflow/promesse/{workflow_id}/submit", tags=["Workflow"])
+async def workflow_submit(
+    workflow_id: str,
+    request: WorkflowSubmitRequest,
+    background_tasks: BackgroundTasks,
+    auth: AuthContext = Depends(require_write_permission),
+):
+    """
+    Soumet des réponses dans un workflow et retourne les questions suivantes.
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    workflow_id = sanitize_identifier(workflow_id)
+    if not workflow_id:
+        raise HTTPException(status_code=400, detail="workflow_id invalide")
+
+    try:
+        collecteur = CollecteurInteractif.load_state(workflow_id)
+        if not collecteur:
+            raise HTTPException(status_code=404, detail="Workflow non trouvé")
+
+        # Soumettre les réponses
+        result = collecteur.submit_answers(request.answers)
+        collecteur.save_state(workflow_id)
+
+        # Progression
+        progress = collecteur.get_progress()
+        sections = collecteur.get_sections_list()
+
+        # Trouver la prochaine section incomplète
+        next_section = None
+        next_questions = []
+        for s in sections:
+            if not s['complete']:
+                next_section = s
+                next_questions = collecteur.get_questions_for_section(s['key'])
+                break
+
+        # Mettre à jour l'état
+        wf_state = _workflow_states.get(workflow_id, {})
+        if next_section is None:
+            wf_state['status'] = 'ready_to_generate'
+            wf_state['steps_completed'] = wf_state.get('steps_completed', []) + ['collect_complete']
+        else:
+            wf_state['status'] = 'collecting'
+
+        _workflow_states[workflow_id] = wf_state
+
+        background_tasks.add_task(
+            _log_qr_activity, auth.etude_id, workflow_id,
+            "workflow_submit", len(request.answers)
+        )
+
+        return {
+            "workflow_id": workflow_id,
+            "status": wf_state.get('status', 'collecting'),
+            "accepted": result['accepted'],
+            "errors": result['errors'],
+            "next_section": next_section,
+            "next_questions": next_questions,
+            "progress": progress,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur workflow submit: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la soumission")
+
+
+@app.post("/workflow/promesse/{workflow_id}/generate", tags=["Workflow"])
+async def workflow_generate(
+    workflow_id: str,
+    background_tasks: BackgroundTasks,
+    auth: AuthContext = Depends(require_write_permission),
+):
+    """
+    Déclenche la génération du document promesse.
+
+    Pipeline: validation → détection type → assemblage → export DOCX → URL.
+    Retourne le statut et l'URL du fichier si streaming non supporté.
+
+    Pour le streaming SSE, utiliser GET /workflow/promesse/{id}/generate-stream.
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    workflow_id = sanitize_identifier(workflow_id)
+    if not workflow_id:
+        raise HTTPException(status_code=400, detail="workflow_id invalide")
+
+    try:
+        collecteur = CollecteurInteractif.load_state(workflow_id)
+        if not collecteur:
+            raise HTTPException(status_code=404, detail="Workflow non trouvé")
+
+        donnees = collecteur.donnees
+        wf_state = _workflow_states.get(workflow_id, {})
+        wf_state['status'] = 'generating'
+        wf_state['generation_started'] = datetime.now().isoformat()
+        _workflow_states[workflow_id] = wf_state
+
+        # --- Étape 1: Validation ---
+        from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
+        gestionnaire = GestionnairePromesses()
+
+        validation = gestionnaire.valider(donnees)
+        if validation.get('erreurs'):
+            wf_state['status'] = 'validation_failed'
+            _workflow_states[workflow_id] = wf_state
+            return {
+                "workflow_id": workflow_id,
+                "status": "validation_failed",
+                "erreurs": validation['erreurs'],
+                "warnings": validation.get('warnings', []),
+            }
+
+        # --- Étape 2: Détection catégorie ---
+        categorie = gestionnaire.detecter_categorie_bien(donnees)
+
+        # --- Étape 3: Génération ---
+        resultat = gestionnaire.generer(donnees)
+
+        wf_state['status'] = 'completed' if resultat.succes else 'generation_failed'
+        wf_state['steps_completed'] = wf_state.get('steps_completed', []) + [
+            'validation', 'detection', 'assembly', 'export'
+        ]
+        wf_state['fichier_docx'] = resultat.fichier_docx
+        wf_state['generation_completed'] = datetime.now().isoformat()
+        _workflow_states[workflow_id] = wf_state
+
+        # Sync en arrière-plan
+        background_tasks.add_task(
+            _log_qr_activity, auth.etude_id, workflow_id, "workflow_generate", 1
+        )
+
+        response = {
+            "workflow_id": workflow_id,
+            "status": wf_state['status'],
+            "categorie_bien": categorie.value if hasattr(categorie, 'value') else str(categorie),
+            "type_promesse": resultat.type_promesse.value if hasattr(resultat, 'type_promesse') else None,
+            "fichier_docx": resultat.fichier_docx,
+            "erreurs": resultat.erreurs if hasattr(resultat, 'erreurs') else [],
+            "warnings": resultat.warnings if hasattr(resultat, 'warnings') else [],
+        }
+
+        if resultat.fichier_docx:
+            filename = Path(resultat.fichier_docx).name
+            response["fichier_url"] = f"/files/{filename}"
+
+        return response
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur workflow generate: {e}", exc_info=True)
+        wf_state = _workflow_states.get(workflow_id, {})
+        wf_state['status'] = 'generation_failed'
+        wf_state['error'] = str(e)
+        _workflow_states[workflow_id] = wf_state
+        raise HTTPException(status_code=500, detail="Erreur lors de la génération")
+
+
+@app.get("/workflow/promesse/{workflow_id}/generate-stream", tags=["Workflow"])
+async def workflow_generate_stream(
+    workflow_id: str,
+    auth: AuthContext = Depends(require_write_permission),
+):
+    """
+    Génération avec streaming SSE des étapes.
+
+    Événements envoyés:
+    - step: {step: "validation", message: "Validation des données..."}
+    - step: {step: "detection", message: "Détection catégorie..."}
+    - step: {step: "assembly", message: "Assemblage du document..."}
+    - step: {step: "export", message: "Export DOCX..."}
+    - complete: {fichier_url: "/files/xxx.docx"}
+    - error: {message: "..."}
+    """
+    if not COLLECTEUR_DISPONIBLE:
+        raise HTTPException(status_code=503, detail="Module Q&R non disponible")
+
+    workflow_id = sanitize_identifier(workflow_id)
+    if not workflow_id:
+        raise HTTPException(status_code=400, detail="workflow_id invalide")
+
+    collecteur = CollecteurInteractif.load_state(workflow_id)
+    if not collecteur:
+        raise HTTPException(status_code=404, detail="Workflow non trouvé")
+
+    async def event_generator():
+        import asyncio
+        donnees = collecteur.donnees
+        wf_state = _workflow_states.get(workflow_id, {})
+
+        try:
+            # Étape 1: Validation
+            yield {"event": "step", "data": json.dumps(
+                {"step": "validation", "message": "Validation des données..."}
+            )}
+            await asyncio.sleep(0.1)
+
+            from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
+            gestionnaire = GestionnairePromesses()
+            validation = gestionnaire.valider(donnees)
+
+            if validation.get('erreurs'):
+                yield {"event": "error", "data": json.dumps(
+                    {"message": "Validation échouée", "erreurs": validation['erreurs']}
+                )}
+                return
+
+            # Étape 2: Détection
+            yield {"event": "step", "data": json.dumps(
+                {"step": "detection", "message": "Détection de la catégorie de bien..."}
+            )}
+            await asyncio.sleep(0.1)
+            categorie = gestionnaire.detecter_categorie_bien(donnees)
+
+            # Étape 3: Assemblage
+            yield {"event": "step", "data": json.dumps(
+                {"step": "assembly", "message": f"Assemblage template {categorie.value}..."}
+            )}
+            await asyncio.sleep(0.1)
+
+            # Étape 4: Export
+            yield {"event": "step", "data": json.dumps(
+                {"step": "export", "message": "Export DOCX en cours..."}
+            )}
+
+            resultat = gestionnaire.generer(donnees)
+
+            if resultat.succes:
+                filename = Path(resultat.fichier_docx).name if resultat.fichier_docx else None
+                wf_state['status'] = 'completed'
+                wf_state['fichier_docx'] = resultat.fichier_docx
+                _workflow_states[workflow_id] = wf_state
+
+                yield {"event": "complete", "data": json.dumps({
+                    "message": "Document prêt",
+                    "fichier_url": f"/files/{filename}" if filename else None,
+                    "type_promesse": resultat.type_promesse.value if hasattr(resultat, 'type_promesse') else None,
+                })}
+            else:
+                yield {"event": "error", "data": json.dumps({
+                    "message": "Génération échouée",
+                    "erreurs": resultat.erreurs if hasattr(resultat, 'erreurs') else [],
+                })}
+
+        except Exception as e:
+            logger.error(f"Erreur streaming workflow: {e}", exc_info=True)
+            yield {"event": "error", "data": json.dumps({
+                "message": str(e),
+            })}
+
+    try:
+        from sse_starlette.sse import EventSourceResponse
+        return EventSourceResponse(event_generator())
+    except ImportError:
+        raise HTTPException(
+            status_code=503,
+            detail="Streaming SSE non disponible. Installer: pip install sse-starlette"
+        )
+
+
+@app.get("/workflow/promesse/{workflow_id}/status", tags=["Workflow"])
+async def workflow_status(
+    workflow_id: str,
+    auth: AuthContext = Depends(verify_api_key),
+):
+    """
+    Retourne l'état d'un workflow de promesse.
+    """
+    workflow_id = sanitize_identifier(workflow_id)
+    if not workflow_id:
+        raise HTTPException(status_code=400, detail="workflow_id invalide")
+
+    # Vérifier l'état en mémoire
+    wf_state = _workflow_states.get(workflow_id)
+
+    # Si pas en mémoire, vérifier si session Q&R existe
+    if not wf_state and COLLECTEUR_DISPONIBLE:
+        collecteur = CollecteurInteractif.load_state(workflow_id)
+        if collecteur:
+            progress = collecteur.get_progress()
+            return {
+                "workflow_id": workflow_id,
+                "status": "collecting",
+                "progress": progress,
+            }
+
+    if not wf_state:
+        raise HTTPException(status_code=404, detail="Workflow non trouvé")
+
+    result = {
+        "workflow_id": workflow_id,
+        "status": wf_state.get('status', 'unknown'),
+        "categorie_bien": wf_state.get('categorie_bien'),
+        "created_at": wf_state.get('created_at'),
+        "steps_completed": wf_state.get('steps_completed', []),
+    }
+
+    if wf_state.get('fichier_docx'):
+        filename = Path(wf_state['fichier_docx']).name
+        result['fichier_url'] = f"/files/{filename}"
+
+    if wf_state.get('error'):
+        result['error'] = wf_state['error']
+
+    # Ajouter la progression Q&R si disponible
+    if COLLECTEUR_DISPONIBLE:
+        collecteur = CollecteurInteractif.load_state(workflow_id)
+        if collecteur:
+            result['progress'] = collecteur.get_progress()
+
+    return result
 
 
 # =============================================================================

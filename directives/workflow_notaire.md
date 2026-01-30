@@ -19,7 +19,7 @@ Les workflows les plus courants sont accessibles via des commandes `/slash` dans
 | Besoin | Commande | Ce qui se passe |
 |--------|----------|----------------|
 | Générer un acte | `/generer-acte vente` | Pipeline complet: validation → assemblage → DOCX |
-| Générer une promesse | `/generer-promesse standard` | Détection auto du type + génération |
+| Générer une promesse | `/generer-promesse copropriete` | Détection auto du type + génération |
 | Tester le pipeline | `/test-pipeline` | pytest + conformité templates |
 | Auditer un template | `/valider-template all` | Comparaison vs trames originales |
 | Déployer en prod | `/deploy-modal prod` | Tests → deploy Modal |
@@ -52,14 +52,13 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 
 #### 🆕 Promesses de Vente (Système Multi-Templates v1.4.0)
 
-| Type | Template | Conformité | Cas d'usage |
-|------|----------|-----------|-------------|
-| **Standard** | `promesse/promesse_standard.md` | **88.9%** | ✅ PROD | 1 bien simple |
-| **Premium** | `promesse/promesse_premium.md` | **85.2%** | ✅ PROD | Diagnostics exhaustifs |
-| **Avec mobilier** | `promesse/promesse_avec_mobilier.md` | **87.1%** | ✅ PROD | Vente meublée |
-| **Multi-biens** | `promesse/promesse_multi_biens.md` | **82.4%** | ✅ PROD | Lot + parking + cave |
+| Type | Template | Conformité | Statut | Cas d'usage |
+|------|----------|-----------|--------|-------------|
+| **Promesse copropriété** | `promesse_vente_lots_copropriete.md` | **88.9%** | ✅ PROD | Appartement, lots de copro |
+| **Promesse hors copropriété** | `promesse_hors_copropriete.md` | NEW | ✅ PROD | Maison, villa, local |
+| **Promesse terrain à bâtir** | `promesse_terrain_a_batir.md` | NEW | ✅ PROD | Terrain, lotissement |
 
-**Détection automatique**: Le système choisit le bon template selon les données fournies.
+**Détection automatique**: Le système choisit le bon template selon la nature du bien (copropriété / hors copropriété / terrain).
 
 ### ⚡ Performance Pipeline (v1.4.0)
 
@@ -140,7 +139,7 @@ if type_acte == "promesse":
     from execution.gestionnaire_promesses import GestionnairePromesses
     gestionnaire = GestionnairePromesses()
     detection = gestionnaire.detecter_type(donnees)
-    # detection.type_promesse: standard | premium | avec_mobilier | multi_biens
+    # detection.type_promesse: copropriete | hors_copropriete | terrain_a_batir
 
 # 3. Vérifier conformité template
 conformite = verifier_conformite_template(type_acte)
@@ -151,7 +150,7 @@ if conformite < 80:
 ```
 
 **Agent dit** (pour promesse):
-> "Je vais créer une promesse de vente. D'après les données, je détecte une vente **avec mobilier** (confiance 85%). Le template correspondant est prêt à 87.1%. Je génère le document."
+> "Je vais créer une promesse de vente. D'après les données, je détecte une promesse **hors copropriété** (confiance 85%). Le template correspondant est prêt. Je génère le document."
 
 **Agent dit** (pour vente):
 > "Je vais créer un acte de vente. Le template est prêt à 80.2%. Voulez-vous que je collecte vos données ou utilise un exemple?"
@@ -340,8 +339,8 @@ python notaire.py promesse-avancee generer \
 # Avec profil prédéfini
 python notaire.py promesse-avancee generer \
     --donnees donnees.json \
-    --profil agence_premium \
-    --output promesse_premium.docx
+    --profil agence_standard \
+    --output promesse_copropriete.docx
 ```
 
 #### Génération depuis titre de propriété
@@ -397,13 +396,13 @@ python notaire.py promesse-avancee types
 
 ### Cas 2: "Génère-moi une promesse de vente"
 
-**Conformité template**: 82-89% ✅ (selon type détecté)
+**Conformité template**: 85-89% ✅ (selon type détecté)
 
 **Agent dit**:
-> "Je détecte une promesse de type **avec mobilier** (confiance 92%). Le template correspondant est prêt à 87.1%. Je génère le document."
+> "Je détecte une promesse de type **hors copropriété** (confiance 92%). Le template correspondant est prêt. Je génère le document."
 
 **Agent fait**:
-1. 🔍 Détection automatique du type (standard/premium/avec_mobilier/multi_biens)
+1. 🔍 Détection automatique du type (copropriete/hors_copropriete/terrain_a_batir)
 2. ✅ Validation des données obligatoires
 3. 📋 Suggestions de sections conditionnelles
 4. 🔧 Génération avec template spécialisé
@@ -537,10 +536,9 @@ python execution/extraire_bookmarks_contenu.py \
 | Type | Templates | Conformité | Statut |
 |------|-----------|-----------|--------|
 | Vente | 1 | 80.2% | ✅ PROD |
-| Promesse Standard | 1 | 88.9% | ✅ PROD |
-| Promesse Premium | 1 | 85.2% | ✅ PROD |
-| Promesse Mobilier | 1 | 87.1% | ✅ PROD |
-| Promesse Multi-biens | 1 | 82.4% | ✅ PROD |
+| Promesse Copropriété | 1 | 88.9% | ✅ PROD |
+| Promesse Hors Copropriété | 1 | NEW | ✅ PROD |
+| Promesse Terrain à Bâtir | 1 | NEW | ✅ PROD |
 | Règlement Copro | 1 | 85.5% | ✅ PROD |
 | Modificatif EDD | 1 | 91.7% | ✅ PROD |
 

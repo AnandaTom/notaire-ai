@@ -2230,7 +2230,11 @@ class CollecteurInteractif:
     Modes:
         - 'cli': interactif avec input() pour chaque question manquante
         - 'prefill_only': utilise uniquement les données pré-remplies + défauts
+        - 'api': retourne les questions comme objets (pour API REST)
     """
+
+    # Répertoire de persistence des sessions Q&R
+    SESSIONS_DIR = PROJECT_ROOT / '.tmp' / 'qr_sessions'
 
     # Mapping singulier (schema) → pluriel (données pipeline)
     PLURIELS = {
@@ -2302,6 +2306,11 @@ class CollecteurInteractif:
             # Ignorer les sections conditionnelles non applicables
             condition = section.get('condition', '')
             if condition and not self._evaluer_condition_section(condition):
+                continue
+
+            # Filtrer par catégorie de bien (v1.7.0)
+            condition_categorie = section.get('condition_categorie', '')
+            if condition_categorie and not self._evaluer_condition_categorie(condition_categorie):
                 continue
 
             self._traiter_section(section_key, section, mode)
@@ -2621,6 +2630,47 @@ class CollecteurInteractif:
             pass
         return True
 
+    def _evaluer_condition_categorie(self, condition_categorie: str) -> bool:
+        """Évalue si la section est applicable à la catégorie de bien détectée.
+
+        La catégorie est déterminée par:
+        1. _metadata.categorie_bien (choix explicite du notaire)
+        2. Détection automatique via bien.copropriete, bien.lotissement, bien.type_bien
+        """
+        # 1. Chercher la catégorie explicite
+        categorie = self._get_deep(self.donnees, ['_metadata', 'categorie_bien'])
+        if categorie:
+            # Normaliser: "Lot en copropriété (appartement...)" -> "copropriete"
+            # IMPORTANT: vérifier 'hors' et 'terrain' AVANT 'copropri'
+            # car 'hors_copropriete' contient 'copropri' comme substring
+            cat_lower = str(categorie).lower()
+            if 'hors' in cat_lower or 'maison' in cat_lower:
+                categorie_normalisee = 'hors_copropriete'
+            elif 'terrain' in cat_lower:
+                categorie_normalisee = 'terrain_a_batir'
+            elif 'copropri' in cat_lower:
+                categorie_normalisee = 'copropriete'
+            else:
+                categorie_normalisee = 'copropriete'
+            return condition_categorie == categorie_normalisee
+
+        # 2. Détection automatique
+        bien = self._get_deep(self.donnees, ['bien']) or {}
+        lotissement = bien.get('lotissement')
+        type_bien = str(bien.get('type_bien', '')).lower()
+        copropriete = bien.get('copropriete')
+
+        if lotissement or type_bien in ('terrain', 'parcelle'):
+            categorie_detectee = 'terrain_a_batir'
+        elif copropriete is True or bien.get('lots'):
+            categorie_detectee = 'copropriete'
+        elif copropriete is False or type_bien in ('maison', 'villa', 'local_commercial', 'immeuble'):
+            categorie_detectee = 'hors_copropriete'
+        else:
+            categorie_detectee = 'copropriete'
+
+        return condition_categorie == categorie_detectee
+
     def _afficher_rapport(self):
         """Affiche le rapport de collecte."""
         total = self.questions_posees + self.questions_preremplies + self.questions_ignorees
@@ -2648,6 +2698,293 @@ class CollecteurInteractif:
                 (self.questions_preremplies / total) * 100
             ) if total > 0 else 0
         }
+
+    # =========================================================================
+    # Mode API - Retourne les questions comme objets JSON
+    # =========================================================================
+
+    def get_sections_list(self) -> List[Dict[str, Any]]:
+        """Retourne la liste des sections applicables avec leur statut.
+
+        Filtre par catégorie de bien et conditions de section.
+
+        Returns:
+            Liste de dicts: {key, titre, nb_questions, nb_repondues, complete}
+        """
+        sections = self.schema.get('sections', {})
+        result = []
+
+        for section_key in sorted(sections.keys()):
+            section = sections[section_key]
+
+            # Filtrage conditions
+            condition = section.get('condition', '')
+            if condition and not self._evaluer_condition_section(condition):
+                continue
+            condition_categorie = section.get('condition_categorie', '')
+            if condition_categorie and not self._evaluer_condition_categorie(condition_categorie):
+                continue
+
+            questions = section.get('questions', [])
+            nb_total = len(questions)
+            nb_repondues = 0
+            for q in questions:
+                variable = q.get('variable', '')
+                if variable:
+                    chemin = self._parse_variable(variable)
+                    val = self._get_deep(self.donnees, chemin)
+                    if val is not None:
+                        nb_repondues += 1
+
+            result.append({
+                'key': section_key,
+                'titre': section.get('titre', section_key),
+                'nb_questions': nb_total,
+                'nb_repondues': nb_repondues,
+                'complete': nb_repondues >= nb_total and nb_total > 0,
+            })
+
+        return result
+
+    def get_questions_for_section(self, section_key: str) -> List[Dict[str, Any]]:
+        """Retourne les questions d'une section avec leur statut pre-remplissage.
+
+        Args:
+            section_key: Clé de la section (ex: '2_promettant')
+
+        Returns:
+            Liste de dicts: {id, question, type, options, defaut, variable,
+                             valeur_actuelle, pre_rempli, obligatoire,
+                             sous_questions}
+        """
+        sections = self.schema.get('sections', {})
+        section = sections.get(section_key)
+        if not section:
+            return []
+
+        questions = section.get('questions', [])
+        result = []
+
+        for q in questions:
+            q_out = {
+                'id': q.get('id', ''),
+                'question': q.get('question', ''),
+                'type': q.get('type', 'texte'),
+                'options': q.get('options', []),
+                'defaut': q.get('defaut'),
+                'variable': q.get('variable', ''),
+                'obligatoire': q.get('obligatoire', False),
+                'aide': q.get('aide', ''),
+                'repeter': q.get('repeter', ''),
+            }
+
+            # Valeur actuelle
+            variable = q.get('variable', '')
+            if variable:
+                chemin = self._parse_variable(variable)
+                val = self._get_deep(self.donnees, chemin)
+                q_out['valeur_actuelle'] = val
+                q_out['pre_rempli'] = val is not None
+            else:
+                q_out['valeur_actuelle'] = None
+                q_out['pre_rempli'] = False
+
+            # Sous-questions (structure uniquement, pas évaluation)
+            sous_q = q.get('sous_questions', {})
+            if sous_q:
+                q_out['sous_questions'] = {}
+                for cond_key, sq_list in sous_q.items():
+                    q_out['sous_questions'][cond_key] = [
+                        {
+                            'id': sq.get('id', ''),
+                            'question': sq.get('question', ''),
+                            'type': sq.get('type', 'texte'),
+                            'options': sq.get('options', []),
+                            'defaut': sq.get('defaut'),
+                            'variable': sq.get('variable', ''),
+                            'obligatoire': sq.get('obligatoire', False),
+                        }
+                        for sq in sq_list
+                    ]
+
+            result.append(q_out)
+
+        return result
+
+    def submit_answers(self, answers: Dict[str, Any]) -> Dict[str, Any]:
+        """Soumet des réponses pour un ensemble de questions.
+
+        Args:
+            answers: Dict {question_id_ou_variable: valeur}.
+                     Si la clé contient un '.', elle est traitée comme un chemin variable.
+                     Sinon, on cherche la variable correspondant au question_id.
+
+        Returns:
+            Dict: {accepted: int, errors: list, donnees_updated: dict keys}
+        """
+        accepted = 0
+        errors = []
+        updated_keys = []
+
+        # Index id->variable depuis le schema
+        id_to_variable = {}
+        for section in self.schema.get('sections', {}).values():
+            for q in section.get('questions', []):
+                qid = q.get('id', '')
+                var = q.get('variable', '')
+                if qid and var:
+                    id_to_variable[qid] = var
+                # Sous-questions (peut être dict {condition: [questions]} ou list)
+                sous_q = q.get('sous_questions', {})
+                if isinstance(sous_q, dict):
+                    sq_lists = sous_q.values()
+                elif isinstance(sous_q, list):
+                    sq_lists = [sous_q]
+                else:
+                    sq_lists = []
+                for sq_list in sq_lists:
+                    if not isinstance(sq_list, list):
+                        continue
+                    for sq in sq_list:
+                        sqid = sq.get('id', '') if isinstance(sq, dict) else ''
+                        svar = sq.get('variable', '') if isinstance(sq, dict) else ''
+                        if sqid and svar:
+                            id_to_variable[sqid] = svar
+
+        for key, value in answers.items():
+            # Résoudre le chemin variable
+            if '.' in key or '[]' in key:
+                variable = key
+            elif key in id_to_variable:
+                variable = id_to_variable[key]
+            else:
+                errors.append({'key': key, 'error': 'Question inconnue'})
+                continue
+
+            try:
+                chemin = self._parse_variable(variable)
+                self._set_deep(self.donnees, chemin, value)
+                accepted += 1
+                updated_keys.append(variable)
+            except Exception as e:
+                errors.append({'key': key, 'error': str(e)})
+
+        return {
+            'accepted': accepted,
+            'errors': errors,
+            'updated_keys': updated_keys,
+        }
+
+    def get_progress(self) -> Dict[str, Any]:
+        """Retourne la progression globale de la collecte.
+
+        Returns:
+            Dict: {total_sections, sections_completes, total_questions,
+                   questions_repondues, pourcentage, champs_manquants,
+                   sections_detail}
+        """
+        sections_list = self.get_sections_list()
+        total_sections = len(sections_list)
+        sections_completes = sum(1 for s in sections_list if s['complete'])
+        total_questions = sum(s['nb_questions'] for s in sections_list)
+        questions_repondues = sum(s['nb_repondues'] for s in sections_list)
+
+        # Champs manquants (obligatoires)
+        champs_manquants = []
+        for section in self.schema.get('sections', {}).values():
+            condition = section.get('condition', '')
+            if condition and not self._evaluer_condition_section(condition):
+                continue
+            condition_categorie = section.get('condition_categorie', '')
+            if condition_categorie and not self._evaluer_condition_categorie(condition_categorie):
+                continue
+
+            for q in section.get('questions', []):
+                if not q.get('obligatoire', False):
+                    continue
+                variable = q.get('variable', '')
+                if variable:
+                    chemin = self._parse_variable(variable)
+                    val = self._get_deep(self.donnees, chemin)
+                    if val is None:
+                        champs_manquants.append({
+                            'variable': variable,
+                            'question': q.get('question', ''),
+                            'section': section.get('titre', ''),
+                        })
+
+        pct = round((questions_repondues / total_questions) * 100) if total_questions > 0 else 0
+
+        return {
+            'total_sections': total_sections,
+            'sections_completes': sections_completes,
+            'total_questions': total_questions,
+            'questions_repondues': questions_repondues,
+            'pourcentage': pct,
+            'champs_manquants': champs_manquants,
+            'sections_detail': sections_list,
+        }
+
+    # =========================================================================
+    # Persistance session Q&R
+    # =========================================================================
+
+    def save_state(self, dossier_id: str) -> str:
+        """Sauvegarde l'état de la session Q&R pour reprise ultérieure.
+
+        Args:
+            dossier_id: Identifiant du dossier
+
+        Returns:
+            Chemin du fichier de session
+        """
+        self.SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+        session_path = self.SESSIONS_DIR / f"{dossier_id}.json"
+
+        state = {
+            'dossier_id': dossier_id,
+            'type_acte': self.type_acte,
+            'donnees': self.donnees,
+            'questions_posees': self.questions_posees,
+            'questions_preremplies': self.questions_preremplies,
+            'questions_ignorees': self.questions_ignorees,
+            'compteurs_repeter': self._compteurs_repeter,
+            'saved_at': datetime.now().isoformat(),
+        }
+
+        with open(session_path, 'w', encoding='utf-8') as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+
+        return str(session_path)
+
+    @classmethod
+    def load_state(cls, dossier_id: str) -> Optional['CollecteurInteractif']:
+        """Charge une session Q&R sauvegardée.
+
+        Args:
+            dossier_id: Identifiant du dossier
+
+        Returns:
+            Instance CollecteurInteractif restaurée, ou None si pas de session
+        """
+        session_path = cls.SESSIONS_DIR / f"{dossier_id}.json"
+        if not session_path.exists():
+            return None
+
+        with open(session_path, 'r', encoding='utf-8') as f:
+            state = json.load(f)
+
+        instance = cls(
+            type_acte=state['type_acte'],
+            prefill=state.get('donnees', {}),
+        )
+        instance.donnees = state.get('donnees', {})
+        instance.questions_posees = state.get('questions_posees', 0)
+        instance.questions_preremplies = state.get('questions_preremplies', 0)
+        instance.questions_ignorees = state.get('questions_ignorees', 0)
+        instance._compteurs_repeter = state.get('compteurs_repeter', {})
+
+        return instance
 
 
 # =============================================================================

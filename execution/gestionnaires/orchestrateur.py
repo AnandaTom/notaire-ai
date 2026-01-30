@@ -48,16 +48,17 @@ except ImportError:
         HistoriqueActes = None
         Acte = None
 
-# Import du gestionnaire de promesses (v1.5.1)
+# Import du gestionnaire de promesses (v1.7.0 - catégories de bien)
 try:
-    from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
+    from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses, CategorieBien
     GESTIONNAIRE_PROMESSES_DISPONIBLE = True
 except ImportError:
     try:
-        from gestionnaire_promesses import GestionnairePromesses
+        from gestionnaire_promesses import GestionnairePromesses, CategorieBien
         GESTIONNAIRE_PROMESSES_DISPONIBLE = True
     except ImportError:
         GESTIONNAIRE_PROMESSES_DISPONIBLE = False
+        CategorieBien = None
 
 # Configuration encodage Windows
 if sys.platform == 'win32':
@@ -133,6 +134,7 @@ class OrchestratorNotaire:
     - Historique Supabase
     """
 
+    # Templates par défaut (pour promesse, la catégorie de bien prime — voir _get_promesse_template)
     TEMPLATES = {
         TypeActe.VENTE: 'vente_lots_copropriete.md',
         TypeActe.PROMESSE_VENTE: 'promesse_vente_lots_copropriete.md',
@@ -140,9 +142,16 @@ class OrchestratorNotaire:
         TypeActe.MODIFICATIF_EDD: 'modificatif_edd.md',
     }
 
+    # Templates promesse par catégorie de bien (v1.7.0)
+    PROMESSE_TEMPLATES_PAR_CATEGORIE = {
+        'copropriete': 'promesse_vente_lots_copropriete.md',
+        'hors_copropriete': 'promesse_hors_copropriete.md',
+        'terrain_a_batir': 'promesse_terrain_a_batir.md',
+    }
+
     CONFORMITE_TEMPLATES = {
-        TypeActe.VENTE: 0.85,
-        TypeActe.PROMESSE_VENTE: 0.61,
+        TypeActe.VENTE: 0.802,
+        TypeActe.PROMESSE_VENTE: 0.889,
         TypeActe.REGLEMENT_COPROPRIETE: 0.855,
         TypeActe.MODIFICATIF_EDD: 0.917,
     }
@@ -1026,6 +1035,22 @@ class OrchestratorNotaire:
 
         return {"alertes": alertes, "valide": len(alertes) == 0}
 
+    def _get_promesse_template(self, donnees: Dict[str, Any]) -> str:
+        """Sélectionne le template promesse selon la catégorie de bien."""
+        if GESTIONNAIRE_PROMESSES_DISPONIBLE and CategorieBien is not None:
+            try:
+                gestionnaire = GestionnairePromesses()
+                categorie = gestionnaire.detecter_categorie_bien(donnees)
+                template = self.PROMESSE_TEMPLATES_PAR_CATEGORIE.get(
+                    categorie.value,
+                    self.TEMPLATES[TypeActe.PROMESSE_VENTE]
+                )
+                logger.info(f"Catégorie bien détectée: {categorie.value} -> {template}")
+                return template
+            except Exception as e:
+                logger.warning(f"Détection catégorie échouée, fallback copro: {e}")
+        return self.TEMPLATES[TypeActe.PROMESSE_VENTE]
+
     def _assembler_template(
         self,
         type_acte: TypeActe,
@@ -1033,7 +1058,15 @@ class OrchestratorNotaire:
         output_path: str
     ) -> Dict[str, Any]:
         """Assemble le template avec les données."""
-        template = self.TEMPLATES.get(type_acte)
+        # Pour les promesses, sélection par catégorie de bien
+        if type_acte == TypeActe.PROMESSE_VENTE:
+            try:
+                donnees_json = json.loads(Path(donnees_path).read_text(encoding='utf-8'))
+                template = self._get_promesse_template(donnees_json)
+            except Exception:
+                template = self.TEMPLATES.get(type_acte)
+        else:
+            template = self.TEMPLATES.get(type_acte)
         script = self.project_root / 'execution' / 'core' / 'assembler_acte.py'
 
         # Créer le dossier de sortie
@@ -1048,7 +1081,8 @@ class OrchestratorNotaire:
                     '--template', template,
                     '--donnees', donnees_path,
                     '--output', str(output_dir),
-                    '--id', acte_id
+                    '--id', acte_id,
+                    '--zones-grisees'
                 ],
                 capture_output=True,
                 text=True,
@@ -1089,7 +1123,8 @@ class OrchestratorNotaire:
                 [
                     sys.executable, str(script),
                     '--input', str(md_path.resolve()),
-                    '--output', str(Path(output_path).resolve())
+                    '--output', str(Path(output_path).resolve()),
+                    '--zones-grisees'
                 ],
                 capture_output=True,
                 text=True,

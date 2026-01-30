@@ -200,13 +200,13 @@ Les parties s'engagent à être disponibles à la date de convocation et à info
 
 {% if prix.ventilation %}
 Le prix ci-dessus est ventilé comme suit :
-* **Biens immobiliers** : {{ prix.ventilation.immobilier | format_nombre }} €
-{% if prix.ventilation.meubles %}
-* **Meubles meublants** : {{ prix.ventilation.meubles | format_nombre }} €
-{% endif %}
-{% if prix.ventilation.autres %}
-* **Autres éléments** : {{ prix.ventilation.autres | format_nombre }} €
-{% endif %}
+
+| Élément | Montant |
+| :---- | ----: |
+| Biens immobiliers | {{ prix.ventilation.immobilier | format_nombre }} EUR |
+{% if prix.ventilation.meubles %}| Meubles meublants | {{ prix.ventilation.meubles | format_nombre }} EUR |
+{% endif %}{% if prix.ventilation.autres %}| Autres éléments | {{ prix.ventilation.autres | format_nombre }} EUR |
+{% endif %}| **TOTAL** | **{{ prix.montant | format_nombre }} EUR** |
 
 Cette ventilation est retenue pour le calcul des droits d'enregistrement et des émoluments du notaire.
 
