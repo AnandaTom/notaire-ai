@@ -91,7 +91,7 @@ const SupabaseClient = {
      * @param {string} params.token - Token unique du formulaire
      * @returns {Promise<object>}
      */
-    async createSubmission({ etudeId, dossierId, notaireId, clientId, typePartie, label, token }) {
+    async createSubmission({ etudeId, dossierId, notaireId, clientId, typePartie, label, token, notaireEmail, typeQuestionnaire, clientEmail }) {
         return await this.request(
             '/rest/v1/form_submissions',
             {
@@ -104,7 +104,10 @@ const SupabaseClient = {
                     client_id: clientId || null,
                     type_partie: typePartie,
                     label,
-                    status: 'pending'
+                    status: 'pending',
+                    notaire_email: notaireEmail || null,
+                    type_questionnaire: typeQuestionnaire || null,
+                    client_email: clientEmail || null
                 })
             }
         );
@@ -163,6 +166,36 @@ const SupabaseClient = {
             `/rest/v1/etude_users?etude_id=eq.${etudeId}&role=in.(notaire,clerc)&select=*`,
             { method: 'GET' }
         );
+    },
+
+    /**
+     * Envoie le lien du questionnaire au client par email
+     * @param {object} payload
+     * @param {string} payload.client_email - Email du client
+     * @param {string} payload.client_nom - Nom du client
+     * @param {string} payload.client_prenom - Prénom du client
+     * @param {string} payload.questionnaire_url - URL complète du questionnaire
+     * @param {string} payload.type_questionnaire - Type de questionnaire
+     * @param {string} payload.etude_nom - Nom de l'étude notariale
+     * @param {string} payload.notaire_email - Email du notaire
+     * @returns {Promise<object>}
+     */
+    async sendLinkToClient(payload) {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-questionnaire-link`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Email sending failed: ${error}`);
+        }
+
+        return await response.json();
     },
 
     /**

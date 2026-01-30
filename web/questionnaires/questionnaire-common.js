@@ -541,6 +541,21 @@ function collectFormData() {
 // ============================================
 // SOUMISSION
 // ============================================
+
+// Récupérer le token depuis l'URL (lien envoyé par le notaire)
+function getTokenFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('token') || null;
+}
+
+// Récupérer la clé de chiffrement depuis le fragment URL
+function getKeyFromUrl() {
+    const hash = window.location.hash;
+    if (!hash) return null;
+    const params = new URLSearchParams(hash.substring(1));
+    return params.get('key') || null;
+}
+
 async function submitForm(e) {
     e.preventDefault();
 
@@ -569,9 +584,24 @@ async function submitForm(e) {
             clientPrenom = data.acheteurs[0].prenoms || '';
         }
 
-        // Générer clé et token
-        const { key, keyBase64 } = await CryptoModule.generateKey();
-        const token = CryptoModule.generateToken();
+        // Vérifier si on a un token existant (lien envoyé par le notaire)
+        const existingToken = getTokenFromUrl();
+        const existingKeyBase64 = getKeyFromUrl();
+
+        let token, keyBase64, key;
+
+        if (existingToken && existingKeyBase64) {
+            // MODE LIEN NOTAIRE : PATCH la submission existante
+            token = existingToken;
+            keyBase64 = existingKeyBase64;
+            key = await CryptoModule.importKey(keyBase64);
+        } else {
+            // MODE AUTONOME : Créer une nouvelle submission
+            const generated = await CryptoModule.generateKey();
+            key = generated.key;
+            keyBase64 = generated.keyBase64;
+            token = CryptoModule.generateToken();
+        }
 
         // Chiffrer les données
         const { encrypted, iv } = await CryptoModule.encrypt(data, key);
@@ -586,44 +616,82 @@ async function submitForm(e) {
             typePartie = 'vendeur_maison';
         }
 
-        // Récupérer l'email du notaire depuis l'URL ou la config
-        const urlParams = new URLSearchParams(window.location.search);
-        const notaireEmail = urlParams.get('notaire') || CONFIG.notaireEmail || '';
+        if (existingToken) {
+            // PATCH la submission existante (créée par le notaire)
+            // Récupérer d'abord les infos existantes pour avoir notaire_email et etude_id
+            const existingSubmission = await SupabaseClient.getSubmissionByToken(existingToken);
 
-        // Préparer les données pour Supabase
-        const submissionData = {
-            token: token,
-            type_questionnaire: CONFIG.type,
-            type_partie: typePartie,
-            data_encrypted: encrypted,
-            encryption_iv: iv,
-            encryption_key_wrapped: keyBase64, // Pour déchiffrement serveur si besoin
-            status: 'submitted',
-            submitted_at: new Date().toISOString(),
-            client_nom: clientNom,
-            client_prenom: clientPrenom,
-            notaire_email: notaireEmail,
-            user_agent: navigator.userAgent,
-            label: `${clientPrenom} ${clientNom} - ${CONFIG.title}`.trim()
-        };
+            await SupabaseClient.request(
+                `/rest/v1/form_submissions?token=eq.${existingToken}`,
+                {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        data_encrypted: encrypted,
+                        encryption_iv: iv,
+                        encryption_key_wrapped: keyBase64,
+                        status: 'submitted',
+                        submitted_at: new Date().toISOString(),
+                        client_nom: clientNom || undefined,
+                        client_prenom: clientPrenom || undefined,
+                        user_agent: navigator.userAgent
+                    })
+                }
+            );
 
-        // Envoyer à Supabase
-        await SupabaseClient.createSubmission(submissionData);
+            // Envoyer la notification email au notaire
+            const notaireEmail = existingSubmission?.notaire_email;
+            if (notaireEmail) {
+                try {
+                    await SupabaseClient.sendNotification({
+                        submission_id: existingSubmission.id,
+                        token: existingToken,
+                        type_questionnaire: existingSubmission.type_questionnaire || CONFIG.type,
+                        notaire_email: notaireEmail,
+                        client_nom: clientNom,
+                        client_prenom: clientPrenom,
+                        etude_id: existingSubmission.etude_id,
+                        dossier_id: existingSubmission.dossier_id
+                    });
+                } catch (emailError) {
+                    console.warn('Email notification failed:', emailError);
+                }
+            }
+        } else {
+            // Créer une nouvelle submission (mode autonome)
+            const urlParams = new URLSearchParams(window.location.search);
+            const notaireEmail = urlParams.get('notaire') || CONFIG.notaireEmail || '';
 
-        // Envoyer la notification email au notaire (si email configuré)
-        if (notaireEmail) {
-            try {
-                await SupabaseClient.sendNotification({
-                    submission_id: token,
-                    token: token,
-                    type_questionnaire: CONFIG.type,
-                    notaire_email: notaireEmail,
-                    client_nom: clientNom,
-                    client_prenom: clientPrenom
-                });
-            } catch (emailError) {
-                console.warn('Email notification failed:', emailError);
-                // Ne pas bloquer si l'email échoue
+            const submissionData = {
+                token: token,
+                type_questionnaire: CONFIG.type,
+                type_partie: typePartie,
+                data_encrypted: encrypted,
+                encryption_iv: iv,
+                encryption_key_wrapped: keyBase64,
+                status: 'submitted',
+                submitted_at: new Date().toISOString(),
+                client_nom: clientNom,
+                client_prenom: clientPrenom,
+                notaire_email: notaireEmail,
+                user_agent: navigator.userAgent,
+                label: `${clientPrenom} ${clientNom} - ${CONFIG.title}`.trim()
+            };
+
+            await SupabaseClient.createSubmission(submissionData);
+
+            if (notaireEmail) {
+                try {
+                    await SupabaseClient.sendNotification({
+                        submission_id: token,
+                        token: token,
+                        type_questionnaire: CONFIG.type,
+                        notaire_email: notaireEmail,
+                        client_nom: clientNom,
+                        client_prenom: clientPrenom
+                    });
+                } catch (emailError) {
+                    console.warn('Email notification failed:', emailError);
+                }
             }
         }
 
