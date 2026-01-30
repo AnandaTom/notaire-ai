@@ -443,6 +443,20 @@
                            placeholder="Ex: Achat appartement rue Victor Hugo">
                 </div>
 
+                <div class="form-group">
+                    <label for="notaireEmail">Email du notaire (pour recevoir les réponses) *</label>
+                    <input type="email" id="notaireEmail" name="notaireEmail" required
+                           placeholder="notaire@etude.fr">
+                    <small style="color: #6b7280;">Vous recevrez un email avec le récapitulatif DOCX quand le client aura rempli le formulaire</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientEmail">Email du client (optionnel)</label>
+                    <input type="email" id="clientEmail" name="clientEmail"
+                           placeholder="client@email.com">
+                    <small style="color: #6b7280;">Si renseigné, le lien sera envoyé automatiquement par email au client</small>
+                </div>
+
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
                     Générer le lien sécurisé
                 </button>
@@ -468,6 +482,14 @@
 
             <div class="success-message" id="copySuccess">
                 Lien copié dans le presse-papier !
+            </div>
+
+            <div id="emailSentConfirmation" class="hidden" style="margin-top: 16px; padding: 12px; background: #d1fae5; border-radius: 8px; color: #065f46;">
+                <strong>Email envoyé !</strong> Le lien a été envoyé au client par email.
+            </div>
+
+            <div id="emailSendingError" class="hidden" style="margin-top: 16px; padding: 12px; background: #fee2e2; border-radius: 8px; color: #991b1b;">
+                <strong>Erreur :</strong> <span id="emailErrorMessage"></span>
             </div>
 
             <div style="margin-top: 20px; padding: 16px; background: #fef3c7; border-radius: 8px;">
@@ -711,11 +733,38 @@
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
         }
 
+        // Pré-remplir l'email du notaire quand le modal s'ouvre
+        const origOpenNewFormModal = openNewFormModal;
+        openNewFormModal = function() {
+            origOpenNewFormModal();
+            // Pré-remplir avec l'email de l'étude si disponible
+            const emailField = document.getElementById('notaireEmail');
+            if (emailField && currentEtude && currentEtude.email_contact) {
+                emailField.value = currentEtude.email_contact;
+            }
+        };
+
+        // Mapping type_partie → type_questionnaire
+        function getTypeQuestionnaire(typePartie) {
+            const mapping = {
+                'vendeur_appartement': 'vente_appartement',
+                'vendeur_maison': 'vente_maison',
+                'acquereur': 'achat_bien',
+                'vendeur': 'vente_appartement',
+                'acheteur': 'achat_bien'
+            };
+            return mapping[typePartie] || 'vente_appartement';
+        }
+
         // Créer nouveau formulaire
         document.getElementById('newFormForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const formData = new FormData(e.target);
+            const notaireEmail = formData.get('notaireEmail');
+            const clientEmail = formData.get('clientEmail');
+            const typePartie = formData.get('typePartie');
+            const typeQuestionnaire = getTypeQuestionnaire(typePartie);
 
             // Générer token et clé
             const token = CryptoModule.generateToken();
@@ -727,10 +776,13 @@
                     etudeId: currentUser.etudeId,
                     notaireId: currentUser.id,
                     dossierId: formData.get('dossierId') || null,
-                    clientId: null, // Sera créé à l'import
-                    typePartie: formData.get('typePartie'),
+                    clientId: null,
+                    typePartie: typePartie,
                     label: formData.get('formLabel'),
-                    token: token
+                    token: token,
+                    notaireEmail: notaireEmail,
+                    typeQuestionnaire: typeQuestionnaire,
+                    clientEmail: clientEmail || null
                 });
 
                 // Mettre à jour avec nom/prénom client (pour affichage)
@@ -747,15 +799,14 @@
 
                 // Générer le lien
                 const baseUrl = window.location.origin + window.location.pathname.replace('dashboard-notaire.html', '');
-                const formType = formData.get('typePartie');
 
                 let formUrl;
-                if (formType === 'vendeur_appartement') {
+                if (typePartie === 'vendeur_appartement') {
                     formUrl = `${baseUrl}questionnaires/vente-appartement.html`;
-                } else if (formType === 'vendeur_maison') {
+                } else if (typePartie === 'vendeur_maison') {
                     formUrl = `${baseUrl}questionnaires/vente-maison.html`;
-                } else if (formType === 'acquereur') {
-                    formUrl = `${baseUrl}fill.html`;
+                } else if (typePartie === 'acquereur' || typePartie === 'acheteur') {
+                    formUrl = `${baseUrl}questionnaires/achat-bien.html`;
                 } else {
                     formUrl = `${baseUrl}fill.html`;
                 }
@@ -768,7 +819,29 @@
                 // Afficher le lien
                 closeModal();
                 document.getElementById('generatedLink').textContent = generatedLinkData.url;
+                document.getElementById('emailSentConfirmation').classList.add('hidden');
+                document.getElementById('emailSendingError').classList.add('hidden');
                 document.getElementById('linkModal').classList.add('active');
+
+                // Si email client renseigné, envoyer le lien par email
+                if (clientEmail) {
+                    try {
+                        await SupabaseClient.sendLinkToClient({
+                            client_email: clientEmail,
+                            client_nom: formData.get('clientNom'),
+                            client_prenom: formData.get('clientPrenom'),
+                            questionnaire_url: generatedLinkData.url,
+                            type_questionnaire: typeQuestionnaire,
+                            etude_nom: currentEtude.nom || 'Votre notaire',
+                            notaire_email: notaireEmail
+                        });
+                        document.getElementById('emailSentConfirmation').classList.remove('hidden');
+                    } catch (emailError) {
+                        console.error('Erreur envoi email client:', emailError);
+                        document.getElementById('emailSendingError').classList.remove('hidden');
+                        document.getElementById('emailErrorMessage').textContent = emailError.message || 'Impossible d\'envoyer l\'email';
+                    }
+                }
 
                 // Recharger la liste
                 loadSubmissions();
