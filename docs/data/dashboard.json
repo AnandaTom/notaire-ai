@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-29T21:46:13.140559",
+    "generated_at": "2026-01-30T21:35:50.183588",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,28 +12,28 @@
     "scripts_count": 61,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 162
+    "commits": 177
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "c8f5c81",
-      "message": "chore: Fin de journee - 29/01/2026 22:45:54,21",
-      "date": "2026-01-29"
+      "hash": "83cbd00",
+      "message": "chore: Fin de journee - 30/01/2026 22:35:38,25",
+      "date": "2026-01-30"
     },
-    "total_commits": 162,
+    "total_commits": 177,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 110
+        "commits": 112
       },
       {
         "name": "github-actions[bot]",
-        "commits": 33
+        "commits": 35
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 18
+        "commits": 19
       },
       {
         "name": "Payoss",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-01-29"
+      "last_modified": "2026-01-30"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1536,
-      "last_modified": "2026-01-29"
+      "last_modified": "2026-01-30"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-01-29"
+      "last_modified": "2026-01-30"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,12 +88,12 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-01-29"
+      "last_modified": "2026-01-30"
     }
   ],
   "scripts": {
     "total": 61,
-    "total_lines": 36389,
+    "total_lines": 36918,
     "categories": {
       "generation": 6,
       "utils": 47,
@@ -104,7 +104,7 @@
     "scripts": [
       {
         "name": "agent_autonome.py",
-        "lines": 2805,
+        "lines": 3142,
         "path": "execution/agent_autonome.py"
       },
       {
@@ -119,12 +119,12 @@
       },
       {
         "name": "orchestrateur.py",
-        "lines": 1425,
+        "lines": 1460,
         "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "gestionnaire_promesses.py",
-        "lines": 1236,
+        "lines": 1357,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
@@ -156,7 +156,7 @@
   },
   "schemas": {
     "total": 17,
-    "total_variables": 202,
+    "total_variables": 204,
     "schemas": [
       {
         "name": "questions_notaire.json",
@@ -208,7 +208,7 @@
       },
       {
         "name": "promesse_catalogue_unifie.json",
-        "count": 10
+        "count": 12
       },
       {
         "name": "clauses_catalogue.json",
@@ -622,6 +622,46 @@
   ],
   "activity": [
     {
+      "hash": "83cbd00",
+      "author": "Tom",
+      "date": "2026-01-30",
+      "message": "Fin de journee - 30/01/2026 22:35:38,25",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "f039c12",
+      "author": "Tom",
+      "date": "2026-01-30",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "22db26c",
+      "author": "github-actions[bot]",
+      "date": "2026-01-30",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "5a2de99",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "c8f5c81",
       "author": "Tom",
       "date": "2026-01-29",
@@ -630,6 +670,26 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
+    },
+    {
+      "hash": "7005c70",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "8fc7f26",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "register custom Jinja2 filters in template syntax test",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
     },
     {
       "hash": "bd01ec1",
@@ -662,6 +722,26 @@
       "type_color": "red"
     },
     {
+      "hash": "1ac7192",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "112a32f",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
       "hash": "f77ea23",
       "author": "github-actions[bot]",
       "date": "2026-01-29",
@@ -680,6 +760,26 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
+    },
+    {
+      "hash": "d3c44e5",
+      "author": "github-actions[bot]",
+      "date": "2026-01-29",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "bb26e17",
+      "author": "Tom",
+      "date": "2026-01-29",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
     },
     {
       "hash": "c6dc43e",
@@ -702,7 +802,7 @@
       "type_color": "green"
     },
     {
-      "hash": "87934e9",
+      "hash": "25e26ae",
       "author": "github-actions[bot]",
       "date": "2026-01-29",
       "message": "auto-update dashboard data [skip ci]",
@@ -712,110 +812,10 @@
       "type_color": "blue"
     },
     {
-      "hash": "b388819",
+      "hash": "3487b2a",
       "author": "Tom",
       "date": "2026-01-29",
-      "message": "ajout specs detaillees pour Augustin (formulaires, dashboard, commercial)",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
-    },
-    {
-      "hash": "ea18d1e",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "1412ce1",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "DIAGNOSTIC_WORKFLOW enrichi avec specs détaillées pour Paul",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
-    },
-    {
-      "hash": "23f28a2",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "aa40ed1",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "workflow_rapide paths + diagnostic workflow doc",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "a69d708",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "98fa965",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "merge: Sync avec master (dashboard.json auto-genere)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ecd8f0a",
-      "author": "Automai",
-      "date": "2026-01-29",
-      "message": "Travail du 29/01/2026 (#17)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "9a13b27",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Fin de journee - 29/01/2026 11:27:22,92",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "7905871",
-      "author": "Automai",
-      "date": "2026-01-29",
-      "message": "Ajout trames promesse D, E, F (#16)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "090d6b9",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "message": "Merge branch 'tom/dev'",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1023,7 +1023,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-01-29"
+    "last_updated": "2026-01-30"
   },
   "overview": {
     "overall_score": 67,
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-29 21:46"
+    "last_updated": "2026-01-30 21:35"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-29 21:46"
+    "last_updated": "2026-01-30 21:35"
   },
   "conformity_details": {
     "promesse": {
