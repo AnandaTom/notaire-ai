@@ -1,21 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Variables Promesse Unilatérale de Vente - Lots de Copropriété",
-  "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente de lots de copropriété. Supporte 4 types de promesses détectés automatiquement.",
-  "version": "2.0.0",
-  "date_modification": "2026-01-28",
+  "title": "Variables Promesse Unilatérale de Vente",
+  "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente. Supporte 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir) et 4 types de transactions.",
+  "version": "3.0.0",
+  "date_modification": "2026-01-30",
   "type": "object",
   "required": ["promettants", "beneficiaires", "prix", "delai_realisation"],
   "$comment": "Les champs 'bien' ou 'biens' sont requis selon le type. Voir promesse_catalogue_unifie.json pour détails.",
   "properties": {
     "_metadata": {
       "type": "object",
-      "description": "Métadonnées pour le système multi-templates v1.4.0",
+      "description": "Métadonnées pour le système multi-templates v1.7.0",
       "properties": {
+        "categorie_bien": {
+          "type": "string",
+          "enum": ["copropriete", "hors_copropriete", "terrain_a_batir"],
+          "description": "Catégorie de bien (Niveau 1: sélectionne le template de base)"
+        },
         "type_promesse": {
           "type": "string",
           "enum": ["standard", "premium", "avec_mobilier", "multi_biens"],
-          "description": "Type de promesse (détecté automatiquement ou forcé)"
+          "description": "Type de promesse (Niveau 2: variante au sein de la catégorie)"
         },
         "template_utilise": {
           "type": "string",
@@ -920,10 +925,138 @@
           "items": { "$ref": "#/$defs/lot_copropriete" }
         },
         "carrez": { "type": "number" },
-        "prix": { "type": "number", "description": "Prix individuel du bien (pour multi-biens)" }
+        "prix": { "type": "number", "description": "Prix individuel du bien (pour multi-biens)" },
+        "type_bien": {
+          "type": "string",
+          "enum": ["appartement", "maison", "terrain", "local_commercial", "parking", "cave", "autre"],
+          "description": "Type de bien (utilisé pour la détection de catégorie)"
+        },
+        "lotissement": {
+          "type": ["object", "boolean"],
+          "description": "Données de lotissement (catégorie terrain_a_batir)",
+          "properties": {
+            "nom": { "type": "string", "description": "Nom du lotissement" },
+            "commune": { "type": "string" },
+            "autorite": { "type": "string", "description": "Autorité ayant délivré le permis" },
+            "date_permis": { "type": "string", "format": "date" },
+            "numero_permis": { "type": "string" },
+            "lotisseur": { "type": "string" },
+            "date_reception": { "type": "string", "format": "date" },
+            "parcelles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "lot": { "type": "string" },
+                  "section": { "type": "string" },
+                  "numero": { "type": "string" },
+                  "surface": { "type": "number" },
+                  "affectation": { "type": "string" }
+                }
+              }
+            },
+            "cahier_charges": {
+              "type": "object",
+              "properties": {
+                "auteur": { "type": "string" },
+                "date": { "type": "string", "format": "date" },
+                "publication": { "type": "string" },
+                "prescriptions": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "reglement": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string", "format": "date" },
+                "prescriptions_principales": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "asl": {
+              "type": "object",
+              "description": "Association Syndicale Libre",
+              "properties": {
+                "nom": { "type": "string" },
+                "objet": { "type": "string" },
+                "cotisation": { "type": "number" }
+              }
+            }
+          }
+        },
+        "construction": {
+          "type": "object",
+          "description": "Données de construction existante (catégorie hors_copropriete)",
+          "properties": {
+            "date_construction": { "type": "string" },
+            "surface_habitable": { "type": "number" },
+            "surface_terrain": { "type": "number" },
+            "nombre_pieces": { "type": "integer" },
+            "nombre_niveaux": { "type": "integer" },
+            "dependances": { "type": "string", "description": "Description des dépendances" },
+            "assainissement": {
+              "type": "string",
+              "enum": ["collectif", "individuel", "fosse_septique"],
+              "description": "Type d'assainissement"
+            },
+            "chauffage": { "type": "string" },
+            "permis_construire": {
+              "type": "object",
+              "properties": {
+                "numero": { "type": "string" },
+                "date": { "type": "string", "format": "date" },
+                "conformite": { "type": "boolean" }
+              }
+            }
+          }
+        },
+        "viabilisation": {
+          "type": "object",
+          "description": "État de viabilisation (catégorie terrain_a_batir)",
+          "properties": {
+            "viabilise": { "type": "boolean" },
+            "raccordements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "reseau": { "type": "string" },
+                  "statut": { "type": "string" },
+                  "distance": { "type": "string" },
+                  "cout": { "type": "number" }
+                }
+              }
+            },
+            "cout_estimatif": { "type": "number" }
+          }
+        },
+        "constructibilite": {
+          "type": "object",
+          "description": "Données de constructibilité (catégorie terrain_a_batir)",
+          "properties": {
+            "cu_reference": { "type": "string", "description": "Référence certificat d'urbanisme" },
+            "cu_type": { "type": "string", "enum": ["informatif", "operationnel"] },
+            "cu_date": { "type": "string", "format": "date" },
+            "cu_validite": { "type": "string", "format": "date" },
+            "cu_commune": { "type": "string" },
+            "zone_plu": { "type": "string", "description": "Zone du PLU (ex: UB, AU)" },
+            "plu_commune": { "type": "string" },
+            "shon_max": { "type": "number", "description": "Surface de plancher maximale (m²)" },
+            "contraintes": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "bornage": {
+          "type": "object",
+          "description": "Procès-verbal de bornage",
+          "properties": {
+            "geometre": { "type": "string" },
+            "date": { "type": "string", "format": "date" },
+            "reference": { "type": "string" },
+            "surface": { "type": "number" },
+            "bornes": { "type": "array", "items": { "type": "string" } }
+          }
+        }
       }
     }
   },
 
-  "$comment_v2": "Ce schéma est compatible avec le système multi-templates v1.4.0. Voir schemas/promesse_catalogue_unifie.json pour le catalogue complet des 4 types de promesses (standard, premium, avec_mobilier, multi_biens)."
+  "$comment_v2": "Ce schéma est compatible avec le système multi-templates v1.7.0 (3 catégories de biens). Voir schemas/promesse_catalogue_unifie.json pour le catalogue complet."
 }

@@ -1,14 +1,24 @@
 {
-  "titre": "Questions pour Promesse Unilatérale de Vente - Lots de Copropriété",
-  "description": "Questions structurées à poser au notaire pour collecter les informations nécessaires à la rédaction d'une promesse unilatérale de vente de lots de copropriété",
-  "version": "2.0.0",
-  "date_modification": "2026-01-28",
-  "note_multi_templates": "Ce questionnaire supporte 4 types de promesses (standard, premium, avec_mobilier, multi_biens). Les questions conditionnelles s'adaptent automatiquement.",
+  "titre": "Questions pour Promesse Unilatérale de Vente",
+  "description": "Questions structurées pour collecter les informations nécessaires à la rédaction d'une promesse unilatérale de vente — 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir)",
+  "version": "3.0.0",
+  "date_modification": "2026-01-30",
+  "note_multi_templates": "Ce questionnaire supporte 3 catégories de biens et 4 types de transactions. Les sections sont filtrées par condition_categorie.",
   "sections": {
     "0_detection_type": {
       "titre": "Détection du type de promesse",
-      "note": "Ces questions permettent de détecter automatiquement le type de template à utiliser",
+      "note": "Ces questions déterminent la catégorie de bien (copro/hors-copro/terrain) et le type de transaction",
       "questions": [
+        {
+          "id": "categorie_bien",
+          "question": "Quelle est la catégorie du bien ?",
+          "type": "choix",
+          "options": ["Lot en copropriété (appartement, cave, parking)", "Hors copropriété (maison, local commercial)", "Terrain à bâtir (lotissement, parcelle)"],
+          "obligatoire": true,
+          "defaut": "Lot en copropriété (appartement, cave, parking)",
+          "variable": "_metadata.categorie_bien",
+          "note": "Détermine le template de base et les sections affichées"
+        },
         {
           "id": "type_promesse_force",
           "question": "Souhaitez-vous forcer un type de promesse spécifique ?",
@@ -425,6 +435,7 @@
 
     "6_lots": {
       "titre": "Lots de copropriété",
+      "condition_categorie": "copropriete",
       "questions": [
         {
           "id": "lots_nombre",
@@ -481,6 +492,7 @@
     },
 
     "7_carrez": {
+      "condition_categorie": "copropriete",
       "titre": "Superficie Carrez",
       "questions": [
         {
@@ -515,6 +527,7 @@
     },
 
     "8_copropriete": {
+      "condition_categorie": "copropriete",
       "titre": "Copropriété",
       "questions": [
         {
@@ -602,6 +615,187 @@
           "type": "booleen",
           "obligatoire": true,
           "variable": "copropriete.emprunt_collectif.existe"
+        }
+      ]
+    },
+
+    "8b_hors_copropriete": {
+      "titre": "Description du bien hors copropriété",
+      "condition_categorie": "hors_copropriete",
+      "questions": [
+        {
+          "id": "type_bien",
+          "question": "Quel est le type de bien ?",
+          "type": "choix",
+          "options": ["Maison individuelle", "Villa", "Local commercial", "Immeuble entier", "Autre"],
+          "obligatoire": true,
+          "variable": "bien.type_bien"
+        },
+        {
+          "id": "surface_habitable",
+          "question": "Surface habitable (en m²) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "bien.surface_habitable"
+        },
+        {
+          "id": "surface_terrain",
+          "question": "Surface du terrain (en m²) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "bien.surface_terrain"
+        },
+        {
+          "id": "dependances",
+          "question": "Y a-t-il des dépendances (garage, cave, abri) ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "dependances_liste",
+                "question": "Décrivez les dépendances (type et surface)",
+                "type": "tableau",
+                "variable": "bien.dependances",
+                "colonnes": ["type", "surface"]
+              }
+            ]
+          }
+        },
+        {
+          "id": "date_construction",
+          "question": "Date de construction ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "bien.construction.date"
+        },
+        {
+          "id": "assainissement_type",
+          "question": "Type d'assainissement ?",
+          "type": "choix",
+          "options": ["Collectif (tout-à-l'égout)", "Individuel (fosse septique)", "Non raccordé"],
+          "obligatoire": true,
+          "variable": "bien.assainissement.type"
+        },
+        {
+          "id": "bornage_effectue",
+          "question": "Un bornage a-t-il été effectué ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.bornage.effectue",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "bornage_geometre",
+                "question": "Nom du géomètre-expert ?",
+                "type": "texte",
+                "variable": "bien.bornage.geometre"
+              },
+              {
+                "id": "bornage_date",
+                "question": "Date du bornage ?",
+                "type": "date",
+                "variable": "bien.bornage.date"
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    "8c_terrain": {
+      "titre": "Description du terrain à bâtir",
+      "condition_categorie": "terrain_a_batir",
+      "questions": [
+        {
+          "id": "nature_terrain",
+          "question": "Nature du terrain ?",
+          "type": "choix",
+          "options": ["Terrain à bâtir", "Terrain agricole", "Terrain viabilisé", "Parcelle de lotissement"],
+          "obligatoire": true,
+          "variable": "bien.nature_terrain"
+        },
+        {
+          "id": "surface_terrain",
+          "question": "Surface du terrain (en m²) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "bien.surface_terrain"
+        },
+        {
+          "id": "lotissement",
+          "question": "Le terrain fait-il partie d'un lotissement ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.lotissement.existe",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "lotissement_nom",
+                "question": "Nom du lotissement ?",
+                "type": "texte",
+                "variable": "bien.lotissement.nom"
+              },
+              {
+                "id": "lotissement_permis",
+                "question": "Numéro du permis d'aménager ?",
+                "type": "texte",
+                "variable": "bien.lotissement.numero_permis"
+              },
+              {
+                "id": "lotissement_cahier_charges",
+                "question": "Existe-t-il un cahier des charges ?",
+                "type": "booleen",
+                "variable": "bien.lotissement.cahier_charges.existe"
+              }
+            ]
+          }
+        },
+        {
+          "id": "viabilise",
+          "question": "Le terrain est-il viabilisé ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.viabilisation.viabilise"
+        },
+        {
+          "id": "zone_plu",
+          "question": "Zone du PLU (Plan Local d'Urbanisme) ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "bien.constructibilite.zone_plu",
+          "note": "Ex: U, AU, 1AU, N..."
+        },
+        {
+          "id": "cu_reference",
+          "question": "Référence du certificat d'urbanisme (si existant) ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "bien.constructibilite.cu_reference"
+        },
+        {
+          "id": "bornage_terrain",
+          "question": "Un bornage a-t-il été effectué ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.bornage.effectue",
+          "note": "Obligatoire pour les terrains en lotissement (art. L.115-4 CU)",
+          "sous_questions": {
+            "si_oui": [
+              {
+                "id": "bornage_geometre",
+                "question": "Nom du géomètre-expert ?",
+                "type": "texte",
+                "variable": "bien.bornage.geometre"
+              },
+              {
+                "id": "bornage_surface",
+                "question": "Surface bornée (en m²) ?",
+                "type": "nombre",
+                "variable": "bien.bornage.surface"
+              }
+            ]
+          }
         }
       ]
     },

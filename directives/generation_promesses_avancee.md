@@ -6,14 +6,13 @@
 
 ## Vue d'ensemble
 
-Le système supporte désormais **4 types de promesses de vente**, chacun adapté à un cas d'usage spécifique:
+Le système supporte désormais **3 catégories de promesses de vente**, chacune adaptée à un cas d'usage spécifique:
 
 | Type | Template | Cas d'usage | Bookmarks |
 |------|----------|-------------|-----------|
-| **standard** | `promesse_standard.md` | 1 bien simple, pas de mobilier | 298 |
-| **premium** | `promesse_premium.md` | Diagnostics exhaustifs, localisation détaillée | 359 |
-| **avec_mobilier** | `promesse_avec_mobilier.md` | Vente meublée, équipements inclus | 312 |
-| **multi_biens** | `promesse_multi_biens.md` | Plusieurs propriétés vendues ensemble | 423 |
+| **copropriete** | `promesse_vente_lots_copropriete.md` | Appartement, lots de copro | 298 |
+| **hors_copropriete** | `promesse_hors_copropriete.md` | Maison, villa, local commercial | - |
+| **terrain_a_batir** | `promesse_terrain_a_batir.md` | Terrain, lotissement | - |
 
 ---
 
@@ -22,7 +21,7 @@ Le système supporte désormais **4 types de promesses de vente**, chacun adapt�
 Le système détecte automatiquement le type approprié:
 
 ```python
-from execution.gestionnaire_promesses import GestionnairePromesses
+from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
 gestionnaire = GestionnairePromesses()
 
@@ -35,10 +34,9 @@ print(f"Sections: {len(detection.sections_recommandees)}")
 
 ### Règles de Détection
 
-1. **Multi-biens** (priorité 1): Si `len(biens) > 1`
-2. **Avec mobilier** (priorité 2): Si `mobilier.existe == True`
-3. **Premium** (priorité 3): Si diagnostics exhaustifs ou localisation détaillée
-4. **Standard** (priorité 4): Par défaut
+1. **Copropriété** (priorité 1): Si `bien.copropriete == True`
+2. **Terrain à bâtir** (priorité 2): Si `bien.nature == "Terrain"` et `bien.nb_lots_cadastraux == 1`
+3. **Hors copropriété** (priorité 3): Par défaut (maison, villa, local commercial)
 
 ---
 
@@ -57,10 +55,10 @@ print(f"Sections: {len(detection.sections_recommandees)}")
 
 ```bash
 # 1. Extraire un titre
-python execution/extraire_titre_propriete.py --input titre.pdf --output titre.json
+python execution/extraction/extraire_titre_propriete.py --input titre.pdf --output titre.json
 
 # 2. Générer la promesse
-python execution/gestionnaire_promesses.py depuis-titre \
+python execution/gestionnaires/gestionnaire_promesses.py depuis-titre \
     --titre titre.json \
     --beneficiaires beneficiaires.json \
     --prix 250000 \
@@ -124,11 +122,11 @@ profils = gestionnaire.get_profils_disponibles()
 
 | Profil | Type | Description |
 |--------|------|-------------|
-| `particulier_simple` | standard | 1 vendeur → 1 acquéreur |
-| `particulier_meuble` | avec_mobilier | Avec liste de mobilier |
-| `agence_premium` | premium | Documentation complète |
-| `investisseur_multi` | multi_biens | Plusieurs biens, substitution |
-| `sans_pret` | standard | Achat comptant |
+| `particulier_copropriete` | copropriete | Appartement, 1 bien |
+| `particulier_maison` | hors_copropriete | Maison, achat simple |
+| `investisseur_terrain` | terrain_a_batir | Terrain à bâtir, développement |
+| `agence_standard` | copropriete | Vente classique avec agence |
+| `sans_pret` | copropriete | Achat comptant |
 
 ---
 
@@ -189,71 +187,46 @@ profils = gestionnaire.get_profils_disponibles()
 
 ### Données spécifiques par type
 
-#### Type `avec_mobilier`
-
-```json
-{
-    "mobilier": {
-        "existe": true,
-        "prix_total": 15000,
-        "liste": [
-            {"designation": "Cuisine équipée", "etat": "Bon", "valeur": 8000},
-            {"designation": "Réfrigérateur Samsung", "etat": "Très bon", "valeur": 1200},
-            {"designation": "Lave-vaisselle Bosch", "etat": "Bon", "valeur": 800}
-        ]
-    }
-}
-```
-
-#### Type `multi_biens`
-
-```json
-{
-    "biens": [
-        {
-            "adresse": "25 avenue Jean Jaurès, Apt 12",
-            "nature": "Appartement",
-            "cadastre": {"section": "AB", "numero": "123"},
-            "lots": [{"numero": 12, "tantiemes": 150}],
-            "prix": 230000
-        },
-        {
-            "adresse": "25 avenue Jean Jaurès, Parking 45",
-            "nature": "Parking",
-            "cadastre": {"section": "AB", "numero": "123"},
-            "lots": [{"numero": 45, "tantiemes": 10}],
-            "prix": 15000
-        },
-        {
-            "adresse": "25 avenue Jean Jaurès, Cave 8",
-            "nature": "Cave",
-            "cadastre": {"section": "AB", "numero": "123"},
-            "lots": [{"numero": 8, "tantiemes": 5}],
-            "prix": 5000
-        }
-    ]
-}
-```
-
-#### Type `premium`
+#### Type `hors_copropriete`
 
 ```json
 {
     "bien": {
+        "nature": "Maison d'habitation",
+        "surface_habitable": 120.5,
+        "surface_terrain": 850,
         "localisation_detaillee": true,
         "lieu_dit": "Les Brotteaux",
-        "voie_acces": "Par la rue de la République",
-        "coordonnees_gps": "45.7640° N, 4.8357° E"
+        "voie_acces": "Par la rue de la République"
     },
     "diagnostics": {
-        "exhaustifs": true,
         "dpe": {"date": "2026-01-15", "classe": "C"},
         "amiante": {"date": "2026-01-15", "presence": false},
         "plomb": {"date": "2026-01-15", "presence": false},
         "electricite": {"date": "2026-01-15", "conforme": true},
-        "gaz": {"date": "2026-01-15", "conforme": true},
-        "termites": {"date": "2026-01-15", "presence": false},
-        "erp": {"date": "2026-01-15"}
+        "gaz": {"date": "2026-01-15", "conforme": true}
+    }
+}
+```
+
+#### Type `terrain_a_batir`
+
+```json
+{
+    "bien": {
+        "nature": "Terrain à bâtir",
+        "surface": 500,
+        "zone_urbaine": true,
+        "plu_conforme": true,
+        "acces_direct_route": true,
+        "viabilisation_etat": "Partiellement viabilisé"
+    },
+    "lotissement": {
+        "existe": false
+    },
+    "urbanisme": {
+        "permis_construire_possible": true,
+        "zone_classement": "Zone AU - Aménagement à moyen terme"
     }
 }
 ```
@@ -347,16 +320,20 @@ else:
 
 ```
 schemas/
-├── promesse_catalogue_unifie.json   # Catalogue des 4 trames
+├── promesse_catalogue_unifie.json   # Catalogue des 3 catégories
 
-templates/promesse/
-├── promesse_base.md                 # Template de base
-├── promesse_standard.md             # Type standard
-├── promesse_premium.md              # Type premium
-├── promesse_avec_mobilier.md        # Type avec mobilier
-└── promesse_multi_biens.md          # Type multi-biens
+templates/
+├── promesse_vente_lots_copropriete.md  # Catégorie copropriété
+├── promesse_hors_copropriete.md        # Catégorie hors copropriété
+├── promesse_terrain_a_batir.md         # Catégorie terrain à bâtir
+└── sections/                            # Sections réutilisables
+    ├── section_sequestre.md
+    ├── section_declarations_parties.md
+    ├── section_propriete_jouissance.md
+    ├── section_lotissement_dispositions.md
+    └── section_evenement_sanitaire.md
 
-execution/
+execution/gestionnaires/
 ├── gestionnaire_promesses.py        # Gestionnaire intelligent
 
 supabase/migrations/

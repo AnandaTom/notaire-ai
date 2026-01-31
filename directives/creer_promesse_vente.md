@@ -1,41 +1,60 @@
-# Directive : Création d'une Promesse Unilatérale de Vente - Lots de Copropriété
+# Directive : Création d'une Promesse Unilatérale de Vente
 
-**Version**: 2.0.0 | **Date**: 2026-01-28
+**Version**: 3.0.0 | **Date**: 2026-01-30
 
 ---
 
 ## Objectif
 
-Guider la création complète d'une **promesse unilatérale de vente** de lots de copropriété, avec support de **4 types de promesses** adaptés aux différents cas d'usage.
+Guider la création complète d'une **promesse unilatérale de vente** pour les 3 catégories de biens immobiliers, avec détection automatique à 2 niveaux.
 
 ---
 
-## 🆕 Système Multi-Templates (v1.4.0)
+## Architecture 2 niveaux (v1.7.0)
 
-Le système détecte automatiquement le type de promesse approprié:
+Le système utilise une détection à 2 niveaux:
 
-| Type | Template | Cas d'usage | Bookmarks |
-|------|----------|-------------|-----------|
-| **Standard** | `promesse_standard.md` | 1 bien simple, pas de mobilier | 298 |
-| **Premium** | `promesse_premium.md` | Diagnostics exhaustifs, agences | 359 |
-| **Avec mobilier** | `promesse_avec_mobilier.md` | Vente meublée | 312 |
-| **Multi-biens** | `promesse_multi_biens.md` | Lot + parking + cave | 423 |
+### Niveau 1 : Catégorie de bien (détermine le template de base)
+
+| Catégorie | Template | Cas d'usage |
+|-----------|----------|-------------|
+| **Copropriété** | `promesse_vente_lots_copropriete.md` | Appartement, lot de copro |
+| **Hors copropriété** | `promesse_hors_copropriete.md` | Maison individuelle, local commercial |
+| **Terrain à bâtir** | `promesse_terrain_a_batir.md` | Terrain, lotissement |
+
+### Niveau 2 : Type de transaction (sections conditionnelles)
+
+| Type | Sections supplémentaires |
+|------|--------------------------|
+| **Standard** | Sections de base |
+| **Premium** | Diagnostics exhaustifs, localisation détaillée |
+| **Avec mobilier** | Liste mobilier, ventilation prix |
+| **Multi-biens** | Multi-désignation, multi-cadastre |
 
 ### Détection Automatique
 
 ```python
-from execution.gestionnaire_promesses import GestionnairePromesses
+from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
 gestionnaire = GestionnairePromesses()
 detection = gestionnaire.detecter_type(donnees)
 
 # Résultat:
-# type_promesse: "avec_mobilier"
-# confiance: 0.85
-# sections_recommandees: ["entete", "mobilier_vendu", ...]
+# categorie_bien: CategorieBien.TERRAIN_A_BATIR
+# type_promesse: TypePromesse.STANDARD
+# confiance: 0.90
 ```
 
-### Règles de Détection
+### Règles de Détection Catégorie (Niveau 1)
+
+| Priorité | Condition | Catégorie |
+|----------|-----------|-----------|
+| 1 | `bien.lotissement` ou `type_bien == "terrain"` | TERRAIN_A_BATIR |
+| 2 | `bien.copropriete` ou `syndic` ou `lots` | COPROPRIETE |
+| 3 | `type_bien in (maison, villa, local)` | HORS_COPROPRIETE |
+| 4 | Par défaut | COPROPRIETE |
+
+### Règles de Détection Type (Niveau 2)
 
 | Priorité | Condition | Type |
 |----------|-----------|------|
@@ -63,14 +82,16 @@ detection = gestionnaire.detecter_type(donnees)
 
 | Ressource | Chemin |
 |-----------|--------|
-| **Gestionnaire principal** | `execution/gestionnaire_promesses.py` |
+| **Gestionnaire principal** | `execution/gestionnaires/gestionnaire_promesses.py` |
 | **Catalogue unifié** | `schemas/promesse_catalogue_unifie.json` |
-| Template DOCX original | `docs_original/Trame promesse unilatérale de vente lots de copropriété.docx` |
-| Templates spécialisés | `templates/promesse/*.md` |
+| Template copropriété | `templates/promesse_vente_lots_copropriete.md` |
+| Template hors copropriété | `templates/promesse_hors_copropriete.md` |
+| Template terrain à bâtir | `templates/promesse_terrain_a_batir.md` |
+| Sections réutilisables | `templates/sections/section_*.md` |
 | Schéma variables | `schemas/variables_promesse_vente.json` |
 | Questions notaire | `schemas/questions_promesse_vente.json` |
-| Script assemblage | `execution/assembler_acte.py` |
-| Script export DOCX | `execution/exporter_docx.py` |
+| Script assemblage | `execution/core/assembler_acte.py` |
+| Script export DOCX | `execution/core/exporter_docx.py` |
 
 ---
 
@@ -86,9 +107,10 @@ detection = gestionnaire.detecter_type(donnees)
 │     ├─► Via titre: extraire_titre_propriete.py                         │
 │     └─► Via API: POST /titres/{id}/vers-promesse                       │
 │                                                                        │
-│  2. DÉTECTION DU TYPE                                                  │
-│     ├─► Exécuter gestionnaire_promesses.detecter_type()                │
-│     └─► Résultat: standard | premium | avec_mobilier | multi_biens     │
+│  2. DÉTECTION (2 niveaux)                                              │
+│     ├─► Niveau 1: categorie_bien (copro | hors_copro | terrain)        │
+│     ├─► Niveau 2: type_promesse (standard | premium | mobilier | multi)│
+│     └─► Sélection automatique du template par catégorie                │
 │                                                                        │
 │  3. VALIDATION DES DONNÉES                                             │
 │     ├─► Exécuter gestionnaire_promesses.valider()                      │
@@ -177,11 +199,16 @@ curl -X POST "https://notaire-ai--fastapi-app.modal.run/titres/{titre_id}/vers-p
 ## Méthode 3: Via Python
 
 ```python
-from execution.gestionnaire_promesses import GestionnairePromesses
+from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
 gestionnaire = GestionnairePromesses()
 
-# Option A: Depuis des données
+# Détection catégorie + type
+detection = gestionnaire.detecter_type(donnees)
+print(f"Catégorie: {detection.categorie_bien.value}")  # copropriete / hors_copropriete / terrain_a_batir
+print(f"Type: {detection.type_promesse.value}")  # standard / premium / avec_mobilier / multi_biens
+
+# Option A: Depuis des données (sélection template automatique par catégorie)
 resultat = gestionnaire.generer(donnees)
 
 # Option B: Depuis un titre
@@ -197,15 +224,15 @@ donnees, resultat = gestionnaire.generer_depuis_titre(
     }
 )
 
-print(f"Type: {resultat.type_promesse.value}")
+print(f"Catégorie: {resultat.categorie_bien.value}")
 print(f"DOCX: {resultat.fichier_docx}")
 ```
 
 ---
 
-## Structure des Données par Type
+## Structure des Données par Catégorie
 
-### Type Standard (minimal)
+### Copropriété (standard)
 
 ```json
 {
@@ -285,6 +312,69 @@ Remplacer `bien` par `biens`:
             "prix": 5000
         }
     ]
+}
+```
+
+### Hors copropriété (maison)
+
+```json
+{
+    "promettants": [{"nom": "MARTIN", "prenoms": "Pierre"}],
+    "beneficiaires": [{"nom": "DUPONT", "prenoms": "Jean"}],
+    "bien": {
+        "adresse": "15 chemin des Vignes",
+        "code_postal": "69380",
+        "ville": "Lissieu",
+        "copropriete": false,
+        "type_bien": "maison",
+        "surface_habitable": 120.50,
+        "surface_terrain": 850,
+        "dependances": [
+            {"type": "garage", "surface": 25},
+            {"type": "abri_jardin", "surface": 12}
+        ],
+        "construction": {"date": "1985", "materiaux": "Parpaings"},
+        "assainissement": {"type": "collectif"}
+    },
+    "prix": {"montant": 380000},
+    "delai_realisation": "2026-06-30"
+}
+```
+
+### Terrain à bâtir (lotissement)
+
+```json
+{
+    "promettants": [{"nom": "SCI LES ORMES"}],
+    "beneficiaires": [{"nom": "LAMBERT", "prenoms": "Sophie"}],
+    "bien": {
+        "adresse": "Rue du Lotissement",
+        "code_postal": "69380",
+        "ville": "Lissieu",
+        "type_bien": "terrain",
+        "lotissement": {
+            "nom": "LE PRE DES LYS",
+            "numero_permis": "PA 069 380 26 V0001",
+            "lotisseur": "SCI LES ORMES",
+            "cahier_charges": {"auteur": "Me NOTAIRE"}
+        },
+        "nature_terrain": "Terrain à bâtir",
+        "surface_terrain": 450
+    },
+    "viabilisation": {
+        "viabilise": true,
+        "raccordements": [
+            {"reseau": "Eau potable", "statut": "Raccordé"},
+            {"reseau": "Électricité", "statut": "En limite"},
+            {"reseau": "Assainissement", "statut": "Raccordé"}
+        ]
+    },
+    "constructibilite": {
+        "zone_plu": "1AU",
+        "cu_reference": "CU 069 380 26 A0012"
+    },
+    "prix": {"montant": 150000},
+    "delai_realisation": "2026-09-30"
 }
 ```
 
@@ -426,3 +516,4 @@ resultat = gestionnaire.generer(donnees)
 |------|---------|--------------|
 | 2025-01-19 | 1.0 | Création initiale |
 | 2026-01-28 | 2.0 | Système multi-templates (4 types), détection auto, Supabase |
+| 2026-01-30 | 3.0 | Architecture 2 niveaux (3 catégories + 4 types), templates hors-copro et terrain |

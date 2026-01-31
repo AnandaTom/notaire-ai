@@ -140,18 +140,31 @@ Voir [docs/SKILLS_AGENTS_GUIDE.md](docs/SKILLS_AGENTS_GUIDE.md) pour le guide co
 | Template | Type d'acte | Conformité | Bookmarks |
 |----------|-------------|------------|-----------|
 | `templates/vente_lots_copropriete.md` | Acte de vente définitif | 80.2% ✅ | 361 |
-| `templates/promesse_vente_lots_copropriete.md` | Promesse standard | 88.9% ✅ | 298 |
+| `templates/promesse_vente_lots_copropriete.md` | Promesse copropriété | 88.9% ✅ | 298 |
+| `templates/promesse_hors_copropriete.md` | Promesse hors copropriété | NEW | - |
+| `templates/promesse_terrain_a_batir.md` | Promesse terrain à bâtir | NEW | - |
 | `templates/reglement_copropriete_edd.md` | EDD et règlement de copropriété | 85.5% ✅ | 116 |
 | `templates/modificatif_edd.md` | Modificatif EDD/RC | 91.7% ✅ | 60 |
 
-### 🆕 Templates Promesse Spécialisés (v1.4.0)
+### 🆕 Templates Promesse par Catégorie de Bien (v1.7.0)
 
-| Template | Type | Cas d'usage | Source |
-|----------|------|-------------|--------|
-| `templates/promesse/promesse_standard.md` | Standard | 1 bien simple | ORIGINAL |
-| `templates/promesse/promesse_premium.md` | Premium | Diagnostics exhaustifs | Trame B |
-| `templates/promesse/promesse_avec_mobilier.md` | Mobilier | Vente meublée | Trame C |
-| `templates/promesse/promesse_multi_biens.md` | Multi-biens | Lot + parking + cave | Trame A |
+Le système sélectionne automatiquement le template selon la catégorie de bien (détection 2 niveaux):
+
+| Catégorie | Template | Cas d'usage |
+|-----------|----------|-------------|
+| Copropriété | `promesse_vente_lots_copropriete.md` | Appartement, lots de copro |
+| Hors copropriété | `promesse_hors_copropriete.md` | Maison, local commercial |
+| Terrain à bâtir | `promesse_terrain_a_batir.md` | Terrain, lotissement |
+
+### Sections réutilisables (templates/sections/)
+
+| Section | Condition | Catégories |
+|---------|-----------|------------|
+| `section_sequestre.md` | `sequestre` ou `indemnite_immobilisation` | Toutes |
+| `section_declarations_parties.md` | Toujours | Toutes |
+| `section_propriete_jouissance.md` | Toujours | Toutes |
+| `section_lotissement_dispositions.md` | `bien.lotissement` | Terrain |
+| `section_evenement_sanitaire.md` | `evenement_sanitaire` | Toutes |
 
 ---
 
@@ -447,16 +460,18 @@ Be pragmatic. Be reliable. Self-anneal. **Build knowledge.**
    - Enrichir catalogues si nouvelles clauses/situations
    - Documenter dans `lecons_apprises.md` si edge case
 
-### Templates Actuels (v1.4.0) - Janvier 2026
+### Templates Actuels (v1.7.0) - Janvier 2026
 
 | Template | Conformité | Statut |
 |----------|-----------|--------|
 | Règlement copropriété | 85.5% | ✅ PROD |
 | Modificatif EDD | 91.7% | ✅ PROD |
-| **Promesse** | **88.9%** | ✅ PROD |
+| **Promesse copropriété** | **88.9%** | ✅ PROD |
+| **Promesse hors copropriété** | NEW | ✅ PROD |
+| **Promesse terrain à bâtir** | NEW | ✅ PROD |
 | **Vente** | **80.2%** | ✅ PROD |
 
-**Objectif atteint: 4/4 templates ≥80%!**
+**6 templates PROD — 3 catégories de biens couvertes**
 
 ### Garanties au Notaire
 
@@ -518,33 +533,38 @@ python execution/utils/convertir_promesse_vente.py \
 
 ---
 
-## Version 1.4.0 - Système de Promesses Avancé (Janvier 2026)
+## Version 1.7.0 - Architecture 3 Catégories de Bien (Janvier 2026)
 
-### 🆕 Architecture Multi-Templates Promesse
+### 🆕 Détection 2 niveaux (catégorie + type)
 
-Le système supporte désormais **4 types de promesses** basés sur l'analyse des 4 trames originales:
+Le système sélectionne le template par **catégorie de bien** puis ajuste les sections par **type de transaction**:
 
-| Type | Template | Cas d'usage | Bookmarks |
-|------|----------|-------------|-----------|
-| **Standard** | `promesse_standard.md` | 1 bien simple, pas de mobilier | 298 |
-| **Premium** | `promesse_premium.md` | Diagnostics exhaustifs, agences | 359 |
-| **Mobilier** | `promesse_avec_mobilier.md` | Vente meublée | 312 |
-| **Multi-biens** | `promesse_multi_biens.md` | Lot + parking + cave | 423 |
+**Niveau 1 — Catégorie de bien** (détermine le template de base):
 
-### 🔧 Nouveaux Composants
+| Catégorie | Template | Marqueurs détection |
+|-----------|----------|---------------------|
+| **Copropriété** | `promesse_vente_lots_copropriete.md` | syndic, lots, tantièmes, EDD |
+| **Hors copropriété** | `promesse_hors_copropriete.md` | maison, villa, local, copropriete=false |
+| **Terrain à bâtir** | `promesse_terrain_a_batir.md` | lotissement, viabilisation, constructibilité |
 
-1. **Gestionnaire de Promesses** ([gestionnaire_promesses.py](execution/gestionnaire_promesses.py))
-   - Détection automatique du type de promesse
+**Niveau 2 — Type de transaction** (sections conditionnelles): standard, premium, avec_mobilier, multi_biens
+
+### 🔧 Composants
+
+1. **Gestionnaire de Promesses** ([gestionnaire_promesses.py](execution/gestionnaires/gestionnaire_promesses.py))
+   - `CategorieBien` enum (copropriete, hors_copropriete, terrain_a_batir)
+   - `detecter_categorie_bien()` — détection prioritaire par marqueurs
+   - `detecter_type()` — détection 2 niveaux (catégorie + type)
    - Validation des données avec règles conditionnelles
    - Génération depuis titre de propriété
    - Intégration Supabase complète
 
-2. **Catalogue Unifié** ([promesse_catalogue_unifie.json](schemas/promesse_catalogue_unifie.json))
-   - Variables des 4 trames (298-423 bookmarks)
-   - Tableaux avec dimensions et structures
+2. **Catalogue Unifié v2.0** ([promesse_catalogue_unifie.json](schemas/promesse_catalogue_unifie.json))
+   - 8 trames sources analysées (Principale, A-F, PUV GUNTZER)
+   - `categories_bien` avec marqueurs et templates
+   - `detection_priorites` pour la logique de sélection
    - Sections fixes (11) et variables (16)
    - Profils prédéfinis (5)
-   - Mapping titre → promesse
 
 3. **Migration Supabase** ([20260128_promesses_titres.sql](supabase/migrations/20260128_promesses_titres.sql))
    - `titres_propriete`: Stockage titres extraits
@@ -552,7 +572,7 @@ Le système supporte désormais **4 types de promesses** basés sur l'analyse de
    - `feedbacks_promesse`: Retours notaires
    - Fonctions: `rechercher_titre_adresse()`, `titre_vers_promesse_data()`
 
-### 📡 Nouveaux Endpoints API
+### 📡 Endpoints API
 
 | Endpoint | Méthode | Description |
 |----------|---------|-------------|
@@ -563,41 +583,56 @@ Le système supporte désormais **4 types de promesses** basés sur l'analyse de
 | `/titres` | GET | Liste les titres |
 | `/titres/{id}/vers-promesse` | POST | Convertit titre → promesse |
 
+**API Q&R (v3.0.0) :**
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/questions/promesse` | GET | Questions filtrées par catégorie/section |
+| `/questions/promesse/answer` | POST | Soumettre des réponses |
+| `/questions/promesse/progress/{id}` | GET | Progression de collecte |
+| `/questions/promesse/prefill` | POST | Pré-remplissage depuis titre/données |
+
+**Workflow (v3.0.0) :**
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/workflow/promesse/start` | POST | Démarrer un workflow complet |
+| `/workflow/promesse/{id}/submit` | POST | Soumettre réponses + suite |
+| `/workflow/promesse/{id}/generate` | POST | Déclencher génération DOCX |
+| `/workflow/promesse/{id}/generate-stream` | GET | Génération SSE (progression) |
+| `/workflow/promesse/{id}/status` | GET | État du workflow |
+
 ### 🎯 Workflow Recommandé
 
 ```python
-from execution.gestionnaire_promesses import GestionnairePromesses
+from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
 gestionnaire = GestionnairePromesses()
 
-# 1. Détection automatique
+# 1. Détection 2 niveaux
 detection = gestionnaire.detecter_type(donnees)
-# → type_promesse: "avec_mobilier", confiance: 85%
+# → categorie_bien: TERRAIN_A_BATIR, type_promesse: "standard", confiance: 90%
 
 # 2. Validation
 validation = gestionnaire.valider(donnees)
 # → erreurs: [], champs_manquants: []
 
-# 3. Génération
+# 3. Génération (sélection template automatique par catégorie)
 resultat = gestionnaire.generer(donnees)
-# → fichier_docx: "promesse_avec_mobilier_20260128.docx"
-
-# Ou depuis un titre de propriété
-donnees, resultat = gestionnaire.generer_depuis_titre(
-    titre_data, beneficiaires, prix, financement
-)
+# → fichier_docx: "promesse_terrain_20260130.docx", categorie_bien: TERRAIN_A_BATIR
 ```
 
 ### 📊 Couverture des Cas
 
-| Situation | Avant v1.4 | Après v1.4 |
-|-----------|------------|------------|
-| 1 bien simple | ✅ | ✅ |
-| Vente meublée | ❌ | ✅ |
-| Multi-biens (lot+parking) | ❌ | ✅ |
-| Localisation détaillée | ❌ | ✅ |
-| Diagnostics exhaustifs | Partiel | ✅ Complet |
-| Depuis titre propriété | ❌ | ✅ Auto |
+| Situation | Avant v1.4 | v1.4 | v1.7 |
+|-----------|------------|------|------|
+| Appartement copro | ✅ | ✅ | ✅ |
+| Vente meublée | ❌ | ✅ | ✅ |
+| Multi-biens (lot+parking) | ❌ | ✅ | ✅ |
+| Maison individuelle | ❌ | ❌ | ✅ |
+| Terrain à bâtir | ❌ | ❌ | ✅ |
+| Lotissement | ❌ | ❌ | ✅ |
+| Depuis titre propriété | ❌ | ✅ | ✅ |
 
 ---
 

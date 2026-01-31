@@ -1,13 +1,62 @@
 {
   "meta": {
-    "version": "1.0.0",
-    "description": "Catalogue unifié des 4 trames de promesse de vente",
+    "version": "3.0.0",
+    "description": "Catalogue unifié des 8 trames de promesse de vente (3 catégories de bien, API Q&R, workflow)",
     "date_creation": "2026-01-28",
+    "date_modification": "2026-01-30",
     "trames_sources": [
       "Trame promesse unilatérale de vente lots de copropriété.docx",
       "Trame_promesse_A.docx",
       "Trame_promesse_B.docx",
-      "Trame_promesse_C.docx"
+      "Trame_promesse_C.docx",
+      "Trame_promesse_D.docx",
+      "Trame_promesse_E.docx",
+      "Trame_promesse_F.docx",
+      "PUV GUNTZER GAUTIER.docx"
+    ]
+  },
+
+  "categories_bien": {
+    "description": "Classification des 8 trames en 3 catégories de bien (feedback notaire 2026-01-30)",
+    "categories": {
+      "copropriete": {
+        "nom": "Lots de copropriété",
+        "description": "Bien en copropriété avec syndic, EDD, lots et tantièmes",
+        "marqueurs": ["copropriete.syndic", "bien.lots", "bien.tantiemes", "copropriete.edd", "copropriete.reglement"],
+        "template_base": "promesse_vente_lots_copropriete.md",
+        "trames": {
+          "ORIGINAL": {"nom": "Trame Principale", "type_transaction": "standard", "conformite": 0.889},
+          "A": {"nom": "Trame A", "type_transaction": "multi_biens", "conformite": 0.653},
+          "B": {"nom": "Trame B", "type_transaction": "premium", "conformite": 0.802},
+          "C": {"nom": "Trame C", "type_transaction": "avec_mobilier", "conformite": 0.834}
+        }
+      },
+      "hors_copropriete": {
+        "nom": "Bien hors copropriété",
+        "description": "Maison individuelle, local commercial, bien sans syndic ni lots",
+        "marqueurs": ["bien.copropriete==false", "bien.surface_terrain", "bien.type_bien in (maison, villa, local_commercial)"],
+        "template_base": "promesse_hors_copropriete.md",
+        "trames": {
+          "E": {"nom": "Trame E", "type_transaction": "standard", "conformite": 0.734},
+          "F": {"nom": "Trame F", "type_transaction": "standard", "conformite": 0.795}
+        }
+      },
+      "terrain_a_batir": {
+        "nom": "Terrain à bâtir / Lotissement",
+        "description": "Terrain nu, lotissement, parcelles avec permis d'aménager et viabilisation",
+        "marqueurs": ["bien.lotissement", "bien.viabilisation", "bien.permis_amenager", "bien.type_bien==terrain"],
+        "template_base": "promesse_terrain_a_batir.md",
+        "trames": {
+          "D": {"nom": "Trame D", "type_transaction": "standard", "conformite": 0.798},
+          "PUV_GUNTZER": {"nom": "PUV Lotissement (réelle)", "type_transaction": "standard", "bookmarks": 325, "tables": 10}
+        }
+      }
+    },
+    "detection_priorites": [
+      {"priorite": 1, "condition": "bien.lotissement || bien.type_bien=='terrain'", "categorie": "terrain_a_batir"},
+      {"priorite": 2, "condition": "copropriete.syndic || bien.lots || bien.copropriete==true", "categorie": "copropriete"},
+      {"priorite": 3, "condition": "bien.copropriete==false || bien.type_bien in ('maison','villa','local_commercial')", "categorie": "hors_copropriete"},
+      {"priorite": 99, "condition": "default", "categorie": "copropriete"}
     ]
   },
 
@@ -17,7 +66,8 @@
       "nom": "Promesse Standard",
       "description": "1 bien en copropriété, sans mobilier",
       "trame_source": "ORIGINAL",
-      "template": "promesse_standard.md",
+      "template": "promesse_vente_lots_copropriete.md",
+      "_note": "Le type standard utilise le template de la catégorie détectée (copro/hors-copro/terrain)",
       "bookmarks": 298,
       "cas_usage": [
         "Vente appartement simple",
@@ -35,7 +85,8 @@
       "nom": "Promesse Premium",
       "description": "Diagnostics exhaustifs, localisation détaillée, annexes complètes",
       "trame_source": "Trame_B",
-      "template": "promesse_premium.md",
+      "template": "promesse_vente_lots_copropriete.md",
+      "_note": "Le type premium ajoute des sections conditionnelles au template de la catégorie",
       "bookmarks": 359,
       "cas_usage": [
         "Agences immobilières",
@@ -54,7 +105,8 @@
       "nom": "Promesse avec Mobilier",
       "description": "Inclut liste des meubles vendus + diagnostics en tableau",
       "trame_source": "Trame_C",
-      "template": "promesse_avec_mobilier.md",
+      "template": "promesse_vente_lots_copropriete.md",
+      "_note": "Le type mobilier ajoute les sections mobilier au template de la catégorie",
       "bookmarks": 312,
       "cas_usage": [
         "Vente meublée",
@@ -71,7 +123,8 @@
       "nom": "Promesse Multi-Propriétés",
       "description": "Vente de plusieurs biens distincts ensemble",
       "trame_source": "Trame_A",
-      "template": "promesse_multi_biens.md",
+      "template": "promesse_vente_lots_copropriete.md",
+      "_note": "Le type multi-biens ajoute les sections multi-désignation au template de la catégorie",
       "bookmarks": 423,
       "cas_usage": [
         "Vente lot + cave + parking séparés",
@@ -640,5 +693,31 @@
       "get_titre_by_proprietaire": "SELECT * FROM titres_propriete WHERE proprietaires @> $1::jsonb",
       "get_promesses_etude": "SELECT * FROM promesses_generees WHERE etude_id = $1 ORDER BY created_at DESC"
     }
+  },
+
+  "api_qr": {
+    "description": "API Q&R et Workflow pour le frontend notaire (v3.0.0)",
+    "schema_questions": "schemas/questions_promesse_vente.json",
+    "endpoints": {
+      "questions": {
+        "GET /questions/promesse": "Liste des sections ou questions filtrées par catégorie",
+        "POST /questions/promesse/answer": "Soumission de réponses (dossier_id + answers)",
+        "GET /questions/promesse/progress/{dossier_id}": "Progression de collecte",
+        "POST /questions/promesse/prefill": "Pré-remplissage depuis titre/données"
+      },
+      "workflow": {
+        "POST /workflow/promesse/start": "Démarre un workflow complet",
+        "POST /workflow/promesse/{id}/submit": "Soumet réponses + retourne suite",
+        "POST /workflow/promesse/{id}/generate": "Déclenche la génération DOCX",
+        "GET /workflow/promesse/{id}/generate-stream": "Génération SSE avec progression",
+        "GET /workflow/promesse/{id}/status": "État du workflow"
+      }
+    },
+    "questions_par_categorie": {
+      "copropriete": {"sections": 22, "questions": 93},
+      "hors_copropriete": {"sections": 20, "questions": 79},
+      "terrain_a_batir": {"sections": 20, "questions": 79}
+    },
+    "persistence": ".tmp/qr_sessions/{dossier_id}.json"
   }
 }

@@ -8,6 +8,28 @@ Les parties conviennent de la repartition des charges de copropriete comme suit 
 {{ charges_copropriete.repartition }}
 {% endif %}
 
+{% if charges_copropriete.budget_previsionnel or charges_copropriete.appels_fonds %}
+### Budget prévisionnel et charges
+
+| Poste | Montant annuel | Observations |
+| :---- | ----: | :---- |
+{% if charges_copropriete.budget_previsionnel %}{% for poste in charges_copropriete.budget_previsionnel %}| {{ poste.libelle }} | {{ poste.montant | format_nombre }} EUR | {{ poste.observations | default("") }} |
+{% endfor %}{% endif %}{% if charges_copropriete.total_annuel %}| **TOTAL charges annuelles** | **{{ charges_copropriete.total_annuel | format_nombre }} EUR** | |
+{% endif %}{% if charges_copropriete.quote_part_vendeur %}| Quote-part du lot vendu | {{ charges_copropriete.quote_part_vendeur | format_nombre }} EUR | Dernier exercice approuvé |
+{% endif %}
+
+{% endif %}
+
+{% if charges_copropriete.travaux_votes %}
+### Travaux votés non encore appelés
+
+| Travaux | Montant voté | Quote-part lot | Date AG |
+| :---- | ----: | ----: | :---- |
+{% for travail in charges_copropriete.travaux_votes %}| {{ travail.description }} | {{ travail.montant_total | format_nombre }} EUR | {{ travail.quote_part | format_nombre }} EUR | {{ travail.date_ag | default("-") }} |
+{% endfor %}
+
+{% endif %}
+
 {% if charges_copropriete.appels_fonds %}
 ### Appels de fonds
 

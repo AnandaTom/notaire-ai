@@ -135,24 +135,24 @@ Tableaux 13-15: Prix, objets, précisions
 ### Option Recommandée: 4 Templates Séparés
 
 ```
-promesse_standard.md         (ORIGINAL - 1 bien simple)
-promesse_premium.md          (Trame B - diagnostics exhaustifs)
-promesse_avec_mobilier.md    (Trame C - mobilier + diagnostics tableau)
-promesse_multiproprietees.md (Trame A - 3 biens vendus ensemble)
+promesse_vente_lots_copropriete.md  (Copropriété - appartement, lots)
+promesse_hors_copropriete.md        (Hors copropriété - maison, local)
+promesse_terrain_a_batir.md         (Terrain à bâtir - lotissement)
 ```
 
 ### Détection Automatique du Type
 
 ```python
 def detecter_type_promesse(donnees):
-    if len(donnees.get('biens', [])) > 1:
-        return "promesse_multiproprietees.md"
-    elif donnees.get('mobilier'):
-        return "promesse_avec_mobilier.md"
-    elif donnees.get('diagnostics_exhaustifs') or donnees.get('adresse_detaillee'):
-        return "promesse_premium.md"
+    bien = donnees.get('bien', {})
+
+    # Niveau 1: Catégorie de bien
+    if bien.get('lotissement') or bien.get('type') == "terrain":
+        return "promesse_terrain_a_batir.md"
+    elif bien.get('copropriete') or bien.get('syndic'):
+        return "promesse_vente_lots_copropriete.md"
     else:
-        return "promesse_standard.md"
+        return "promesse_hors_copropriete.md"
 ```
 
 ---
@@ -172,8 +172,8 @@ Ces variables sont présentes dans les 4 trames:
 ## 7. Prochaines Étapes
 
 1. **Court terme**: Utiliser le template ORIGINAL (88.9% conformité)
-2. **Moyen terme**: Créer `promesse_avec_mobilier.md` depuis Trame C
-3. **Long terme**: Créer les 4 templates spécialisés avec détection auto
+2. **Fait (v1.7.0)**: Templates par catégorie de bien (copro, hors-copro, terrain)
+3. **Long terme**: Enrichir templates spécialisés selon retours notaires
 
 ---
 

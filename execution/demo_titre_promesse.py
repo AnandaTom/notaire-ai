@@ -186,10 +186,21 @@ def run_demo(
 
         try:
             from execution.core.assembler_acte import AssembleurActe
-            assembleur = AssembleurActe(PROJECT_ROOT / 'templates')
-            acte_md = assembleur.assembler(
-                'promesse_vente_lots_copropriete.md', donnees
-            )
+            from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses, CategorieBien
+
+            # Sélection du template par catégorie de bien
+            gestionnaire = GestionnairePromesses()
+            categorie = gestionnaire.detecter_categorie_bien(donnees)
+            CATEGORY_TEMPLATES = {
+                CategorieBien.COPROPRIETE: 'promesse_vente_lots_copropriete.md',
+                CategorieBien.HORS_COPROPRIETE: 'promesse_hors_copropriete.md',
+                CategorieBien.TERRAIN_A_BATIR: 'promesse_terrain_a_batir.md',
+            }
+            template_name = CATEGORY_TEMPLATES.get(categorie, 'promesse_vente_lots_copropriete.md')
+            print(f"  Categorie bien: {categorie.value} -> {template_name}")
+
+            assembleur = AssembleurActe(PROJECT_ROOT / 'templates', zones_grisees=True)
+            acte_md = assembleur.assembler(template_name, donnees)
             print(f"  Assemblage OK: {len(acte_md)} caracteres")
 
             # Sauvegarder le markdown
@@ -221,12 +232,11 @@ def run_demo(
         print("  " + "-" * 40)
 
         try:
-            from execution.core.exporter_docx import ExporterDocx
+            from execution.core.exporter_docx import exporter_docx as _exporter_docx
             output_name = output or f'demo_promesse_{timestamp}.docx'
             docx_path = PROJECT_ROOT / 'outputs' / output_name
 
-            exporteur = ExporterDocx()
-            exporteur.exporter(str(md_path), str(docx_path))
+            _exporter_docx(str(md_path), str(docx_path), zones_grisees=True)
             taille = docx_path.stat().st_size / 1024
             print(f"  DOCX genere: {docx_path.name} ({taille:.1f} Ko)")
 
