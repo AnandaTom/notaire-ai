@@ -948,6 +948,23 @@ class GestionnairePromesses:
             )
         warnings.extend(validation.warnings)
 
+        # 2b. Enrichir le cadastre via API gouvernementale
+        try:
+            from execution.services.cadastre_service import CadastreService
+            cadastre_svc = CadastreService()
+            resultat_cadastre = cadastre_svc.enrichir_cadastre(donnees)
+            donnees = resultat_cadastre["donnees"]
+            rapport_cad = resultat_cadastre["rapport"]
+            if rapport_cad["cadastre_enrichi"]:
+                print(f"[INFO] Cadastre enrichi: {rapport_cad['parcelles_validees']} parcelle(s) "
+                      f"validee(s), INSEE {rapport_cad['code_insee']}")
+            for w in rapport_cad.get("warnings", []):
+                warnings.append(f"Cadastre: {w}")
+        except ImportError:
+            pass
+        except Exception as e:
+            warnings.append(f"Enrichissement cadastre echoue: {e}")
+
         # 3. Sélectionner les sections
         sections = self._get_sections_pour_type(type_promesse, donnees)
 
