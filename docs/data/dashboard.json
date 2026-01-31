@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-31T19:32:54.655739",
+    "generated_at": "2026-01-31T19:47:23.020920",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 183
+    "commits": 185
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "7ce3c49",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "37e8b16",
+      "message": "docs: mise a jour directives avec CadastreService v1.8.0",
       "date": "2026-01-31"
     },
-    "total_commits": 183,
+    "total_commits": 185,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 115
+        "commits": 116
       },
       {
         "name": "github-actions[bot]",
-        "commits": 37
+        "commits": 38
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "37e8b16",
+      "author": "Tom",
+      "date": "2026-01-31",
+      "message": "mise a jour directives avec CadastreService v1.8.0",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "439ca62",
+      "author": "github-actions[bot]",
+      "date": "2026-01-31",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "7ce3c49",
       "author": "Tom",
       "date": "2026-01-31",
@@ -800,26 +820,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "f77ea23",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "72d2937",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Sprint 3+4 - Q&R interactif, pipeline E2E, conversion promesse→vente",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-01-31 19:32"
+    "last_updated": "2026-01-31 19:47"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-01-31 19:32"
+    "last_updated": "2026-01-31 19:47"
   },
   "conformity_details": {
     "promesse": {
