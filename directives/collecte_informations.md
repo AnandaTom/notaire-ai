@@ -16,7 +16,9 @@ L'agent (via front-end) pose des questions au notaire de manière conversationne
 
 1. **Identifier le type d'acte**
    - Vente de lots de copropriété
-   - Promesse de vente de lots de copropriété
+   - Promesse de vente (3 catégories : copropriété, hors copropriété, terrain à bâtir)
+   - Règlement de copropriété / EDD
+   - Modificatif EDD
 
 2. **Créer le dossier temporaire**
    ```
@@ -102,6 +104,19 @@ VALIDATION: Les quotités doivent totaliser 100% !
 - Références cadastrales (section, numéro, lieudit, surface) ?
 ```
 
+**Enrichissement cadastre automatique (v1.8.0) :**
+Si l'adresse est fournie, le système enrichit automatiquement les données cadastrales :
+1. Géocode l'adresse → code INSEE + coordonnées (API Adresse BAN)
+2. Valide chaque parcelle cadastrale existante → surface officielle (API Carto IGN)
+3. Si aucune parcelle → liste les sections de la commune pour guider la saisie
+
+**Chaîne de résolution cadastre :**
+```
+Titre de propriété (OCR) → Supabase (cache) → API Gouv → Q&R notaire (fallback)
+```
+
+L'enrichissement est intégré dans `GestionnairePromesses.generer()` et dans `extraire_titre.py`.
+
 #### Section 6 : Lots de copropriété
 ```
 Pour CHAQUE lot vendu:
@@ -176,6 +191,33 @@ Proposer au notaire:
 ```
 
 ---
+
+### Phase 2b : Enrichissement cadastre (automatique)
+
+Avant la validation, le système enrichit automatiquement les données cadastrales si l'adresse du bien est disponible :
+
+```bash
+# Enrichissement standalone (CLI)
+python execution/services/cadastre_service.py enrichir \
+    --donnees .tmp/dossiers/{reference}/collecte.json
+
+# Ou via l'API
+POST /cadastre/enrichir
+{
+  "donnees": { "bien": { "adresse": {...}, "cadastre": [...] } }
+}
+```
+
+**Ce qui se passe :**
+1. Géocodage de l'adresse → code INSEE de la commune
+2. Pour chaque parcelle existante : validation via API Carto IGN
+3. Ajout des champs `verifie`, `code_insee`, `surface_m2`, `source`
+4. Rapport : `cadastre_enrichi`, `parcelles_validees`, `erreurs`
+
+**Si le cadastre n'est pas dans les données :**
+- Extraction depuis le titre de propriété (OCR/patterns)
+- Recherche dans Supabase (titres_propriete)
+- Demander au notaire les références cadastrales (section, numéro)
 
 ### Phase 3 : Validation
 
@@ -282,11 +324,15 @@ Cela peut s'expliquer par l'inclusion des frais de notaire dans le financement. 
 | Date | Modification |
 |------|--------------|
 | 2025-01-19 | Création - Directive de collecte structurée basée sur l'analyse des 361 variables |
+| 2026-01-31 | Ajout Phase 2b enrichissement cadastre automatique (API BAN + IGN), chaîne de résolution cadastre |
 
 ---
 
 ## Voir aussi
 
 - [schemas/questions_notaire.json](../schemas/questions_notaire.json) - Schéma complet des questions
+- [schemas/questions_promesse_vente.json](../schemas/questions_promesse_vente.json) - Questions promesse (97 questions, 21 sections)
 - [schemas/variables_vente.json](../schemas/variables_vente.json) - Schéma des données
+- [execution/services/cadastre_service.py](../execution/services/cadastre_service.py) - Service cadastre (API Gouv)
+- [execution/api/api_cadastre.py](../execution/api/api_cadastre.py) - Endpoints API cadastre
 - [directives/creer_acte.md](creer_acte.md) - Flux complet de création

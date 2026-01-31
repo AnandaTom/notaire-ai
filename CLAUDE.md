@@ -81,7 +81,8 @@ python notaire.py dashboard
 | `execution/utils/` | collecter_informations.py, suggerer_clauses.py, extraire_bookmarks.py, extraire_titre.py | Utilitaires |
 | `execution/extraction/` | patterns_avances.py, ml_extractor.py, ocr_processor.py | Module ML |
 | `execution/security/` | encryption_service.py, anonymiser_docx.py, secure_client_manager.py | Sécurité RGPD |
-| `execution/api/` | api_validation.py, api_feedback.py | Endpoints API internes |
+| `execution/services/` | cadastre_service.py | 🆕 **APIs gouvernementales** (cadastre, geocoding) |
+| `execution/api/` | api_validation.py, api_feedback.py, api_cadastre.py | Endpoints API internes |
 
 **Scripts à la racine de execution/ :**
 | Script | Fonction |
@@ -90,7 +91,7 @@ python notaire.py dashboard
 | `execution/demo_titre_promesse.py` | 🆕 **DEMO** - Titre → Q&R → Promesse → DOCX |
 | `execution/utils/convertir_promesse_vente.py` | 🆕 **CONVERSION** - Promesse → Vente (conservation données) |
 | `execution/workflow_rapide.py` | 🚀 **Génération 1 commande** - Validation → Assemblage → Export |
-| `execution/test_fiabilite.py` | ✅ **Tests automatisés** (194 tests) |
+| `execution/test_fiabilite.py` | ✅ **Tests automatisés** (219 tests) |
 | `execution/generer_dashboard_data.py` | Génération données dashboard |
 | `notaire.py` | **CLI SIMPLIFIÉ** - Point d'entrée racine (`python notaire.py`) |
 
@@ -486,6 +487,62 @@ modal serve modal/modal_app.py    # Test local
 ```
 
 Endpoint: `https://notaire-ai--fastapi-app.modal.run/`
+
+---
+
+## Version 1.8.0 - Intégration Cadastre Gouvernemental (Janvier 2026)
+
+### 🆕 CadastreService — APIs gouvernementales
+
+Le pipeline enrichit automatiquement les données cadastrales via 2 APIs ouvertes :
+
+| API | Usage | Endpoint |
+|-----|-------|----------|
+| **API Adresse (BAN)** | Adresse → code_insee, coordinates | `api-adresse.data.gouv.fr/search/` |
+| **API Carto (IGN)** | code_insee + section + numero → parcelle GeoJSON | `apicarto.ign.fr/api/cadastre/parcelle` |
+
+**Chaîne de résolution cadastre** (priorité descendante) :
+1. Titre de propriété (upload notaire) → OCR → extraction cadastre
+2. Supabase → recherche par adresse/nom
+3. API Cadastre gouv.fr → geocoding adresse → lookup parcelle
+4. Questions Q&R au notaire (frontend ou CLI)
+
+### Composants
+
+1. **CadastreService** ([cadastre_service.py](execution/services/cadastre_service.py))
+   - `geocoder_adresse(adresse)` → code_insee, coordinates, ville
+   - `chercher_parcelle(code_insee, section, numero)` → parcelle + géométrie + surface
+   - `lister_sections(code_insee)` → toutes sections d'une commune
+   - `enrichir_cadastre(donnees)` → enrichissement automatique du dossier
+   - `surface_texte_vers_m2("00 ha 05 a 30 ca")` → 530
+   - Cache local (TTL 24h) pour éviter les appels redondants
+
+2. **Intégration pipeline** (automatique)
+   - Extraction titre (`extraire_titre.py`) → enrichissement cadastre après OCR
+   - Génération promesse (`gestionnaire_promesses.py`) → enrichissement avant assemblage
+   - 5 nouveaux patterns regex cadastre dans `patterns_avances.py`
+
+3. **API Endpoints** ([api_cadastre.py](execution/api/api_cadastre.py))
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/cadastre/geocoder` | POST | Adresse → code_insee + coordinates |
+| `/cadastre/parcelle` | GET | code_insee + section + numero → parcelle |
+| `/cadastre/sections` | GET | code_insee → liste sections |
+| `/cadastre/enrichir` | POST | Données dossier → données enrichies |
+| `/cadastre/surface` | GET | Conversion surface texte → m² |
+
+### CLI
+
+```bash
+python execution/services/cadastre_service.py geocoder "12 rue de la Paix, Paris"
+python execution/services/cadastre_service.py parcelle 69290 AH 0068
+python execution/services/cadastre_service.py sections 69290
+python execution/services/cadastre_service.py enrichir donnees.json -o enrichi.json
+python execution/services/cadastre_service.py surface "00 ha 05 a 30 ca"
+```
+
+### Tests : **219 tests, 0 failures** (25 tests cadastre ajoutés)
 
 ---
 
