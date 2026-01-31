@@ -22,20 +22,21 @@ J'ai fait un audit complet du code Modal. Voici ce qui ressort :
 | Schemas/templates charges | 10 schemas, 6 templates | 0 |
 | Detection categorie bien | 3 categories, 2 niveaux | Non |
 | Validation donnees | 12+ regles | Non |
+| Enrichissement cadastre | API Gouv (BAN + IGN) | Non |
 | Auto-correction | Oui | Non |
 
 ---
 
 ## Solution : Anthropic API + Tool Use
 
-Remplacer `chat_handler.py` par un vrai appel Anthropic Messages API avec 8 tools qui wrappent les fonctions Python **deja codees**.
+Remplacer `chat_handler.py` par un vrai appel Anthropic Messages API avec 9 tools qui wrappent les fonctions Python **deja codees**.
 
 ### Architecture
 
 ```
 Frontend --> POST /chat --> Modal (FastAPI) --> Anthropic Messages API
                                                   |           |
-                                             system prompt   8 tools
+                                             system prompt   9 tools
                                              = CLAUDE.md     = fonctions Python
                                              + directives    existantes
 ```
@@ -44,7 +45,7 @@ Frontend --> POST /chat --> Modal (FastAPI) --> Anthropic Messages API
 
 Charger `CLAUDE.md` + `directives/workflow_notaire.md` + `directives/creer_promesse_vente.md` au boot. ~15K tokens, ~$0.05/conversation.
 
-### Les 8 tools (wrappent des fonctions existantes)
+### Les 9 tools (wrappent des fonctions existantes)
 
 | Tool | Wrappe | Fichier source |
 |------|--------|----------------|
@@ -55,7 +56,33 @@ Charger `CLAUDE.md` + `directives/workflow_notaire.md` + `directives/creer_prome
 | `valider_donnees` | Validation complete | valider_acte.py |
 | `generer_document` | `GestionnairePromesses.generer()` | gestionnaire_promesses.py |
 | `chercher_clause` | Catalogue 45+ clauses | clauses_catalogue.json |
+| `chercher_cadastre` | `CadastreService.enrichir_cadastre()` | cadastre_service.py |
 | `soumettre_feedback` | Insert Supabase | feedbacks_promesse |
+
+### Tool `chercher_cadastre` (nouveau — v1.8.0)
+
+Le 9e tool wrappe `CadastreService` (`execution/services/cadastre_service.py`). Il permet a l'agent de :
+
+1. **Geocoder une adresse** → code INSEE + coordonnees GPS (API Adresse BAN)
+2. **Chercher une parcelle** → section + numero → surface, geometrie (API Carto IGN)
+3. **Enrichir automatiquement** les donnees cadastrales d'un dossier
+
+**Chaine de resolution cadastre :**
+```
+Titre de propriete (OCR) → Supabase (cache) → API Gouv → Q&R notaire (fallback)
+```
+
+**Endpoints API cadastre (deja codes) :**
+
+| Endpoint | Methode | Description |
+|----------|---------|-------------|
+| `/cadastre/geocoder` | POST | Adresse → code_insee + coordonnees |
+| `/cadastre/parcelle` | GET | code_insee + section + numero → parcelle |
+| `/cadastre/sections` | GET | code_insee → liste des sections |
+| `/cadastre/enrichir` | POST | Donnees dossier → donnees enrichies |
+| `/cadastre/surface` | GET | Conversion surface texte ↔ m² |
+
+Le tool `chercher_cadastre` appelle `/cadastre/enrichir` en interne. L'enrichissement est aussi appele automatiquement dans `GestionnairePromesses.generer()` avant l'assemblage.
 
 ### Endpoint /chat
 

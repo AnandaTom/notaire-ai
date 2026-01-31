@@ -2,7 +2,7 @@
 
 > Cette directive décrit le workflow complet pour qu'un notaire génère un acte avec NotaireAI.
 
-**Version**: 2.3.0 | **Date**: 2026-01-29
+**Version**: 2.4.0 | **Date**: 2026-01-31
 
 ---
 
@@ -102,6 +102,33 @@ python execution/demo_titre_promesse.py --titre titre.json --prix 500000
 ```
 
 **Pipeline démo complet**: ~26s pour titre → collecte → validation → assemblage → DOCX.
+
+### 🆕 Enrichissement Cadastre Automatique (v1.8.0)
+
+Le pipeline enrichit automatiquement les données cadastrales avant assemblage :
+
+```
+Adresse du bien → API Adresse (BAN) → code_insee
+code_insee + section + numéro → API Carto (IGN) → parcelle validée + surface m²
+```
+
+**Intégration transparente** : L'enrichissement se fait automatiquement dans :
+- `extraire_titre.py` : après OCR du titre de propriété
+- `gestionnaire_promesses.py` : avant assemblage de la promesse
+- `cadastre_service.py` : CLI directe pour tests
+
+```bash
+# Enrichir un dossier complet
+python execution/services/cadastre_service.py enrichir donnees.json -o enrichi.json
+
+# Geocoder une adresse → code_insee
+python execution/services/cadastre_service.py geocoder "12 rue de la Paix, Paris"
+
+# Chercher une parcelle officielle
+python execution/services/cadastre_service.py parcelle 69290 AH 0068
+```
+
+**Fallback** : si l'API est indisponible, le pipeline continue avec les données existantes et avertit.
 
 ### 🆕 Intégration Backend Sprint 2 (v1.5.1)
 
@@ -526,7 +553,7 @@ python execution/extraire_bookmarks_contenu.py \
 | Temps génération | <1 min | ~8s |
 | Taux erreur | <5% | ~1.5% |
 | Promesses avec détection auto | 100% | **100%** ✅ |
-| Tests automatisés | 100% pass | **194/194** ✅ |
+| Tests automatisés | 100% pass | **219/219** ✅ |
 | Pipeline E2E promesse→DOCX | OK | **92.8 Ko** ✅ |
 | Pipeline E2E vente→DOCX | OK | **72 Ko** ✅ |
 | Collecte Q&R pré-remplissage | ≥60% | **64%** ✅ |
@@ -723,7 +750,9 @@ python execution/workflow_rapide.py --type vente \
 
 ---
 
-**Version**: 2.3.0
-**Dernière mise à jour**: 2026-01-29
-**Sprint 3 (P3+P4)**: Collecte Q&R interactive, démo titre→promesse→DOCX, conversion promesse→vente, 194 tests
+**Version**: 2.4.0
+**Dernière mise à jour**: 2026-01-31
+**Sprint 3 (P3+P4)**: Collecte Q&R interactive, démo titre→promesse→DOCX, conversion promesse→vente
+**Sprint 4 (P5-P7)**: Fix templates, guards, deprecation warnings
+**Sprint 5**: Intégration cadastre gouvernemental (API BAN + API Carto IGN), 219 tests
 **Prochaine révision**: Quand support autres types d'actes (donation, succession)
