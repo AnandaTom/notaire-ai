@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche d'État Civil - Notaire</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a5276'%3E%3Cpath d='M12 3L2 12h3v9h14v-9h3L12 3z'/%3E%3C/svg%3E">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --primary-light: #34495e;
+            --accent-color: #8e44ad;
+        }
+        .file-upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-light);
+        }
+        .file-upload-zone:hover {
+            border-color: var(--primary-light);
+            background: #f0f3f7;
+        }
+        .file-upload-zone.has-file {
+            border-color: var(--success-color);
+            background: #f0fdf4;
+        }
+        .file-upload-zone svg {
+            width: 40px;
+            height: 40px;
+            color: var(--text-light);
+            margin-bottom: var(--spacing-sm);
+        }
+        .file-upload-zone p {
+            margin: 0;
+            color: var(--text-medium);
+            font-size: 0.9rem;
+        }
+        .file-upload-zone .file-name {
+            margin-top: var(--spacing-sm);
+            font-weight: 600;
+            color: var(--success-color);
+        }
+        .file-upload-zone input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                        </svg>
+                    </div>
+                </div>
+                <h1>Fiche d'État Civil</h1>
+                <p class="subtitle">Informations personnelles et pièce d'identité</p>
+                <span class="badge">Transmission sécurisée et chiffrée</span>
+            </div>
+        </header>
+
+        <div class="form-body">
+            <!-- Introduction -->
+            <div class="intro-section">
+                <h2>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                    Pourquoi ces informations ?
+                </h2>
+                <p>Votre notaire a besoin de vos informations d'état civil pour la préparation de votre dossier.
+                Ce formulaire sécurisé vous permet de transmettre vos données personnelles ainsi qu'une copie de votre pièce d'identité de manière confidentielle.</p>
+            </div>
+
+            <!-- Barre de progression -->
+            <div class="progress-bar">
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Identité</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Coordonnées</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Pièce d'identité</span>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <span class="step-number">4</span>
+                        <span class="step-label">Validation</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="questionnaireForm">
+                <!-- Section 1: Identité -->
+                <section class="form-section active" data-section="1">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>État civil</h2>
+                            <p>Vos informations personnelles</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Informations personnelles</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="civilite">Civilité <span class="required">*</span></label>
+                                <select id="civilite" name="civilite" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="M">Monsieur</option>
+                                    <option value="Mme">Madame</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nom">Nom de naissance <span class="required">*</span></label>
+                                <input type="text" id="nom" name="nom" required placeholder="DUPONT">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nom_usage">Nom d'usage <span class="optional">(si différent)</span></label>
+                                <input type="text" id="nom_usage" name="nom_usage" placeholder="Nom marital ou d'usage">
+                            </div>
+                            <div class="form-group">
+                                <label for="prenoms">Prénom(s) <span class="required">*</span></label>
+                                <input type="text" id="prenoms" name="prenoms" required placeholder="Jean, Pierre">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="date_naissance">Date de naissance <span class="required">*</span></label>
+                                <input type="date" id="date_naissance" name="date_naissance" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lieu_naissance">Lieu de naissance <span class="required">*</span></label>
+                                <input type="text" id="lieu_naissance" name="lieu_naissance" required placeholder="Paris (75)">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="departement_naissance">Département de naissance <span class="required">*</span></label>
+                                <input type="text" id="departement_naissance" name="departement_naissance" required placeholder="75 - Paris">
+                            </div>
+                            <div class="form-group">
+                                <label for="nationalite">Nationalité <span class="required">*</span></label>
+                                <input type="text" id="nationalite" name="nationalite" required placeholder="Française" value="Française">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profession">Profession <span class="required">*</span></label>
+                            <input type="text" id="profession" name="profession" required placeholder="Cadre, Enseignant, Retraité...">
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Situation matrimoniale</h3>
+
+                        <div class="form-group">
+                            <label for="situation_matrimoniale">Situation <span class="required">*</span></label>
+                            <select id="situation_matrimoniale" name="situation_matrimoniale" required>
+                                <option value="">Sélectionner</option>
+                                <option value="celibataire">Célibataire</option>
+                                <option value="marie">Marié(e)</option>
+                                <option value="pacse">Pacsé(e)</option>
+                                <option value="divorce">Divorcé(e)</option>
+                                <option value="veuf">Veuf(ve)</option>
+                            </select>
+                        </div>
+
+                        <div id="conjoint_details" class="conditional-field">
+                            <h4 style="margin-bottom: var(--spacing-md); color: var(--primary-color);">Informations du conjoint / partenaire</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="conjoint_civilite">Civilité</label>
+                                    <select id="conjoint_civilite" name="conjoint_civilite">
+                                        <option value="">Sélectionner</option>
+                                        <option value="M">Monsieur</option>
+                                        <option value="Mme">Madame</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="conjoint_nom">Nom</label>
+                                    <input type="text" id="conjoint_nom" name="conjoint_nom" placeholder="NOM">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="conjoint_prenoms">Prénom(s)</label>
+                                    <input type="text" id="conjoint_prenoms" name="conjoint_prenoms" placeholder="Prénom(s)">
+                                </div>
+                                <div class="form-group">
+                                    <label for="conjoint_date_naissance">Date de naissance</label>
+                                    <input type="date" id="conjoint_date_naissance" name="conjoint_date_naissance">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="conjoint_lieu_naissance">Lieu de naissance</label>
+                                    <input type="text" id="conjoint_lieu_naissance" name="conjoint_lieu_naissance" placeholder="Ville (Département)">
+                                </div>
+                                <div class="form-group">
+                                    <label for="regime_matrimonial">Régime matrimonial</label>
+                                    <select id="regime_matrimonial" name="regime_matrimonial">
+                                        <option value="">Sélectionner</option>
+                                        <option value="communaute_legale">Communauté légale</option>
+                                        <option value="communaute_universelle">Communauté universelle</option>
+                                        <option value="separation_biens">Séparation de biens</option>
+                                        <option value="participation_acquets">Participation aux acquêts</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="date_mariage">Date du mariage / PACS</label>
+                                    <input type="date" id="date_mariage" name="date_mariage">
+                                </div>
+                                <div class="form-group">
+                                    <label for="lieu_mariage">Lieu du mariage / PACS</label>
+                                    <input type="text" id="lieu_mariage" name="lieu_mariage" placeholder="Ville">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Coordonnées -->
+                <section class="form-section" data-section="2">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Coordonnées</h2>
+                            <p>Votre adresse et moyens de contact</p>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Adresse postale</h3>
+
+                        <div class="form-group">
+                            <label for="adresse">Adresse <span class="required">*</span></label>
+                            <input type="text" id="adresse" name="adresse" required placeholder="12 rue de la Paix">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="complement_adresse">Complément d'adresse</label>
+                            <input type="text" id="complement_adresse" name="complement_adresse" placeholder="Bâtiment, étage, appartement...">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="code_postal">Code postal <span class="required">*</span></label>
+                                <input type="text" id="code_postal" name="code_postal" required placeholder="75001" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="ville">Ville <span class="required">*</span></label>
+                                <input type="text" id="ville" name="ville" required placeholder="Paris">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pays">Pays</label>
+                            <input type="text" id="pays" name="pays" placeholder="France" value="France">
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Moyens de contact</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tel_portable">Téléphone portable <span class="required">*</span></label>
+                                <input type="tel" id="tel_portable" name="tel_portable" required placeholder="06 12 34 56 78">
+                            </div>
+                            <div class="form-group">
+                                <label for="tel_fixe">Téléphone fixe</label>
+                                <input type="tel" id="tel_fixe" name="tel_fixe" placeholder="01 23 45 67 89">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Adresse email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="jean.dupont@email.com">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Pièce d'identité -->
+                <section class="form-section" data-section="3">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <circle cx="8" cy="11" r="2"/>
+                                <path d="M14 10h4M14 14h4"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Pièce d'identité</h2>
+                            <p>Copie de votre carte d'identité ou passeport</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                        </svg>
+                        <p>Veuillez fournir une copie lisible (recto et verso si carte d'identité) de votre pièce d'identité en cours de validité.
+                        Formats acceptés : JPG, PNG, PDF. Taille maximale : 10 Mo par fichier.</p>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Type de document</h3>
+                        <div class="form-group">
+                            <label for="type_piece">Type de pièce d'identité <span class="required">*</span></label>
+                            <select id="type_piece" name="type_piece" required>
+                                <option value="">Sélectionner</option>
+                                <option value="cni">Carte nationale d'identité</option>
+                                <option value="passeport">Passeport</option>
+                                <option value="titre_sejour">Titre de séjour</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="numero_piece">Numéro de la pièce <span class="required">*</span></label>
+                                <input type="text" id="numero_piece" name="numero_piece" required placeholder="N° du document">
+                            </div>
+                            <div class="form-group">
+                                <label for="date_expiration">Date d'expiration <span class="required">*</span></label>
+                                <input type="date" id="date_expiration" name="date_expiration" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="autorite_delivrance">Autorité de délivrance</label>
+                            <input type="text" id="autorite_delivrance" name="autorite_delivrance" placeholder="Préfecture de Paris">
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Téléchargement des copies</h3>
+
+                        <div class="form-group">
+                            <label>Recto de la pièce d'identité <span class="required">*</span></label>
+                            <div class="file-upload-zone" id="uploadRecto" onclick="document.getElementById('file_recto').click()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <p>Cliquez pour sélectionner un fichier</p>
+                                <p style="font-size: 0.8rem; color: var(--text-light);">JPG, PNG ou PDF - Max 10 Mo</p>
+                                <div class="file-name" id="rectoFileName"></div>
+                                <input type="file" id="file_recto" name="file_recto" accept=".jpg,.jpeg,.png,.pdf" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Verso de la pièce d'identité <span class="optional">(si carte d'identité)</span></label>
+                            <div class="file-upload-zone" id="uploadVerso" onclick="document.getElementById('file_verso').click()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <p>Cliquez pour sélectionner un fichier</p>
+                                <p style="font-size: 0.8rem; color: var(--text-light);">JPG, PNG ou PDF - Max 10 Mo</p>
+                                <div class="file-name" id="versoFileName"></div>
+                                <input type="file" id="file_verso" name="file_verso" accept=".jpg,.jpeg,.png,.pdf">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Validation -->
+                <section class="form-section" data-section="4">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4"/>
+                                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="section-title">
+                            <h2>Vérification et envoi</h2>
+                            <p>Vérifiez vos informations avant envoi</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                        </svg>
+                        <p>Veuillez vérifier l'exactitude de vos informations avant de les envoyer.
+                        Vos données seront transmises de manière chiffrée et sécurisée à votre notaire.</p>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Observations</h3>
+                        <div class="form-group">
+                            <label for="observations">Avez-vous des informations complémentaires à communiquer ?</label>
+                            <textarea id="observations" name="observations" rows="4" placeholder="Toute information que vous jugez utile..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- RGPD -->
+                    <div class="rgpd-section" style="margin-top: var(--spacing-lg); border-radius: var(--border-radius);">
+                        <h3>Protection des données personnelles</h3>
+                        <p>Conformément au RGPD, les informations recueillies font l'objet d'un traitement informatique
+                        destiné à la préparation de votre dossier notarial. Elles sont conservées pendant la durée
+                        nécessaire au traitement de votre dossier et ne sont accessibles qu'à votre notaire.</p>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-sm); cursor: pointer; font-weight: normal;">
+                            <input type="checkbox" name="rgpd_consent" required style="margin-top: 4px; width: 18px; height: 18px;">
+                            <span>J'accepte le traitement de mes données personnelles dans le cadre de mon dossier notarial <span class="required">*</span></span>
+                        </label>
+                    </div>
+                </section>
+            </form>
+
+            <!-- Navigation -->
+            <div class="form-navigation">
+                <button type="button" class="btn btn-secondary" id="prevBtn" style="visibility: hidden;" onclick="previousSection()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Précédent
+                </button>
+
+                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextSection()">
+                    Suivant
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </button>
+
+                <button type="submit" form="questionnaireForm" class="btn btn-success" id="submitBtn" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Envoyer mes informations
+                </button>
+            </div>
+
+            <!-- Footer sécurité -->
+            <div class="form-footer">
+                <div class="security-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+                    Transmission sécurisée et chiffrée
+                </div>
+            </div>
+        </div>
+
+        <!-- Page de succès -->
+        <div class="success-page" id="successPage" style="display: none;">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <h2>Informations envoyées avec succès !</h2>
+            <p>Votre fiche d'état civil et votre pièce d'identité ont été transmises de manière sécurisée à votre notaire.</p>
+            <p style="color: var(--text-light); margin-top: var(--spacing-md);">Vous pouvez fermer cette page.</p>
+        </div>
+    </div>
+
+    <!-- Overlay de chargement -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Envoi en cours...</p>
+    </div>
+
+    <script src="questionnaire-common.js"></script>
+    <script src="questionnaire-etat-civil.js"></script>
+    <script>
+        const CONFIG = {
+            type: 'etat_civil',
+            title: 'Fiche État Civil',
+            totalSections: 4
+        };
+    </script>
+</body>
+</html>

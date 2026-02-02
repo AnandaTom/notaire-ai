@@ -569,7 +569,7 @@ async function submitForm(e) {
     try {
         // Collecter les données (peut être overridé par le script spécifique)
         const data = typeof window.collectFormData === 'function'
-            ? window.collectFormData()
+            ? await window.collectFormData()
             : collectFormData();
 
         // Extraire nom/prénom du client selon le type de questionnaire
@@ -582,6 +582,9 @@ async function submitForm(e) {
         } else if (data.acheteurs && data.acheteurs[0]) {
             clientNom = data.acheteurs[0].nom || '';
             clientPrenom = data.acheteurs[0].prenoms || '';
+        } else if (data.personne) {
+            clientNom = data.personne.nom || '';
+            clientPrenom = data.personne.prenoms || '';
         }
 
         // Vérifier si on a un token existant (lien envoyé par le notaire)
@@ -614,6 +617,8 @@ async function submitForm(e) {
             typePartie = 'vendeur_appartement';
         } else if (CONFIG.type === 'vente_maison') {
             typePartie = 'vendeur_maison';
+        } else if (CONFIG.type === 'etat_civil') {
+            typePartie = 'etat_civil';
         }
 
         if (existingToken) {
