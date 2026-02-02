@@ -2284,6 +2284,168 @@ async def convertir_titre_en_promesse(
 
 
 # =============================================================================
+# Endpoints Document Review (revue paragraphe par paragraphe)
+# =============================================================================
+
+
+def split_markdown_sections(markdown_text: str) -> List[Dict[str, Any]]:
+    """Découpe un document Markdown en sections par heading H2."""
+    sections = []
+    current_title = "Introduction"
+    current_content: List[str] = []
+    section_idx = 0
+
+    for line in markdown_text.split("\n"):
+        if line.startswith("## "):
+            if current_content or section_idx == 0:
+                content_text = "\n".join(current_content).strip()
+                if content_text:
+                    sections.append({
+                        "id": f"section_{section_idx}",
+                        "index": section_idx,
+                        "title": current_title,
+                        "content": content_text,
+                        "heading_level": 2,
+                    })
+                    section_idx += 1
+            current_title = line[3:].strip()
+            current_content = []
+        else:
+            current_content.append(line)
+
+    # Dernière section
+    content_text = "\n".join(current_content).strip()
+    if content_text:
+        sections.append({
+            "id": f"section_{section_idx}",
+            "index": section_idx,
+            "title": current_title,
+            "content": content_text,
+            "heading_level": 2,
+        })
+
+    return sections
+
+
+@app.get("/document/{workflow_id}/sections", tags=["Document Review"])
+async def get_document_sections(
+    workflow_id: str,
+    auth: AuthContext = Depends(verify_api_key),
+):
+    """
+    Découpe un document Markdown généré en sections pour review paragraphe par paragraphe.
+    Retourne la liste des sections avec titre et contenu.
+    """
+    # Chercher le fichier .md du workflow
+    md_file = None
+    search_dirs = [
+        PROJECT_ROOT / ".tmp" / "actes_generes",
+        Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs")),
+        PROJECT_ROOT / "outputs",
+    ]
+
+    for search_dir in search_dirs:
+        if not search_dir.exists():
+            continue
+        # Chercher dans le dossier du workflow
+        workflow_dir = search_dir / workflow_id
+        if workflow_dir.exists():
+            for f in workflow_dir.glob("*.md"):
+                md_file = f
+                break
+        # Chercher par nom de fichier contenant le workflow_id
+        if not md_file:
+            for f in search_dir.glob(f"*{workflow_id}*.md"):
+                md_file = f
+                break
+        if md_file:
+            break
+
+    if not md_file:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Document non trouvé pour le workflow {workflow_id}"
+        )
+
+    try:
+        markdown_text = md_file.read_text(encoding="utf-8")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lecture document: {e}")
+
+    sections = split_markdown_sections(markdown_text)
+
+    return {
+        "workflow_id": workflow_id,
+        "fichier": str(md_file.name),
+        "sections_count": len(sections),
+        "sections": sections,
+    }
+
+
+class ParagraphFeedbackRequest(BaseModel):
+    """Feedback sur une section/paragraphe du document généré."""
+    workflow_id: str = Field(..., description="ID du workflow de génération")
+    section_id: str = Field(..., description="ID de la section (ex: section_3)")
+    section_title: str = Field("", description="Titre de la section")
+    action: str = Field(..., description="approuver, corriger, commenter")
+    contenu: Optional[str] = Field(None, description="Texte corrigé ou commentaire")
+    raison: Optional[str] = Field(None, description="Raison du feedback")
+
+
+@app.post("/feedback/paragraphe", tags=["Document Review"])
+async def submit_paragraph_feedback(
+    request: ParagraphFeedbackRequest,
+    background_tasks: BackgroundTasks,
+    auth: AuthContext = Depends(require_write_permission),
+):
+    """
+    Enregistre un feedback paragraphe par paragraphe dans Supabase.
+    Utilisé par la notaire pour valider ou corriger chaque section du document.
+    """
+    try:
+        supabase = get_supabase_client()
+    except Exception:
+        supabase = None
+
+    feedback_data = {
+        "etude_id": auth.etude_id,
+        "section_id": request.section_id,
+        "action": request.action,
+        "contenu": request.contenu,
+        "raison": request.raison or "",
+        "metadata": {
+            "source": "paragraph_review",
+            "workflow_id": request.workflow_id,
+            "section_title": request.section_title,
+        },
+    }
+
+    if supabase:
+        try:
+            result = supabase.table("feedbacks_promesse").insert(
+                feedback_data
+            ).execute()
+            feedback_id = result.data[0]["id"] if result.data else None
+        except Exception as e:
+            logger.warning(f"Supabase insert feedback failed: {e}")
+            feedback_id = None
+    else:
+        feedback_id = None
+        # Fallback: log local
+        logs_dir = PROJECT_ROOT / ".tmp" / "logs"
+        logs_dir.mkdir(parents=True, exist_ok=True)
+        log_file = logs_dir / "paragraph_feedbacks.jsonl"
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(feedback_data, ensure_ascii=False) + "\n")
+
+    return {
+        "succes": True,
+        "feedback_id": feedback_id,
+        "message": f"Feedback '{request.action}' enregistré pour {request.section_id}",
+    }
+
+
+# =============================================================================
 # Fonctions d'arrière-plan (apprentissage continu)
 # =============================================================================
 

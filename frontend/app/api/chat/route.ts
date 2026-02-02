@@ -1,76 +1,54 @@
-import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+/**
+ * Proxy vers le backend Modal (FastAPI).
+ *
+ * Remplace l'appel direct Anthropic par un proxy qui route tout
+ * vers le /chat endpoint de Modal, ou l'agent LLM (Anthropic + 9 tools)
+ * gere la conversation intelligemment.
+ */
 
-const SYSTEM_PROMPT = `Tu es NotaireAI, un assistant juridique spécialisé dans la création et la modification d'actes notariaux pour l'étude de Maître Charlotte Diaz.
-
-## Ton rôle
-Tu assistes les notaires dans la rédaction d'actes de vente et de promesses de vente de lots de copropriété, conformément au droit français.
-
-## Principes de fonctionnement
-1. **Collecte progressive** : Pose des questions une par une pour collecter les informations nécessaires
-2. **Validation** : Vérifie toujours la cohérence des données (quotités = 100%, dates logiques, etc.)
-3. **Références légales** : Cite les articles de loi pertinents (Code civil, CCH, etc.)
-4. **Format** : L'utilisateur a choisi le format d'export (PDF ou DOCX)
-
-## Sections d'un acte de vente
-1. Identification des parties (vendeurs, acquéreurs)
-2. Situation matrimoniale
-3. Désignation du bien (lots, tantièmes, cadastre)
-4. Origine de propriété
-5. Prix et paiement
-6. Prêts (si financement)
-7. Diagnostics techniques
-8. Charges et conditions
-
-## Style de communication
-- Professionnel mais accessible
-- Précis et structuré
-- Toujours en français
-- Utilise le vouvoiement
-
-## Format de réponse
-Quand tu poses des questions, indique la section en cours entre crochets, ex: [Identification du vendeur]
-`
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, format } = await request.json()
+    const body = await request.json()
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2048,
-      system: SYSTEM_PROMPT + `\n\nFormat d'export choisi par l'utilisateur: ${format.toUpperCase()}`,
-      messages: messages.map((m: { role: string; content: string }) => ({
-        role: m.role as 'user' | 'assistant',
-        content: m.content,
-      })),
-    })
-
-    const content = response.content[0]
-    if (content.type !== 'text') {
-      throw new Error('Unexpected response type')
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
     }
 
-    // Extract section from response if present
-    const sectionMatch = content.text.match(/\[([^\]]+)\]/)
-    const section = sectionMatch ? sectionMatch[1] : undefined
+    // Forward API key si configuree
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY
+    if (apiKey) {
+      headers['X-API-Key'] = apiKey
+    }
 
-    // Remove section tag from content
-    const cleanContent = content.text.replace(/\[[^\]]+\]\s*/, '')
-
-    return NextResponse.json({
-      content: cleanContent,
-      section,
+    const response = await fetch(`${API_URL}/chat/`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        message: body.message || body.messages?.[body.messages.length - 1]?.content || '',
+        conversation_id: body.conversation_id,
+        history: body.messages || body.history || [],
+        context: { format: body.format || 'docx' },
+        user_id: body.user_id || '',
+        etude_id: body.etude_id || '',
+      }),
     })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Erreur serveur' }))
+      return NextResponse.json(error, { status: response.status })
+    }
+
+    const data = await response.json()
+    return NextResponse.json(data)
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Proxy error:', error)
     return NextResponse.json(
-      { error: 'Erreur de communication avec l\'assistant' },
-      { status: 500 }
+      { content: 'Erreur de communication avec le serveur. Veuillez reessayer.', suggestions: [] },
+      { status: 502 }
     )
   }
 }

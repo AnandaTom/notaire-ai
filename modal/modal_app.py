@@ -38,6 +38,8 @@ image = modal.Image.debian_slim(python_version="3.11").pip_install(
     "supabase>=2.0.0",
     "python-multipart>=0.0.6",
     "sse-starlette>=1.6.0",
+    "anthropic>=0.39.0",
+    "requests>=2.31.0",
 )
 
 # Stub Modal
@@ -45,7 +47,9 @@ app = modal.App(
     name="notaire-ai",
     image=image,
     secrets=[
-        modal.Secret.from_name("supabase-credentials"),  # SUPABASE_URL, SUPABASE_KEY
+        modal.Secret.from_name("supabase-credentials"),   # SUPABASE_URL, SUPABASE_KEY
+        modal.Secret.from_name("anthropic-credentials"),   # ANTHROPIC_API_KEY
+        modal.Secret.from_name("github-credentials"),      # GITHUB_TOKEN, GITHUB_REPO, GITHUB_DEFAULT_BRANCH
     ]
 )
 
@@ -164,6 +168,19 @@ def daily_learning_job():
         }).execute()
 
         print(f"[{datetime.now()}] Rapport généré avec succès")
+
+        # 4. Self-anneal: créer PR GitHub si feedbacks confirmés (3+)
+        try:
+            from execution.self_anneal import run_self_anneal
+            anneal_result = run_self_anneal(supabase)
+            rapport["self_anneal"] = anneal_result
+            print(f"  Self-anneal: {anneal_result.get('status', 'unknown')} "
+                  f"({anneal_result.get('corrections_applied', 0)} corrections)")
+            if anneal_result.get("pr_url"):
+                print(f"  PR: {anneal_result['pr_url']}")
+        except Exception as anneal_err:
+            print(f"⚠️ Self-anneal ignoré: {anneal_err}")
+            rapport["self_anneal"] = {"status": "error", "error": str(anneal_err)}
 
     except Exception as e:
         print(f"❌ Erreur job apprentissage: {e}")

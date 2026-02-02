@@ -1,9 +1,10 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { Scale, Paperclip, Mic, Send, FileText, FilePlus, Edit, Download } from 'lucide-react'
+import { Scale, Paperclip, Mic, Send, FileText, FilePlus, Edit, Download, ClipboardCheck } from 'lucide-react'
 import type { Message } from '@/app/page'
 import ReactMarkdown from 'react-markdown'
+import ParagraphReview from './ParagraphReview'
 
 interface ChatAreaProps {
   messages: Message[]
@@ -11,6 +12,7 @@ interface ChatAreaProps {
   onSendMessage: (content: string) => void
   selectedFormat: 'pdf' | 'docx'
   onFormatChange: (format: 'pdf' | 'docx') => void
+  onReviewRequest?: (workflowId: string) => void
 }
 
 export default function ChatArea({
@@ -19,6 +21,7 @@ export default function ChatArea({
   onSendMessage,
   selectedFormat,
   onFormatChange,
+  onReviewRequest,
 }: ChatAreaProps) {
   const [input, setInput] = useState('')
   const chatRef = useRef<HTMLDivElement>(null)
@@ -75,6 +78,7 @@ export default function ChatArea({
             onFormatChange={onFormatChange}
             suggestions={message.suggestions}
             metadata={message.metadata}
+            onReviewRequest={onReviewRequest}
           />
         ))}
 
@@ -139,7 +143,8 @@ function MessageBubble({
   selectedFormat?: 'pdf' | 'docx'
   onFormatChange?: (format: 'pdf' | 'docx') => void
   suggestions?: string[]
-  metadata?: { fichier_url?: string; [key: string]: unknown }
+  metadata?: { fichier_url?: string; workflow_id?: string; [key: string]: unknown }
+  onReviewRequest?: (workflowId: string) => void
 }) {
   const isAssistant = message.role === 'assistant'
 
@@ -246,16 +251,27 @@ function MessageBubble({
           </div>
         )}
 
-        {/* Download Link */}
+        {/* Download Link + Review Button */}
         {isAssistant && message.metadata?.fichier_url && (
-          <a
-            href={`${process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'}${message.metadata.fichier_url}`}
-            download
-            className="inline-flex items-center gap-2 mt-3 px-4 py-2.5 bg-gold text-white rounded-xl text-[0.82rem] font-medium hover:bg-gold-dark transition-all shadow-sm"
-          >
-            <Download className="w-4 h-4" />
-            Télécharger le document
-          </a>
+          <div className="flex flex-wrap gap-2 mt-3">
+            <a
+              href={`${process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'}${message.metadata.fichier_url}`}
+              download
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl text-[0.82rem] font-medium hover:bg-gold-dark transition-all shadow-sm"
+            >
+              <Download className="w-4 h-4" />
+              Telecharger le document
+            </a>
+            {message.metadata?.workflow_id && onReviewRequest && (
+              <button
+                onClick={() => onReviewRequest(message.metadata!.workflow_id!)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-amber-300 text-amber-700 rounded-xl text-[0.82rem] font-medium hover:bg-amber-50 transition-all shadow-sm"
+              >
+                <ClipboardCheck className="w-4 h-4" />
+                Relire section par section
+              </button>
+            )}
+          </div>
         )}
 
         {/* Suggestions */}

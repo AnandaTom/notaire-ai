@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Sidebar from '@/components/Sidebar'
 import ChatArea from '@/components/ChatArea'
 import Header from '@/components/Header'
+import ParagraphReview from '@/components/ParagraphReview'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ''
@@ -17,10 +18,19 @@ export interface Message {
   suggestions?: string[]
   metadata?: {
     fichier_url?: string
+    workflow_id?: string
     intention?: string
     confiance?: number
     [key: string]: unknown
   }
+}
+
+interface DocumentSection {
+  id: string
+  index: number
+  title: string
+  content: string
+  heading_level: number
 }
 
 export default function Home() {
@@ -39,6 +49,10 @@ Comment puis-je vous assister aujourd'hui ?`,
   const [isLoading, setIsLoading] = useState(false)
   const [selectedFormat, setSelectedFormat] = useState<'pdf' | 'docx'>('docx')
   const [conversationId] = useState(() => crypto.randomUUID())
+
+  // Review state
+  const [reviewSections, setReviewSections] = useState<DocumentSection[] | null>(null)
+  const [reviewWorkflowId, setReviewWorkflowId] = useState<string | null>(null)
 
   const sendMessage = async (content: string) => {
     const userMessage: Message = {
@@ -87,6 +101,7 @@ Comment puis-je vous assister aujourd'hui ?`,
         suggestions: data.suggestions,
         metadata: {
           fichier_url: data.fichier_url,
+          workflow_id: data.workflow_id,
           intention: data.intention,
           confiance: data.confiance,
           ...(data.contexte_mis_a_jour || {}),
@@ -110,6 +125,31 @@ Comment puis-je vous assister aujourd'hui ?`,
     }
   }
 
+  const handleReviewRequest = async (workflowId: string) => {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (API_KEY) headers['X-API-Key'] = API_KEY
+
+      const response = await fetch(`${API_URL}/document/${workflowId}/sections`, {
+        headers,
+      })
+
+      if (!response.ok) throw new Error('Document non trouve')
+
+      const data = await response.json()
+      setReviewSections(data.sections)
+      setReviewWorkflowId(workflowId)
+    } catch (error) {
+      console.error('Review error:', error)
+    }
+  }
+
+  const handleReviewComplete = () => {
+    setReviewSections(null)
+    setReviewWorkflowId(null)
+    sendMessage('La relecture du document est terminee. Merci.')
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen p-5">
       <div className="w-full max-w-[1100px] h-[92vh] max-h-[850px] bg-ivory rounded-[20px] shadow-lg grid grid-cols-[280px_1fr] overflow-hidden border border-gold/10">
@@ -122,9 +162,22 @@ Comment puis-je vous assister aujourd'hui ?`,
             onSendMessage={sendMessage}
             selectedFormat={selectedFormat}
             onFormatChange={setSelectedFormat}
+            onReviewRequest={handleReviewRequest}
           />
         </main>
       </div>
+
+      {/* Paragraph Review Modal */}
+      {reviewSections && reviewWorkflowId && (
+        <ParagraphReview
+          workflowId={reviewWorkflowId}
+          sections={reviewSections}
+          onComplete={handleReviewComplete}
+          onClose={() => { setReviewSections(null); setReviewWorkflowId(null) }}
+          apiUrl={API_URL}
+          apiKey={API_KEY}
+        />
+      )}
     </div>
   )
 }

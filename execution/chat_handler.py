@@ -546,12 +546,14 @@ def create_chat_router():
         content: str
         suggestions: List[str] = []
         action: Optional[dict] = None
-        intention: str
-        confiance: float
+        intention: str = "agent"
+        confiance: float = 1.0
         conversation_id: Optional[str] = None
         section: Optional[str] = None
         fichier_url: Optional[str] = None
         contexte_mis_a_jour: Optional[dict] = None
+        tool_calls_made: int = 0
+        tools_used: List[str] = []
 
     @router.post("/", response_model=ChatResponse)
     async def chat(request: ChatRequest):
@@ -569,7 +571,6 @@ def create_chat_router():
         - Met a jour le contexte de la conversation
         """
         try:
-            handler = ChatHandler(verbose=False)
             historique = request.history or []
             contexte = request.context or {}
             conversation_id = request.conversation_id
@@ -583,11 +584,9 @@ def create_chat_router():
                     ).maybe_single().execute()
 
                     if conv_resp.data:
-                        # Charger le contexte persiste
                         stored_ctx = conv_resp.data.get("contexte") or {}
                         contexte = {**stored_ctx, **contexte}
 
-                        # Charger les messages precedents
                         msgs_resp = supabase.table("conversation_messages").select(
                             "role, content"
                         ).eq(
@@ -597,7 +596,6 @@ def create_chat_router():
                         if msgs_resp.data:
                             historique = msgs_resp.data
                     else:
-                        # Creer la conversation
                         supabase.table("conversations").insert({
                             "id": conversation_id,
                             "etude_id": request.etude_id,
@@ -608,13 +606,70 @@ def create_chat_router():
                 except Exception:
                     pass  # Fallback silencieux
 
-            reponse = handler.traiter_message(
-                message=request.message,
-                user_id=request.user_id,
-                etude_id=request.etude_id,
-                historique=historique,
-                contexte=contexte
-            )
+            # --- Agent LLM (Anthropic API + Tool Use) ---
+            use_llm = bool(os.environ.get("ANTHROPIC_API_KEY"))
+            agent_result = None
+
+            if use_llm:
+                try:
+                    from execution.agent_llm import run_agent, build_system_prompt
+
+                    # Convertir historique en format Anthropic messages
+                    anthropic_messages = []
+                    for msg in historique:
+                        role = msg.get("role", "user")
+                        content = msg.get("content", "")
+                        if role in ("user", "assistant") and content:
+                            anthropic_messages.append({"role": role, "content": content})
+
+                    # Ajouter le message courant
+                    anthropic_messages.append({"role": "user", "content": request.message})
+
+                    agent_context = {
+                        "etude_id": request.etude_id,
+                        "supabase": supabase,
+                        "user_id": request.user_id,
+                    }
+
+                    agent_result = run_agent(
+                        messages=anthropic_messages,
+                        system_prompt=build_system_prompt(),
+                        context=agent_context,
+                    )
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).warning(f"Agent LLM fallback: {e}")
+                    agent_result = None
+
+            # --- Fallback: ChatHandler keyword matching ---
+            if agent_result is None:
+                handler = ChatHandler(verbose=False)
+                reponse = handler.traiter_message(
+                    message=request.message,
+                    user_id=request.user_id,
+                    etude_id=request.etude_id,
+                    historique=historique,
+                    contexte=contexte,
+                )
+                response_content = reponse.content
+                response_suggestions = reponse.suggestions
+                response_intention = reponse.intention_detectee
+                response_confiance = reponse.confiance
+                response_fichier_url = None
+                if reponse.action and isinstance(reponse.action, dict):
+                    response_fichier_url = reponse.action.get("fichier_url")
+                response_tool_calls = 0
+                response_tools_used = []
+                response_contexte = reponse.contexte_mis_a_jour
+            else:
+                response_content = agent_result.get("content", "")
+                response_suggestions = []
+                response_intention = "agent"
+                response_confiance = 1.0
+                response_fichier_url = agent_result.get("fichier_url")
+                response_tool_calls = agent_result.get("tool_calls_made", 0)
+                response_tools_used = agent_result.get("tools_used", [])
+                response_contexte = None
 
             # Persister les messages dans Supabase
             if supabase and conversation_id and request.etude_id:
@@ -628,20 +683,21 @@ def create_chat_router():
                         {
                             "conversation_id": conversation_id,
                             "role": "assistant",
-                            "content": reponse.content,
-                            "intention": reponse.intention_detectee,
-                            "confiance": reponse.confiance,
+                            "content": response_content,
+                            "intention": response_intention,
+                            "confiance": response_confiance,
                             "metadata": {
-                                "suggestions": reponse.suggestions,
+                                "suggestions": response_suggestions,
+                                "tool_calls_made": response_tool_calls,
+                                "tools_used": response_tools_used,
                             },
                         },
                     ]).execute()
 
-                    # Mettre a jour le contexte
                     update_data = {}
-                    if reponse.contexte_mis_a_jour:
-                        update_data["contexte"] = reponse.contexte_mis_a_jour
-                        type_acte = reponse.contexte_mis_a_jour.get("type_acte_en_cours")
+                    if response_contexte:
+                        update_data["contexte"] = response_contexte
+                        type_acte = response_contexte.get("type_acte_en_cours")
                         if type_acte:
                             update_data["type_acte"] = type_acte
                     if update_data:
@@ -651,26 +707,22 @@ def create_chat_router():
                 except Exception:
                     pass  # Fallback silencieux
 
-            # Extraire fichier_url depuis action si présent
-            fichier_url = None
-            if reponse.action and isinstance(reponse.action, dict):
-                fichier_url = reponse.action.get("fichier_url")
-
             # Extraire section depuis le contexte
             section = None
-            if reponse.contexte_mis_a_jour:
-                section = reponse.contexte_mis_a_jour.get("etape_workflow")
+            if response_contexte:
+                section = response_contexte.get("etape_workflow")
 
             return ChatResponse(
-                content=reponse.content,
-                suggestions=reponse.suggestions,
-                action=reponse.action,
-                intention=reponse.intention_detectee,
-                confiance=reponse.confiance,
+                content=response_content,
+                suggestions=response_suggestions,
+                intention=response_intention,
+                confiance=response_confiance,
                 conversation_id=conversation_id,
                 section=section,
-                fichier_url=fichier_url,
-                contexte_mis_a_jour=reponse.contexte_mis_a_jour,
+                fichier_url=response_fichier_url,
+                contexte_mis_a_jour=response_contexte,
+                tool_calls_made=response_tool_calls,
+                tools_used=response_tools_used,
             )
 
         except Exception as e:
