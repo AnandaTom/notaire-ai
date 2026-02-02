@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-02T07:01:42.624237",
+    "generated_at": "2026-02-02T18:12:18.647267",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,28 +12,28 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 172
+    "commits": 175
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "5c83278",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-02-01"
+      "hash": "5d45452",
+      "message": "feat: dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
+      "date": "2026-02-02"
     },
-    "total_commits": 172,
+    "total_commits": 175,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 116
+        "commits": 117
       },
       {
         "name": "github-actions[bot]",
-        "commits": 40
+        "commits": 41
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 19
+        "commits": 20
       },
       {
         "name": "Payoss",
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "5d45452",
+      "author": "Augustin",
+      "date": "2026-02-02",
+      "message": "dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "793e863",
+      "author": "Augustin",
+      "date": "2026-01-30",
+      "message": "audit complet questionnaire → email notaire + stockage Supabase",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "88747f8",
+      "author": "github-actions[bot]",
+      "date": "2026-02-02",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "5c83278",
       "author": "github-actions[bot]",
       "date": "2026-02-01",
@@ -790,36 +820,6 @@
       "type_label": "Documentation",
       "type_icon": "📝",
       "type_color": "purple"
-    },
-    {
-      "hash": "ab325cb",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "54607c3",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ea18d1e",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-02 07:01"
+    "last_updated": "2026-02-02 18:12"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-02 07:01"
+    "last_updated": "2026-02-02 18:12"
   },
   "conformity_details": {
     "promesse": {
