@@ -155,6 +155,20 @@ Pour la compréhension de certains termes aux présentes, il est préalablement 
 **-** Les **"MEUBLES"** désigneront les meubles et objets mobiliers, s'il en existe.
 
 # Identification du bien
+
+{% if bien.adresse %}
+| Lieu de situation du bien vendu | |
+| :---- | :---- |
+| **Adresse** | {% if bien.adresse.numero %}{{ bien.adresse.numero }} {% endif %}{{ bien.adresse.voie }}, {{ bien.adresse.code_postal }} {{ bien.adresse.ville }} |
+| **Commune** | {{ bien.adresse.ville }} ({{ bien.adresse.departement }}) |
+{% if bien.adresse.code_insee %}
+| **Code INSEE** | {{ bien.adresse.code_insee }} |
+{% endif %}
+{% if bien.cadastre and bien.cadastre[0] %}
+| **Références cadastrales** | Section {{ bien.cadastre[0].section }} n° {{ bien.cadastre[0].numero }} |
+{% endif %}
+{% endif %}
+
 ## Désignation
 **Un bien immobilier sis à {{ bien.adresse.ville }} ({{ bien.adresse.departement }}) {{ bien.adresse.code_postal }}{% if bien.adresse.numero %} {{ bien.adresse.numero }}{% endif %} {{ bien.adresse.voie }}{% if bien.adresse.lieu_dit %}, lieu-dit "{{ bien.adresse.lieu_dit }}"{% endif %}.**
 
@@ -166,8 +180,11 @@ Figurant ainsi au cadastre :
 | Section | N° | Lieudit | Surface |
 | :---- | :---- | :---- | :---- |
 {% for parcelle in bien.cadastre %}
-| {{ parcelle.section }} | {{ parcelle.numero }} | {{ parcelle.lieudit }} | {{ parcelle.surface }} |
+| {{ parcelle.section }} | {{ parcelle.numero }} | {{ parcelle.lieudit }} | {{ parcelle.surface }}{% if parcelle.surface_m2 %} ({{ parcelle.surface_m2 }} m²){% endif %} |
 {% endfor %}
+{% if bien.cadastre_total_surface %}
+| | | **Total** | **{{ bien.cadastre_total_surface }}** |
+{% endif %}
 
 Un extrait de plan cadastral est annexé.
 Un extrait de plan Géoportail avec vue aérienne est annexé.

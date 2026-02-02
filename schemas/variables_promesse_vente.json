@@ -201,7 +201,9 @@
             "voie": { "type": "string" },
             "code_postal": { "type": "string" },
             "ville": { "type": "string" },
-            "departement": { "type": "string" }
+            "departement": { "type": "string" },
+            "code_insee": { "type": "string", "description": "Code INSEE de la commune (enrichi par CadastreService)" },
+            "lieu_dit": { "type": "string", "description": "Lieu-dit (hors copro / terrain)" }
           }
         },
         "nom_residence": {
@@ -216,9 +218,17 @@
               "section": { "type": "string" },
               "numero": { "type": "string" },
               "lieudit": { "type": "string" },
-              "surface": { "type": "string" }
+              "surface": { "type": "string", "description": "Surface en ha a ca (ex: 00 ha 05 a 30 ca)" },
+              "surface_m2": { "type": "integer", "description": "Surface en m² (enrichi par CadastreService)" },
+              "verifie": { "type": "boolean", "description": "Parcelle validée via API Carto IGN" },
+              "code_insee": { "type": "string", "description": "Code INSEE de la commune" },
+              "source": { "type": "string", "description": "Source de la donnée (titre, api_gouv, notaire)" }
             }
           }
+        },
+        "cadastre_total_surface": {
+          "type": "string",
+          "description": "Surface totale des parcelles (ex: 00 ha 08 a 92 ca)"
         },
         "lots": {
           "type": "array",
@@ -345,6 +355,35 @@
           "properties": {
             "existe": { "type": "boolean" },
             "solde": { "type": "number" }
+          }
+        },
+        "garantie_superficie": {
+          "type": "object",
+          "description": "Garantie de superficie loi Carrez (certificat de mesurage)",
+          "properties": {
+            "active": { "type": "boolean", "default": true },
+            "superficie_mesuree": { "type": "number", "description": "Surface mesurée en m²" },
+            "date_mesurage": { "type": "string", "description": "Date du certificat de mesurage" },
+            "mesureur": { "type": "string", "description": "Nom du diagnostiqueur / mesureur" }
+          }
+        },
+        "assurance": {
+          "type": "object",
+          "description": "Assurance responsabilité civile de la copropriété",
+          "properties": {
+            "assureur": { "type": "string", "description": "Nom de la compagnie d'assurance" },
+            "numero_police": { "type": "string", "description": "Numéro de police d'assurance" },
+            "attestation": { "type": "boolean", "description": "Attestation d'assurance fournie" }
+          }
+        },
+        "ascenseurs": {
+          "type": "object",
+          "description": "Réglementation ascenseurs de la copropriété",
+          "properties": {
+            "existe": { "type": "boolean" },
+            "securite_conforme": { "type": "boolean" },
+            "controle_technique": { "type": "string" },
+            "contrat_entretien": { "type": "string" }
           }
         }
       }
@@ -758,6 +797,19 @@
         "execution_forcee": { "type": "boolean", "default": true },
         "clause_penale": { "type": "boolean" },
         "substitution_autorisee": { "type": "boolean" }
+      }
+    },
+
+    "restrictions_usage": {
+      "type": "array",
+      "description": "Restrictions d'usage grevant le bien (servitudes spécifiques, restrictions conventionnelles)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "description": "Type de restriction (servitude, convention, réglementation)" },
+          "description": { "type": "string", "description": "Description détaillée de la restriction" },
+          "origine": { "type": "string", "description": "Origine de la restriction (acte, règlement, arrêté)" }
+        }
       }
     }
   },

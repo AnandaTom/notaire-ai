@@ -615,6 +615,56 @@
           "type": "booleen",
           "obligatoire": true,
           "variable": "copropriete.emprunt_collectif.existe"
+        },
+        {
+          "id": "garantie_superficie_mesureur",
+          "question": "Qui a réalisé le mesurage loi Carrez (nom du diagnostiqueur) ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "copropriete.garantie_superficie.mesureur"
+        },
+        {
+          "id": "garantie_superficie_date",
+          "question": "Quelle est la date du certificat de mesurage Carrez ?",
+          "type": "date",
+          "obligatoire": false,
+          "variable": "copropriete.garantie_superficie.date_mesurage"
+        },
+        {
+          "id": "assurance_copro_assureur",
+          "question": "Quel est l'assureur de la copropriété (responsabilité civile) ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "copropriete.assurance.assureur"
+        },
+        {
+          "id": "assurance_copro_police",
+          "question": "Quel est le numéro de police d'assurance de la copropriété ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "copropriete.assurance.numero_police"
+        }
+      ]
+    },
+
+    "8d_restrictions": {
+      "titre": "Restrictions d'usage",
+      "condition": "toujours",
+      "questions": [
+        {
+          "id": "restrictions_existent",
+          "question": "Le bien est-il soumis à des restrictions d'usage particulières (servitudes spécifiques, restrictions conventionnelles) ?",
+          "type": "booleen",
+          "obligatoire": false,
+          "variable": "_restrictions_existent"
+        },
+        {
+          "id": "restrictions_details",
+          "question": "Décrivez chaque restriction d'usage (type, description, origine)",
+          "type": "texte_libre",
+          "obligatoire": false,
+          "condition": "_restrictions_existent == true",
+          "variable": "restrictions_usage"
         }
       ]
     },

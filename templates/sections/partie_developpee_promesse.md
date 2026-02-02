@@ -231,6 +231,28 @@ Cette somme sera versée par virement bancaire dans les **{{ provision_frais.del
 Cette provision sera imputée sur le montant définitif des frais lors de la réitération de la vente. Si la vente ne se réalise pas, cette provision sera restituée au **BÉNÉFICIAIRE**, déduction faite des frais et honoraires dus au titre de la présente promesse.
 {% endif %}
 
+{% if virement_coordonnees %}
+### VIREMENT À EFFECTUER - COORDONNÉES DE L'OFFICE NOTARIAL
+
+Les sommes dues au titre des présentes devront être versées par virement bancaire aux coordonnées suivantes :
+
+{% if virement_coordonnees.banque %}
+**Banque** : {{ virement_coordonnees.banque }}
+{% endif %}
+{% if virement_coordonnees.iban %}
+**IBAN** : {{ virement_coordonnees.iban }}
+{% endif %}
+{% if virement_coordonnees.bic %}
+**BIC** : {{ virement_coordonnees.bic }}
+{% endif %}
+{% if virement_coordonnees.titulaire %}
+**Titulaire** : {{ virement_coordonnees.titulaire }}
+{% endif %}
+{% if virement_coordonnees.reference %}
+**Référence** : {{ virement_coordonnees.reference }}
+{% endif %}
+{% endif %}
+
 {% if conditions_suspensives %}
 ## CONDITIONS SUSPENSIVES
 
@@ -515,6 +537,24 @@ Le **PROMETTANT** fait les réserves suivantes :
 * {{ reserve }}
 {% endfor %}
 {% endif %}
+{% endif %}
+
+{% if restrictions_usage %}
+## RESTRICTIONS D'USAGE
+
+Le bien objet des présentes est soumis aux restrictions d'usage suivantes :
+
+{% for restriction in restrictions_usage %}
+**{{ restriction.type | default("Restriction") }}**
+
+{{ restriction.description }}
+
+{% if restriction.origine %}
+*Origine : {{ restriction.origine }}*
+{% endif %}
+{% endfor %}
+
+Le **BÉNÉFICIAIRE** déclare avoir été pleinement informé de ces restrictions et les accepter.
 {% endif %}
 
 ## POUVOIRS
