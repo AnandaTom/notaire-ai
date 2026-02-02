@@ -216,6 +216,56 @@ const SupabaseClient = {
                 })
             }
         );
+    },
+
+    /**
+     * Authentifie un notaire par email/mot de passe
+     * @param {string} email
+     * @param {string} password
+     * @returns {Promise<object|null>} Notaire user object with étude info
+     */
+    async authenticateNotaire(email, password) {
+        // Hash password client-side with SHA-256
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // Query notaire_users with email and check hash
+        const users = await this.request(
+            `/rest/v1/notaire_users?email=eq.${encodeURIComponent(email)}&password_hash=eq.${passwordHash}&is_active=eq.true&select=*,etudes(*)`,
+            { method: 'GET' }
+        );
+
+        if (!users || users.length === 0) {
+            return null;
+        }
+
+        const user = users[0];
+
+        // Update last login
+        await this.request(
+            `/rest/v1/notaire_users?id=eq.${user.id}`,
+            {
+                method: 'PATCH',
+                body: JSON.stringify({ last_login_at: new Date().toISOString() })
+            }
+        );
+
+        return user;
+    },
+
+    /**
+     * Liste les dossiers d'une étude
+     * @param {string} etudeId
+     * @returns {Promise<object[]>}
+     */
+    async listDossiers(etudeId) {
+        return await this.request(
+            `/rest/v1/dossiers?etude_id=eq.${etudeId}&order=created_at.desc&select=id,numero,type_acte,statut,parties`,
+            { method: 'GET' }
+        );
     }
 };
 

@@ -3,285 +3,639 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NotaireAI - Dashboard Notaire</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Notomai - Espace Notaire</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a365d'%3E%3Cpath d='M12 3L2 12h3v9h14v-9h3L12 3z'/%3E%3C/svg%3E">
     <style>
-        /* Dashboard specific styles */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e5e7eb;
+        /* === DESIGN SYSTEM - Thème Notarial Professionnel === */
+        :root {
+            --navy: #1a365d;
+            --navy-light: #2a4a7f;
+            --navy-dark: #0f2340;
+            --gold: #c9a84c;
+            --gold-light: #e2c973;
+            --gold-dark: #a88a3a;
+            --cream: #faf8f5;
+            --white: #ffffff;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --success: #2d8a4e;
+            --success-bg: #e6f4ea;
+            --warning: #b8860b;
+            --warning-bg: #fef3cd;
+            --error: #c62828;
+            --error-bg: #fce4ec;
+            --info: #1565c0;
+            --info-bg: #e3f2fd;
+            --font-main: 'Segoe UI', 'Roboto', -apple-system, sans-serif;
+            --font-serif: Georgia, 'Times New Roman', serif;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 8px;
+            --radius-lg: 12px;
         }
 
-        .user-info {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--gray-50);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        /* === TOP BAR === */
+        .topbar {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            color: white;
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-brand {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .topbar-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .topbar-logo svg { width: 22px; height: 22px; color: var(--navy-dark); }
+
+        .topbar-title {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .topbar-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-user-info {
+            text-align: right;
+        }
+
+        .topbar-user-name { font-weight: 600; font-size: 0.9rem; }
+        .topbar-user-etude { font-size: 0.8rem; opacity: 0.7; }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            background: var(--gold);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--navy-dark);
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            font-weight: bold;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            border: none;
-            background: #f3f4f6;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: var(--radius);
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
         }
 
-        .tab:hover {
-            background: #e5e7eb;
+        .btn-logout:hover { background: rgba(255,255,255,0.2); }
+
+        /* === MAIN LAYOUT === */
+        .main-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px;
         }
 
-        .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        /* === LOGIN PAGE === */
+        .login-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .card {
+        .login-card {
             background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
         }
 
-        .card h3 {
-            margin: 0 0 16px 0;
-            color: #1f2937;
+        .login-header {
+            background: var(--cream);
+            padding: 40px 32px 32px;
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+        .login-logo {
+            width: 64px;
+            height: 64px;
+            background: var(--navy);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: var(--shadow-md);
         }
 
-        .stat-card {
-            background: #f9fafb;
-            padding: 16px;
-            border-radius: 8px;
+        .login-logo svg { width: 36px; height: 36px; color: var(--gold); }
+
+        .login-header h1 {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .login-header p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .login-body {
+            padding: 32px;
+        }
+
+        .login-body .form-group { margin-bottom: 20px; }
+
+        .login-body label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .login-body input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .login-body input:focus {
+            outline: none;
+            border-color: var(--navy-light);
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        .login-error {
+            display: none;
+            padding: 10px 14px;
+            background: var(--error-bg);
+            color: var(--error);
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .login-footer {
+            padding: 16px 32px 24px;
             text-align: center;
         }
 
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #667eea;
+        .login-footer p { font-size: 0.8rem; color: var(--gray-500); }
+
+        /* === STATS === */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
         }
 
-        .stat-label {
-            color: #6b7280;
-            font-size: 0.85rem;
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--navy);
+            transition: all 0.2s;
         }
 
-        .submissions-list {
+        .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .stat-card.pending { border-left-color: var(--warning); }
+        .stat-card.submitted { border-left-color: var(--info); }
+        .stat-card.processed { border-left-color: var(--success); }
+        .stat-card.total { border-left-color: var(--gold); }
+
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--navy); }
+        .stat-label { font-size: 0.85rem; color: var(--gray-600); margin-top: 2px; }
+
+        /* === TABS === */
+        .tabs-bar {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            gap: 4px;
+            background: white;
+            padding: 4px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
         }
 
-        .submission-item {
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { background: var(--gray-100); color: var(--gray-800); }
+
+        .tab-btn.active {
+            background: var(--navy);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* === CARDS === */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px;
-            background: #f9fafb;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-bottom: 1px solid var(--gray-200);
         }
 
-        .submission-item.pending {
-            border-left-color: #f59e0b;
+        .card-header h3 {
+            font-size: 1.05rem;
+            color: var(--gray-800);
+            font-weight: 600;
         }
 
-        .submission-item.submitted {
-            border-left-color: #10b981;
-        }
+        .card-body { padding: 24px; }
 
-        .submission-item.processed {
-            border-left-color: #6b7280;
-        }
-
-        .submission-info h4 {
-            margin: 0 0 4px 0;
-            color: #1f2937;
-        }
-
-        .submission-info p {
-            margin: 0;
-            color: #6b7280;
-            font-size: 0.85rem;
-        }
-
-        .submission-actions {
-            display: flex;
+        /* === BUTTONS === */
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
             gap: 8px;
+            border: none;
+            font-family: inherit;
         }
 
-        .status-badge {
+        .btn-primary {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--navy-dark);
+        }
+
+        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,168,76,0.3); }
+
+        .btn-outline {
+            background: white;
+            color: var(--navy);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-outline:hover { border-color: var(--navy); background: var(--gray-50); }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #34a853 100%);
+            color: white;
+        }
+
+        .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+
+        /* === SUBMISSIONS LIST === */
+        .submissions-list { display: flex; flex-direction: column; }
+
+        .submission-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--gray-100);
+            transition: background 0.15s;
+        }
+
+        .submission-row:last-child { border-bottom: none; }
+        .submission-row:hover { background: var(--gray-50); }
+
+        .submission-left { display: flex; align-items: center; gap: 16px; }
+
+        .submission-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .submission-icon.vendeur { background: #fef3cd; color: var(--warning); }
+        .submission-icon.acquereur { background: var(--info-bg); color: var(--info); }
+        .submission-icon.etat_civil { background: #f3e5f5; color: #7b1fa2; }
+
+        .submission-icon svg { width: 20px; height: 20px; }
+
+        .submission-info h4 { font-size: 0.95rem; color: var(--gray-800); margin-bottom: 2px; }
+        .submission-info p { font-size: 0.8rem; color: var(--gray-500); }
+
+        .submission-right { display: flex; align-items: center; gap: 10px; }
+
+        .badge {
             padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .status-badge.pending {
-            background: #fef3c7;
-            color: #92400e;
+        .badge-pending { background: var(--warning-bg); color: var(--warning); }
+        .badge-submitted { background: var(--info-bg); color: var(--info); }
+        .badge-processed { background: var(--success-bg); color: var(--success); }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--gray-500);
         }
 
-        .status-badge.submitted {
-            background: #d1fae5;
-            color: #065f46;
-        }
+        .empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
 
-        .status-badge.processed {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        /* Modal */
-        .modal {
+        /* === MODAL === */
+        .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
 
-        .modal.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
-        .modal-content {
+        .modal {
             background: white;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 500px;
-            width: 90%;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            max-width: 560px;
+            width: 92%;
             max-height: 90vh;
             overflow-y: auto;
         }
 
         .modal-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--gray-200);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
         }
 
-        .modal-header h2 {
-            margin: 0;
-        }
+        .modal-header h2 { font-size: 1.15rem; color: var(--navy); }
 
-        .close-btn {
+        .modal-close {
             background: none;
             border: none;
             font-size: 1.5rem;
+            color: var(--gray-500);
             cursor: pointer;
-            color: #6b7280;
+            padding: 4px;
         }
 
-        .link-display {
-            background: #f3f4f6;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 16px 0;
-            word-break: break-all;
-            font-family: monospace;
+        .modal-close:hover { color: var(--gray-800); }
+        .modal-body { padding: 24px 28px; }
+        .modal-footer { padding: 16px 28px 24px; }
+
+        /* === FORMS IN MODALS === */
+        .form-group { margin-bottom: 18px; }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 6px;
             font-size: 0.85rem;
         }
 
-        .copy-btn {
+        .form-group small { display: block; margin-top: 4px; color: var(--gray-500); font-size: 0.8rem; }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            margin-top: 12px;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
         }
 
-        .success-message {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 12px;
-            display: none;
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--navy-light);
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
         }
 
-        .hidden { display: none !important; }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-        .btn-generate {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+        /* === SEPARATOR === */
+        .section-separator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-separator::before,
+        .section-separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        /* === CHECKBOX GROUP === */
+        .checkbox-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
             transition: all 0.2s;
         }
 
-        .btn-generate:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        .checkbox-option:hover { border-color: var(--navy-light); background: var(--gray-50); }
+
+        .checkbox-option.selected {
+            border-color: var(--navy);
+            background: rgba(26, 54, 93, 0.04);
         }
 
-        .btn-generate:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .checkbox-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--navy);
         }
 
+        .checkbox-option-text h4 { font-size: 0.9rem; color: var(--gray-800); margin-bottom: 2px; }
+        .checkbox-option-text p { font-size: 0.8rem; color: var(--gray-500); }
+
+        /* === LINK DISPLAY === */
+        .link-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 14px;
+            word-break: break-all;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            margin: 16px 0;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .alert-success { background: var(--success-bg); color: var(--success); }
+        .alert-warning { background: var(--warning-bg); color: var(--warning); }
+        .alert-error { background: var(--error-bg); color: var(--error); }
+        .alert-info { background: var(--info-bg); color: var(--info); }
+
+        .hidden { display: none !important; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .topbar { padding: 0 16px; }
+            .topbar-user-info { display: none; }
+            .main-content { padding: 16px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .form-row-2 { grid-template-columns: 1fr; }
+            .submission-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .submission-right { width: 100%; justify-content: flex-end; }
+        }
+
+        /* === ANIMATION === */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner-sm {
+            width: 16px; height: 16px;
+            border: 2px solid var(--gray-300);
+            border-top-color: var(--navy);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        /* Generation modal */
         .generation-progress {
             display: none;
             margin-top: 16px;
             padding: 16px;
-            background: #f0fdf4;
-            border-radius: 8px;
+            background: var(--success-bg);
+            border-radius: var(--radius);
             border: 1px solid #bbf7d0;
-        }
-
-        .generation-progress .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #10b981;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
 
         .download-link {
@@ -290,145 +644,197 @@
             gap: 8px;
             margin-top: 12px;
             padding: 10px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
             color: white;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: var(--radius);
             font-weight: 500;
             transition: all 0.2s;
         }
 
-        .download-link:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Login form */
-        .login-container {
-            max-width: 400px;
-            margin: 60px auto;
-        }
-
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 24px;
-        }
+        .download-link:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>NotaireAI</h1>
-            <p class="subtitle">Espace Notaire</p>
-        </header>
 
-        <!-- Login State -->
-        <div id="loginState" class="login-container">
-            <div class="card">
-                <h2>Connexion</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="apiKey">Clé API Notaire</label>
-                        <input type="password" id="apiKey" name="apiKey" required
-                               placeholder="nai_xxxxxxxxxxxxxxxx">
-                        <small style="color: #6b7280;">Fournie par votre administrateur</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        Se connecter
-                    </button>
-                </form>
+<!-- ==================== LOGIN PAGE ==================== -->
+<div id="loginPage" class="login-page">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+                    <path d="M9 10h.01M15 10h.01"/>
+                </svg>
+            </div>
+            <h1>Notomai</h1>
+            <p>Espace Notaire</p>
+        </div>
+        <div class="login-body">
+            <div class="login-error" id="loginError"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Adresse email</label>
+                    <input type="email" id="loginEmail" required placeholder="notaire@etude.fr" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" required placeholder="Votre mot de passe" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login" id="loginBtn">Se connecter</button>
+            </form>
+        </div>
+        <div class="login-footer">
+            <p>Connexion sécurisée - Notomai &copy; 2026</p>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== DASHBOARD ==================== -->
+<div id="dashboardPage" class="hidden">
+    <!-- Top bar -->
+    <div class="topbar">
+        <div class="topbar-brand">
+            <div class="topbar-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+                </svg>
+            </div>
+            <div>
+                <div class="topbar-title">Notomai</div>
+                <div class="topbar-subtitle">Espace Notaire</div>
+            </div>
+        </div>
+        <div class="topbar-user">
+            <div class="topbar-user-info">
+                <div class="topbar-user-name" id="userName">Notaire</div>
+                <div class="topbar-user-etude" id="etudeName">Mon étude</div>
+            </div>
+            <div class="avatar" id="userInitials">N</div>
+            <button class="btn-logout" onclick="logout()">Déconnexion</button>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card total">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">Total formulaires</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-label">En attente</div>
+            </div>
+            <div class="stat-card submitted">
+                <div class="stat-value" id="statSubmitted">0</div>
+                <div class="stat-label">Soumis</div>
+            </div>
+            <div class="stat-card processed">
+                <div class="stat-value" id="statProcessed">0</div>
+                <div class="stat-label">Traités</div>
             </div>
         </div>
 
-        <!-- Dashboard State -->
-        <div id="dashboardState" class="hidden">
-            <div class="dashboard-header">
-                <div class="user-info">
-                    <div class="user-avatar" id="userInitials">JD</div>
-                    <div>
-                        <strong id="userName">Jean Dupont</strong>
-                        <p style="margin: 0; font-size: 0.85rem; color: #6b7280;" id="etudeName">Étude de Paris</p>
-                    </div>
+        <!-- Tabs -->
+        <div class="tabs-bar">
+            <button class="tab-btn active" onclick="showTab('formulaires')">Formulaires clients</button>
+            <button class="tab-btn" onclick="showTab('clients')">Fiches clients</button>
+        </div>
+
+        <!-- Tab: Formulaires -->
+        <div id="tab-formulaires">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Mes formulaires</h3>
+                    <button class="btn btn-gold" onclick="openNewFormModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Nouveau formulaire
+                    </button>
                 </div>
-                <button class="btn" onclick="logout()">Déconnexion</button>
-            </div>
-
-            <div class="tabs">
-                <button class="tab active" onclick="showTab('formulaires')">Formulaires clients</button>
-                <button class="tab" onclick="showTab('clients')">Fiches clients</button>
-            </div>
-
-            <!-- Tab: Formulaires -->
-            <div id="tab-formulaires">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="statPending">0</div>
-                        <div class="stat-label">En attente</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="statSubmitted">0</div>
-                        <div class="stat-label">Soumis</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="statProcessed">0</div>
-                        <div class="stat-label">Traités</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h3 style="margin: 0;">Mes formulaires</h3>
-                        <button class="btn btn-primary" onclick="openNewFormModal()">
-                            + Nouveau formulaire
-                        </button>
-                    </div>
-
-                    <div class="submissions-list" id="submissionsList">
-                        <p style="color: #6b7280; text-align: center;">Chargement...</p>
+                <div class="submissions-list" id="submissionsList">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12h6M12 9v6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p>Chargement...</p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Tab: Clients -->
-            <div id="tab-clients" class="hidden">
-                <div class="card">
+        <!-- Tab: Clients -->
+        <div id="tab-clients" class="hidden">
+            <div class="card">
+                <div class="card-header">
                     <h3>Fiches clients</h3>
-                    <p style="color: #6b7280;">Les fiches clients enrichies apparaîtront ici.</p>
+                </div>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <p>Les fiches clients enrichies apparaîtront ici.</p>
+                    </div>
                     <div id="clientsList"></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal: Nouveau formulaire -->
-    <div class="modal" id="newFormModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Créer un formulaire client</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-
+<!-- ==================== MODAL: Nouveau formulaire ==================== -->
+<div class="modal-overlay" id="newFormModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Envoyer un formulaire client</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
             <form id="newFormForm">
-                <div class="form-group">
-                    <label for="clientNom">Nom du client *</label>
-                    <input type="text" id="clientNom" name="clientNom" required placeholder="DUPONT">
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="clientNom">Nom du client *</label>
+                        <input type="text" id="clientNom" name="clientNom" required placeholder="DUPONT">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientPrenom">Prénom du client *</label>
+                        <input type="text" id="clientPrenom" name="clientPrenom" required placeholder="Jean">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="clientPrenom">Prénom du client *</label>
-                    <input type="text" id="clientPrenom" name="clientPrenom" required placeholder="Jean">
+                <div class="section-separator">Formulaires à envoyer</div>
+
+                <div id="formTypeSelection">
+                    <div class="checkbox-option" onclick="toggleCheckbox(this, 'sendQuestionnaire')">
+                        <input type="checkbox" id="sendQuestionnaire" name="sendQuestionnaire" checked>
+                        <div class="checkbox-option-text">
+                            <h4>Questionnaire immobilier</h4>
+                            <p>Informations détaillées pour un acte (vente, achat)</p>
+                        </div>
+                    </div>
+
+                    <div id="questionnaireTypeGroup">
+                        <div class="form-group" style="margin-left: 28px;">
+                            <label for="typePartie">Type de partie *</label>
+                            <select id="typePartie" name="typePartie">
+                                <option value="">Sélectionner...</option>
+                                <option value="acquereur">Acquéreur</option>
+                                <option value="vendeur_appartement">Vendeur (appartement)</option>
+                                <option value="vendeur_maison">Vendeur (maison)</option>
+                                <option value="vendeur">Vendeur (générique)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-option" onclick="toggleCheckbox(this, 'sendEtatCivil')">
+                        <input type="checkbox" id="sendEtatCivil" name="sendEtatCivil">
+                        <div class="checkbox-option-text">
+                            <h4>Fiche d'état civil</h4>
+                            <p>Identité, coordonnées et copie pièce d'identité</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="typePartie">Type de partie *</label>
-                    <select id="typePartie" name="typePartie" required>
-                        <option value="">Sélectionner...</option>
-                        <option value="acquereur">Acquéreur</option>
-                        <option value="vendeur">Vendeur</option>
-                        <option value="vendeur_appartement">Vendeur (appartement)</option>
-                        <option value="vendeur_maison">Vendeur (maison)</option>
-                    </select>
-                </div>
+                <div class="section-separator">Options</div>
 
                 <div class="form-group">
                     <label for="dossierId">Dossier (optionnel)</label>
@@ -439,666 +845,795 @@
 
                 <div class="form-group">
                     <label for="formLabel">Libellé / Référence</label>
-                    <input type="text" id="formLabel" name="formLabel"
-                           placeholder="Ex: Achat appartement rue Victor Hugo">
+                    <input type="text" id="formLabel" name="formLabel" placeholder="Ex: Achat appartement rue Victor Hugo">
                 </div>
 
                 <div class="form-group">
-                    <label for="notaireEmail">Email du notaire (pour recevoir les réponses) *</label>
-                    <input type="email" id="notaireEmail" name="notaireEmail" required
-                           placeholder="notaire@etude.fr">
-                    <small style="color: #6b7280;">Vous recevrez un email avec le récapitulatif DOCX quand le client aura rempli le formulaire</small>
+                    <label for="notaireEmail">Votre email (pour recevoir les réponses) *</label>
+                    <input type="email" id="notaireEmail" name="notaireEmail" required placeholder="notaire@etude.fr">
+                    <small>Vous recevrez un email avec le récapitulatif quand le client répondra</small>
                 </div>
 
                 <div class="form-group">
                     <label for="clientEmail">Email du client (optionnel)</label>
-                    <input type="email" id="clientEmail" name="clientEmail"
-                           placeholder="client@email.com">
-                    <small style="color: #6b7280;">Si renseigné, le lien sera envoyé automatiquement par email au client</small>
+                    <input type="email" id="clientEmail" name="clientEmail" placeholder="client@email.com">
+                    <small>Si renseigné, le(s) lien(s) seront envoyés automatiquement par email</small>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    Générer le lien sécurisé
+                    Générer les liens sécurisés
                 </button>
             </form>
         </div>
     </div>
+</div>
 
-    <!-- Modal: Lien généré -->
-    <div class="modal" id="linkModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Lien créé avec succès</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
+<!-- ==================== MODAL: Lien généré ==================== -->
+<div class="modal-overlay" id="linkModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Liens créés avec succès</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="generatedLinksContainer"></div>
+
+            <div id="emailSentConfirmation" class="alert alert-success hidden">
+                <strong>Email envoyé !</strong> Le(s) lien(s) ont été envoyés au client par email.
             </div>
 
-            <p>Envoyez ce lien à votre client. Il pourra remplir le formulaire de manière sécurisée.</p>
-
-            <div class="link-display" id="generatedLink"></div>
-
-            <button class="btn btn-primary copy-btn" onclick="copyLink()">
-                Copier le lien
-            </button>
-
-            <div class="success-message" id="copySuccess">
-                Lien copié dans le presse-papier !
-            </div>
-
-            <div id="emailSentConfirmation" class="hidden" style="margin-top: 16px; padding: 12px; background: #d1fae5; border-radius: 8px; color: #065f46;">
-                <strong>Email envoyé !</strong> Le lien a été envoyé au client par email.
-            </div>
-
-            <div id="emailSendingError" class="hidden" style="margin-top: 16px; padding: 12px; background: #fee2e2; border-radius: 8px; color: #991b1b;">
+            <div id="emailSendingError" class="alert alert-error hidden">
                 <strong>Erreur :</strong> <span id="emailErrorMessage"></span>
             </div>
 
-            <div style="margin-top: 20px; padding: 16px; background: #fef3c7; border-radius: 8px;">
-                <strong>Important :</strong>
-                <ul style="margin: 8px 0 0 0; padding-left: 20px;">
-                    <li>Ce lien est valide <strong>7 jours</strong></li>
-                    <li>Il ne peut être utilisé qu'une seule fois</li>
-                    <li>Les données sont chiffrées de bout en bout</li>
-                    <li>Seul vous pouvez les déchiffrer</li>
-                </ul>
+            <div class="alert alert-warning" style="margin-top: 20px;">
+                <div>
+                    <strong>Important :</strong>
+                    <ul style="margin: 8px 0 0; padding-left: 18px; font-size: 0.85rem;">
+                        <li>Chaque lien est valide <strong>7 jours</strong></li>
+                        <li>Utilisation unique</li>
+                        <li>Données chiffrées de bout en bout</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal: Voir soumission -->
-    <div class="modal" id="viewSubmissionModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Détails de la soumission</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-
-            <div id="submissionDetails"></div>
-
-            <div id="importSection" class="hidden" style="margin-top: 20px;">
-                <button class="btn btn-primary" style="width: 100%;" onclick="importToClientFile()">
-                    Importer vers fiche client
-                </button>
-            </div>
+<!-- ==================== MODAL: Voir soumission ==================== -->
+<div class="modal-overlay" id="viewSubmissionModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Détails de la soumission</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="submissionDetails"></div>
+        <div class="modal-footer" id="importSection" class="hidden">
+            <button class="btn btn-primary" style="width: 100%;" onclick="importToClientFile()">
+                Importer vers fiche client
+            </button>
         </div>
     </div>
+</div>
 
-    <!-- Modal: Générer un acte -->
-    <div class="modal" id="generateModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Générer un acte</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
+<!-- ==================== MODAL: Générer un acte ==================== -->
+<div class="modal-overlay" id="generateModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Générer un acte</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="generateForm">
+            <p id="generateClientInfo"></p>
+            <div class="form-group">
+                <label for="generateType">Type d'acte *</label>
+                <select id="generateType" required>
+                    <option value="promesse_vente">Promesse de vente</option>
+                    <option value="vente">Acte de vente définitif</option>
+                </select>
             </div>
-
-            <div id="generateForm">
-                <p id="generateClientInfo"></p>
-
-                <div class="form-group">
-                    <label for="generateType">Type d'acte *</label>
-                    <select id="generateType" required>
-                        <option value="promesse_vente">Promesse de vente</option>
-                        <option value="vente">Acte de vente définitif</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="generateFormat">Format de sortie</label>
-                    <select id="generateFormat">
-                        <option value="docx">Word (.docx)</option>
-                        <option value="pdf">PDF (.pdf)</option>
-                    </select>
-                </div>
-
-                <button class="btn btn-primary" id="generateBtn" style="width: 100%;" onclick="executeGeneration()">
-                    Générer l'acte
-                </button>
-
-                <div class="generation-progress" id="generateProgress">
-                    <span class="spinner"></span>
-                    <span id="generateProgressText">Génération en cours...</span>
-                </div>
-
-                <div id="generateResult" class="hidden" style="margin-top: 16px;">
-                    <div style="padding: 16px; background: #d1fae5; border-radius: 8px; color: #065f46;">
+            <div class="form-group">
+                <label for="generateFormat">Format de sortie</label>
+                <select id="generateFormat">
+                    <option value="docx">Word (.docx)</option>
+                    <option value="pdf">PDF (.pdf)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="generateBtn" style="width: 100%;" onclick="executeGeneration()">
+                Générer l'acte
+            </button>
+            <div class="generation-progress" id="generateProgress">
+                <span class="spinner-sm"></span>
+                <span id="generateProgressText">Génération en cours...</span>
+            </div>
+            <div id="generateResult" class="hidden" style="margin-top: 16px;">
+                <div class="alert alert-success">
+                    <div>
                         <strong>Acte généré avec succès !</strong>
-                        <p id="generateResultInfo" style="margin: 8px 0 0;"></p>
+                        <p id="generateResultInfo" style="margin: 4px 0 0;"></p>
                     </div>
-                    <a id="generateDownloadLink" class="download-link" href="#" download>
-                        Télécharger le document
-                    </a>
                 </div>
+                <a id="generateDownloadLink" class="download-link" href="#" download>
+                    Télécharger le document
+                </a>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="crypto.js"></script>
-    <script src="supabase-client.js"></script>
-    <script>
-        // État global
-        let currentUser = null;
-        let currentEtude = null;
-        let submissions = [];
-        let generatedLinkData = null;
+<script src="crypto.js"></script>
+<script src="supabase-client.js"></script>
+<script>
+    // =====================================================
+    // ÉTAT GLOBAL
+    // =====================================================
+    let currentUser = null;
+    let currentEtude = null;
+    let submissions = [];
+    let generatedLinks = [];
 
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            // Vérifier si déjà connecté
-            const savedApiKey = localStorage.getItem('notaire_api_key');
-            if (savedApiKey) {
-                authenticate(savedApiKey);
-            }
-        });
-
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const apiKey = document.getElementById('apiKey').value;
-            await authenticate(apiKey);
-        });
-
-        async function authenticate(apiKey) {
+    // =====================================================
+    // INITIALISATION
+    // =====================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedSession = localStorage.getItem('notaire_session');
+        if (savedSession) {
             try {
-                // Vérifier la clé API via Supabase
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/agent_api_keys?key_prefix=eq.${apiKey.substring(0, 12)}&select=*,etudes(*)`, {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (!data || data.length === 0) {
-                    alert('Clé API invalide');
-                    return;
-                }
-
-                // Pour la démo, on accepte la clé
-                localStorage.setItem('notaire_api_key', apiKey);
-
-                // Récupérer infos utilisateur (simplifié)
-                currentUser = {
-                    id: data[0].created_by,
-                    apiKey: apiKey,
-                    etudeId: data[0].etude_id
-                };
-
-                currentEtude = data[0].etudes || { nom: 'Mon étude' };
-
+                const session = JSON.parse(savedSession);
+                currentUser = session.user;
+                currentEtude = session.etude;
                 showDashboard();
                 loadSubmissions();
-
-            } catch (error) {
-                console.error('Erreur authentification:', error);
-                alert('Erreur de connexion. Vérifiez votre clé API.');
+                loadDossiers();
+            } catch (e) {
+                localStorage.removeItem('notaire_session');
             }
         }
+    });
 
-        function logout() {
-            localStorage.removeItem('notaire_api_key');
-            currentUser = null;
-            currentEtude = null;
-            document.getElementById('dashboardState').classList.add('hidden');
-            document.getElementById('loginState').classList.remove('hidden');
-        }
+    // =====================================================
+    // AUTHENTIFICATION EMAIL / MOT DE PASSE
+    // =====================================================
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const btn = document.getElementById('loginBtn');
+        const errorDiv = document.getElementById('loginError');
 
-        function showDashboard() {
-            document.getElementById('loginState').classList.add('hidden');
-            document.getElementById('dashboardState').classList.remove('hidden');
+        btn.disabled = true;
+        btn.textContent = 'Connexion...';
+        errorDiv.style.display = 'none';
 
-            // Mettre à jour les infos utilisateur
-            document.getElementById('etudeName').textContent = currentEtude.nom || 'Mon étude';
-            document.getElementById('userInitials').textContent = 'NT';
-            document.getElementById('userName').textContent = 'Notaire';
-        }
+        try {
+            const user = await SupabaseClient.authenticateNotaire(email, password);
 
-        // Charger les soumissions
-        async function loadSubmissions() {
-            try {
-                const data = await SupabaseClient.listSubmissions(currentUser.etudeId);
-                submissions = data || [];
-                renderSubmissions();
-                updateStats();
-            } catch (error) {
-                console.error('Erreur chargement soumissions:', error);
-            }
-        }
-
-        function renderSubmissions() {
-            const container = document.getElementById('submissionsList');
-
-            if (submissions.length === 0) {
-                container.innerHTML = '<p style="color: #6b7280; text-align: center;">Aucun formulaire envoyé</p>';
+            if (!user) {
+                errorDiv.textContent = 'Email ou mot de passe incorrect.';
+                errorDiv.style.display = 'block';
                 return;
             }
 
-            container.innerHTML = submissions.map(sub => `
-                <div class="submission-item ${sub.status}">
+            currentUser = {
+                id: user.id,
+                email: user.email,
+                nom: user.nom,
+                prenom: user.prenom,
+                role: user.role,
+                etudeId: user.etude_id
+            };
+
+            currentEtude = user.etudes || { nom: 'Mon étude' };
+
+            // Save session
+            localStorage.setItem('notaire_session', JSON.stringify({
+                user: currentUser,
+                etude: currentEtude
+            }));
+
+            showDashboard();
+            loadSubmissions();
+            loadDossiers();
+
+        } catch (error) {
+            console.error('Erreur authentification:', error);
+            errorDiv.textContent = 'Erreur de connexion. Réessayez.';
+            errorDiv.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Se connecter';
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('notaire_session');
+        currentUser = null;
+        currentEtude = null;
+        document.getElementById('dashboardPage').classList.add('hidden');
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+    }
+
+    function showDashboard() {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('dashboardPage').classList.remove('hidden');
+
+        const displayName = currentUser.prenom
+            ? `${currentUser.prenom} ${currentUser.nom}`
+            : 'Notaire';
+        const initials = currentUser.prenom
+            ? `${currentUser.prenom[0]}${currentUser.nom[0]}`.toUpperCase()
+            : 'N';
+
+        document.getElementById('userName').textContent = displayName;
+        document.getElementById('etudeName').textContent = currentEtude.nom || 'Mon étude';
+        document.getElementById('userInitials').textContent = initials;
+
+        // Pre-fill notaire email
+        const emailField = document.getElementById('notaireEmail');
+        if (emailField) {
+            emailField.value = currentUser.email || currentEtude.email_contact || '';
+        }
+    }
+
+    // =====================================================
+    // CHARGEMENT DONNÉES
+    // =====================================================
+    async function loadSubmissions() {
+        try {
+            const data = await SupabaseClient.listSubmissions(currentUser.etudeId);
+            submissions = data || [];
+            renderSubmissions();
+            updateStats();
+        } catch (error) {
+            console.error('Erreur chargement soumissions:', error);
+        }
+    }
+
+    async function loadDossiers() {
+        try {
+            const dossiers = await SupabaseClient.listDossiers(currentUser.etudeId);
+            const select = document.getElementById('dossierId');
+            if (select && dossiers) {
+                const options = dossiers.map(d =>
+                    `<option value="${d.id}">${d.numero} - ${d.type_acte}</option>`
+                ).join('');
+                select.innerHTML = '<option value="">Aucun dossier lié</option>' + options;
+            }
+        } catch (e) {
+            console.warn('Could not load dossiers:', e);
+        }
+    }
+
+    function renderSubmissions() {
+        const container = document.getElementById('submissionsList');
+
+        if (submissions.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 12h6M12 9v6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>Aucun formulaire envoyé. Cliquez sur "Nouveau formulaire" pour commencer.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = submissions.map(sub => {
+            const iconClass = getIconClass(sub.type_partie);
+            const iconSvg = getIconSvg(sub.type_partie);
+            const typeLabel = getTypeLabel(sub.type_partie, sub.type_questionnaire);
+
+            return `
+            <div class="submission-row">
+                <div class="submission-left">
+                    <div class="submission-icon ${iconClass}">
+                        ${iconSvg}
+                    </div>
                     <div class="submission-info">
                         <h4>${sub.client_nom || 'Client'} ${sub.client_prenom || ''}</h4>
-                        <p>${sub.label || sub.type_partie} - ${formatDate(sub.created_at)}</p>
-                    </div>
-                    <div class="submission-actions">
-                        <span class="status-badge ${sub.status}">${getStatusLabel(sub.status)}</span>
-                        ${sub.status === 'submitted' ? `
-                            <button class="btn" onclick="viewSubmission('${sub.id}')">Voir</button>
-                            <button class="btn-generate" onclick="openGenerateModal('${sub.id}')">Générer l'acte</button>
-                        ` : ''}
+                        <p>${typeLabel} ${sub.label ? '- ' + sub.label : ''} - ${formatDate(sub.created_at)}</p>
                     </div>
                 </div>
-            `).join('');
+                <div class="submission-right">
+                    <span class="badge badge-${sub.status}">${getStatusLabel(sub.status)}</span>
+                    ${sub.status === 'submitted' ? `
+                        <button class="btn btn-outline btn-sm" onclick="viewSubmission('${sub.id}')">Voir</button>
+                        <button class="btn btn-success btn-sm" onclick="openGenerateModal('${sub.id}')">Générer</button>
+                    ` : ''}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function getIconClass(typePartie) {
+        if (typePartie === 'etat_civil') return 'etat_civil';
+        if (typePartie === 'acquereur' || typePartie === 'acheteur') return 'acquereur';
+        return 'vendeur';
+    }
+
+    function getIconSvg(typePartie) {
+        if (typePartie === 'etat_civil') {
+            return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M14 10h4M14 14h4"/></svg>';
         }
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    }
 
-        function updateStats() {
-            document.getElementById('statPending').textContent = submissions.filter(s => s.status === 'pending').length;
-            document.getElementById('statSubmitted').textContent = submissions.filter(s => s.status === 'submitted').length;
-            document.getElementById('statProcessed').textContent = submissions.filter(s => s.status === 'processed').length;
-        }
-
-        function getStatusLabel(status) {
-            const labels = {
-                'pending': 'En attente',
-                'submitted': 'Soumis',
-                'processed': 'Traité',
-                'expired': 'Expiré'
-            };
-            return labels[status] || status;
-        }
-
-        function formatDate(dateStr) {
-            return new Date(dateStr).toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        // Tabs
-        function showTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.tab[onclick="showTab('${tabName}')"]`).classList.add('active');
-
-            document.getElementById('tab-formulaires').classList.toggle('hidden', tabName !== 'formulaires');
-            document.getElementById('tab-clients').classList.toggle('hidden', tabName !== 'clients');
-        }
-
-        // Modals
-        function openNewFormModal() {
-            document.getElementById('newFormModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
-
-        // Pré-remplir l'email du notaire quand le modal s'ouvre
-        const origOpenNewFormModal = openNewFormModal;
-        openNewFormModal = function() {
-            origOpenNewFormModal();
-            // Pré-remplir avec l'email de l'étude si disponible
-            const emailField = document.getElementById('notaireEmail');
-            if (emailField && currentEtude && currentEtude.email_contact) {
-                emailField.value = currentEtude.email_contact;
-            }
+    function getTypeLabel(typePartie, typeQuestionnaire) {
+        const labels = {
+            'vendeur_appartement': 'Vendeur (appart.)',
+            'vendeur_maison': 'Vendeur (maison)',
+            'vendeur': 'Vendeur',
+            'acquereur': 'Acquéreur',
+            'acheteur': 'Acquéreur',
+            'etat_civil': 'État civil'
         };
+        return labels[typePartie] || typePartie || '';
+    }
 
-        // Mapping type_partie → type_questionnaire
-        function getTypeQuestionnaire(typePartie) {
-            const mapping = {
-                'vendeur_appartement': 'vente_appartement',
-                'vendeur_maison': 'vente_maison',
-                'acquereur': 'achat_bien',
-                'vendeur': 'vente_appartement',
-                'acheteur': 'achat_bien'
-            };
-            return mapping[typePartie] || 'vente_appartement';
+    function updateStats() {
+        document.getElementById('statTotal').textContent = submissions.length;
+        document.getElementById('statPending').textContent = submissions.filter(s => s.status === 'pending').length;
+        document.getElementById('statSubmitted').textContent = submissions.filter(s => s.status === 'submitted').length;
+        document.getElementById('statProcessed').textContent = submissions.filter(s => s.status === 'processed').length;
+    }
+
+    function getStatusLabel(status) {
+        return { 'pending': 'En attente', 'submitted': 'Soumis', 'processed': 'Traité', 'expired': 'Expiré' }[status] || status;
+    }
+
+    function formatDate(dateStr) {
+        return new Date(dateStr).toLocaleDateString('fr-FR', {
+            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+    }
+
+    // =====================================================
+    // TABS
+    // =====================================================
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('tab-formulaires').classList.toggle('hidden', tabName !== 'formulaires');
+        document.getElementById('tab-clients').classList.toggle('hidden', tabName !== 'clients');
+    }
+
+    // =====================================================
+    // MODALS
+    // =====================================================
+    function openNewFormModal() {
+        document.getElementById('newFormModal').classList.add('active');
+        // Pre-fill notaire email
+        const emailField = document.getElementById('notaireEmail');
+        if (emailField && currentUser) {
+            emailField.value = currentUser.email || currentEtude.email_contact || '';
+        }
+        // Reset checkboxes
+        document.getElementById('sendQuestionnaire').checked = true;
+        document.getElementById('sendEtatCivil').checked = false;
+        updateCheckboxStyles();
+        updateQuestionnaireTypeVisibility();
+    }
+
+    function closeModal() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    }
+
+    // Close on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    });
+
+    // =====================================================
+    // CHECKBOX TOGGLE FOR FORM TYPE
+    // =====================================================
+    function toggleCheckbox(container, checkboxId) {
+        const cb = document.getElementById(checkboxId);
+        cb.checked = !cb.checked;
+        updateCheckboxStyles();
+        updateQuestionnaireTypeVisibility();
+    }
+
+    function updateCheckboxStyles() {
+        document.querySelectorAll('.checkbox-option').forEach(opt => {
+            const cb = opt.querySelector('input[type="checkbox"]');
+            opt.classList.toggle('selected', cb && cb.checked);
+        });
+    }
+
+    function updateQuestionnaireTypeVisibility() {
+        const sendQ = document.getElementById('sendQuestionnaire').checked;
+        document.getElementById('questionnaireTypeGroup').style.display = sendQ ? 'block' : 'none';
+    }
+
+    // =====================================================
+    // MAPPING HELPERS
+    // =====================================================
+    function getTypeQuestionnaire(typePartie) {
+        const mapping = {
+            'vendeur_appartement': 'vente_appartement',
+            'vendeur_maison': 'vente_maison',
+            'acquereur': 'achat_bien',
+            'vendeur': 'vente_appartement',
+            'acheteur': 'achat_bien'
+        };
+        return mapping[typePartie] || 'vente_appartement';
+    }
+
+    function getFormUrl(typePartie) {
+        const baseUrl = window.location.origin + window.location.pathname.replace('dashboard-notaire.html', '');
+        const urls = {
+            'vendeur_appartement': `${baseUrl}questionnaires/vente-appartement.html`,
+            'vendeur_maison': `${baseUrl}questionnaires/vente-maison.html`,
+            'acquereur': `${baseUrl}questionnaires/achat-bien.html`,
+            'acheteur': `${baseUrl}questionnaires/achat-bien.html`,
+            'etat_civil': `${baseUrl}questionnaires/etat-civil.html`
+        };
+        return urls[typePartie] || `${baseUrl}fill.html`;
+    }
+
+    // =====================================================
+    // CRÉATION FORMULAIRE
+    // =====================================================
+    document.getElementById('newFormForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const clientNom = formData.get('clientNom');
+        const clientPrenom = formData.get('clientPrenom');
+        const notaireEmail = formData.get('notaireEmail');
+        const clientEmail = formData.get('clientEmail');
+        const dossierId = formData.get('dossierId') || null;
+        const label = formData.get('formLabel');
+
+        const sendQuestionnaire = document.getElementById('sendQuestionnaire').checked;
+        const sendEtatCivil = document.getElementById('sendEtatCivil').checked;
+
+        if (!sendQuestionnaire && !sendEtatCivil) {
+            alert('Veuillez sélectionner au moins un type de formulaire.');
+            return;
         }
 
-        // Créer nouveau formulaire
-        document.getElementById('newFormForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        const typePartie = sendQuestionnaire ? formData.get('typePartie') : null;
+        if (sendQuestionnaire && !typePartie) {
+            alert('Veuillez sélectionner un type de partie pour le questionnaire.');
+            return;
+        }
 
-            const formData = new FormData(e.target);
-            const notaireEmail = formData.get('notaireEmail');
-            const clientEmail = formData.get('clientEmail');
-            const typePartie = formData.get('typePartie');
-            const typeQuestionnaire = getTypeQuestionnaire(typePartie);
+        try {
+            generatedLinks = [];
 
-            // Générer token et clé
-            const token = CryptoModule.generateToken();
-            const { key, keyBase64 } = await CryptoModule.generateKey();
+            // Create questionnaire submission if selected
+            if (sendQuestionnaire) {
+                const token = CryptoModule.generateToken();
+                const { key, keyBase64 } = await CryptoModule.generateKey();
+                const typeQuestionnaire = getTypeQuestionnaire(typePartie);
 
-            // Créer la soumission dans Supabase
-            try {
                 await SupabaseClient.createSubmission({
                     etudeId: currentUser.etudeId,
                     notaireId: currentUser.id,
-                    dossierId: formData.get('dossierId') || null,
+                    dossierId,
                     clientId: null,
-                    typePartie: typePartie,
-                    label: formData.get('formLabel'),
-                    token: token,
-                    notaireEmail: notaireEmail,
-                    typeQuestionnaire: typeQuestionnaire,
+                    typePartie,
+                    label,
+                    token,
+                    notaireEmail,
+                    typeQuestionnaire,
                     clientEmail: clientEmail || null
                 });
 
-                // Mettre à jour avec nom/prénom client (pour affichage)
+                // Update client name
                 await SupabaseClient.request(
                     `/rest/v1/form_submissions?token=eq.${token}`,
                     {
                         method: 'PATCH',
-                        body: JSON.stringify({
-                            client_nom: formData.get('clientNom'),
-                            client_prenom: formData.get('clientPrenom')
-                        })
+                        body: JSON.stringify({ client_nom: clientNom, client_prenom: clientPrenom })
                     }
                 );
 
-                // Générer le lien
-                const baseUrl = window.location.origin + window.location.pathname.replace('dashboard-notaire.html', '');
+                const formUrl = getFormUrl(typePartie);
+                const fullUrl = `${formUrl}?token=${token}#key=${keyBase64}`;
 
-                let formUrl;
-                if (typePartie === 'vendeur_appartement') {
-                    formUrl = `${baseUrl}questionnaires/vente-appartement.html`;
-                } else if (typePartie === 'vendeur_maison') {
-                    formUrl = `${baseUrl}questionnaires/vente-maison.html`;
-                } else if (typePartie === 'acquereur' || typePartie === 'acheteur') {
-                    formUrl = `${baseUrl}questionnaires/achat-bien.html`;
-                } else {
-                    formUrl = `${baseUrl}fill.html`;
-                }
-
-                generatedLinkData = {
-                    url: `${formUrl}?token=${token}#key=${keyBase64}`,
-                    key: keyBase64
-                };
-
-                // Afficher le lien
-                closeModal();
-                document.getElementById('generatedLink').textContent = generatedLinkData.url;
-                document.getElementById('emailSentConfirmation').classList.add('hidden');
-                document.getElementById('emailSendingError').classList.add('hidden');
-                document.getElementById('linkModal').classList.add('active');
-
-                // Si email client renseigné, envoyer le lien par email
-                if (clientEmail) {
-                    try {
-                        await SupabaseClient.sendLinkToClient({
-                            client_email: clientEmail,
-                            client_nom: formData.get('clientNom'),
-                            client_prenom: formData.get('clientPrenom'),
-                            questionnaire_url: generatedLinkData.url,
-                            type_questionnaire: typeQuestionnaire,
-                            etude_nom: currentEtude.nom || 'Votre notaire',
-                            notaire_email: notaireEmail
-                        });
-                        document.getElementById('emailSentConfirmation').classList.remove('hidden');
-                    } catch (emailError) {
-                        console.error('Erreur envoi email client:', emailError);
-                        document.getElementById('emailSendingError').classList.remove('hidden');
-                        document.getElementById('emailErrorMessage').textContent = emailError.message || 'Impossible d\'envoyer l\'email';
-                    }
-                }
-
-                // Recharger la liste
-                loadSubmissions();
-
-                // Reset form
-                e.target.reset();
-
-            } catch (error) {
-                console.error('Erreur création formulaire:', error);
-                alert('Erreur lors de la création du formulaire');
-            }
-        });
-
-        function copyLink() {
-            navigator.clipboard.writeText(generatedLinkData.url).then(() => {
-                document.getElementById('copySuccess').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('copySuccess').style.display = 'none';
-                }, 3000);
-            });
-        }
-
-        // Voir une soumission
-        async function viewSubmission(id) {
-            const submission = submissions.find(s => s.id === id);
-            if (!submission) return;
-
-            const details = document.getElementById('submissionDetails');
-
-            if (submission.status === 'submitted' && submission.data_encrypted) {
-                // Les données sont chiffrées - demander la clé
-                details.innerHTML = `
-                    <div class="form-group">
-                        <label>Clé de déchiffrement</label>
-                        <input type="text" id="decryptKey" placeholder="Collez la clé ici">
-                        <small style="color: #6b7280;">La clé se trouve dans le lien envoyé au client (après #key=)</small>
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%;" onclick="decryptSubmission('${id}')">
-                        Déchiffrer les données
-                    </button>
-                `;
-                document.getElementById('importSection').classList.add('hidden');
-            } else {
-                details.innerHTML = `
-                    <p><strong>Client:</strong> ${submission.client_nom || '-'} ${submission.client_prenom || ''}</p>
-                    <p><strong>Type:</strong> ${submission.type_partie}</p>
-                    <p><strong>Statut:</strong> ${getStatusLabel(submission.status)}</p>
-                    <p><strong>Créé le:</strong> ${formatDate(submission.created_at)}</p>
-                `;
+                generatedLinks.push({
+                    type: 'Questionnaire ' + getTypeLabel(typePartie),
+                    url: fullUrl,
+                    typeQuestionnaire
+                });
             }
 
-            document.getElementById('viewSubmissionModal').classList.add('active');
-        }
+            // Create état civil submission if selected
+            if (sendEtatCivil) {
+                const token = CryptoModule.generateToken();
+                const { key, keyBase64 } = await CryptoModule.generateKey();
 
-        // Déchiffrer une soumission
-        async function decryptSubmission(id) {
-            const submission = submissions.find(s => s.id === id);
-            const keyBase64 = document.getElementById('decryptKey').value.trim();
-
-            if (!keyBase64) {
-                alert('Veuillez entrer la clé de déchiffrement');
-                return;
-            }
-
-            try {
-                const key = await CryptoModule.importKey(keyBase64);
-                const decrypted = await CryptoModule.decrypt(
-                    submission.data_encrypted,
-                    submission.encryption_iv,
-                    key
-                );
-
-                // Afficher les données
-                const details = document.getElementById('submissionDetails');
-                details.innerHTML = `
-                    <h4>Données du client</h4>
-                    <pre style="background: #f3f4f6; padding: 16px; border-radius: 8px; overflow: auto; max-height: 400px;">${JSON.stringify(decrypted, null, 2)}</pre>
-                `;
-
-                // Stocker pour import
-                window.currentDecryptedData = {
-                    submissionId: id,
-                    data: decrypted
-                };
-
-                document.getElementById('importSection').classList.remove('hidden');
-
-            } catch (error) {
-                console.error('Erreur déchiffrement:', error);
-                alert('Impossible de déchiffrer. Vérifiez la clé.');
-            }
-        }
-
-        // Importer vers fiche client
-        async function importToClientFile() {
-            if (!window.currentDecryptedData) return;
-
-            try {
-                const result = await SupabaseClient.enrichClientFromSubmission(
-                    window.currentDecryptedData.submissionId,
-                    window.currentDecryptedData.data
-                );
-
-                if (result.success) {
-                    alert(`Fiche client ${result.action === 'created' ? 'créée' : 'mise à jour'} avec succès !`);
-                    closeModal();
-                    loadSubmissions();
-                } else {
-                    alert('Erreur: ' + (result.error || 'Import échoué'));
-                }
-            } catch (error) {
-                console.error('Erreur import:', error);
-                alert('Erreur lors de l\'import');
-            }
-        }
-
-        // =====================================================
-        // Génération d'actes
-        // =====================================================
-
-        let currentGenerationSubmission = null;
-
-        const API_BASE_URL = window.NOTOMAI_API_URL || 'https://notaire-ai--fastapi-app.modal.run';
-
-        function openGenerateModal(submissionId) {
-            const submission = submissions.find(s => s.id === submissionId);
-            if (!submission) return;
-
-            currentGenerationSubmission = submission;
-
-            document.getElementById('generateClientInfo').innerHTML =
-                `<strong>Client :</strong> ${submission.client_nom || ''} ${submission.client_prenom || ''}<br>` +
-                `<strong>Type de partie :</strong> ${submission.type_partie || '-'}`;
-
-            // Pré-sélectionner le type d'acte selon le type de partie
-            const typeSelect = document.getElementById('generateType');
-            if (submission.type_partie === 'acquereur') {
-                typeSelect.value = 'promesse_vente';
-            }
-
-            // Réinitialiser l'état
-            document.getElementById('generateResult').classList.add('hidden');
-            document.getElementById('generateProgress').style.display = 'none';
-            document.getElementById('generateBtn').disabled = false;
-
-            document.getElementById('generateModal').classList.add('active');
-        }
-
-        async function executeGeneration() {
-            if (!currentGenerationSubmission) return;
-
-            const typeActe = document.getElementById('generateType').value;
-            const format = document.getElementById('generateFormat').value;
-            const btn = document.getElementById('generateBtn');
-            const progress = document.getElementById('generateProgress');
-            const progressText = document.getElementById('generateProgressText');
-            const resultDiv = document.getElementById('generateResult');
-
-            btn.disabled = true;
-            progress.style.display = 'block';
-            resultDiv.classList.add('hidden');
-            progressText.textContent = 'Préparation des données...';
-
-            try {
-                // Construire la demande en langage naturel pour l'agent
-                const sub = currentGenerationSubmission;
-                const demande = buildGenerationPrompt(sub, typeActe);
-
-                progressText.textContent = 'Génération de l\'acte en cours...';
-
-                const response = await fetch(`${API_BASE_URL}/agent/execute`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-Key': currentUser.apiKey
-                    },
-                    body: JSON.stringify({
-                        texte: demande,
-                        options: {
-                            format: format,
-                            submission_id: sub.id,
-                            type_acte: typeActe
-                        }
-                    })
+                await SupabaseClient.createSubmission({
+                    etudeId: currentUser.etudeId,
+                    notaireId: currentUser.id,
+                    dossierId,
+                    clientId: null,
+                    typePartie: 'etat_civil',
+                    label: label ? label + ' (État civil)' : 'Fiche état civil',
+                    token,
+                    notaireEmail,
+                    typeQuestionnaire: 'etat_civil',
+                    clientEmail: clientEmail || null
                 });
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => null);
-                    throw new Error(errorData?.detail || `Erreur ${response.status}`);
-                }
-
-                const result = await response.json();
-
-                if (result.succes && result.fichier_url) {
-                    progressText.textContent = 'Acte généré !';
-                    progress.style.display = 'none';
-
-                    // Afficher le résultat
-                    document.getElementById('generateResultInfo').textContent =
-                        `Référence : ${result.reference || result.dossier_id || '-'} | Durée : ${result.duree_ms}ms`;
-
-                    const downloadLink = document.getElementById('generateDownloadLink');
-                    downloadLink.href = `${API_BASE_URL}${result.fichier_url}`;
-                    downloadLink.textContent = `Télécharger (${format.toUpperCase()})`;
-
-                    resultDiv.classList.remove('hidden');
-
-                    // Mettre à jour le statut de la soumission
-                    await markSubmissionProcessed(sub.id);
-
-                } else {
-                    throw new Error(result.message || 'La génération a échoué');
-                }
-
-            } catch (error) {
-                console.error('Erreur génération:', error);
-                progress.style.display = 'none';
-                alert('Erreur lors de la génération : ' + error.message);
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        function buildGenerationPrompt(submission, typeActe) {
-            const nom = submission.client_nom || 'Client';
-            const prenom = submission.client_prenom || '';
-            const typeLabel = typeActe === 'promesse_vente' ? 'promesse de vente' : 'acte de vente';
-
-            if (submission.type_partie === 'acquereur') {
-                return `Crée une ${typeLabel} pour l'acquéreur ${prenom} ${nom}`;
-            } else if (submission.type_partie && submission.type_partie.startsWith('vendeur')) {
-                return `Crée une ${typeLabel} pour le vendeur ${prenom} ${nom}`;
-            }
-            return `Crée une ${typeLabel} pour ${prenom} ${nom}`;
-        }
-
-        async function markSubmissionProcessed(submissionId) {
-            try {
                 await SupabaseClient.request(
-                    `/rest/v1/form_submissions?id=eq.${submissionId}`,
+                    `/rest/v1/form_submissions?token=eq.${token}`,
                     {
                         method: 'PATCH',
-                        body: JSON.stringify({ status: 'processed' })
+                        body: JSON.stringify({ client_nom: clientNom, client_prenom: clientPrenom })
                     }
                 );
-                loadSubmissions();
-            } catch (error) {
-                console.error('Erreur mise à jour statut:', error);
+
+                const formUrl = getFormUrl('etat_civil');
+                const fullUrl = `${formUrl}?token=${token}#key=${keyBase64}`;
+
+                generatedLinks.push({
+                    type: 'Fiche état civil',
+                    url: fullUrl,
+                    typeQuestionnaire: 'etat_civil'
+                });
+            }
+
+            // Show links modal
+            closeModal();
+            showLinksModal(clientEmail, clientNom, clientPrenom, notaireEmail);
+
+            // Reload
+            loadSubmissions();
+            e.target.reset();
+
+            // Re-set email
+            document.getElementById('notaireEmail').value = currentUser.email || currentEtude.email_contact || '';
+
+        } catch (error) {
+            console.error('Erreur création formulaire:', error);
+            alert('Erreur lors de la création du formulaire: ' + error.message);
+        }
+    });
+
+    function showLinksModal(clientEmail, clientNom, clientPrenom, notaireEmail) {
+        const container = document.getElementById('generatedLinksContainer');
+
+        container.innerHTML = generatedLinks.map((link, i) => `
+            <div style="margin-bottom: 16px;">
+                <strong>${link.type}</strong>
+                <div class="link-box" id="linkBox_${i}">${link.url}</div>
+                <button class="btn btn-outline btn-sm" onclick="copyToClipboard('${link.url}', this)">
+                    Copier le lien
+                </button>
+            </div>
+        `).join('');
+
+        document.getElementById('emailSentConfirmation').classList.add('hidden');
+        document.getElementById('emailSendingError').classList.add('hidden');
+        document.getElementById('linkModal').classList.add('active');
+
+        // Send email if client email provided
+        if (clientEmail) {
+            sendLinksToClient(clientEmail, clientNom, clientPrenom, notaireEmail);
+        }
+    }
+
+    async function sendLinksToClient(clientEmail, clientNom, clientPrenom, notaireEmail) {
+        for (const link of generatedLinks) {
+            try {
+                await SupabaseClient.sendLinkToClient({
+                    client_email: clientEmail,
+                    client_nom: clientNom,
+                    client_prenom: clientPrenom,
+                    questionnaire_url: link.url,
+                    type_questionnaire: link.typeQuestionnaire,
+                    etude_nom: currentEtude.nom || 'Votre notaire',
+                    notaire_email: notaireEmail
+                });
+            } catch (emailError) {
+                console.error('Erreur envoi email:', emailError);
+                document.getElementById('emailSendingError').classList.remove('hidden');
+                document.getElementById('emailErrorMessage').textContent = emailError.message || "Impossible d'envoyer l'email";
+                return;
             }
         }
+        document.getElementById('emailSentConfirmation').classList.remove('hidden');
+    }
 
-        // Fermer modal en cliquant dehors
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
+    function copyToClipboard(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'Copié !';
+            btn.style.color = 'var(--success)';
+            btn.style.borderColor = 'var(--success)';
+            setTimeout(() => {
+                btn.textContent = orig;
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }, 2000);
         });
-    </script>
+    }
+
+    // =====================================================
+    // VOIR SOUMISSION
+    // =====================================================
+    async function viewSubmission(id) {
+        const submission = submissions.find(s => s.id === id);
+        if (!submission) return;
+
+        const details = document.getElementById('submissionDetails');
+        const importSection = document.getElementById('importSection');
+
+        if (submission.status === 'submitted' && submission.data_encrypted) {
+            details.innerHTML = `
+                <div class="form-group">
+                    <label>Clé de déchiffrement</label>
+                    <input type="text" id="decryptKey" placeholder="Collez la clé ici (après #key= dans le lien)">
+                    <small>La clé se trouve dans le lien envoyé au client (après #key=)</small>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="decryptSubmission('${id}')">
+                    Déchiffrer les données
+                </button>
+            `;
+            importSection.classList.add('hidden');
+        } else {
+            details.innerHTML = `
+                <p><strong>Client:</strong> ${submission.client_nom || '-'} ${submission.client_prenom || ''}</p>
+                <p><strong>Type:</strong> ${getTypeLabel(submission.type_partie)}</p>
+                <p><strong>Statut:</strong> ${getStatusLabel(submission.status)}</p>
+                <p><strong>Créé le:</strong> ${formatDate(submission.created_at)}</p>
+            `;
+        }
+
+        document.getElementById('viewSubmissionModal').classList.add('active');
+    }
+
+    async function decryptSubmission(id) {
+        const submission = submissions.find(s => s.id === id);
+        const keyBase64 = document.getElementById('decryptKey').value.trim();
+
+        if (!keyBase64) { alert('Veuillez entrer la clé de déchiffrement'); return; }
+
+        try {
+            const key = await CryptoModule.importKey(keyBase64);
+            const decrypted = await CryptoModule.decrypt(submission.data_encrypted, submission.encryption_iv, key);
+
+            document.getElementById('submissionDetails').innerHTML = `
+                <h4 style="margin-bottom: 12px;">Données du client</h4>
+                <pre style="background: var(--gray-50); padding: 16px; border-radius: var(--radius); overflow: auto; max-height: 400px; font-size: 0.85rem;">${JSON.stringify(decrypted, null, 2)}</pre>
+            `;
+
+            window.currentDecryptedData = { submissionId: id, data: decrypted };
+            document.getElementById('importSection').classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Erreur déchiffrement:', error);
+            alert('Impossible de déchiffrer. Vérifiez la clé.');
+        }
+    }
+
+    async function importToClientFile() {
+        if (!window.currentDecryptedData) return;
+        try {
+            const result = await SupabaseClient.enrichClientFromSubmission(
+                window.currentDecryptedData.submissionId,
+                window.currentDecryptedData.data
+            );
+            if (result.success) {
+                alert(`Fiche client ${result.action === 'created' ? 'créée' : 'mise à jour'} avec succès !`);
+                closeModal();
+                loadSubmissions();
+            } else {
+                alert('Erreur: ' + (result.error || 'Import échoué'));
+            }
+        } catch (error) {
+            console.error('Erreur import:', error);
+            alert("Erreur lors de l'import");
+        }
+    }
+
+    // =====================================================
+    // GÉNÉRATION D'ACTES
+    // =====================================================
+    let currentGenerationSubmission = null;
+    const API_BASE_URL = window.NOTOMAI_API_URL || 'https://notaire-ai--fastapi-app.modal.run';
+
+    function openGenerateModal(submissionId) {
+        const submission = submissions.find(s => s.id === submissionId);
+        if (!submission) return;
+        currentGenerationSubmission = submission;
+
+        document.getElementById('generateClientInfo').innerHTML =
+            `<strong>Client :</strong> ${submission.client_nom || ''} ${submission.client_prenom || ''}<br>` +
+            `<strong>Type :</strong> ${getTypeLabel(submission.type_partie)}`;
+
+        if (submission.type_partie === 'acquereur') {
+            document.getElementById('generateType').value = 'promesse_vente';
+        }
+
+        document.getElementById('generateResult').classList.add('hidden');
+        document.getElementById('generateProgress').style.display = 'none';
+        document.getElementById('generateBtn').disabled = false;
+        document.getElementById('generateModal').classList.add('active');
+    }
+
+    async function executeGeneration() {
+        if (!currentGenerationSubmission) return;
+
+        const typeActe = document.getElementById('generateType').value;
+        const format = document.getElementById('generateFormat').value;
+        const btn = document.getElementById('generateBtn');
+        const progress = document.getElementById('generateProgress');
+        const progressText = document.getElementById('generateProgressText');
+        const resultDiv = document.getElementById('generateResult');
+
+        btn.disabled = true;
+        progress.style.display = 'block';
+        resultDiv.classList.add('hidden');
+        progressText.textContent = 'Préparation des données...';
+
+        try {
+            const sub = currentGenerationSubmission;
+            const nom = sub.client_nom || 'Client';
+            const prenom = sub.client_prenom || '';
+            const typeLabel = typeActe === 'promesse_vente' ? 'promesse de vente' : 'acte de vente';
+            let demande;
+
+            if (sub.type_partie === 'acquereur') {
+                demande = `Crée une ${typeLabel} pour l'acquéreur ${prenom} ${nom}`;
+            } else if (sub.type_partie && sub.type_partie.startsWith('vendeur')) {
+                demande = `Crée une ${typeLabel} pour le vendeur ${prenom} ${nom}`;
+            } else {
+                demande = `Crée une ${typeLabel} pour ${prenom} ${nom}`;
+            }
+
+            progressText.textContent = "Génération de l'acte en cours...";
+
+            const response = await fetch(`${API_BASE_URL}/agent/execute`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    texte: demande,
+                    options: { format, submission_id: sub.id, type_acte: typeActe }
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
+                throw new Error(errorData?.detail || `Erreur ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.succes && result.fichier_url) {
+                progress.style.display = 'none';
+                document.getElementById('generateResultInfo').textContent =
+                    `Référence : ${result.reference || result.dossier_id || '-'} | Durée : ${result.duree_ms}ms`;
+
+                const downloadLink = document.getElementById('generateDownloadLink');
+                downloadLink.href = `${API_BASE_URL}${result.fichier_url}`;
+                downloadLink.textContent = `Télécharger (${format.toUpperCase()})`;
+                resultDiv.classList.remove('hidden');
+
+                await SupabaseClient.request(
+                    `/rest/v1/form_submissions?id=eq.${sub.id}`,
+                    { method: 'PATCH', body: JSON.stringify({ status: 'processed' }) }
+                );
+                loadSubmissions();
+            } else {
+                throw new Error(result.message || 'La génération a échoué');
+            }
+
+        } catch (error) {
+            console.error('Erreur génération:', error);
+            progress.style.display = 'none';
+            alert('Erreur lors de la génération : ' + error.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+</script>
 </body>
 </html>
