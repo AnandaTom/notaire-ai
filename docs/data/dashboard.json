@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-02T18:12:18.647267",
+    "generated_at": "2026-02-03T06:51:34.922697",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,28 +12,28 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 175
+    "commits": 176
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "5d45452",
-      "message": "feat: dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
+      "hash": "c89d37e",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-02-02"
     },
-    "total_commits": 175,
+    "total_commits": 176,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 117
+        "commits": 119
       },
       {
         "name": "github-actions[bot]",
-        "commits": 41
+        "commits": 43
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 20
+        "commits": 22
       },
       {
         "name": "Payoss",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-02"
+      "last_modified": "2026-02-03"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1536,
-      "last_modified": "2026-02-02"
+      "last_modified": "2026-02-03"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-02"
+      "last_modified": "2026-02-03"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,7 +88,7 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-02"
+      "last_modified": "2026-02-03"
     }
   ],
   "scripts": {
@@ -622,6 +622,16 @@
   ],
   "activity": [
     {
+      "hash": "c89d37e",
+      "author": "github-actions[bot]",
+      "date": "2026-02-02",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "5d45452",
       "author": "Augustin",
       "date": "2026-02-02",
@@ -810,16 +820,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "b388819",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "ajout specs detaillees pour Augustin (formulaires, dashboard, commercial)",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
     }
   ],
   "recommendations": {
@@ -1023,7 +1023,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-02"
+    "last_updated": "2026-02-03"
   },
   "overview": {
     "overall_score": 67,
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-02 18:12"
+    "last_updated": "2026-02-03 06:51"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-02 18:12"
+    "last_updated": "2026-02-03 06:51"
   },
   "conformity_details": {
     "promesse": {
