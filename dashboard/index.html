@@ -1494,6 +1494,51 @@
             color: var(--gold-light);
         }
 
+        /* Daily Motivation Banner */
+        .motivation-banner {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            padding: var(--space-lg) var(--space-xl);
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+            border-radius: 8px;
+            margin-bottom: var(--space-lg);
+            box-shadow: 0 4px 20px rgba(201, 169, 98, 0.25);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .motivation-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .motivation-content {
+            flex: 1;
+        }
+
+        .motivation-quote {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .motivation-author {
+            font-size: 0.8rem;
+            color: var(--ink-deep);
+            margin-top: var(--space-xs);
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .motivation-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
         /* Metrics Bar */
         .metrics-bar {
             display: flex;
@@ -1564,6 +1609,15 @@
     </header>
 
     <main class="main">
+        <!-- Daily Motivation Quote -->
+        <div class="motivation-banner" id="motivationBanner">
+            <div class="motivation-icon">💡</div>
+            <div class="motivation-content">
+                <div class="motivation-quote" id="motivationQuote">Chargement...</div>
+                <div class="motivation-author" id="motivationAuthor"></div>
+            </div>
+        </div>
+
         <!-- Metrics Bar -->
         <div class="metrics-bar">
             <div class="metric-item">
@@ -2299,6 +2353,54 @@
     </footer>
 
     <script>
+        // Daily Motivation Quotes - Business Mindset
+        const motivationQuotes = [
+            { quote: "Le succes n'est pas final, l'echec n'est pas fatal. C'est le courage de continuer qui compte.", author: "Winston Churchill" },
+            { quote: "Ne cherchez pas a etre une personne de succes. Cherchez a etre une personne de valeur.", author: "Albert Einstein" },
+            { quote: "La meilleure facon de predire l'avenir est de le creer.", author: "Peter Drucker" },
+            { quote: "Les opportunites ne se presentent pas, vous les creez.", author: "Chris Grosser" },
+            { quote: "Votre temps est limite. Ne le gaspillez pas a vivre la vie de quelqu'un d'autre.", author: "Steve Jobs" },
+            { quote: "Le secret du changement est de concentrer toute votre energie non pas a combattre l'ancien, mais a construire le nouveau.", author: "Socrate" },
+            { quote: "Si vous voulez quelque chose que vous n'avez jamais eu, vous devez faire quelque chose que vous n'avez jamais fait.", author: "Thomas Jefferson" },
+            { quote: "L'excellence n'est pas un acte, mais une habitude.", author: "Aristote" },
+            { quote: "Chaque client satisfait est votre meilleur commercial.", author: "Proverbe Business" },
+            { quote: "La perfection n'est pas atteignable, mais en la poursuivant, on atteint l'excellence.", author: "Vince Lombardi" },
+            { quote: "Un probleme est une opportunite deguisee.", author: "John Adams" },
+            { quote: "Le prix s'oublie, la qualite reste.", author: "Proverbe des artisans" },
+            { quote: "Construisez quelque chose dont 100 personnes ont absolument besoin, pas quelque chose que 1 million trouvent cool.", author: "Paul Graham (Y Combinator)" },
+            { quote: "La vitesse compte. L'execution mange la strategie au petit-dejeuner.", author: "Peter Drucker" },
+            { quote: "Commencez par le minimum, mais visez l'excellence. Iterez sans relache.", author: "Reid Hoffman (LinkedIn)" },
+            { quote: "Ne vendez pas un produit, vendez un resultat. Les notaires veulent du temps libre, pas du logiciel.", author: "Mindset SaaS" },
+            { quote: "Un bon produit se vend tout seul. Un excellent produit cree des ambassadeurs.", author: "Seth Godin" },
+            { quote: "Le meilleur marketing est un client qui ne peut pas s'empecher de parler de vous.", author: "Shep Hyken" },
+            { quote: "Chaque bug corrige est une relation client renforcee.", author: "Philosophie Support" },
+            { quote: "First do it, then do it right, then do it better.", author: "Adele Goldberg" },
+            { quote: "Le meilleur moment pour planter un arbre etait il y a 20 ans. Le deuxieme meilleur moment est maintenant.", author: "Proverbe chinois" },
+            { quote: "Shipping beats perfection. Mais shipping de la merde tue la confiance.", author: "Reid Hoffman adapte" },
+            { quote: "Focalisez-vous sur ce qui fait la difference: la generation d'actes parfaite.", author: "Notomai Mantra" },
+            { quote: "Les notaires ne paient pas pour du logiciel, ils paient pour du temps retrouve.", author: "Notomai Insight" },
+            { quote: "30 clients a 400 euros/mois = liberte financiere. C'est votre seul objectif.", author: "Notomai Target" },
+            { quote: "Chaque heure investie aujourd'hui economise 100 heures aux notaires demain.", author: "Notomai Purpose" },
+            { quote: "La conformite 100% n'est pas un objectif, c'est un minimum.", author: "Notomai Standard" },
+            { quote: "Un acte parfait = un notaire fidele. Un notaire fidele = 5 recommandations.", author: "Notomai Growth" },
+            { quote: "Le setup a 10K n'est pas un cout, c'est un filtre qualite.", author: "Notomai Pricing" },
+            { quote: "Construisez pour 10 clients comme si vous en aviez 1000.", author: "Scalability Mindset" },
+            { quote: "La simplicite est la sophistication supreme.", author: "Leonard de Vinci" }
+        ];
+
+        function loadDailyMotivation() {
+            // Use day of year to get consistent quote per day
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const quoteIndex = dayOfYear % motivationQuotes.length;
+
+            const todayQuote = motivationQuotes[quoteIndex];
+            document.getElementById('motivationQuote').textContent = '"' + todayQuote.quote + '"';
+            document.getElementById('motivationAuthor').textContent = '— ' + todayQuote.author;
+        }
+
         async function loadData() {
             try {
                 const response = await fetch('data/status.json');
@@ -2414,7 +2516,8 @@
             document.getElementById('capabilitiesGrid').innerHTML = capabilitiesHtml;
         }
 
-        // Load and auto-refresh
+        // Load daily motivation and dashboard data
+        loadDailyMotivation();
         loadData();
         setInterval(loadData, 30000);
     </script>
