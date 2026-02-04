@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T20:50:38.686990",
+    "generated_at": "2026-02-04T20:58:00.586475",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 193
+    "commits": 195
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "c638d5e",
-      "message": "feat(dashboard): ajout citation motivation quotidienne",
+      "hash": "d45644a",
+      "message": "chore(dashboard): renommage NotaireAI → Notomai",
       "date": "2026-02-04"
     },
-    "total_commits": 193,
+    "total_commits": 195,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 51
+        "commits": 52
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 38
+        "commits": 39
       },
       {
         "name": "Payoss",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "d45644a",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "renommage NotaireAI → Notomai",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "7c0d621",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "c638d5e",
       "author": "Augustin",
       "date": "2026-02-04",
@@ -800,26 +820,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "5d45452",
-      "author": "Augustin",
-      "date": "2026-02-02",
-      "message": "dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "793e863",
-      "author": "Augustin",
-      "date": "2026-01-30",
-      "message": "audit complet questionnaire → email notaire + stockage Supabase",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 20:50"
+    "last_updated": "2026-02-04 20:58"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 20:50"
+    "last_updated": "2026-02-04 20:58"
   },
   "conformity_details": {
     "promesse": {
