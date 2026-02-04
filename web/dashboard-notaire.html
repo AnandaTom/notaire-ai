@@ -653,6 +653,449 @@
         }
 
         .download-link:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+        /* === DOCUMENTS TAB === */
+        .documents-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .document-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.2s;
+            border-left: 4px solid var(--gray-300);
+        }
+
+        .document-card:hover { box-shadow: var(--shadow-md); }
+        .document-card.status-pending { border-left-color: var(--warning); }
+        .document-card.status-uploaded { border-left-color: var(--info); }
+        .document-card.status-validated { border-left-color: var(--success); }
+        .document-card.status-rejected { border-left-color: var(--error); }
+
+        .doc-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .doc-card-icon.pending { background: var(--warning-bg); color: var(--warning); }
+        .doc-card-icon.uploaded { background: var(--info-bg); color: var(--info); }
+        .doc-card-icon.validated { background: var(--success-bg); color: var(--success); }
+
+        .doc-card-icon svg { width: 24px; height: 24px; }
+
+        .doc-card-content { flex: 1; min-width: 0; }
+        .doc-card-content h4 { font-size: 1rem; color: var(--gray-800); margin-bottom: 4px; }
+        .doc-card-content p { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 8px; }
+
+        .doc-progress-bar {
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .doc-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--navy) 0%, var(--gold) 100%);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .doc-progress-text {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .doc-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Document status badges */
+        .doc-status-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .doc-status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--gray-50);
+            border-radius: 16px;
+            font-size: 0.75rem;
+        }
+
+        .doc-status-item.uploaded { background: var(--info-bg); color: var(--info); }
+        .doc-status-item.validated { background: var(--success-bg); color: var(--success); }
+        .doc-status-item.rejected { background: var(--error-bg); color: var(--error); }
+
+        .doc-status-item svg { width: 12px; height: 12px; }
+
+        /* Notification badge on tab */
+        .tab-btn .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--gold);
+            color: var(--navy-dark);
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .tab-btn.active .notification-badge {
+            background: var(--gold);
+            color: var(--navy-dark);
+        }
+
+        /* Documents filter */
+        .documents-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover { background: var(--gray-200); }
+        .filter-btn.active {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+        }
+
+        /* Document detail modal */
+        .doc-detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .doc-detail-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        .doc-detail-item.validated {
+            background: var(--success-bg);
+            border-color: #a3e4b7;
+        }
+
+        .doc-detail-item.rejected {
+            background: var(--error-bg);
+            border-color: #f8b4b4;
+        }
+
+        .doc-detail-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-detail-info svg { width: 20px; height: 20px; color: var(--gray-600); }
+        .doc-detail-info .name { font-weight: 500; }
+        .doc-detail-info .meta { font-size: 0.8rem; color: var(--gray-500); }
+
+        .doc-detail-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-icon.download { background: var(--info-bg); color: var(--info); }
+        .btn-icon.download:hover { background: #bbdefb; }
+        .btn-icon.validate { background: var(--success-bg); color: var(--success); }
+        .btn-icon.validate:hover { background: #c8e6c9; }
+        .btn-icon.reject { background: var(--error-bg); color: var(--error); }
+        .btn-icon.reject:hover { background: #ffcdd2; }
+
+        .btn-icon svg { width: 16px; height: 16px; }
+
+        /* === KPIs & PILOTAGE === */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--navy);
+            transition: all 0.2s;
+        }
+
+        .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .kpi-card.gold { border-left-color: var(--gold); }
+        .kpi-card.success { border-left-color: var(--success); }
+        .kpi-card.warning { border-left-color: var(--warning); }
+        .kpi-card.info { border-left-color: var(--info); }
+
+        .kpi-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .kpi-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-100);
+        }
+
+        .kpi-card-icon svg { width: 20px; height: 20px; color: var(--gray-600); }
+        .kpi-card.gold .kpi-card-icon { background: rgba(201, 168, 76, 0.15); }
+        .kpi-card.gold .kpi-card-icon svg { color: var(--gold-dark); }
+        .kpi-card.success .kpi-card-icon { background: var(--success-bg); }
+        .kpi-card.success .kpi-card-icon svg { color: var(--success); }
+
+        .kpi-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.1;
+        }
+
+        .kpi-card-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        .kpi-card-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+
+        .kpi-card-trend.up { color: var(--success); }
+        .kpi-card-trend.down { color: var(--error); }
+        .kpi-card-trend svg { width: 14px; height: 14px; }
+
+        /* Rappels Widget */
+        .rappels-widget {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .rappels-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .rappels-header h3 { font-size: 1rem; font-weight: 600; }
+        .rappels-count {
+            background: var(--gold);
+            color: var(--navy-dark);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .rappel-item {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+
+        .rappel-item:hover { background: var(--gray-50); }
+        .rappel-item:last-child { border-bottom: none; }
+
+        .rappel-priority {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .rappel-priority.urgente { background: var(--error); }
+        .rappel-priority.haute { background: var(--warning); }
+        .rappel-priority.normale { background: var(--info); }
+        .rappel-priority.basse { background: var(--gray-400); }
+
+        .rappel-content { flex: 1; min-width: 0; }
+        .rappel-title { font-weight: 500; color: var(--gray-800); margin-bottom: 2px; }
+        .rappel-dossier { font-size: 0.8rem; color: var(--gray-500); }
+
+        .rappel-date {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .rappel-date.en_retard { background: var(--error-bg); color: var(--error); }
+        .rappel-date.imminent { background: var(--warning-bg); color: var(--warning); }
+        .rappel-date.cette_semaine { background: var(--info-bg); color: var(--info); }
+        .rappel-date.a_venir { background: var(--gray-100); color: var(--gray-600); }
+
+        .rappel-action {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .rappel-item:hover .rappel-action { opacity: 1; }
+
+        /* Dossiers en cours */
+        .dossiers-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dossiers-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .dossiers-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+
+        .dossiers-table tr:hover { background: var(--gray-50); }
+
+        .dossier-numero {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .dossier-parties {
+            font-size: 0.9rem;
+            color: var(--gray-700);
+        }
+
+        .dossier-type {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .dossier-statut {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .dossier-statut.en_cours { background: var(--info-bg); color: var(--info); }
+        .dossier-statut.brouillon { background: var(--gray-100); color: var(--gray-600); }
+        .dossier-statut.termine { background: var(--success-bg); color: var(--success); }
+
+        .dossier-signature {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .dossier-signature.soon { color: var(--warning); font-weight: 500; }
+        .dossier-signature.late { color: var(--error); font-weight: 500; }
+
+        /* Pilotage grid layout */
+        .pilotage-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .pilotage-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pilotage-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pilotage-section-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--navy);
+        }
     </style>
 </head>
 <body>
@@ -739,8 +1182,128 @@
 
         <!-- Tabs -->
         <div class="tabs-bar">
+            <button class="tab-btn" onclick="showTab('pilotage')" id="tabPilotage">
+                Pilotage
+            </button>
             <button class="tab-btn active" onclick="showTab('formulaires')">Formulaires clients</button>
+            <button class="tab-btn" onclick="showTab('documents')" id="tabDocuments">
+                Documents
+                <span class="notification-badge hidden" id="docsBadge">0</span>
+            </button>
             <button class="tab-btn" onclick="showTab('clients')">Fiches clients</button>
+        </div>
+
+        <!-- Tab: Pilotage -->
+        <div id="tab-pilotage" class="hidden">
+            <!-- KPIs principaux -->
+            <div class="kpi-grid" id="kpiGrid">
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpiDossiersEnCours">-</div>
+                    <div class="kpi-card-label">Dossiers en cours</div>
+                </div>
+
+                <div class="kpi-card gold">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpiCaMois">-</div>
+                    <div class="kpi-card-label">CA ce mois</div>
+                </div>
+
+                <div class="kpi-card success">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpiActesMois">-</div>
+                    <div class="kpi-card-label">Actes ce mois</div>
+                </div>
+
+                <div class="kpi-card warning">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpiRappelsUrgents">-</div>
+                    <div class="kpi-card-label">Rappels urgents</div>
+                </div>
+            </div>
+
+            <!-- Grille principale -->
+            <div class="pilotage-grid">
+                <!-- Colonne gauche: Dossiers -->
+                <div>
+                    <div class="pilotage-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                        </svg>
+                        Dossiers en cours
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0; overflow-x: auto;">
+                            <table class="dossiers-table" id="dossiersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Dossier</th>
+                                        <th>Parties</th>
+                                        <th>Type</th>
+                                        <th>Statut</th>
+                                        <th>Signature</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dossiersTableBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                                            Chargement des dossiers...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne droite: Rappels -->
+                <div>
+                    <div class="pilotage-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                        </svg>
+                        Rappels & Échéances
+                    </div>
+                    <div class="rappels-widget">
+                        <div class="rappels-header">
+                            <h3>À traiter</h3>
+                            <span class="rappels-count" id="rappelsCount">0</span>
+                        </div>
+                        <div id="rappelsList">
+                            <div class="rappel-item" style="justify-content: center; color: var(--gray-500);">
+                                Chargement des rappels...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Tab: Formulaires -->
@@ -764,6 +1327,32 @@
             </div>
         </div>
 
+        <!-- Tab: Documents -->
+        <div id="tab-documents" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Documents clients</h3>
+                    <div class="documents-filter">
+                        <button class="filter-btn active" onclick="filterDocuments('all')">Tous</button>
+                        <button class="filter-btn" onclick="filterDocuments('pending_review')">À vérifier</button>
+                        <button class="filter-btn" onclick="filterDocuments('validated')">Validés</button>
+                        <button class="filter-btn" onclick="filterDocuments('rejected')">Rejetés</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="documents-grid" id="documentsGrid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <p>Chargement des documents...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Tab: Clients -->
         <div id="tab-clients" class="hidden">
             <div class="card">
@@ -776,6 +1365,22 @@
                     </div>
                     <div id="clientsList"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL: Détails documents d'un client ==================== -->
+<div class="modal-overlay" id="documentsDetailModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Documents du dossier</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="clientDocumentsInfo" style="margin-bottom: 16px;"></div>
+            <div class="doc-detail-list" id="documentsDetailList">
+                <!-- Documents listés ici -->
             </div>
         </div>
     </div>
@@ -985,6 +1590,7 @@
                 showDashboard();
                 loadSubmissions();
                 loadDossiers();
+                loadDocumentsStatus(); // Load documents for badge
             } catch (e) {
                 localStorage.removeItem('notaire_session');
             }
@@ -1034,6 +1640,7 @@
             showDashboard();
             loadSubmissions();
             loadDossiers();
+            loadDocumentsStatus(); // Load documents for badge
 
         } catch (error) {
             console.error('Erreur authentification:', error);
@@ -1195,8 +1802,477 @@
     function showTab(tabName) {
         document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
         event.target.classList.add('active');
+        document.getElementById('tab-pilotage').classList.toggle('hidden', tabName !== 'pilotage');
         document.getElementById('tab-formulaires').classList.toggle('hidden', tabName !== 'formulaires');
+        document.getElementById('tab-documents').classList.toggle('hidden', tabName !== 'documents');
         document.getElementById('tab-clients').classList.toggle('hidden', tabName !== 'clients');
+
+        // Load data when tab is shown
+        if (tabName === 'documents') {
+            loadDocumentsStatus();
+        }
+        if (tabName === 'pilotage') {
+            loadPilotageData();
+        }
+    }
+
+    // =====================================================
+    // PILOTAGE & KPIs
+    // =====================================================
+    let kpisData = null;
+    let dossiersDashboard = [];
+    let rappelsDashboard = [];
+
+    async function loadPilotageData() {
+        try {
+            // Charger toutes les données en parallèle
+            const [kpis, dossiers, rappels] = await Promise.all([
+                SupabaseClient.getKpisEtude(currentUser.etudeId),
+                SupabaseClient.getDossiersDashboard(currentUser.etudeId, { statut: 'en_cours' }),
+                SupabaseClient.getRappelsDashboard(currentUser.etudeId)
+            ]);
+
+            kpisData = kpis;
+            dossiersDashboard = dossiers || [];
+            rappelsDashboard = rappels || [];
+
+            renderKpis();
+            renderDossiersPilotage();
+            renderRappels();
+        } catch (error) {
+            console.error('Erreur chargement pilotage:', error);
+        }
+    }
+
+    function renderKpis() {
+        if (!kpisData) return;
+
+        // Dossiers en cours
+        document.getElementById('kpiDossiersEnCours').textContent = kpisData.dossiers_en_cours || 0;
+
+        // CA ce mois (formaté)
+        const caMois = kpisData.ca_ce_mois || 0;
+        document.getElementById('kpiCaMois').textContent = formatMontant(caMois);
+
+        // Actes ce mois
+        document.getElementById('kpiActesMois').textContent = kpisData.actes_ce_mois || 0;
+
+        // Rappels urgents
+        const urgents = (kpisData.rappels_en_retard || 0) + (kpisData.rappels_urgents || 0);
+        document.getElementById('kpiRappelsUrgents').textContent = urgents;
+    }
+
+    function renderDossiersPilotage() {
+        const tbody = document.getElementById('dossiersTableBody');
+
+        if (dossiersDashboard.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                        Aucun dossier en cours.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = dossiersDashboard.map(d => {
+            // Extraire les noms des parties
+            let partiesStr = '-';
+            if (d.parties && Array.isArray(d.parties) && d.parties.length > 0) {
+                const vendeurs = d.parties.filter(p => p.role === 'vendeur').map(p => p.nom).join(', ');
+                const acquereurs = d.parties.filter(p => p.role === 'acquereur').map(p => p.nom).join(', ');
+                if (vendeurs && acquereurs) {
+                    partiesStr = `${vendeurs} → ${acquereurs}`;
+                } else if (vendeurs || acquereurs) {
+                    partiesStr = vendeurs || acquereurs;
+                }
+            }
+
+            // Type d'acte formaté
+            const typeLabels = {
+                'vente': 'Vente',
+                'promesse_vente': 'Promesse',
+                'donation': 'Donation',
+                'succession': 'Succession'
+            };
+
+            // Statut
+            const statutLabels = {
+                'en_cours': 'En cours',
+                'brouillon': 'Brouillon',
+                'termine': 'Terminé'
+            };
+
+            // Date signature
+            let signatureHtml = '-';
+            if (d.jours_avant_signature !== null) {
+                const jours = d.jours_avant_signature;
+                if (jours < 0) {
+                    signatureHtml = `<span class="dossier-signature late">${Math.abs(jours)}j en retard</span>`;
+                } else if (jours <= 7) {
+                    signatureHtml = `<span class="dossier-signature soon">Dans ${jours}j</span>`;
+                } else {
+                    signatureHtml = `<span class="dossier-signature">${formatDateShort(d.date_signature_prevue)}</span>`;
+                }
+            }
+
+            return `
+                <tr>
+                    <td><span class="dossier-numero">${d.numero || '-'}</span></td>
+                    <td><span class="dossier-parties">${partiesStr}</span></td>
+                    <td><span class="dossier-type">${typeLabels[d.type_acte] || d.type_acte}</span></td>
+                    <td><span class="dossier-statut ${d.statut}">${statutLabels[d.statut] || d.statut}</span></td>
+                    <td>${signatureHtml}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderRappels() {
+        const container = document.getElementById('rappelsList');
+        const countEl = document.getElementById('rappelsCount');
+
+        countEl.textContent = rappelsDashboard.length;
+
+        if (rappelsDashboard.length === 0) {
+            container.innerHTML = `
+                <div class="rappel-item" style="justify-content: center; color: var(--gray-500);">
+                    Aucun rappel actif.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = rappelsDashboard.slice(0, 8).map(r => {
+            // Date formatée
+            const dateStr = formatDateShort(r.date_echeance);
+            const joursRestants = r.jours_restants;
+
+            let dateLabel = dateStr;
+            if (joursRestants < 0) {
+                dateLabel = `${Math.abs(joursRestants)}j en retard`;
+            } else if (joursRestants === 0) {
+                dateLabel = "Aujourd'hui";
+            } else if (joursRestants === 1) {
+                dateLabel = 'Demain';
+            } else if (joursRestants <= 7) {
+                dateLabel = `Dans ${joursRestants}j`;
+            }
+
+            return `
+                <div class="rappel-item">
+                    <div class="rappel-priority ${r.priorite}"></div>
+                    <div class="rappel-content">
+                        <div class="rappel-title">${r.titre}</div>
+                        <div class="rappel-dossier">${r.dossier_numero || 'Sans dossier'}</div>
+                    </div>
+                    <div class="rappel-date ${r.urgence}">${dateLabel}</div>
+                    <button class="btn-icon validate rappel-action" title="Terminer" onclick="completeRappel('${r.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function completeRappel(rappelId) {
+        try {
+            await SupabaseClient.completeRappel(rappelId, currentUser.id);
+            loadPilotageData(); // Recharger les données
+        } catch (error) {
+            console.error('Erreur completion rappel:', error);
+            alert('Erreur lors de la mise à jour du rappel');
+        }
+    }
+
+    function formatMontant(montant) {
+        if (!montant || montant === 0) return '0 €';
+        if (montant >= 1000) {
+            return (montant / 1000).toFixed(1).replace('.0', '') + ' k€';
+        }
+        return montant.toLocaleString('fr-FR') + ' €';
+    }
+
+    function formatDateShort(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+    }
+
+    // =====================================================
+    // DOCUMENTS MANAGEMENT
+    // =====================================================
+    let documentsStatusData = [];
+    let currentDocFilter = 'all';
+
+    async function loadDocumentsStatus() {
+        try {
+            const data = await SupabaseClient.listSubmissionsWithDocumentsStatus(currentUser.etudeId);
+            documentsStatusData = (data || []).filter(d => d.total_documents > 0 || d.type_questionnaire === 'etat_civil');
+            renderDocumentsGrid();
+            updateDocumentsBadge();
+        } catch (error) {
+            console.error('Erreur chargement documents:', error);
+            document.getElementById('documentsGrid').innerHTML = `
+                <div class="empty-state">
+                    <p>Erreur lors du chargement des documents.</p>
+                </div>
+            `;
+        }
+    }
+
+    function updateDocumentsBadge() {
+        const pendingCount = documentsStatusData.filter(d =>
+            d.documents_global_status === 'pending_review' ||
+            d.documents_global_status === 'has_rejected' ||
+            (d.documents_uploaded > 0 && d.documents_validated < d.total_documents)
+        ).length;
+
+        const badge = document.getElementById('docsBadge');
+        if (pendingCount > 0) {
+            badge.textContent = pendingCount;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    function filterDocuments(filter) {
+        currentDocFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        renderDocumentsGrid();
+    }
+
+    function renderDocumentsGrid() {
+        const container = document.getElementById('documentsGrid');
+
+        let filteredData = documentsStatusData;
+        if (currentDocFilter === 'pending_review') {
+            filteredData = documentsStatusData.filter(d =>
+                d.documents_global_status === 'pending_review' || d.documents_pending > 0 || d.documents_uploaded > 0
+            );
+        } else if (currentDocFilter === 'validated') {
+            filteredData = documentsStatusData.filter(d => d.documents_global_status === 'all_validated');
+        } else if (currentDocFilter === 'rejected') {
+            filteredData = documentsStatusData.filter(d =>
+                d.documents_global_status === 'has_rejected' || d.documents_rejected > 0
+            );
+        }
+
+        if (filteredData.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <p>${currentDocFilter === 'all' ? 'Aucun document téléversé par vos clients.' : 'Aucun document dans cette catégorie.'}</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredData.map(sub => {
+            const total = sub.total_documents;
+            const validated = sub.documents_validated || 0;
+            const rejected = sub.documents_rejected || 0;
+            const pending = sub.documents_pending || 0;
+            const uploaded = sub.documents_uploaded || 0;
+            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
+
+            let statusClass = 'pending';
+            let statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+
+            if (sub.documents_global_status === 'all_validated') {
+                statusClass = 'validated';
+                statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+            } else if (sub.documents_global_status === 'has_rejected' || rejected > 0) {
+                statusClass = 'status-rejected';
+            } else if (uploaded > 0 || pending > 0) {
+                statusClass = 'uploaded';
+            }
+
+            return `
+                <div class="document-card status-${statusClass}">
+                    <div class="doc-card-icon ${statusClass}">
+                        ${statusIcon}
+                    </div>
+                    <div class="doc-card-content">
+                        <h4>${sub.client_nom || 'Client'} ${sub.client_prenom || ''}</h4>
+                        <p>${getTypeLabel(null, sub.type_questionnaire)} - ${formatDate(sub.submission_date)}</p>
+                        <div class="doc-progress-bar">
+                            <div class="doc-progress-fill" style="width: ${percent}%"></div>
+                        </div>
+                        <div class="doc-progress-text">
+                            <span>${validated}/${total} validés</span>
+                            <span>${percent}%</span>
+                        </div>
+                        <div class="doc-status-list">
+                            ${uploaded > 0 ? `<span class="doc-status-item uploaded"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg> ${uploaded} à vérifier</span>` : ''}
+                            ${validated > 0 ? `<span class="doc-status-item validated"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> ${validated} validés</span>` : ''}
+                            ${rejected > 0 ? `<span class="doc-status-item rejected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> ${rejected} rejetés</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="doc-card-actions">
+                        <button class="btn btn-outline btn-sm" onclick="openDocumentsDetail('${sub.submission_id}')">
+                            Voir les documents
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function openDocumentsDetail(submissionId) {
+        const sub = documentsStatusData.find(s => s.submission_id === submissionId);
+        if (!sub) return;
+
+        document.getElementById('clientDocumentsInfo').innerHTML = `
+            <strong>${sub.client_nom || 'Client'} ${sub.client_prenom || ''}</strong><br>
+            <span style="color: var(--gray-500);">${getTypeLabel(null, sub.type_questionnaire)}</span>
+        `;
+
+        try {
+            const documents = await SupabaseClient.listDocumentsBySubmission(submissionId);
+            const container = document.getElementById('documentsDetailList');
+
+            if (!documents || documents.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-500); text-align: center;">Aucun document téléversé.</p>';
+            } else {
+                container.innerHTML = documents.map(doc => {
+                    const typeLabels = {
+                        'cni': 'Carte d\'identité',
+                        'passeport': 'Passeport',
+                        'titre_sejour': 'Titre de séjour',
+                        'contrat_mariage': 'Contrat de mariage',
+                        'contrat_pacs': 'Convention PACS',
+                        'changement_regime_matrimonial': 'Changement régime',
+                        'livret_famille': 'Livret de famille',
+                        'jugement_tutelle': 'Jugement tutelle',
+                        'jugement_curatelle': 'Jugement curatelle',
+                        'sauvegarde_justice': 'Sauvegarde justice',
+                        'habilitation_familiale': 'Habilitation familiale',
+                        'autre': 'Autre document'
+                    };
+
+                    const sizeKB = Math.round((doc.taille_octets || 0) / 1024);
+                    const statusClass = doc.statut === 'validated' ? 'validated' : doc.statut === 'rejected' ? 'rejected' : '';
+
+                    return `
+                        <div class="doc-detail-item ${statusClass}">
+                            <div class="doc-detail-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <div>
+                                    <div class="name">${typeLabels[doc.type_document] || doc.type_document}</div>
+                                    <div class="meta">${doc.nom_fichier} (${sizeKB} Ko)</div>
+                                    ${doc.commentaire_notaire ? `<div class="meta" style="color: var(--error);"><em>${doc.commentaire_notaire}</em></div>` : ''}
+                                </div>
+                            </div>
+                            <div class="doc-detail-actions">
+                                <button class="btn-icon download" title="Télécharger" onclick="downloadDocument('${doc.storage_path}', '${doc.nom_fichier}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                </button>
+                                ${doc.statut !== 'validated' ? `
+                                    <button class="btn-icon validate" title="Valider" onclick="validateDocument('${doc.id}')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                                ${doc.statut !== 'rejected' ? `
+                                    <button class="btn-icon reject" title="Rejeter" onclick="rejectDocument('${doc.id}')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="18" y1="6" x2="6" y2="18"/>
+                                            <line x1="6" y1="6" x2="18" y2="18"/>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('documentsDetailModal').classList.add('active');
+        } catch (error) {
+            console.error('Erreur chargement documents:', error);
+            alert('Erreur lors du chargement des documents');
+        }
+    }
+
+    async function downloadDocument(storagePath, fileName) {
+        try {
+            const signedUrl = await SupabaseClient.getSignedUrl(storagePath);
+            if (signedUrl) {
+                const a = document.createElement('a');
+                a.href = signedUrl;
+                a.download = fileName;
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('Impossible de générer le lien de téléchargement');
+            }
+        } catch (error) {
+            console.error('Erreur téléchargement:', error);
+            alert('Erreur lors du téléchargement');
+        }
+    }
+
+    async function validateDocument(documentId) {
+        try {
+            await SupabaseClient.updateDocumentStatus(documentId, 'validated', null, currentUser.id);
+            // Refresh the detail modal
+            const modal = document.getElementById('documentsDetailModal');
+            if (modal.classList.contains('active')) {
+                // Find current submission and reload
+                const infoEl = document.getElementById('clientDocumentsInfo');
+                const submissionId = documentsStatusData.find(s =>
+                    infoEl.innerHTML.includes(s.client_nom)
+                )?.submission_id;
+                if (submissionId) {
+                    await openDocumentsDetail(submissionId);
+                }
+            }
+            await loadDocumentsStatus();
+        } catch (error) {
+            console.error('Erreur validation:', error);
+            alert('Erreur lors de la validation');
+        }
+    }
+
+    async function rejectDocument(documentId) {
+        const comment = prompt('Raison du rejet (optionnel):');
+        try {
+            await SupabaseClient.updateDocumentStatus(documentId, 'rejected', comment, currentUser.id);
+            // Refresh
+            const modal = document.getElementById('documentsDetailModal');
+            if (modal.classList.contains('active')) {
+                const infoEl = document.getElementById('clientDocumentsInfo');
+                const submissionId = documentsStatusData.find(s =>
+                    infoEl.innerHTML.includes(s.client_nom)
+                )?.submission_id;
+                if (submissionId) {
+                    await openDocumentsDetail(submissionId);
+                }
+            }
+            await loadDocumentsStatus();
+        } catch (error) {
+            console.error('Erreur rejet:', error);
+            alert('Erreur lors du rejet');
+        }
     }
 
     // =====================================================
