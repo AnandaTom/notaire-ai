@@ -188,15 +188,17 @@ class GestionnairePromesses:
             bien = biens[0] if biens else {}
 
         # --- Priorité 1: Terrain à bâtir / Lotissement ---
-        if bien.get("lotissement"):
-            return CategorieBien.TERRAIN_A_BATIR
+        # Note: lotissement seul NE suffit PAS pour catégoriser en TERRAIN
+        # (une maison dans un lotissement = HORS_COPRO, pas TERRAIN)
+        # Vérifions d'abord les marqueurs terrain EXPLICITES
 
         type_bien = str(bien.get("type_bien", "")).lower()
         nature = str(bien.get("nature", "")).lower()
+        usage = str(bien.get("usage_actuel", "")).lower()
 
-        terrain_keywords = ("terrain", "parcelle", "lotissement", "lot a batir",
+        terrain_keywords = ("terrain", "parcelle", "lot a batir",
                             "lot à bâtir", "terrain a batir", "terrain à bâtir")
-        if type_bien in terrain_keywords or nature in terrain_keywords:
+        if type_bien in terrain_keywords or nature in terrain_keywords or usage in terrain_keywords:
             return CategorieBien.TERRAIN_A_BATIR
 
         # Marqueurs lotissement dans les données
