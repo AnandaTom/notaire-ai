@@ -194,6 +194,7 @@
         .section:nth-child(3) { animation-delay: 0.3s; }
         .section:nth-child(4) { animation-delay: 0.4s; }
         .section:nth-child(5) { animation-delay: 0.5s; }
+        .section:nth-child(6) { animation-delay: 0.6s; }
 
         @keyframes fadeInUp {
             from {
@@ -749,6 +750,256 @@
             color: var(--ink-medium);
         }
 
+        /* Best Practice Business Section */
+        .business-container {
+            background: var(--cream);
+            border: 1px solid var(--parchment-dark);
+            border-radius: 8px;
+            padding: var(--space-xl);
+        }
+
+        .business-summary {
+            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
+            border-radius: 8px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+
+        .business-summary-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--gold-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .business-summary-text {
+            color: var(--cream);
+            font-size: 0.9rem;
+        }
+
+        .axes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        @media (max-width: 900px) {
+            .axes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .axe-card {
+            background: var(--parchment);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .axe-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(10, 22, 40, 0.1);
+        }
+
+        .axe-card.priority {
+            border: 2px solid var(--gold-primary);
+            background: linear-gradient(135deg, rgba(201, 169, 98, 0.1), var(--cream));
+        }
+
+        .axe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .axe-name {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+
+        .axe-impact {
+            background: var(--ink-black);
+            color: var(--gold-primary);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .axe-card.priority .axe-impact {
+            background: var(--gold-primary);
+            color: var(--ink-black);
+        }
+
+        .axe-description {
+            font-size: 0.85rem;
+            color: var(--ink-medium);
+            margin-bottom: var(--space-md);
+        }
+
+        .axe-gain {
+            font-size: 0.8rem;
+            color: var(--success);
+            font-weight: 600;
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(74, 124, 89, 0.1);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .roadmap-section {
+            margin-top: var(--space-xl);
+        }
+
+        .roadmap-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .roadmap-item {
+            background: var(--parchment);
+            border-radius: 8px;
+            padding: var(--space-md);
+            position: relative;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .roadmap-item.prod::before {
+            background: var(--success);
+        }
+
+        .roadmap-item.todo::before {
+            background: var(--warning);
+        }
+
+        .roadmap-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+
+        .roadmap-item-name {
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+
+        .roadmap-item-conformity {
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .roadmap-item.prod .roadmap-item-conformity {
+            color: var(--success);
+        }
+
+        .roadmap-item.todo .roadmap-item-conformity {
+            color: var(--warning);
+        }
+
+        .roadmap-item-volume {
+            font-size: 0.75rem;
+            color: var(--ink-medium);
+        }
+
+        .competitors-section {
+            margin-top: var(--space-xl);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--parchment-dark);
+        }
+
+        .competitors-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-md);
+        }
+
+        .competitors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-sm);
+        }
+
+        .competitor-chip {
+            background: var(--parchment);
+            border-radius: 8px;
+            padding: var(--space-sm) var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .competitor-name {
+            color: var(--ink-black);
+            font-weight: 500;
+        }
+
+        .competitor-status {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .competitor-status.no {
+            background: rgba(139, 58, 58, 0.15);
+            color: var(--seal-red);
+        }
+
+        .competitor-status.partial {
+            background: rgba(184, 134, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .manual-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--ink-black);
+            color: var(--gold-primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .manual-link:hover {
+            background: var(--ink-deep);
+            transform: translateY(-2px);
+        }
+
         /* Footer */
         .footer {
             background: var(--ink-black);
@@ -999,6 +1250,55 @@
             </div>
             <div class="capabilities-grid" id="capabilitiesGrid"></div>
         </section>
+
+        <!-- Section 6: Best Practice Business -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-number">VI</span>
+                <h2 class="section-title">Strategie Business</h2>
+            </div>
+            <div class="business-container">
+                <!-- Summary -->
+                <div class="business-summary">
+                    <div class="business-summary-title">Notre Avantage Competitif Unique</div>
+                    <div class="business-summary-text" id="businessSummary">
+                        Generation d'actes notariaux complets en &lt; 1 minute, 100% fideles aux trames
+                    </div>
+                </div>
+
+                <!-- 3 Axes -->
+                <div class="axes-grid" id="axesGrid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Roadmap Generation -->
+                <div class="roadmap-section">
+                    <div class="roadmap-title">
+                        <span>📋</span>
+                        Roadmap Generation d'Actes
+                    </div>
+                    <div class="roadmap-grid" id="roadmapGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Competitors -->
+                <div class="competitors-section">
+                    <div class="competitors-title">Audit Concurrentiel - Generation IA</div>
+                    <div class="competitors-grid" id="competitorsGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Link to full manual -->
+                <a href="../docs/data/BEST_PRACTICE_BUSINESS.md" target="_blank" class="manual-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10,19L12,15H9V10H15V15L13,19H10Z"/>
+                    </svg>
+                    Voir le manuel complet
+                </a>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -1132,9 +1432,124 @@
             document.getElementById('capabilitiesGrid').innerHTML = capabilitiesHtml;
         }
 
+        // Load Best Practice Business data
+        async function loadBestPractice() {
+            try {
+                const response = await fetch('../docs/data/dashboard.json');
+                const data = await response.json();
+                if (data.best_practice_business) {
+                    updateBestPractice(data.best_practice_business);
+                }
+            } catch (error) {
+                console.log('Loading default best practice data...');
+                updateBestPractice(getDefaultBestPractice());
+            }
+        }
+
+        function getDefaultBestPractice() {
+            return {
+                competitive_audit: {
+                    summary: "AUCUN concurrent ne genere d'actes complets par IA - C'est notre moat",
+                    our_unique_advantage: "Generation d'actes notariaux complets en < 1 minute, 100% fideles aux trames",
+                    competitors: [
+                        { name: "Septeo/Genapi", has_acte_generation: false },
+                        { name: "Fichorga", has_acte_generation: "partial" },
+                        { name: "Quai des Notaires", has_acte_generation: false },
+                        { name: "MyNotary", has_acte_generation: false },
+                        { name: "Notarly", has_acte_generation: false }
+                    ]
+                },
+                business_axes: {
+                    axe1_relation_client: {
+                        name: "Relation Client",
+                        impact_percent: 15,
+                        description: "Chatbot IA, emails automatiques, prise RDV",
+                        gain_estimate: "3-5h/semaine",
+                        status: "partial"
+                    },
+                    axe2_juridique_actes: {
+                        name: "Juridique / Generation d'Actes",
+                        impact_percent: 70,
+                        description: "LE COEUR DU BUSINESS - Generation d'actes complets",
+                        gain_estimate: "2-3h PAR ACTE",
+                        status: "priority"
+                    },
+                    axe3_administratif: {
+                        name: "Administratif",
+                        impact_percent: 15,
+                        description: "Questionnaires, collecte docs, dashboard",
+                        gain_estimate: "1-2h/dossier",
+                        status: "done"
+                    }
+                },
+                generation_actes_roadmap: {
+                    templates: [
+                        { name: "Promesse de vente", conformity: 94.3, volume_percent: 35, status: "prod" },
+                        { name: "Acte de vente", conformity: 80.2, volume_percent: 35, status: "prod" },
+                        { name: "Compromis", conformity: 0, volume_percent: 15, status: "todo" },
+                        { name: "Donation", conformity: 0, volume_percent: 8, status: "todo" },
+                        { name: "Reglement copro", conformity: 85.5, volume_percent: 5, status: "prod" },
+                        { name: "Modificatif EDD", conformity: 91.7, volume_percent: 2, status: "prod" }
+                    ]
+                }
+            };
+        }
+
+        function updateBestPractice(data) {
+            // Update summary
+            if (data.competitive_audit && data.competitive_audit.our_unique_advantage) {
+                document.getElementById('businessSummary').textContent = data.competitive_audit.our_unique_advantage;
+            }
+
+            // Update axes
+            if (data.business_axes) {
+                const axes = Object.values(data.business_axes);
+                const axesHtml = axes.map(axe => `
+                    <div class="axe-card ${axe.status === 'priority' ? 'priority' : ''}">
+                        <div class="axe-header">
+                            <div class="axe-name">${axe.name}</div>
+                            <div class="axe-impact">${axe.impact_percent}%</div>
+                        </div>
+                        <div class="axe-description">${axe.description}</div>
+                        <div class="axe-gain">${axe.gain_estimate}</div>
+                    </div>
+                `).join('');
+                document.getElementById('axesGrid').innerHTML = axesHtml;
+            }
+
+            // Update roadmap
+            if (data.generation_actes_roadmap && data.generation_actes_roadmap.templates) {
+                const roadmapHtml = data.generation_actes_roadmap.templates.map(t => `
+                    <div class="roadmap-item ${t.status}">
+                        <div class="roadmap-item-header">
+                            <span class="roadmap-item-name">${t.name}</span>
+                            <span class="roadmap-item-conformity">${t.conformity > 0 ? t.conformity + '%' : 'A faire'}</span>
+                        </div>
+                        <div class="roadmap-item-volume">${t.volume_percent}% du volume</div>
+                    </div>
+                `).join('');
+                document.getElementById('roadmapGrid').innerHTML = roadmapHtml;
+            }
+
+            // Update competitors
+            if (data.competitive_audit && data.competitive_audit.competitors) {
+                const competitorsHtml = data.competitive_audit.competitors.map(c => `
+                    <div class="competitor-chip">
+                        <span class="competitor-name">${c.name}</span>
+                        <span class="competitor-status ${c.has_acte_generation === false ? 'no' : 'partial'}">
+                            ${c.has_acte_generation === false ? 'Non' : c.has_acte_generation === 'partial' ? 'Partiel' : 'Oui'}
+                        </span>
+                    </div>
+                `).join('');
+                document.getElementById('competitorsGrid').innerHTML = competitorsHtml;
+            }
+        }
+
         // Load and auto-refresh
         loadData();
+        loadBestPractice();
         setInterval(loadData, 30000);
+        setInterval(loadBestPractice, 60000);
     </script>
 </body>
 </html>
