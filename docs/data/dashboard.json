@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-02T18:23:53.393661",
+    "generated_at": "2026-02-04T16:08:47.743944",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,28 +12,28 @@
     "scripts_count": 66,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 190
+    "commits": 201
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "8d10ad8",
-      "message": "chore: Fin de journee - 02/02/2026 19:23:39,08",
-      "date": "2026-02-02"
+      "hash": "0ffec14",
+      "message": "feat: Intégration 13 trames promesse + plan d'intégration optimisée (v1.9-2.0)",
+      "date": "2026-02-04"
     },
-    "total_commits": 190,
+    "total_commits": 201,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 118
+        "commits": 121
       },
       {
         "name": "github-actions[bot]",
-        "commits": 42
+        "commits": 45
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 20
+        "commits": 22
       },
       {
         "name": "Payoss",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-02"
+      "last_modified": "2026-02-04"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -65,8 +65,8 @@
       "bookmarks": 298,
       "sections": 165,
       "trames_source": 7,
-      "lines": 1536,
-      "last_modified": "2026-02-02"
+      "lines": 1588,
+      "last_modified": "2026-02-04"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-02"
+      "last_modified": "2026-02-04"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,7 +88,7 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-02"
+      "last_modified": "2026-02-04"
     }
   ],
   "scripts": {
@@ -156,7 +156,7 @@
   },
   "schemas": {
     "total": 17,
-    "total_variables": 204,
+    "total_variables": 205,
     "schemas": [
       {
         "name": "questions_notaire.json",
@@ -204,7 +204,7 @@
       },
       {
         "name": "variables_promesse_vente.json",
-        "count": 28
+        "count": 29
       },
       {
         "name": "promesse_catalogue_unifie.json",
@@ -622,6 +622,86 @@
   ],
   "activity": [
     {
+      "hash": "0ffec14",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Intégration 13 trames promesse + plan d'intégration optimisée (v1.9-2.0)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "8aea5b0",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "0e13aae",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "062cc5b",
+      "author": "github-actions[bot]",
+      "date": "2026-02-03",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "c197acd",
+      "author": "Tom",
+      "date": "2026-02-02",
+      "message": "Fin de journee - 02/02/2026 21:09:47,70",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "b1be922",
+      "author": "Augustin",
+      "date": "2026-02-02",
+      "message": "dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "9549e48",
+      "author": "Augustin",
+      "date": "2026-01-30",
+      "message": "audit complet questionnaire → email notaire + stockage Supabase",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "8d0db30",
+      "author": "github-actions[bot]",
+      "date": "2026-02-02",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "8d10ad8",
       "author": "Tom",
       "date": "2026-02-02",
@@ -632,6 +712,26 @@
       "type_color": "blue"
     },
     {
+      "hash": "c89d37e",
+      "author": "github-actions[bot]",
+      "date": "2026-02-02",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "5d45452",
+      "author": "Augustin",
+      "date": "2026-02-02",
+      "message": "dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
       "hash": "a503929",
       "author": "Tom",
       "date": "2026-02-02",
@@ -640,6 +740,16 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
+    },
+    {
+      "hash": "793e863",
+      "author": "Augustin",
+      "date": "2026-01-30",
+      "message": "audit complet questionnaire → email notaire + stockage Supabase",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
     },
     {
       "hash": "88747f8",
@@ -710,116 +820,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "fea1039",
-      "author": "Tom",
-      "date": "2026-01-31",
-      "message": "Fin de journee - 31/01/2026 13:28:16,07",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "788d446",
-      "author": "Tom",
-      "date": "2026-01-31",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "88bb476",
-      "author": "github-actions[bot]",
-      "date": "2026-01-31",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "1710460",
-      "author": "github-actions[bot]",
-      "date": "2026-01-30",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "83cbd00",
-      "author": "Tom",
-      "date": "2026-01-30",
-      "message": "Fin de journee - 30/01/2026 22:35:38,25",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "f039c12",
-      "author": "Tom",
-      "date": "2026-01-30",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "22db26c",
-      "author": "github-actions[bot]",
-      "date": "2026-01-30",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "5a2de99",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "c8f5c81",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Fin de journee - 29/01/2026 22:45:54,21",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "7005c70",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "8fc7f26",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "register custom Jinja2 filters in template syntax test",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
     }
   ],
   "recommendations": {
@@ -1023,7 +1023,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-02"
+    "last_updated": "2026-02-04"
   },
   "overview": {
     "overall_score": 67,
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-02 18:23"
+    "last_updated": "2026-02-04 16:08"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-02 18:23"
+    "last_updated": "2026-02-04 16:08"
   },
   "conformity_details": {
     "promesse": {
