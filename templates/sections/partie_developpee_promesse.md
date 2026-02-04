@@ -557,6 +557,42 @@ Le bien objet des présentes est soumis aux restrictions d'usage suivantes :
 Le **BÉNÉFICIAIRE** déclare avoir été pleinement informé de ces restrictions et les accepter.
 {% endif %}
 
+{% if bien.servitudes and bien.servitudes|length > 0 %}
+## SERVITUDES
+
+Le bien est grevé ou bénéficie des servitudes suivantes :
+
+{% for servitude in bien.servitudes %}
+### {{ servitude.type | capitalize if servitude.type else "Servitude" }}
+
+**Nature** : {{ servitude.nature }}
+
+{% if servitude.description %}
+{{ servitude.description }}
+{% endif %}
+
+{% if servitude.origine %}
+**Origine** : {{ servitude.origine }}{% if servitude.origine_date %} ({{ servitude.origine_date | format_date }}){% endif %}
+{% endif %}
+
+{% if servitude.fonds %}
+**Fonds** : {{ servitude.fonds.type }} {{ servitude.fonds.designation }}
+{% endif %}
+
+{% if servitude.modalites %}
+**Modalités** : {{ servitude.modalites }}
+{% endif %}
+
+{% endfor %}
+
+{% if bien.servitudes_declaration %}
+{{ bien.servitudes_declaration }}
+{% else %}
+Le **BÉNÉFICIAIRE** déclare avoir été pleinement informé de l'existence de ces servitudes et les accepter.
+{% endif %}
+
+{% endif %}
+
 ## POUVOIRS
 
 Le **BÉNÉFICIAIRE** confère tous pouvoirs au porteur d'une copie exécutoire ou d'un extrait des présentes pour accomplir toutes formalités et faire toutes déclarations nécessaires à la publicité des présentes.

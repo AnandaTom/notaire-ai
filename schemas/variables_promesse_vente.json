@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Variables Promesse Unilatérale de Vente",
-  "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente. Supporte 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir) et 4 types de transactions.",
-  "version": "3.0.0",
-  "date_modification": "2026-01-30",
+  "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente. Supporte 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir), 4 types de transactions, et 5 cas spéciaux (lotissement, groupe habitations, servitudes, viager, création copro).",
+  "version": "4.0.0",
+  "date_modification": "2026-02-04",
   "type": "object",
   "required": ["promettants", "beneficiaires", "prix", "delai_realisation"],
   "$comment": "Les champs 'bien' ou 'biens' sont requis selon le type. Voir promesse_catalogue_unifie.json pour détails.",
@@ -259,6 +259,147 @@
           "type": "boolean",
           "default": true,
           "description": "Bien vendu tel que, sans garantie particulière"
+        },
+        "lotissement": {
+          "type": "object",
+          "description": "Informations sur le lotissement (si applicable - hors copropriété/terrain)",
+          "properties": {
+            "nom": { "type": "string", "description": "Nom du lotissement" },
+            "arrete": {
+              "type": "object",
+              "description": "Arrêté d'autorisation du lotissement",
+              "properties": {
+                "date": { "type": "string", "format": "date" },
+                "autorite": { "type": "string", "description": "Autorité ayant délivré l'arrêté (ex: Maire de...)" },
+                "numero": { "type": "string", "description": "Numéro de référence de l'arrêté" }
+              }
+            },
+            "cahier_charges": {
+              "type": "object",
+              "description": "Cahier des charges du lotissement",
+              "properties": {
+                "date": { "type": "string", "format": "date" },
+                "clauses": {
+                  "type": "array",
+                  "description": "Points clés du cahier des charges",
+                  "items": { "type": "string" }
+                }
+              }
+            },
+            "obligations": {
+              "type": "array",
+              "description": "Obligations spécifiques du lotissement",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": { "type": "string" },
+                  "echeance": { "type": "string", "description": "Échéance de réalisation si applicable" }
+                }
+              }
+            },
+            "association_syndicale": {
+              "type": "object",
+              "description": "Association syndicale libre (ASL) gérant le lotissement",
+              "properties": {
+                "nom": { "type": "string" },
+                "cotisation_annuelle": { "type": "number", "description": "Montant de la cotisation en €" }
+              }
+            }
+          }
+        },
+        "groupe_habitations": {
+          "type": "object",
+          "description": "Informations sur le groupe d'habitations (si applicable - hors copropriété)",
+          "properties": {
+            "nombre_lots": { "type": "integer", "description": "Nombre total de lots dans le groupe" },
+            "parties_communes": {
+              "type": "array",
+              "description": "Parties communes du groupe d'habitations",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "designation": { "type": "string", "description": "Description de la partie commune" },
+                  "surface": { "type": "number", "description": "Surface en m² si applicable" }
+                }
+              }
+            },
+            "charges": {
+              "type": "object",
+              "description": "Répartition des charges communes",
+              "properties": {
+                "quote_part": { "type": "number", "description": "Quote-part du lot (numérateur, ex: 1 pour 1/15)" },
+                "total": { "type": "number", "description": "Total des quotes-parts (dénominateur, ex: 15 pour 1/15)" },
+                "montant_annuel": { "type": "number", "description": "Montant annuel estimé des charges en €" }
+              }
+            },
+            "reglement": {
+              "type": "object",
+              "description": "Règlement du groupe d'habitations",
+              "properties": {
+                "date": { "type": "string", "format": "date", "description": "Date d'établissement du règlement" },
+                "clauses": {
+                  "type": "array",
+                  "description": "Clauses principales du règlement",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "servitudes": {
+          "type": "array",
+          "description": "Liste des servitudes affectant le bien ou dont bénéficie le bien",
+          "items": {
+            "type": "object",
+            "required": ["type", "nature"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["active", "passive", "apparente", "non_apparente", "continue", "discontinue"],
+                "description": "Type de servitude (active=au profit du bien, passive=charge du bien)"
+              },
+              "nature": {
+                "type": "string",
+                "description": "Nature de la servitude (passage, vue, puisage, écoulement, etc.)"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description détaillée de la servitude"
+              },
+              "origine": {
+                "type": "string",
+                "description": "Origine juridique (titre, prescription, destination du père de famille, etc.)"
+              },
+              "origine_date": {
+                "type": "string",
+                "format": "date",
+                "description": "Date de l'acte instituant la servitude"
+              },
+              "fonds": {
+                "type": "object",
+                "description": "Fonds dominant ou servant",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["dominant", "servant"],
+                    "description": "dominant=qui bénéficie, servant=qui subit"
+                  },
+                  "designation": {
+                    "type": "string",
+                    "description": "Désignation du fonds"
+                  }
+                }
+              },
+              "modalites": {
+                "type": "string",
+                "description": "Modalités d'exercice de la servitude"
+              }
+            }
+          }
+        },
+        "servitudes_declaration": {
+          "type": "string",
+          "description": "Déclaration générale sur les servitudes (remplace le texte par défaut)"
         }
       }
     },

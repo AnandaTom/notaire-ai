@@ -232,6 +232,94 @@ Le document modificatif du parcellaire cadastral, créant cette division, a fait
 
 Tel que le **BIEN** existe, avec tous droits y attachés, sans aucune exception ni réserve.
 
+{% if bien.lotissement %}
+## DISPOSITIONS RELATIVES AU LOTISSEMENT
+
+Le bien vendu fait partie d'un lotissement autorisé par arrêté :
+{% if bien.lotissement.arrete %}
+- **Arrêté d'autorisation** : {{ bien.lotissement.arrete.date | format_date }} par {{ bien.lotissement.arrete.autorite }}
+- **Référence** : {{ bien.lotissement.arrete.numero }}
+{% endif %}
+
+{% if bien.lotissement.nom %}
+**Nom du lotissement** : {{ bien.lotissement.nom }}
+{% endif %}
+
+### Obligations du lotissement
+
+Le **BENEFICIAIRE** s'oblige à respecter les conditions suivantes :
+
+{% if bien.lotissement.obligations %}
+{% for obligation in bien.lotissement.obligations %}
+- {{ obligation.description }}{% if obligation.echeance %} (échéance : {{ obligation.echeance }}){% endif %}
+{% endfor %}
+{% else %}
+- Respecter les dispositions de l'arrêté d'autorisation du lotissement
+- Se conformer aux prescriptions du cahier des charges le cas échéant
+{% endif %}
+
+{% if bien.lotissement.cahier_charges %}
+### Cahier des charges
+
+Le bien est soumis au cahier des charges du lotissement établi le {{ bien.lotissement.cahier_charges.date | format_date }}.
+
+**Points clés du cahier des charges** :
+{% for clause in bien.lotissement.cahier_charges.clauses %}
+- {{ clause }}
+{% endfor %}
+{% endif %}
+
+{% if bien.lotissement.association_syndicale %}
+### Association syndicale libre (ASL)
+
+Le lotissement est géré par une association syndicale libre :
+- **Nom** : {{ bien.lotissement.association_syndicale.nom }}
+- **Cotisation annuelle** : {{ bien.lotissement.association_syndicale.cotisation_annuelle }} €
+
+Le **BENEFICIAIRE** s'engage à adhérer à l'association syndicale et à régler les cotisations correspondantes.
+{% endif %}
+
+{% endif %}
+
+{% if bien.groupe_habitations %}
+## GROUPE D'HABITATIONS
+
+Le bien vendu fait partie d'un groupe d'habitations comprenant **{{ bien.groupe_habitations.nombre_lots }} lots**.
+
+{% if bien.groupe_habitations.parties_communes %}
+### Parties communes du groupe
+
+Les parties communes du groupe d'habitations comprennent :
+{% for partie in bien.groupe_habitations.parties_communes %}
+- {{ partie.designation }}{% if partie.surface %} ({{ partie.surface }} m²){% endif %}
+{% endfor %}
+{% endif %}
+
+{% if bien.groupe_habitations.charges %}
+### Charges communes
+
+Les charges du groupe d'habitations sont réparties comme suit :
+- **Quote-part du lot vendu** : {{ bien.groupe_habitations.charges.quote_part }} / {{ bien.groupe_habitations.charges.total }}
+- **Montant annuel estimé** : {{ bien.groupe_habitations.charges.montant_annuel }} €
+
+Le **BENEFICIAIRE** devra supporter sa quote-part des charges communes à compter de la réalisation de la vente.
+{% endif %}
+
+{% if bien.groupe_habitations.reglement %}
+### Règlement du groupe
+
+Le groupe d'habitations est soumis à un règlement établi le {{ bien.groupe_habitations.reglement.date | format_date }}.
+
+**Clauses principales du règlement** :
+{% for clause in bien.groupe_habitations.reglement.clauses %}
+- {{ clause }}
+{% endfor %}
+
+Le **BENEFICIAIRE** déclare avoir pris connaissance du règlement du groupe d'habitations et s'engage à le respecter.
+{% endif %}
+
+{% endif %}
+
 ### Plans du bien
 Demeurent annexées aux présentes :
 - Une copie du plan cadastral ;
