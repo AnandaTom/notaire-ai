@@ -60,6 +60,8 @@ class ContexteConversation:
     type_acte_en_cours: Optional[str] = None
     etape_workflow: Optional[str] = None
     donnees_collectees: Dict[str, Any] = field(default_factory=dict)
+    questionnaire_active: bool = False
+    questionnaire_state: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -138,6 +140,18 @@ class ChatHandler:
 
         if self.verbose:
             print(f"[ChatHandler] Message recu: {message[:50]}...")
+
+        # 0. Si questionnaire actif, traiter la reponse dans ce mode
+        if contexte.questionnaire_active and contexte.questionnaire_state:
+            # Verifier si c'est une annulation
+            msg_lower = message.lower().strip()
+            if msg_lower in ["annuler", "stop", "non", "arreter"]:
+                return ReponseChat(
+                    content="Questionnaire annule. Comment puis-je vous aider ?",
+                    suggestions=["Creer un acte", "Voir mes dossiers", "Aide"],
+                    contexte_mis_a_jour={"questionnaire_active": False, "questionnaire_state": None, "etape_workflow": None}
+                )
+            return self._reponse_questionnaire(message, contexte, etude_id)
 
         # 1. Analyser l'intention
         intention, confiance, entites = self._analyser_intention(message)
@@ -308,11 +322,11 @@ Que souhaitez-vous faire ?""",
         )
 
     def _reponse_creer(self, entites, message, contexte, etude_id) -> ReponseChat:
-        """Reponse pour la creation d'actes."""
+        """Reponse pour la creation d'actes. Demarre le questionnaire si type detecte."""
         type_acte = entites.get("type_acte")
 
         if type_acte:
-            # Type d'acte detecte
+            # Demarrer le questionnaire interactif
             type_lisible = {
                 "vente": "acte de vente",
                 "promesse_vente": "promesse de vente",
@@ -320,6 +334,32 @@ Que souhaitez-vous faire ?""",
                 "modificatif_edd": "modificatif EDD"
             }.get(str(type_acte), str(type_acte))
 
+            try:
+                from execution.questionnaire_manager import QuestionnaireManager
+                qm = QuestionnaireManager(str(type_acte))
+                next_q = qm.get_next_question()
+
+                if next_q:
+                    article = "une" if str(type_acte) == "promesse_vente" else "un"
+                    return ReponseChat(
+                        content=f"""Je vais vous guider pour creer {article} {type_lisible}.
+
+[{next_q['progress']}%] **Section : {next_q['section_titre']}**
+{next_q['question']}""" + (f"\n\nChoix possibles : {', '.join(next_q['options'])}" if next_q.get('options') else ""),
+                        suggestions=next_q.get("options", ["Annuler"]),
+                        action={"type": "start_questionnaire", "type_acte": str(type_acte)},
+                        contexte_mis_a_jour={
+                            "type_acte_en_cours": str(type_acte),
+                            "etape_workflow": "questionnaire",
+                            "questionnaire_active": True,
+                            "questionnaire_state": qm.serialize()
+                        }
+                    )
+            except Exception as e:
+                if self.verbose:
+                    print(f"[ChatHandler] Erreur questionnaire: {e}")
+
+            # Fallback sans questionnaire
             return ReponseChat(
                 content=f"""Je vais vous aider a creer un {type_lisible}.
 
@@ -355,6 +395,70 @@ Par quoi souhaitez-vous commencer ?""",
                     "Modificatif EDD"
                 ]
             )
+
+    def _reponse_questionnaire(self, message, contexte, etude_id) -> ReponseChat:
+        """Traite une reponse dans le mode questionnaire interactif."""
+        try:
+            from execution.questionnaire_manager import QuestionnaireManager
+
+            qm = QuestionnaireManager(
+                type_acte=contexte.type_acte_en_cours or "promesse_vente",
+                state=contexte.questionnaire_state
+            )
+
+            # Trouver la question en attente de reponse
+            current_q = qm.get_next_question()
+            if not current_q:
+                # Deja complet
+                return self._reponse_questionnaire_complet(qm, contexte, etude_id)
+
+            # Enregistrer la reponse
+            qm.record_answer(current_q["id"], message.strip())
+
+            # Passer a la question suivante
+            next_q = qm.get_next_question()
+
+            if next_q is None or qm.is_complete():
+                return self._reponse_questionnaire_complet(qm, contexte, etude_id)
+
+            # Poser la question suivante
+            return ReponseChat(
+                content=f"""[{next_q['progress']}%] **Section : {next_q['section_titre']}**
+{next_q['question']}""" + (f"\n\nChoix possibles : {', '.join(next_q['options'])}" if next_q.get('options') else ""),
+                suggestions=next_q.get("options", []),
+                contexte_mis_a_jour={
+                    "questionnaire_active": True,
+                    "questionnaire_state": qm.serialize()
+                }
+            )
+
+        except Exception as e:
+            if self.verbose:
+                print(f"[ChatHandler] Erreur questionnaire: {e}")
+            return ReponseChat(
+                content="Une erreur est survenue dans le questionnaire. Voulez-vous recommencer ?",
+                suggestions=["Recommencer", "Annuler"],
+                contexte_mis_a_jour={"questionnaire_active": False, "questionnaire_state": None}
+            )
+
+    def _reponse_questionnaire_complet(self, qm, contexte, etude_id) -> ReponseChat:
+        """Genere la reponse quand le questionnaire est complet."""
+        resume = qm.get_summary()
+        return ReponseChat(
+            content=f"""[100%] Toutes les informations sont collectees !
+
+{resume}
+
+Souhaitez-vous generer le document ?""",
+            suggestions=["Generer le document", "Modifier une reponse", "Annuler"],
+            action={"type": "questionnaire_complete", "acte_data": qm.to_acte_data()},
+            contexte_mis_a_jour={
+                "questionnaire_active": False,
+                "questionnaire_state": qm.serialize(),
+                "etape_workflow": "generation_prete",
+                "donnees_collectees": qm.to_acte_data()
+            }
+        )
 
     def _reponse_modifier(self, entites, message, contexte, etude_id) -> ReponseChat:
         """Reponse pour la modification d'actes."""
@@ -478,13 +582,13 @@ class SimpleParseur:
 
         analyse = AnalyseSimple()
 
-        if "vente" in texte_lower or "créer" in texte_lower:
-            analyse.intention = "CREER"
-            analyse.type_acte = "vente"
-            analyse.confiance = 0.7
-        elif "promesse" in texte_lower:
+        if "promesse" in texte_lower:
             analyse.intention = "CREER"
             analyse.type_acte = "promesse_vente"
+            analyse.confiance = 0.7
+        elif "vente" in texte_lower or "créer" in texte_lower or "creer" in texte_lower:
+            analyse.intention = "CREER"
+            analyse.type_acte = "vente"
             analyse.confiance = 0.7
         elif "dossier" in texte_lower or "liste" in texte_lower:
             analyse.intention = "GENERER"

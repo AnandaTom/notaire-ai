@@ -16,6 +16,8 @@ Usage Modal:
 Endpoints:
     POST /agent/execute     - Exécuter une demande
     POST /agent/feedback    - Envoyer un feedback (apprentissage)
+    POST /titres/upload     - Upload et extraction de titre (OCR auto)
+    GET  /titres            - Lister les titres
     GET  /dossiers          - Lister les dossiers
     GET  /dossiers/{id}     - Détail d'un dossier
     POST /dossiers          - Créer un dossier
@@ -32,8 +34,9 @@ from typing import Dict, List, Optional, Any
 from contextlib import asynccontextmanager
 from functools import lru_cache
 
-from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request
+from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse as FastAPIFileResponse
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 
@@ -806,6 +809,61 @@ async def get_current_etude(auth: AuthContext = Depends(verify_api_key)):
 
 
 # =============================================================================
+# Endpoint Téléchargement Fichiers
+# =============================================================================
+
+@app.get("/files/{filename}", tags=["Fichiers"])
+async def download_file(
+    filename: str,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Télécharge un fichier généré (DOCX/PDF).
+
+    Les fichiers sont stockés dans le volume Modal /outputs/ ou localement dans outputs/.
+    Protection contre le path traversal incluse.
+    """
+    import re as re_mod
+
+    # Sécurité : nettoyer le nom de fichier (pas de path traversal)
+    safe_filename = re_mod.sub(r'[^\w\-.]', '', filename)
+    if not safe_filename or '..' in safe_filename:
+        raise HTTPException(status_code=400, detail="Nom de fichier invalide")
+
+    # Chercher le fichier dans le répertoire de sortie
+    output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", str(PROJECT_ROOT / "outputs")))
+
+    # Recherche récursive dans les sous-dossiers
+    found_path = None
+    for candidate in output_dir.rglob(safe_filename):
+        found_path = candidate
+        break
+
+    if not found_path or not found_path.exists():
+        raise HTTPException(status_code=404, detail=f"Fichier non trouvé: {safe_filename}")
+
+    # Sécurité : vérifier que le fichier est bien dans output_dir
+    try:
+        found_path.resolve().relative_to(output_dir.resolve())
+    except ValueError:
+        raise HTTPException(status_code=403, detail="Accès refusé")
+
+    # Déterminer le content-type
+    content_types = {
+        '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        '.pdf': 'application/pdf',
+        '.json': 'application/json',
+    }
+    media_type = content_types.get(found_path.suffix.lower(), 'application/octet-stream')
+
+    return FastAPIFileResponse(
+        path=str(found_path),
+        filename=safe_filename,
+        media_type=media_type
+    )
+
+
+# =============================================================================
 # Endpoints Clauses Intelligentes (Promesse de Vente)
 # =============================================================================
 
@@ -1244,6 +1302,280 @@ async def lister_types_promesse(auth: AuthContext = Depends(verify_api_key)):
 # Endpoints Titres de Propriété
 # =============================================================================
 
+class TitreUploadResponse(BaseModel):
+    """Réponse de l'upload d'un titre."""
+    id: str
+    status: str  # processing, completed, error
+    reference: str
+    confiance_extraction: float
+    donnees: Optional[Dict[str, Any]] = None
+    fichier_original: Optional[str] = None
+    message: Optional[str] = None
+    temps_traitement_ms: Optional[int] = None
+
+
+@app.post("/titres/upload", response_model=TitreUploadResponse, tags=["Titres"])
+async def upload_titre(
+    file: UploadFile = File(...),
+    reference: Optional[str] = Form(None),
+    ocr: Optional[bool] = Form(None),
+    auth: AuthContext = Depends(require_write_permission)
+):
+    """
+    Upload et extraction d'un titre de propriété.
+
+    - **file**: Fichier PDF ou DOCX du titre
+    - **reference**: Référence interne (optionnel, auto-générée si absent)
+    - **ocr**: Forcer l'OCR (optionnel, auto-détection si absent)
+
+    Le système:
+    1. Détecte si le PDF est scanné (image) ou textuel
+    2. Applique l'OCR si nécessaire (PDF scannés)
+    3. Extrait automatiquement les données (propriétaires, bien, prix, etc.)
+    4. Sauvegarde dans Supabase
+    5. Retourne les données extraites avec un score de confiance
+    """
+    import time
+    import tempfile
+    import uuid
+    from pathlib import Path
+
+    debut = time.time()
+
+    # Vérifier le type de fichier
+    filename = file.filename or "document"
+    suffix = Path(filename).suffix.lower()
+
+    if suffix not in [".pdf", ".docx", ".doc"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Format non supporté: {suffix}. Utilisez PDF ou DOCX."
+        )
+
+    # Générer une référence si non fournie
+    if not reference:
+        reference = f"TITRE-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+
+    titre_id = str(uuid.uuid4())
+
+    try:
+        # Sauvegarder le fichier temporairement
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            content = await file.read()
+            tmp.write(content)
+            tmp_path = Path(tmp.name)
+
+        # Importer les outils d'extraction
+        from execution.utils.extraire_titre import extraire_donnees_titre
+
+        # Détection OCR et extraction
+        donnees = None
+        ocr_utilise = False
+        message = None
+
+        if suffix == ".pdf":
+            # Vérifier si c'est un PDF scanné
+            try:
+                from execution.extraction.ocr_processor import OCRProcessor
+
+                processor = OCRProcessor()
+                est_scanne, raison = processor.detecter_pdf_scanne(str(tmp_path))
+
+                if (ocr is True) or (ocr is None and est_scanne):
+                    # Utiliser l'OCR
+                    if processor.est_disponible:
+                        result_ocr = processor.traiter_pdf(str(tmp_path))
+                        ocr_utilise = True
+                        message = f"OCR appliqué ({result_ocr.confiance_moyenne:.0%} confiance)"
+
+                        # Sauvegarder le texte OCR temporairement
+                        texte_ocr_path = tmp_path.with_suffix(".txt")
+                        texte_ocr_path.write_text(result_ocr.texte_complet, encoding="utf-8")
+
+                        # Extraction depuis le texte OCR
+                        from execution.utils.extraire_titre import (
+                            extraire_date, extraire_notaire, extraire_publication,
+                            extraire_personnes, extraire_bien, extraire_prix,
+                            extraire_origine_propriete, extraire_copropriete
+                        )
+
+                        texte = result_ocr.texte_complet
+                        donnees = {
+                            "reference": reference,
+                            "source": {
+                                "type_fichier": "pdf",
+                                "nom_fichier": filename,
+                                "date_upload": datetime.now().isoformat(),
+                                "ocr_utilise": True,
+                                "ocr_confiance": result_ocr.confiance_moyenne
+                            }
+                        }
+
+                        # Extraire les données
+                        date = extraire_date(texte)
+                        if date:
+                            donnees["date_acte"] = date
+
+                        notaire = extraire_notaire(texte)
+                        if notaire:
+                            donnees["notaire"] = notaire
+
+                        publication = extraire_publication(texte)
+                        if publication:
+                            donnees["publication"] = publication
+
+                        vendeurs = extraire_personnes(texte, "VENDEUR")
+                        if vendeurs:
+                            donnees["vendeurs_originaux"] = vendeurs
+
+                        acquereurs = extraire_personnes(texte, "ACQUEREUR")
+                        if acquereurs:
+                            donnees["proprietaires_actuels"] = acquereurs
+
+                        bien = extraire_bien(texte)
+                        if bien:
+                            donnees["bien"] = bien
+
+                        prix = extraire_prix(texte)
+                        if prix:
+                            donnees["prix"] = prix
+
+                        origines = extraire_origine_propriete(texte)
+                        if origines:
+                            donnees["origine_propriete"] = origines
+
+                        copro = extraire_copropriete(texte)
+                        if copro:
+                            donnees["copropriete"] = copro
+
+                        # Calculer la confiance
+                        champs_extraits = [k for k, v in donnees.items()
+                                          if v and k not in ["reference", "source", "metadata"]]
+                        champs_attendus = ["date_acte", "notaire", "proprietaires_actuels",
+                                          "bien", "prix", "origine_propriete"]
+                        confiance = len([c for c in champs_attendus if c in champs_extraits]) / len(champs_attendus)
+
+                        donnees["metadata"] = {
+                            "date_extraction": datetime.now().isoformat(),
+                            "methode_extraction": "ocr",
+                            "confiance": round(confiance, 2),
+                            "champs_manquants": [c for c in champs_attendus if c not in champs_extraits]
+                        }
+
+                        # Nettoyer le fichier texte temporaire
+                        texte_ocr_path.unlink(missing_ok=True)
+                    else:
+                        message = "OCR nécessaire mais non disponible (Tesseract/Poppler manquant)"
+                        # Tenter l'extraction normale quand même
+                        donnees = extraire_donnees_titre(tmp_path, verbose=False)
+                else:
+                    # PDF textuel - extraction directe
+                    donnees = extraire_donnees_titre(tmp_path, verbose=False)
+                    message = "PDF textuel - extraction directe"
+
+            except ImportError:
+                # OCR non disponible, extraction directe
+                donnees = extraire_donnees_titre(tmp_path, verbose=False)
+                message = "Extraction directe (OCR non installé)"
+
+        else:
+            # DOCX - extraction directe
+            donnees = extraire_donnees_titre(tmp_path, verbose=False)
+            message = "Extraction DOCX"
+
+        # Nettoyer le fichier temporaire
+        tmp_path.unlink(missing_ok=True)
+
+        if not donnees:
+            raise HTTPException(status_code=422, detail="Échec de l'extraction des données")
+
+        # Calculer la confiance
+        confiance = donnees.get("metadata", {}).get("confiance", 0.5)
+
+        # Sauvegarder dans Supabase
+        supabase = get_supabase_client()
+        fichier_url = None
+
+        if supabase:
+            try:
+                # Upload du fichier original vers Supabase Storage
+                storage_path = f"titres/{auth.etude_id}/{titre_id}/{filename}"
+                try:
+                    await file.seek(0)
+                    file_content = await file.read()
+                    supabase.storage.from_("documents").upload(
+                        storage_path,
+                        file_content,
+                        {"content-type": file.content_type or "application/pdf"}
+                    )
+                    fichier_url = supabase.storage.from_("documents").get_public_url(storage_path)
+                except Exception as storage_error:
+                    print(f"⚠️ Erreur storage: {storage_error}")
+
+                # Sauvegarder les métadonnées dans la table titres_propriete
+                # Structure adaptée au schéma de la table
+                proprietaires = donnees.get("proprietaires_actuels", [])
+                # S'assurer que proprietaires n'est pas vide (contrainte SQL)
+                if not proprietaires:
+                    proprietaires = [{
+                        "nom": "À compléter",
+                        "prenoms": "",
+                        "extraction_incomplete": True
+                    }]
+
+                insert_data = {
+                    "id": titre_id,
+                    "etude_id": auth.etude_id,
+                    "reference": reference,
+                    "nom_fichier_source": filename,
+                    "type_extraction": "ocr" if ocr_utilise else "auto",
+                    "confiance_extraction": confiance * 100,  # Stocké en % (0-100)
+                    "proprietaires": proprietaires,
+                    "bien": donnees.get("bien", {}),
+                    "origine": donnees.get("origine_propriete", []),
+                    "copropriete": donnees.get("copropriete", {}),
+                    "servitudes": [],
+                    "metadata": {
+                        "date_acte": donnees.get("date_acte"),
+                        "notaire": donnees.get("notaire", {}),
+                        "publication": donnees.get("publication", {}),
+                        "fichier_url": fichier_url,
+                        "vendeurs_originaux": donnees.get("vendeurs_originaux", []),
+                        "prix_original": donnees.get("prix", {}),
+                        "source": donnees.get("source", {}),
+                        "extraction_metadata": donnees.get("metadata", {})
+                    }
+                }
+
+                supabase.table("titres_propriete").insert(insert_data).execute()
+
+            except Exception as db_error:
+                print(f"⚠️ Erreur Supabase: {db_error}")
+                # Continuer quand même, retourner les données extraites
+
+        temps_ms = int((time.time() - debut) * 1000)
+
+        return TitreUploadResponse(
+            id=titre_id,
+            status="completed",
+            reference=reference,
+            confiance_extraction=confiance,
+            donnees=donnees,
+            fichier_original=fichier_url,
+            message=message,
+            temps_traitement_ms=temps_ms
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        # Nettoyer en cas d'erreur
+        if 'tmp_path' in locals():
+            tmp_path.unlink(missing_ok=True)
+
+        raise HTTPException(status_code=500, detail=f"Erreur extraction: {str(e)}")
+
+
 @app.get("/titres", tags=["Titres"])
 async def lister_titres(
     limit: int = 20,
@@ -1635,6 +1967,421 @@ async def analyze_correction_patterns(feedback: FeedbackRequest):
     # TODO: Implémenter l'analyse statistique des corrections
     # Si un même champ est souvent corrigé → ajuster la logique
     pass
+
+
+# =============================================================================
+# Endpoint Chat avec Claude (Anonymisation)
+# =============================================================================
+
+class ChatRequest(BaseModel):
+    """Requête de chat."""
+    message: str = Field(..., description="Message de l'utilisateur")
+    conversation_id: Optional[str] = Field(None, description="ID de conversation pour contexte")
+    context: Optional[Dict[str, Any]] = Field(None, description="Contexte additionnel (dossier en cours, etc.)")
+
+
+class ChatResponse(BaseModel):
+    """Réponse du chat."""
+    message: str
+    conversation_id: str
+    anonymisation_appliquee: bool = False
+    tokens_utilises: Optional[int] = None
+    duree_ms: int
+    suggestions: List[str] = []
+    fichier_url: Optional[str] = None
+
+
+# Stockage en mémoire des conversations (en prod: Redis/Supabase)
+_conversations: Dict[str, List[Dict[str, str]]] = {}
+# Contexte structuré par conversation (questionnaire, dossier actif, etc.)
+_conversation_contexts: Dict[str, Dict[str, Any]] = {}
+
+
+@app.post("/chat", response_model=ChatResponse, tags=["Chat"])
+async def chat_with_claude(
+    request: ChatRequest,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """
+    Chat en langage naturel avec Claude.
+
+    Les données sensibles (noms, adresses, prix) sont automatiquement
+    anonymisées avant envoi à Claude, puis restaurées dans la réponse.
+
+    - **message**: Votre message en langage naturel
+    - **conversation_id**: Pour maintenir le contexte (optionnel)
+    - **context**: Contexte additionnel (dossier en cours, titre chargé, etc.)
+    """
+    import time
+    import uuid
+
+    debut = time.time()
+
+    # Générer ou récupérer l'ID de conversation
+    conv_id = request.conversation_id or str(uuid.uuid4())
+
+    try:
+        # 0. Vérifier le workflow en cours pour cette conversation
+        conv_context = _conversation_contexts.get(conv_id, {})
+
+        # 0a. Si generation prete: le questionnaire est complet, attente confirmation
+        if conv_context.get("etape_workflow") == "generation_prete":
+            msg_lower = request.message.lower().strip()
+
+            if any(kw in msg_lower for kw in ["generer", "générer", "oui", "confirmer", "go"]):
+                # Lancer la generation DOCX
+                try:
+                    donnees = conv_context.get("donnees_collectees", {})
+                    type_acte = conv_context.get("type_acte_en_cours", "promesse_vente")
+
+                    from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+                    import os as _os
+
+                    output_dir = Path(_os.getenv("NOTAIRE_OUTPUT_DIR", str(PROJECT_ROOT / "outputs")))
+                    output_dir.mkdir(parents=True, exist_ok=True)
+                    output_name = f"{type_acte}_{conv_id[:8]}.docx"
+                    output_path = str(output_dir / output_name)
+
+                    orch = OrchestratorNotaire(verbose=False)
+                    result = orch.generer_acte_complet(type_acte, donnees, output_path)
+
+                    conv_context["etape_workflow"] = "termine"
+                    _conversation_contexts[conv_id] = conv_context
+
+                    duree_ms = int((time.time() - debut) * 1000)
+
+                    if result.statut == "succes":
+                        fichier_url = f"/files/{output_name}"
+                        return ChatResponse(
+                            message=f"Document genere avec succes !\n\nFichier : **{output_name}**\nConformite : {result.score_conformite:.0%}",
+                            conversation_id=conv_id,
+                            duree_ms=duree_ms,
+                            fichier_url=fichier_url,
+                            suggestions=["Telecharger le document", "Creer un autre acte"]
+                        )
+                    else:
+                        erreurs = ", ".join(result.erreurs[:3]) if result.erreurs else "Erreur inconnue"
+                        return ChatResponse(
+                            message=f"Erreur lors de la generation : {erreurs}",
+                            conversation_id=conv_id,
+                            duree_ms=duree_ms,
+                            suggestions=["Reessayer", "Modifier les donnees"]
+                        )
+                except Exception as gen_err:
+                    print(f"Generation error: {gen_err}")
+                    import traceback
+                    traceback.print_exc()
+                    duree_ms = int((time.time() - debut) * 1000)
+                    return ChatResponse(
+                        message="Erreur technique lors de la generation. Veuillez reessayer.",
+                        conversation_id=conv_id,
+                        duree_ms=duree_ms,
+                        suggestions=["Reessayer", "Aide"]
+                    )
+
+            elif any(kw in msg_lower for kw in ["modifier", "corriger", "changer"]):
+                # Reactiver le questionnaire pour modifications
+                conv_context["questionnaire_active"] = True
+                conv_context["etape_workflow"] = "questionnaire"
+                _conversation_contexts[conv_id] = conv_context
+
+                from execution.questionnaire_manager import QuestionnaireManager
+                qm = QuestionnaireManager(
+                    type_acte=conv_context.get("type_acte_en_cours", "promesse_vente"),
+                    state=conv_context.get("questionnaire_state")
+                )
+                resume = qm.get_summary()
+
+                duree_ms = int((time.time() - debut) * 1000)
+                return ChatResponse(
+                    message=f"Voici les donnees actuelles :\n{resume}\n\nRenvoyez les informations corrigees.",
+                    conversation_id=conv_id,
+                    duree_ms=duree_ms,
+                    suggestions=["Annuler"]
+                )
+
+            elif any(kw in msg_lower for kw in ["annuler", "stop", "arreter"]):
+                _conversation_contexts[conv_id] = {}
+                duree_ms = int((time.time() - debut) * 1000)
+                return ChatResponse(
+                    message="Generation annulee. Comment puis-je vous aider ?",
+                    conversation_id=conv_id,
+                    duree_ms=duree_ms,
+                    suggestions=["Creer un acte", "Voir mes dossiers"]
+                )
+
+        # 0b. Si questionnaire actif: extraction intelligente
+        if conv_context.get("questionnaire_active"):
+            # Extraction intelligente: analyser le message et extraire tous les champs
+            try:
+                from execution.questionnaire_manager import QuestionnaireManager
+
+                msg_lower = request.message.lower().strip()
+
+                # Vérifier annulation
+                if msg_lower in ["annuler", "stop", "arreter", "arrêter"]:
+                    _conversation_contexts[conv_id] = {}
+                    duree_ms = int((time.time() - debut) * 1000)
+                    return ChatResponse(
+                        message="Collecte annulee. Comment puis-je vous aider ?",
+                        conversation_id=conv_id,
+                        duree_ms=duree_ms,
+                        suggestions=["Creer un acte", "Voir mes dossiers", "Aide"]
+                    )
+
+                qm = QuestionnaireManager(
+                    type_acte=conv_context.get("type_acte_en_cours", "promesse_vente"),
+                    state=conv_context.get("questionnaire_state")
+                )
+
+                # 1. Extraction regex (gratuit, instantané)
+                # Detecter si l'utilisateur veut corriger un champ
+                allow_overwrite = any(kw in msg_lower for kw in ["corriger", "modifier", "changer", "en fait", "non c'est", "plutot", "plutôt"])
+                extracted = qm.extract_from_text(request.message, allow_overwrite=allow_overwrite)
+
+                # 2. Si regex n'a rien trouvé et Claude est dispo, tenter extraction LLM
+                if len(extracted) == 0:
+                    import os
+                    anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+                    if anthropic_key and qm.get_pending_fields():
+                        try:
+                            import anthropic
+                            client = anthropic.Anthropic(api_key=anthropic_key)
+                            extraction_prompt = qm.build_extraction_prompt()
+                            resp = client.messages.create(
+                                model="claude-sonnet-4-20250514",
+                                max_tokens=512,
+                                system=extraction_prompt,
+                                messages=[{"role": "user", "content": request.message}]
+                            )
+                            claude_extracted = qm.parse_claude_response(resp.content[0].text)
+                            extracted.update(claude_extracted)
+                        except Exception as claude_err:
+                            print(f"⚠️ Claude extraction fallback: {claude_err}")
+
+                # 3. Enregistrer tous les champs extraits
+                if extracted:
+                    qm.record_multiple(extracted)
+
+                # 4. Vérifier si complet
+                if qm.is_complete():
+                    conv_context["questionnaire_active"] = False
+                    conv_context["questionnaire_state"] = qm.serialize()
+                    conv_context["donnees_collectees"] = qm.to_acte_data()
+                    conv_context["etape_workflow"] = "generation_prete"
+                    _conversation_contexts[conv_id] = conv_context
+
+                    duree_ms = int((time.time() - debut) * 1000)
+                    return ChatResponse(
+                        message=qm.format_extraction_result(extracted),
+                        conversation_id=conv_id,
+                        duree_ms=duree_ms,
+                        suggestions=["Generer le document", "Modifier une reponse", "Annuler"]
+                    )
+
+                # 5. Montrer ce qui a été compris + ce qui manque
+                conv_context["questionnaire_state"] = qm.serialize()
+                _conversation_contexts[conv_id] = conv_context
+
+                content = qm.format_extraction_result(extracted)
+                suggestions = qm.get_missing_suggestions()
+
+                duree_ms = int((time.time() - debut) * 1000)
+                return ChatResponse(
+                    message=content,
+                    conversation_id=conv_id,
+                    duree_ms=duree_ms,
+                    suggestions=suggestions
+                )
+            except Exception as qm_err:
+                print(f"⚠️ Questionnaire error: {qm_err}")
+                import traceback
+                traceback.print_exc()
+                _conversation_contexts[conv_id] = {}
+
+        # 1. Anonymiser le message
+        from execution.security.chat_anonymizer import ChatAnonymizer
+
+        anonymizer = ChatAnonymizer()
+        message_anonyme, mapping = anonymizer.anonymiser(request.message)
+
+        anonymisation_appliquee = bool(mapping.vendeurs or mapping.acquereurs or
+                                       mapping.prix or mapping.adresses)
+
+        # 1b. Détecter si le message demande de créer un acte (démarrer questionnaire)
+        msg_lower = request.message.lower()
+        type_acte_detecte = None
+
+        if any(kw in msg_lower for kw in ["promesse", "promesse de vente"]):
+            type_acte_detecte = "promesse_vente"
+        elif any(kw in msg_lower for kw in ["acte de vente", "vente definitive"]):
+            type_acte_detecte = "vente"
+        elif "creer" in msg_lower or "créer" in msg_lower or "generer" in msg_lower or "générer" in msg_lower:
+            if "vente" in msg_lower:
+                type_acte_detecte = "promesse_vente"  # Default to promesse
+
+        if type_acte_detecte:
+            try:
+                from execution.questionnaire_manager import QuestionnaireManager
+
+                type_lisible = {
+                    "vente": "acte de vente",
+                    "promesse_vente": "promesse de vente",
+                }.get(type_acte_detecte, type_acte_detecte)
+
+                qm = QuestionnaireManager(type_acte_detecte)
+
+                conv_context["questionnaire_active"] = True
+                conv_context["questionnaire_state"] = qm.serialize()
+                conv_context["type_acte_en_cours"] = type_acte_detecte
+                conv_context["etape_workflow"] = "questionnaire"
+                _conversation_contexts[conv_id] = conv_context
+
+                # Message d'accueil: montrer TOUTES les infos nécessaires
+                content = qm.format_welcome_message(type_lisible)
+
+                duree_ms = int((time.time() - debut) * 1000)
+                return ChatResponse(
+                    message=content,
+                    conversation_id=conv_id,
+                    duree_ms=duree_ms,
+                    suggestions=["Renseigner vendeur", "Renseigner acquereur", "Annuler"]
+                )
+            except Exception as qm_start_err:
+                print(f"⚠️ Questionnaire start error: {qm_start_err}")
+                import traceback
+                traceback.print_exc()
+
+        # 2. Construire le contexte de conversation
+        if conv_id not in _conversations:
+            _conversations[conv_id] = []
+
+        # Ajouter le message utilisateur (anonymisé)
+        _conversations[conv_id].append({
+            "role": "user",
+            "content": message_anonyme
+        })
+
+        # Limiter l'historique à 10 messages
+        if len(_conversations[conv_id]) > 20:
+            _conversations[conv_id] = _conversations[conv_id][-20:]
+
+        # 3. Appeler Claude
+        import os
+        anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+
+        if not anthropic_key:
+            # Mode dégradé sans Claude
+            reponse_anonyme = f"[Mode démo] J'ai bien reçu votre demande concernant la transaction. Pour activer les réponses IA, configurez ANTHROPIC_API_KEY."
+            tokens = 0
+        else:
+            try:
+                import anthropic
+
+                client = anthropic.Anthropic(api_key=anthropic_key)
+
+                # Construire le système prompt
+                system_prompt = """Tu es Notomai, un assistant IA spécialisé pour les notaires français.
+
+Tu aides les notaires à:
+- Générer des actes (promesses de vente, actes de vente, EDD, modificatifs)
+- Extraire des informations de titres de propriété
+- Répondre aux questions juridiques sur l'immobilier
+- Guider dans les procédures notariales
+
+IMPORTANT: Les données sensibles sont anonymisées. Utilise les placeholders ([VENDEUR_1], [ACQUEREUR_1], [PRIX_1], [ADRESSE_1]) dans tes réponses.
+
+Tu es professionnel, précis et tu utilises le vocabulaire juridique approprié.
+Réponds toujours en français."""
+
+                # Ajouter le contexte si fourni
+                if request.context:
+                    context_str = json.dumps(request.context, ensure_ascii=False, indent=2)
+                    system_prompt += f"\n\nContexte actuel:\n{context_str}"
+
+                # Appel à Claude
+                response = client.messages.create(
+                    model="claude-sonnet-4-20250514",
+                    max_tokens=1024,
+                    system=system_prompt,
+                    messages=_conversations[conv_id]
+                )
+
+                reponse_anonyme = response.content[0].text
+                tokens = response.usage.input_tokens + response.usage.output_tokens
+
+            except anthropic.AuthenticationError as auth_err:
+                print(f"⚠️ Erreur auth Anthropic: {auth_err}")
+                reponse_anonyme = "Erreur d'authentification avec l'API Anthropic. Vérifiez que la clé API est valide et que le compte dispose de crédits suffisants."
+                tokens = 0
+            except anthropic.RateLimitError as rate_err:
+                print(f"⚠️ Rate limit Anthropic: {rate_err}")
+                reponse_anonyme = "Le service est temporairement surchargé. Veuillez réessayer dans quelques secondes."
+                tokens = 0
+            except anthropic.APIStatusError as api_err:
+                error_msg = str(api_err)
+                print(f"⚠️ Erreur API Anthropic: {api_err}")
+                if "credit balance" in error_msg.lower():
+                    reponse_anonyme = "Le solde de crédits Anthropic est insuffisant. Veuillez recharger les crédits sur console.anthropic.com."
+                else:
+                    reponse_anonyme = f"Erreur du service IA: {api_err.message if hasattr(api_err, 'message') else error_msg}"
+                tokens = 0
+            except Exception as claude_error:
+                print(f"⚠️ Erreur Claude inattendue: {claude_error}")
+                reponse_anonyme = f"Je suis désolé, une erreur inattendue s'est produite. Veuillez réessayer."
+                tokens = 0
+
+        # 4. Dé-anonymiser la réponse
+        reponse_finale = anonymizer.deanonymiser(reponse_anonyme, mapping)
+
+        # 5. Stocker la réponse dans l'historique (anonymisée)
+        _conversations[conv_id].append({
+            "role": "assistant",
+            "content": reponse_anonyme
+        })
+
+        duree_ms = int((time.time() - debut) * 1000)
+
+        # Log pour audit
+        supabase = get_supabase_client()
+        if supabase:
+            try:
+                supabase.table("audit_logs").insert({
+                    "etude_id": auth.etude_id,
+                    "action": "chat",
+                    "resource_type": "conversation",
+                    "resource_id": conv_id,
+                    "details": {
+                        "anonymisation": anonymisation_appliquee,
+                        "tokens": tokens,
+                        "duree_ms": duree_ms
+                    }
+                }).execute()
+            except Exception:
+                pass
+
+        return ChatResponse(
+            message=reponse_finale,
+            conversation_id=conv_id,
+            anonymisation_appliquee=anonymisation_appliquee,
+            tokens_utilises=tokens if tokens > 0 else None,
+            duree_ms=duree_ms
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur chat: {str(e)}")
+
+
+@app.delete("/chat/{conversation_id}", tags=["Chat"])
+async def clear_conversation(
+    conversation_id: str,
+    auth: AuthContext = Depends(verify_api_key)
+):
+    """Supprime l'historique d'une conversation."""
+    if conversation_id in _conversations:
+        del _conversations[conversation_id]
+        return {"status": "deleted", "conversation_id": conversation_id}
+    return {"status": "not_found", "conversation_id": conversation_id}
 
 
 # =============================================================================

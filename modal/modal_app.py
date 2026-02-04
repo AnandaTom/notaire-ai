@@ -15,10 +15,11 @@ Test local:
     modal serve modal/modal_app.py
 
 Endpoints déployés:
-    https://notaire-ai--fastapi-app.modal.run/agent/execute
-    https://notaire-ai--fastapi-app.modal.run/dossiers
-    https://notaire-ai--fastapi-app.modal.run/clauses/sections
-    https://notaire-ai--fastapi-app.modal.run/health
+    https://paulannes-pro--notaire-ai-fastapi-app.modal.run/agent/execute
+    https://paulannes-pro--notaire-ai-fastapi-app.modal.run/titres/upload     # NOUVEAU
+    https://paulannes-pro--notaire-ai-fastapi-app.modal.run/dossiers
+    https://paulannes-pro--notaire-ai-fastapi-app.modal.run/clauses/sections
+    https://paulannes-pro--notaire-ai-fastapi-app.modal.run/health
 """
 
 import modal
@@ -29,7 +30,14 @@ from pathlib import Path
 # =============================================================================
 
 # Image Docker avec les dépendances
-image = modal.Image.debian_slim(python_version="3.11").pip_install(
+project_root = Path(__file__).parent.parent
+
+image = modal.Image.debian_slim(python_version="3.11").apt_install(
+    # Dépendances système pour OCR (optionnel)
+    "tesseract-ocr",
+    "tesseract-ocr-fra",
+    "poppler-utils",
+).pip_install(
     "fastapi>=0.104.0",
     "uvicorn>=0.24.0",
     "python-docx>=1.1.0",
@@ -37,14 +45,46 @@ image = modal.Image.debian_slim(python_version="3.11").pip_install(
     "pydantic>=2.5.0",
     "supabase>=2.0.0",
     "python-multipart>=0.0.6",
-)
+    # Extraction PDF
+    "pdfplumber>=0.10.0",
+    # OCR (optionnel mais recommandé)
+    "pytesseract>=0.3.10",
+    "pdf2image>=1.16.0",
+    "Pillow>=10.0.0",
+    # LLM pour chat (avec anonymisation)
+    "anthropic>=0.40.0",
+    # Variables d'environnement
+    "python-dotenv>=1.0.0",
+).add_local_dir(
+    # copy=True bake les fichiers dans l'image (sinon mount runtime trop tardif pour ASGI)
+    project_root / "api",
+    remote_path="/app/api",
+    copy=True,
+).add_local_dir(
+    project_root / "execution",
+    remote_path="/app/execution",
+    copy=True,
+).add_local_dir(
+    project_root / "schemas",
+    remote_path="/app/schemas",
+    copy=True,
+).add_local_dir(
+    project_root / "templates",
+    remote_path="/app/templates",
+    copy=True,
+).add_local_dir(
+    project_root / "directives",
+    remote_path="/app/directives",
+    copy=True,
+).env({"PYTHONPATH": "/app"})
 
-# Stub Modal
+# App Modal avec l'image complète
 app = modal.App(
     name="notaire-ai",
     image=image,
     secrets=[
         modal.Secret.from_name("supabase-credentials"),  # SUPABASE_URL, SUPABASE_KEY
+        modal.Secret.from_name("anthropic-credentials"),  # ANTHROPIC_API_KEY
     ]
 )
 
@@ -60,18 +100,17 @@ volume = modal.Volume.from_name("notaire-ai-outputs", create_if_missing=True)
     timeout=300,  # 5 minutes max par requête
     memory=1024,  # 1 GB RAM
     cpu=1.0,
-    allow_concurrent_inputs=10,  # 10 requêtes simultanées par instance
-    container_idle_timeout=60,  # Garde le container 60s après la dernière requête
+    scaledown_window=60,  # Garde le container 60s après la dernière requête
 )
+@modal.concurrent(max_inputs=10)  # 10 requêtes simultanées par instance
 @modal.asgi_app()
 def fastapi_app():
     """Point d'entrée FastAPI sur Modal."""
     import sys
     import os
 
-    # Ajouter le projet au path
-    project_root = Path(__file__).parent.parent
-    sys.path.insert(0, str(project_root))
+    # Ajouter le projet monté au path
+    sys.path.insert(0, "/app")
 
     # Configurer les chemins pour Modal
     os.environ["NOTAIRE_OUTPUT_DIR"] = "/outputs"
@@ -344,7 +383,7 @@ def main():
     print("  modal deploy api/modal_app.py  # Déploiement")
     print()
     print("Une fois déployé, l'API sera accessible à:")
-    print("  https://notaire-ai--fastapi-app.modal.run/")
+    print("  https://paulannes-pro--notaire-ai-fastapi-app.modal.run/")
     print()
 
     # Test du parsing

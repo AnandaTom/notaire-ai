@@ -102,6 +102,13 @@
                     <p>Comment puis-je vous aider aujourd'hui ?</p>
                 </div>
                 <div class="header-right">
+                    <div class="api-mode-indicator demo" id="apiModeIndicator">
+                        <span class="dot"></span>
+                        <span id="apiModeText">Mode Démo</span>
+                    </div>
+                    <button class="settings-btn" onclick="showSettingsModal()" title="Configuration">
+                        ⚙️
+                    </button>
                     <div class="security-indicator">
                         <span class="dot"></span>
                         <span>Connexion sécurisée</span>
@@ -288,6 +295,33 @@
 
             // Mettre à jour l'état
             wasSmallScreen = isSmallScreen;
+        });
+
+        // Mettre à jour l'indicateur de mode API
+        function updateAPIModeIndicator() {
+            const indicator = document.getElementById('apiModeIndicator');
+            const text = document.getElementById('apiModeText');
+            const apiMode = localStorage.getItem('notomai_api_mode') || 'demo';
+
+            if (indicator && text) {
+                if (apiMode === 'api') {
+                    indicator.className = 'api-mode-indicator api';
+                    text.textContent = 'Mode Production';
+                } else {
+                    indicator.className = 'api-mode-indicator demo';
+                    text.textContent = 'Mode Démo';
+                }
+            }
+        }
+
+        // Appeler au chargement
+        document.addEventListener('DOMContentLoaded', updateAPIModeIndicator);
+
+        // Observer les changements dans localStorage
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'notomai_api_mode') {
+                updateAPIModeIndicator();
+            }
         });
     </script>
 </body>
