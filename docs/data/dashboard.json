@@ -1417,5 +1417,235 @@
       "last_tested": "2026-01-29",
       "test_command": "python execution/analyse/comparer_documents.py --original docs_original/Trame_promesse_Principale.docx --genere .tmp/actes_generes/*/acte.docx"
     }
+  },
+  "best_practice_business": {
+    "last_updated": "2026-02-04",
+    "manual_file": "docs/data/BEST_PRACTICE_BUSINESS.md",
+    "business_axes": {
+      "axe1_relation_client": {
+        "name": "Relation Client",
+        "impact_percent": 15,
+        "description": "Chatbot IA, emails automatiques, prise RDV, site custom",
+        "problems_solved": [
+          "Clients perdus",
+          "Questions répétitives",
+          "Prise RDV fastidieuse",
+          "Emails manuels"
+        ],
+        "gain_estimate": "3-5h/semaine par collaborateur",
+        "status": "partial"
+      },
+      "axe2_juridique_actes": {
+        "name": "Juridique / Génération d'Actes",
+        "impact_percent": 70,
+        "description": "LE COEUR DU BUSINESS - Génération d'actes notariaux complets",
+        "problems_solved": [
+          "Rédaction 2-3h/acte",
+          "Erreurs de saisie",
+          "Copier-coller trames",
+          "Clauses oubliées",
+          "Re-saisie depuis titres"
+        ],
+        "gain_estimate": "2-3h PAR ACTE = 5-8h PAR DOSSIER",
+        "status": "priority"
+      },
+      "axe3_administratif": {
+        "name": "Administratif",
+        "impact_percent": 15,
+        "description": "Questionnaires, collecte docs, dashboard, relances",
+        "problems_solved": [
+          "Collecte docs manuelle",
+          "Relances téléphoniques",
+          "Docs mal classés",
+          "Pas de visibilité"
+        ],
+        "gain_estimate": "1-2h/dossier en collecte",
+        "status": "done"
+      }
+    },
+    "competitive_audit": {
+      "summary": "AUCUN concurrent ne génère d'actes complets par IA - C'est notre moat",
+      "competitors": [
+        {
+          "name": "Septeo/Genapi",
+          "market_share": "50%",
+          "ia_investment": "50M€",
+          "has_acte_generation": false,
+          "strengths": ["Extraction auto (Kivia)", "Part de marché"],
+          "weaknesses": ["Pas génération actes", "Pas questionnaires", "Pas temps gagné visible"]
+        },
+        {
+          "name": "Fichorga",
+          "market_share": "N/A",
+          "ia_investment": "3M€ (est.)",
+          "has_acte_generation": "partial",
+          "strengths": ["6ème Sens depuis 2016", "IA française"],
+          "weaknesses": ["Rédaction assistée seulement", "Pas questionnaires digitaux"]
+        },
+        {
+          "name": "Quai des Notaires",
+          "market_share": "21%",
+          "ia_investment": "7M€",
+          "has_acte_generation": false,
+          "strengths": ["Formalités auto", "Signature distance", "SecNumCloud"],
+          "weaknesses": ["Pas génération actes", "Pas IA rédaction"]
+        },
+        {
+          "name": "MyNotary",
+          "market_share": "N/A",
+          "ia_investment": "N/A",
+          "has_acte_generation": false,
+          "strengths": ["Questionnaires clients", "Co-création compromis"],
+          "weaknesses": ["Pas génération IA", "Pas temps gagné visible"]
+        },
+        {
+          "name": "Notarly",
+          "market_share": "N/A",
+          "ia_investment": "N/A",
+          "has_acte_generation": false,
+          "strengths": ["Pilotage activité", "Sync Genapi/Fiducial"],
+          "weaknesses": ["Pas génération actes", "Pas IA générative"]
+        }
+      ],
+      "our_unique_advantage": "Génération d'actes notariaux complets en < 1 minute, 100% fidèles aux trames"
+    },
+    "generation_actes_roadmap": {
+      "objective": "100% fidélité aux trames notariales",
+      "current_status": {
+        "templates_prod": 4,
+        "avg_conformity": 87.9,
+        "volume_covered_percent": 77
+      },
+      "target_status": {
+        "templates_target": 6,
+        "conformity_target": 95,
+        "volume_target_percent": 100
+      },
+      "templates": [
+        {
+          "name": "Promesse de vente",
+          "conformity": 94.3,
+          "volume_percent": 35,
+          "status": "prod",
+          "priority": 1
+        },
+        {
+          "name": "Acte de vente",
+          "conformity": 80.2,
+          "volume_percent": 35,
+          "status": "prod",
+          "priority": 1,
+          "action_needed": "Améliorer à 95%+"
+        },
+        {
+          "name": "Compromis de vente",
+          "conformity": 0,
+          "volume_percent": 15,
+          "status": "todo",
+          "priority": 2,
+          "estimated_days": 1
+        },
+        {
+          "name": "Donation simple",
+          "conformity": 0,
+          "volume_percent": 8,
+          "status": "todo",
+          "priority": 3,
+          "estimated_days": 3
+        },
+        {
+          "name": "Règlement copropriété",
+          "conformity": 85.5,
+          "volume_percent": 5,
+          "status": "prod",
+          "priority": 4
+        },
+        {
+          "name": "Modificatif EDD",
+          "conformity": 91.7,
+          "volume_percent": 2,
+          "status": "prod",
+          "priority": 5
+        }
+      ],
+      "process_100_fidelity": [
+        {
+          "step": 1,
+          "name": "Comparaison",
+          "description": "Diff ligne par ligne entre trame originale et acte généré"
+        },
+        {
+          "step": 2,
+          "name": "Correction",
+          "description": "Corriger chaque écart dans le template Jinja2"
+        },
+        {
+          "step": 3,
+          "name": "Documentation",
+          "description": "Documenter dans directives/lecons_apprises.md"
+        },
+        {
+          "step": 4,
+          "name": "Re-test",
+          "description": "Tester jusqu'à 100% de correspondance"
+        }
+      ],
+      "estimated_timeline": {
+        "promesse_100": "1-2 jours",
+        "vente_100": "1-2 jours",
+        "compromis_creation": "1 jour",
+        "tests_e2e": "1-2 jours",
+        "total_mvp_commercial": "5-7 jours"
+      },
+      "success_criteria": {
+        "conformity_structural": "> 95%",
+        "acceptance_first_draft": "> 90%",
+        "manual_corrections_per_acte": "< 3",
+        "generation_time": "< 30s"
+      }
+    },
+    "priority_actions": [
+      {
+        "rank": 1,
+        "action": "Promesse de vente → 100% conformité",
+        "duration": "1-2 jours",
+        "impact": "35% volume",
+        "owner": "Tom"
+      },
+      {
+        "rank": 2,
+        "action": "Acte de vente → 100% conformité",
+        "duration": "1-2 jours",
+        "impact": "35% volume",
+        "owner": "Tom"
+      },
+      {
+        "rank": 3,
+        "action": "Mapping questionnaire → génération",
+        "duration": "1 jour",
+        "impact": "Flux automatique complet",
+        "owner": "Tom"
+      },
+      {
+        "rank": 4,
+        "action": "Compromis de vente → Création",
+        "duration": "1 jour",
+        "impact": "+15% volume couvert",
+        "owner": "Tom"
+      },
+      {
+        "rank": 5,
+        "action": "Tests end-to-end",
+        "duration": "1 jour",
+        "impact": "Validation flux complet",
+        "owner": "Team"
+      }
+    ],
+    "capacity_estimate": {
+      "feasibility": "100% réalisable",
+      "reasoning": "Pipeline technique en place (Jinja2 → Markdown → DOCX). Travail restant = méthodique, pas créatif.",
+      "time_to_mvp_commercial": "5-7 jours de travail focalisé",
+      "result": "85% du volume notarial couvert avec 100% de fidélité"
+    }
   }
 }
