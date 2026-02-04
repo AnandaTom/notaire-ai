@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T06:51:47.530660",
+    "generated_at": "2026-02-04T17:47:51.967094",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,28 +12,28 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 177
+    "commits": 179
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "062cc5b",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-02-03"
+      "hash": "6fabe8a",
+      "message": "feat(dashboard): ajout module pilotage ERP avec KPIs",
+      "date": "2026-02-04"
     },
-    "total_commits": 177,
+    "total_commits": 179,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 119
+        "commits": 121
       },
       {
         "name": "github-actions[bot]",
-        "commits": 44
+        "commits": 46
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 22
+        "commits": 23
       },
       {
         "name": "Payoss",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "6fabe8a",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "ajout module pilotage ERP avec KPIs",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "0e13aae",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "062cc5b",
       "author": "github-actions[bot]",
       "date": "2026-02-03",
@@ -800,26 +820,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "25e26ae",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "3487b2a",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 06:51"
+    "last_updated": "2026-02-04 17:47"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 06:51"
+    "last_updated": "2026-02-04 17:47"
   },
   "conformity_details": {
     "promesse": {
