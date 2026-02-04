@@ -1196,6 +1196,266 @@
             letter-spacing: 0.05em;
         }
 
+        /* Timeline */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .timeline-phase {
+            background: var(--parchment);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .timeline-phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--ink-medium);
+            color: var(--cream);
+        }
+
+        .timeline-phase-header.phase-current {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: var(--ink-black);
+        }
+
+        .timeline-phase-header.phase-target {
+            background: linear-gradient(135deg, var(--success), #3d6b4a);
+            color: var(--cream);
+        }
+
+        .timeline-phase-date {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .timeline-phase-name {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .timeline-phase-content {
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .timeline-task {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--parchment-dark);
+        }
+
+        .timeline-task:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-task-axe {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .axe-juridique { background: var(--gold-primary); color: var(--ink-black); }
+        .axe-admin { background: var(--ink-medium); color: var(--cream); }
+        .axe-client { background: var(--success); color: var(--cream); }
+        .axe-all { background: var(--ink-black); color: var(--gold-primary); }
+
+        .timeline-task-name {
+            flex: 1;
+            font-size: 0.85rem;
+            color: var(--ink-black);
+        }
+
+        .timeline-task-status {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .timeline-task-status.done { background: rgba(74, 124, 89, 0.15); color: var(--success); }
+        .timeline-task-status.progress { background: rgba(201, 169, 98, 0.2); color: var(--gold-dark); }
+        .timeline-task-status.todo { background: var(--parchment-dark); color: var(--ink-medium); }
+        .timeline-task-status.target { background: var(--success); color: var(--cream); }
+
+        /* Business Analysis */
+        .business-analysis {
+            margin-bottom: var(--space-xl);
+        }
+
+        .analysis-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-md);
+        }
+
+        .ca-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+        }
+
+        @media (max-width: 900px) {
+            .ca-grid { grid-template-columns: 1fr; }
+        }
+
+        .ca-card {
+            background: var(--parchment);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .ca-card.highlight {
+            border-color: var(--gold-primary);
+            background: linear-gradient(135deg, rgba(201, 169, 98, 0.1), var(--cream));
+        }
+
+        .ca-scenario {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-medium);
+            margin-bottom: var(--space-sm);
+        }
+
+        .ca-clients {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+
+        .ca-price {
+            font-size: 0.85rem;
+            color: var(--ink-medium);
+            margin: var(--space-xs) 0;
+        }
+
+        .ca-total {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+            margin: var(--space-sm) 0;
+        }
+
+        .ca-card.highlight .ca-total {
+            color: var(--gold-primary);
+            background: var(--ink-black);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .ca-desc {
+            font-size: 0.75rem;
+            color: var(--ink-medium);
+        }
+
+        /* My Opinion */
+        .my-opinion {
+            margin-top: var(--space-xl);
+        }
+
+        .opinion-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+
+        .opinion-section {
+            background: var(--parchment);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+
+        .opinion-section.positive {
+            border-left: 4px solid var(--success);
+        }
+
+        .opinion-section.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .opinion-section.conclusion {
+            background: linear-gradient(135deg, var(--ink-black), var(--ink-deep));
+            border-left: 4px solid var(--gold-primary);
+        }
+
+        .opinion-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .opinion-icon {
+            font-size: 1.2rem;
+        }
+
+        .opinion-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-medium);
+        }
+
+        .opinion-section.conclusion .opinion-label {
+            color: var(--gold-primary);
+        }
+
+        .opinion-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .opinion-list li {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--ink-black);
+            padding-left: var(--space-md);
+            position: relative;
+        }
+
+        .opinion-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--gold-primary);
+        }
+
+        .opinion-conclusion {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--cream);
+        }
+
         /* Footer */
         .footer {
             background: var(--ink-black);
@@ -1732,35 +1992,198 @@
                     </div>
                 </div>
 
-                <!-- Section 5: Estimation Capacite -->
-                <div class="business-section" style="border-bottom: none;">
+                <!-- Section 5: Frise Chronologique -->
+                <div class="business-section">
                     <div class="business-section-header">
                         <span class="business-section-number">5</span>
-                        <h4 class="business-section-title">Objectif: PERFECTION ABSOLUE</h4>
+                        <h4 class="business-section-title">Frise Chronologique - Fevrier → Septembre 2026</h4>
                     </div>
-                    <div class="capacity-box">
-                        <div class="capacity-title">100% CONFORMITE = Zero Erreur Toleree</div>
-                        <div class="capacity-main">ASAP</div>
-                        <div class="capacity-sub">Deadline max: Septembre 2026 | Mais on vise AVANT</div>
-                        <div class="capacity-stats">
-                            <div class="capacity-stat">
-                                <div class="capacity-stat-value">100%</div>
-                                <div class="capacity-stat-label">Fidelite</div>
+                    <p style="margin-bottom: var(--space-lg); color: var(--ink-medium);">
+                        Planning realiste avec travail intensif. Objectif: deployer AVANT septembre si possible.
+                    </p>
+                    <div class="timeline-container">
+                        <!-- Phase 1 -->
+                        <div class="timeline-phase">
+                            <div class="timeline-phase-header phase-current">
+                                <span class="timeline-phase-date">FEVRIER - MARS</span>
+                                <span class="timeline-phase-name">Phase 1: Fondations</span>
                             </div>
-                            <div class="capacity-stat">
-                                <div class="capacity-stat-value">0</div>
-                                <div class="capacity-stat-label">Erreur</div>
-                            </div>
-                            <div class="capacity-stat">
-                                <div class="capacity-stat-value">PARFAIT</div>
-                                <div class="capacity-stat-label">Standard</div>
+                            <div class="timeline-phase-content">
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-admin">AXE 3</span>
+                                    <span class="timeline-task-name">Dashboard notaire + questionnaires</span>
+                                    <span class="timeline-task-status done">FAIT</span>
+                                </div>
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-juridique">AXE 2</span>
+                                    <span class="timeline-task-name">Promesse de vente → 100%</span>
+                                    <span class="timeline-task-status progress">EN COURS</span>
+                                </div>
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-juridique">AXE 2</span>
+                                    <span class="timeline-task-name">Acte de vente 80% → 100%</span>
+                                    <span class="timeline-task-status todo">2-3 sem</span>
+                                </div>
                             </div>
                         </div>
-                        <p style="margin-top: var(--space-lg); font-size: 0.85rem; color: var(--gold-light);">
-                            Si on est les SEULS a generer des actes complets par IA, c'est qu'il y a une raison.<br>
-                            Le notaire ne doit JAMAIS corriger: ni variable, ni mise en page, ni clause.<br>
-                            <strong>L'acte genere = PRET A SIGNER.</strong>
+                        <!-- Phase 2 -->
+                        <div class="timeline-phase">
+                            <div class="timeline-phase-header">
+                                <span class="timeline-phase-date">AVRIL - MAI</span>
+                                <span class="timeline-phase-name">Phase 2: Completude</span>
+                            </div>
+                            <div class="timeline-phase-content">
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-juridique">AXE 2</span>
+                                    <span class="timeline-task-name">Compromis de vente → 100%</span>
+                                    <span class="timeline-task-status todo">2-3 sem</span>
+                                </div>
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-admin">AXE 3</span>
+                                    <span class="timeline-task-name">Flux questionnaire → generation</span>
+                                    <span class="timeline-task-status todo">3-4 sem</span>
+                                </div>
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-client">AXE 1</span>
+                                    <span class="timeline-task-name">Emails auto + relances</span>
+                                    <span class="timeline-task-status todo">2 sem</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Phase 3 -->
+                        <div class="timeline-phase">
+                            <div class="timeline-phase-header">
+                                <span class="timeline-phase-date">JUIN - JUILLET</span>
+                                <span class="timeline-phase-name">Phase 3: Beta Test</span>
+                            </div>
+                            <div class="timeline-phase-content">
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-all">TOUS</span>
+                                    <span class="timeline-task-name">5-10 notaires beta</span>
+                                    <span class="timeline-task-status todo">6-8 sem</span>
+                                </div>
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-juridique">AXE 2</span>
+                                    <span class="timeline-task-name">Corrections feedback terrain</span>
+                                    <span class="timeline-task-status todo">continu</span>
+                                </div>
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-juridique">AXE 2</span>
+                                    <span class="timeline-task-name">Donation simple (optionnel)</span>
+                                    <span class="timeline-task-status todo">3-4 sem</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Phase 4 -->
+                        <div class="timeline-phase">
+                            <div class="timeline-phase-header phase-target">
+                                <span class="timeline-phase-date">AOUT - SEPTEMBRE</span>
+                                <span class="timeline-phase-name">Phase 4: DEPLOIEMENT</span>
+                            </div>
+                            <div class="timeline-phase-content">
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-all">TOUS</span>
+                                    <span class="timeline-task-name">Deploiement production</span>
+                                    <span class="timeline-task-status target">CIBLE</span>
+                                </div>
+                                <div class="timeline-task">
+                                    <span class="timeline-task-axe axe-client">AXE 1</span>
+                                    <span class="timeline-task-name">Onboarding premiers clients</span>
+                                    <span class="timeline-task-status target">CIBLE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: var(--space-lg); padding: var(--space-md); background: var(--parchment); border-radius: 8px; font-size: 0.85rem;">
+                        <strong>Rythme de travail:</strong> Si vous travaillez intensivement (20-30h/semaine sur le projet),
+                        ce planning est atteignable. Chaque semaine de retard = 1 semaine de decalage.
+                        <strong>Plus vite c'est fait parfaitement, plus vite vous generez du CA.</strong>
+                    </div>
+                </div>
+
+                <!-- Section 6: Analyse Business Realiste -->
+                <div class="business-section" style="border-bottom: none;">
+                    <div class="business-section-header">
+                        <span class="business-section-number">6</span>
+                        <h4 class="business-section-title">Analyse Business - Mon Avis Honnete</h4>
+                    </div>
+
+                    <!-- Projection CA -->
+                    <div class="business-analysis">
+                        <h5 class="analysis-title">Projection CA Realiste</h5>
+                        <div class="ca-grid">
+                            <div class="ca-card">
+                                <div class="ca-scenario">Scenario Prudent</div>
+                                <div class="ca-clients">10-20 etudes</div>
+                                <div class="ca-price">200-300€/mois</div>
+                                <div class="ca-total">24-72K€/an</div>
+                                <div class="ca-desc">An 1 - Validation marche</div>
+                            </div>
+                            <div class="ca-card highlight">
+                                <div class="ca-scenario">Scenario Realiste</div>
+                                <div class="ca-clients">50-100 etudes</div>
+                                <div class="ca-price">300-500€/mois</div>
+                                <div class="ca-total">180-600K€/an</div>
+                                <div class="ca-desc">An 2-3 - Croissance</div>
+                            </div>
+                            <div class="ca-card">
+                                <div class="ca-scenario">Scenario Ambitieux</div>
+                                <div class="ca-clients">200-500 etudes</div>
+                                <div class="ca-price">400-600€/mois</div>
+                                <div class="ca-total">1-3.6M€/an</div>
+                                <div class="ca-desc">An 4-5 - Scale</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: var(--space-md); font-size: 0.8rem; color: var(--ink-medium); text-align: center;">
+                            Base: ~8 500 etudes notariales en France. Meme 1% = 85 clients potentiels.
                         </p>
+                    </div>
+
+                    <!-- Mon avis -->
+                    <div class="my-opinion">
+                        <h5 class="opinion-title">Mon Avis sur Notomai</h5>
+
+                        <div class="opinion-section positive">
+                            <div class="opinion-header">
+                                <span class="opinion-icon">✅</span>
+                                <span class="opinion-label">FORCES REELLES</span>
+                            </div>
+                            <ul class="opinion-list">
+                                <li><strong>Moat technique:</strong> La generation d'actes 100% fideles est DIFFICILE. Personne d'autre ne le fait. Ce n'est pas un hasard - c'est un vrai avantage competitif.</li>
+                                <li><strong>Marche captif:</strong> Les notaires DOIVENT utiliser des trames. Ils ne peuvent pas improviser. Votre solution repond a un besoin reel et recurrent.</li>
+                                <li><strong>ROI evident:</strong> 2-3h/acte x 200+ actes/an = 400-600h/an. A 50€/h de clerc, c'est 20-30K€ economises. Votre prix de 300-500€/mois est ridicule vs la valeur.</li>
+                                <li><strong>Barriere a l'entree:</strong> Comprendre le metier notarial + avoir les trames + maitriser la tech = difficile a copier rapidement.</li>
+                            </ul>
+                        </div>
+
+                        <div class="opinion-section warning">
+                            <div class="opinion-header">
+                                <span class="opinion-icon">⚠️</span>
+                                <span class="opinion-label">POINTS D'ATTENTION</span>
+                            </div>
+                            <ul class="opinion-list">
+                                <li><strong>Profession conservatrice:</strong> Les notaires sont prudents. Il faudra des references, de la confiance. Le bouche-a-oreille sera crucial.</li>
+                                <li><strong>Integration existante:</strong> Beaucoup utilisent deja Genapi/Fichorga. Votre solution doit coexister ou s'integrer, pas remplacer totalement.</li>
+                                <li><strong>Support client:</strong> Les notaires attendront un support reactif. Un bug = un acte rate = un client mecontent. Prevoyez du temps pour ca.</li>
+                                <li><strong>Mise a jour juridique:</strong> Les lois changent. Les trames evoluent. Il faudra maintenir les templates a jour.</li>
+                            </ul>
+                        </div>
+
+                        <div class="opinion-section conclusion">
+                            <div class="opinion-header">
+                                <span class="opinion-icon">💡</span>
+                                <span class="opinion-label">CONCLUSION</span>
+                            </div>
+                            <p class="opinion-conclusion">
+                                <strong>Notomai est un projet SERIEUX avec un vrai potentiel.</strong><br><br>
+                                Vous n'etes pas sur un marche sature de startups. Vous resolvez un probleme concret que personne d'autre ne resout vraiment.
+                                La cle du succes sera la <strong>PERFECTION</strong> de la generation d'actes - c'est votre seul job pour les 6 prochains mois.<br><br>
+                                Si vous atteignez 100% de conformite et que les notaires n'ont JAMAIS a corriger, vous avez un business solide.
+                                Le prix de 300-500€/mois est tres accessible pour une etude (c'est le prix d'une demi-journee de clerc).
+                                <br><br>
+                                <strong style="color: var(--gold-primary);">Mon pronostic: Si vous executez bien, 100K€+ de CA en An 2 est atteignable.</strong>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
