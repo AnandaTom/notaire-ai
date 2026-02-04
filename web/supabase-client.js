@@ -691,6 +691,52 @@ const SupabaseClient = {
                 body: JSON.stringify(evenement)
             }
         );
+    },
+
+    // =========================================================================
+    // RELANCES & NOTIFICATIONS
+    // =========================================================================
+
+    /**
+     * Envoie une relance par email au client
+     * @param {object} payload - Données de la relance
+     * @returns {Promise<object>}
+     */
+    async sendRelanceClient(payload) {
+        return await this.request(
+            '/functions/v1/send-relance-client',
+            {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            }
+        );
+    },
+
+    /**
+     * Envoie le lien du questionnaire au client par email
+     * @param {object} payload - Données pour l'envoi
+     * @returns {Promise<object>}
+     */
+    async sendQuestionnaireLink(payload) {
+        return await this.request(
+            '/functions/v1/send-questionnaire-link',
+            {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            }
+        );
+    },
+
+    /**
+     * Récupère l'historique des relances pour un dossier
+     * @param {string} submissionId
+     * @returns {Promise<object[]>}
+     */
+    async getRelancesHistorique(submissionId) {
+        return await this.request(
+            `/rest/v1/relances_historique?submission_id=eq.${submissionId}&order=created_at.desc`,
+            { method: 'GET' }
+        );
     }
 };
 
