@@ -1591,61 +1591,73 @@
         }
       ],
       "estimated_timeline": {
-        "promesse_100": "1-2 jours",
-        "vente_100": "1-2 jours",
-        "compromis_creation": "1 jour",
-        "tests_e2e": "1-2 jours",
-        "total_mvp_commercial": "5-7 jours"
+        "promesse_100": "2-3 semaines",
+        "vente_100": "2-3 semaines",
+        "compromis_creation": "2-3 semaines",
+        "flux_complet": "3-4 semaines",
+        "tests_beta_notaires": "2 mois",
+        "total_deploiement": "6 mois (Février → Septembre 2026)"
       },
       "success_criteria": {
-        "conformity_structural": "> 95%",
-        "acceptance_first_draft": "> 90%",
-        "manual_corrections_per_acte": "< 3",
-        "generation_time": "< 30s"
+        "conformity_structural": "100%",
+        "acceptance_first_draft": "100%",
+        "manual_corrections_per_acte": "0",
+        "generation_time": "< 30s",
+        "erreur_toleree": "ZERO"
+      },
+      "deployment_target": {
+        "date": "Septembre 2026",
+        "objective": "Acte prêt à signer, zéro correction nécessaire"
       }
     },
     "priority_actions": [
       {
         "rank": 1,
         "action": "Promesse de vente → 100% conformité",
-        "duration": "1-2 jours",
+        "duration": "2-3 semaines",
+        "description": "Comparaison mot à mot, tests exhaustifs, validation notaire",
         "impact": "35% volume",
         "owner": "Tom"
       },
       {
         "rank": 2,
         "action": "Acte de vente → 100% conformité",
-        "duration": "1-2 jours",
+        "duration": "2-3 semaines",
+        "description": "80% → 100%, tous les cas limites couverts",
         "impact": "35% volume",
         "owner": "Tom"
       },
       {
         "rank": 3,
-        "action": "Mapping questionnaire → génération",
-        "duration": "1 jour",
-        "impact": "Flux automatique complet",
-        "owner": "Tom"
-      },
-      {
-        "rank": 4,
-        "action": "Compromis de vente → Création",
-        "duration": "1 jour",
+        "action": "Compromis de vente → Création + 100%",
+        "duration": "2-3 semaines",
+        "description": "Nouveau template + validation complète",
         "impact": "+15% volume couvert",
         "owner": "Tom"
       },
       {
+        "rank": 4,
+        "action": "Flux complet questionnaire → acte",
+        "duration": "3-4 semaines",
+        "description": "Mapping, validation données, génération auto",
+        "impact": "Automatisation complète",
+        "owner": "Team"
+      },
+      {
         "rank": 5,
-        "action": "Tests end-to-end",
-        "duration": "1 jour",
-        "impact": "Validation flux complet",
+        "action": "Tests beta avec notaires + corrections",
+        "duration": "2 mois",
+        "description": "5-10 notaires beta, feedback terrain, itérations",
+        "impact": "Validation production",
         "owner": "Team"
       }
     ],
     "capacity_estimate": {
       "feasibility": "100% réalisable",
-      "reasoning": "Pipeline technique en place (Jinja2 → Markdown → DOCX). Travail restant = méthodique, pas créatif.",
-      "time_to_mvp_commercial": "5-7 jours de travail focalisé",
-      "result": "85% du volume notarial couvert avec 100% de fidélité"
+      "reasoning": "Si on est les SEULS à générer des actes complets par IA, c'est qu'il y a une raison. Le standard = PERFECTION ABSOLUE.",
+      "deployment_target": "ASAP (deadline max: Septembre 2026)",
+      "objective": "Le notaire ne doit JAMAIS corriger: ni variable, ni mise en page, ni clause",
+      "result": "Acte généré = PRÊT À SIGNER"
     }
   }
 }
