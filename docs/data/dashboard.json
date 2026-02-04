@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T16:08:47.743944",
+    "generated_at": "2026-02-04T18:02:22.635730",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,28 +12,28 @@
     "scripts_count": 66,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 201
+    "commits": 205
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "0ffec14",
-      "message": "feat: Intégration 13 trames promesse + plan d'intégration optimisée (v1.9-2.0)",
+      "hash": "d829a8e",
+      "message": "feat(v1.9.0): Phase 1.4-1.5 - Tests + Documentation",
       "date": "2026-02-04"
     },
-    "total_commits": 201,
+    "total_commits": 205,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 121
+        "commits": 124
       },
       {
         "name": "github-actions[bot]",
-        "commits": 45
+        "commits": 48
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 22
+        "commits": 24
       },
       {
         "name": "Payoss",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 66,
-    "total_lines": 39030,
+    "total_lines": 39112,
     "categories": {
       "generation": 6,
       "utils": 52,
@@ -124,7 +124,7 @@
       },
       {
         "name": "gestionnaire_promesses.py",
-        "lines": 1374,
+        "lines": 1456,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
@@ -622,6 +622,46 @@
   ],
   "activity": [
     {
+      "hash": "d829a8e",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Phase 1.4-1.5 - Tests + Documentation",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "ba4b84e",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Phase 1.3 - Détection automatique sous-types (v1.9.0)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "ce55ec1",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Phase 1.1-1.2 - Sections conditionnelles + schémas enrichis (v1.9.0)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "7c63265",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "0ffec14",
       "author": "Tom",
       "date": "2026-02-04",
@@ -780,46 +820,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "37e8b16",
-      "author": "Tom",
-      "date": "2026-01-31",
-      "message": "mise a jour directives avec CadastreService v1.8.0",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
-    },
-    {
-      "hash": "439ca62",
-      "author": "github-actions[bot]",
-      "date": "2026-01-31",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "7ce3c49",
-      "author": "Tom",
-      "date": "2026-01-31",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "d56c1e4",
-      "author": "Automai",
-      "date": "2026-01-31",
-      "message": "Security fixes + CI Jinja2 filter registration (#18)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 16:08"
+    "last_updated": "2026-02-04 18:02"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 16:08"
+    "last_updated": "2026-02-04 18:02"
   },
   "conformity_details": {
     "promesse": {
