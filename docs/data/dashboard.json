@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T20:48:28.126968",
+    "generated_at": "2026-02-04T20:50:38.686990",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 191
+    "commits": 193
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "37edf15",
-      "message": "feat(dashboard): ajout modèle pricing setup 5-10K€ + projections CA",
+      "hash": "c638d5e",
+      "message": "feat(dashboard): ajout citation motivation quotidienne",
       "date": "2026-02-04"
     },
-    "total_commits": 191,
+    "total_commits": 193,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 50
+        "commits": 51
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 37
+        "commits": 38
       },
       {
         "name": "Payoss",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "c638d5e",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "ajout citation motivation quotidienne",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "c35fcf1",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "37edf15",
       "author": "Augustin",
       "date": "2026-02-04",
@@ -800,26 +820,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "88747f8",
-      "author": "github-actions[bot]",
-      "date": "2026-02-02",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "5c83278",
-      "author": "github-actions[bot]",
-      "date": "2026-02-01",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 20:48"
+    "last_updated": "2026-02-04 20:50"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 20:48"
+    "last_updated": "2026-02-04 20:50"
   },
   "conformity_details": {
     "promesse": {
