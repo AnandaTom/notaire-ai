@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T17:47:51.967094",
+    "generated_at": "2026-02-04T17:53:53.960846",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 179
+    "commits": 181
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "6fabe8a",
-      "message": "feat(dashboard): ajout module pilotage ERP avec KPIs",
+      "hash": "31fe1e6",
+      "message": "chore: suppression fichiers obsolètes web/",
       "date": "2026-02-04"
     },
-    "total_commits": 179,
+    "total_commits": 181,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 46
+        "commits": 47
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 23
+        "commits": 24
       },
       {
         "name": "Payoss",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "31fe1e6",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "suppression fichiers obsolètes web/",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "498e700",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "6fabe8a",
       "author": "Augustin",
       "date": "2026-02-04",
@@ -800,26 +820,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "c6dc43e",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "3d553d4",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Sprint 2 batch - API, frontend, persistence, SSE, tests",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 17:47"
+    "last_updated": "2026-02-04 17:53"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 17:47"
+    "last_updated": "2026-02-04 17:53"
   },
   "conformity_details": {
     "promesse": {
