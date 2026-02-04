@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T18:02:22.635730",
+    "generated_at": "2026-02-04T21:49:16.776657",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,32 +12,32 @@
     "scripts_count": 66,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 205
+    "commits": 209
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "d829a8e",
-      "message": "feat(v1.9.0): Phase 1.4-1.5 - Tests + Documentation",
+      "hash": "2f7f8ac",
+      "message": "docs(v1.9.0): Plan améliorations post-Phase 1",
       "date": "2026-02-04"
     },
-    "total_commits": 205,
+    "total_commits": 209,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 124
+        "commits": 127
       },
       {
         "name": "github-actions[bot]",
-        "commits": 48
+        "commits": 53
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 24
+        "commits": 39
       },
       {
         "name": "Payoss",
-        "commits": 13
+        "commits": 15
       },
       {
         "name": "Automai",
@@ -622,6 +622,46 @@
   ],
   "activity": [
     {
+      "hash": "2f7f8ac",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Plan améliorations post-Phase 1",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "5f400c3",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Mise à jour directive creer_promesse_vente v3.0.0 → v3.1.0",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "def4782",
+      "author": "Tom",
+      "date": "2026-02-04",
+      "message": "Phase 2.1 - Analyse complète trames viager K & L",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "2468c38",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "d829a8e",
       "author": "Tom",
       "date": "2026-02-04",
@@ -780,46 +820,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "793e863",
-      "author": "Augustin",
-      "date": "2026-01-30",
-      "message": "audit complet questionnaire → email notaire + stockage Supabase",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "88747f8",
-      "author": "github-actions[bot]",
-      "date": "2026-02-02",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "5c83278",
-      "author": "github-actions[bot]",
-      "date": "2026-02-01",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "0e03dea",
-      "author": "github-actions[bot]",
-      "date": "2026-01-31",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 18:02"
+    "last_updated": "2026-02-04 21:49"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 18:02"
+    "last_updated": "2026-02-04 21:49"
   },
   "conformity_details": {
     "promesse": {
