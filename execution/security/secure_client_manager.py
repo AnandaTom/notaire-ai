@@ -23,7 +23,7 @@ import os
 import re
 import sys
 from dataclasses import dataclass, asdict, field
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
@@ -130,7 +130,7 @@ class SecureClientManager:
     # Patterns pour detection de donnees sensibles
     SENSITIVE_PATTERNS = {
         'nir': r'\b[1-2]\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{3}\s?\d{3}\s?\d{2}\b',
-        'iban': r'\b[A-Z]{2}\d{2}[A-Z0-9]{1,30}\b',
+        'iban': r'\b[A-Z]{2}\d{2}[\s]?[A-Z0-9]{4}[\s]?[A-Z0-9]{4}[\s]?[A-Z0-9]{4}[\s]?[A-Z0-9]{4}[\s]?[A-Z0-9]{0,14}\b',
         'carte_bancaire': r'\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b',
         'medical': r'\b(cancer|vih|sida|depression|traitement|medic)\b'
     }
@@ -212,8 +212,8 @@ class SecureClientManager:
         encrypted_data.update({
             "etude_id": self.etude_id,
             "created_by": self.user_id,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
             "source": data.get("source", "manual")
         })
 
@@ -294,7 +294,7 @@ class SecureClientManager:
         """
         # Chiffrer les champs sensibles
         encrypted_data = self._encrypt_client_data(data)
-        encrypted_data["updated_at"] = datetime.utcnow().isoformat()
+        encrypted_data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         # Mettre a jour le hash si nom change
         if 'nom' in data and data['nom']:
@@ -476,7 +476,7 @@ class SecureClientManager:
                 "client": client_data,
                 "dossiers": dossiers,
                 "audit_trail": audit,
-                "export_date": datetime.utcnow().isoformat()
+                "export_date": datetime.now(timezone.utc).isoformat()
             }
         }
 
@@ -521,7 +521,7 @@ class SecureClientManager:
             "format": "JSON",
             "version": "1.0",
             "gdpr_article": "Art. 20 - Droit a la portabilite",
-            "export_date": datetime.utcnow().isoformat(),
+            "export_date": datetime.now(timezone.utc).isoformat(),
             "client": asdict(client),
             "dossiers": self._get_client_dossiers(client_id)
         }
@@ -540,7 +540,7 @@ class SecureClientManager:
         update_result = self.update_client(client_id, {
             "ai_enrichments": {
                 "opt_out": True,
-                "opt_out_date": datetime.utcnow().isoformat(),
+                "opt_out_date": datetime.now(timezone.utc).isoformat(),
                 "opt_out_reason": "GDPR opposition request"
             }
         })
@@ -569,8 +569,8 @@ class SecureClientManager:
             "ai_enrichments": {"anonymized_reason": "GDPR erasure request"},
             "ai_summary": None,
             "anonymized": True,
-            "anonymized_at": datetime.utcnow().isoformat(),
-            "deleted_at": datetime.utcnow().isoformat()
+            "anonymized_at": datetime.now(timezone.utc).isoformat(),
+            "deleted_at": datetime.now(timezone.utc).isoformat()
         }
 
         if self._offline_mode:
@@ -822,7 +822,7 @@ class SecureClientManager:
     ) -> str:
         """Cree un enregistrement de demande RGPD."""
         if self._offline_mode:
-            return f"offline_gdpr_{datetime.utcnow().timestamp()}"
+            return f"offline_gdpr_{datetime.now(timezone.utc).timestamp()}"
 
         try:
             result = self.client.table("rgpd_requests").insert({
@@ -830,7 +830,7 @@ class SecureClientManager:
                 "etude_id": self.etude_id,
                 "request_type": request_type,
                 "status": "processing",
-                "requested_at": datetime.utcnow().isoformat(),
+                "requested_at": datetime.now(timezone.utc).isoformat(),
                 "requested_by": requested_by,
                 "processed_by": self.user_id
             }).execute()
@@ -847,7 +847,7 @@ class SecureClientManager:
         try:
             self.client.table("rgpd_requests").update({
                 "status": response.get("status", "completed"),
-                "completed_at": datetime.utcnow().isoformat(),
+                "completed_at": datetime.now(timezone.utc).isoformat(),
                 "response_data": response,
                 "rejection_reason": response.get("reason")
             }).eq("id", request_id).execute()

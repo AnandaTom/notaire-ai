@@ -45,7 +45,7 @@ Le financement du prix et des frais au moyen de leur apport personnel est réali
 {% if paiement.fonds_empruntes > 0 %}
 **Fonds empruntés**
 
-A ce financement personnel s'ajoute un financement extérieur à concurrence d'une somme empruntée pour un montant de **{{ paiement.fonds_empruntes_lettres }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})** auprès {{ paiement.prets[0].etablissement.nom }}.
+A ce financement personnel s'ajoute un financement extérieur à concurrence d'une somme empruntée pour un montant de **{{ paiement.fonds_empruntes_lettres }} ({{ paiement.fonds_empruntes|format_nombre }} {{ prix.devise }})**{% if paiement.prets and paiement.prets[0] and paiement.prets[0].etablissement %} auprès {{ paiement.prets[0].etablissement.nom }}{% endif %}.
 Les **ACQUEREURS** sont, au titre de l'obligation à la dette, solidaires de leur remboursement.
 La prise en charge de ces remboursements sera assurée par eux de la façon suivante : {% for quotite in quotites_acquises %}**{{ acquereurs[quotite.personne_index].civilite }} {{ acquereurs[quotite.personne_index].prenoms }} {{ acquereurs[quotite.personne_index].nom }}** à concurrence de **{{ quotite.pourcentage }} %**{% if not loop.last %} et {% endif %}{% endfor %}.
 Cette convention est inopposable au créancier compte tenu de la solidarité rappelée ci-dessus.
@@ -889,7 +889,11 @@ Les diagnostics techniques suivants ont été réalisés conformément aux dispo
 L'ENSEMBLE IMMOBILIER a été construit {% if diagnostics.plomb.construction_avant_1949 %}avant le 1er janvier 1949{% else %}depuis le 1er janvier 1949{% endif %}.
 
 {% if diagnostics.plomb.construction_avant_1949 %}
+{% if diagnostics.plomb.diagnostiqueur %}
 Un constat de risque d'exposition au plomb a été établi le <<<VAR_START>>>{{ diagnostics.plomb.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.plomb.diagnostiqueur.nom }}<<<VAR_END>>>.
+{% else %}
+Un constat de risque d'exposition au plomb a été établi, demeurant annexé aux présentes.
+{% endif %}
 
 Conclusion : <<<VAR_START>>>{{ diagnostics.plomb.conclusion }}<<<VAR_END>>>.
 {% else %}
@@ -900,7 +904,11 @@ En conséquence, le bien n'entre pas dans le champ d'application des disposition
 ### Amiante
 
 {% if diagnostics.amiante %}
+{% if diagnostics.amiante.diagnostiqueur %}
 Un état mentionnant la présence ou l'absence de matériaux ou produits contenant de l'amiante a été établi le <<<VAR_START>>>{{ diagnostics.amiante.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.amiante.diagnostiqueur.nom }}<<<VAR_END>>>.
+{% elif diagnostics.amiante.date %}
+Un état mentionnant la présence ou l'absence de matériaux ou produits contenant de l'amiante a été établi le <<<VAR_START>>>{{ diagnostics.amiante.date | format_date }}<<<VAR_END>>>.
+{% endif %}
 
 Conclusion : <<<VAR_START>>>{{ diagnostics.amiante.conclusion }}<<<VAR_END>>>.
 
@@ -911,8 +919,10 @@ Des matériaux contenant de l'amiante ont été repérés. Le rapport complet es
 
 ### Termites
 
-{% if diagnostics.termites %}
+{% if diagnostics.termites and diagnostics.termites.diagnostiqueur %}
 Un état relatif à la présence de termites a été établi le <<<VAR_START>>>{{ diagnostics.termites.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.termites.diagnostiqueur.nom }}<<<VAR_END>>>.
+{% elif diagnostics.termites and diagnostics.termites.date %}
+Un état relatif à la présence de termites a été établi le <<<VAR_START>>>{{ diagnostics.termites.date | format_date }}<<<VAR_END>>>.
 
 Conclusion : <<<VAR_START>>>{{ diagnostics.termites.conclusion }}<<<VAR_END>>>.
 {% endif %}
@@ -941,8 +951,10 @@ Le BIEN n'est pas équipé d'une installation intérieure de gaz. Le diagnostic 
 
 ### Contrôle de l'installation intérieure d'électricité
 
-{% if diagnostics.electricite %}
+{% if diagnostics.electricite and diagnostics.electricite.diagnostiqueur %}
 Un état de l'installation intérieure d'électricité a été établi le <<<VAR_START>>>{{ diagnostics.electricite.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.electricite.diagnostiqueur.nom }}<<<VAR_END>>>.
+{% elif diagnostics.electricite and diagnostics.electricite.date %}
+Un état de l'installation intérieure d'électricité a été établi le <<<VAR_START>>>{{ diagnostics.electricite.date | format_date }}<<<VAR_END>>>.
 
 Conclusion : <<<VAR_START>>>{{ diagnostics.electricite.conclusion }}<<<VAR_END>>>.
 
@@ -953,8 +965,10 @@ Des anomalies ont été relevées. Le rapport complet est annexé aux présentes
 
 ### Diagnostic de performance énergétique (DPE)
 
-{% if diagnostics.dpe %}
+{% if diagnostics.dpe and diagnostics.dpe.diagnostiqueur %}
 Un diagnostic de performance énergétique a été établi le <<<VAR_START>>>{{ diagnostics.dpe.date | format_date }}<<<VAR_END>>> par <<<VAR_START>>>{{ diagnostics.dpe.diagnostiqueur.nom }}<<<VAR_END>>>.
+{% elif diagnostics.dpe and diagnostics.dpe.date %}
+Un diagnostic de performance énergétique a été établi le <<<VAR_START>>>{{ diagnostics.dpe.date | format_date }}<<<VAR_END>>>.
 
 **Classe énergie** : <<<VAR_START>>>{{ diagnostics.dpe.classe_energie }}<<<VAR_END>>>
 **Classe GES** : <<<VAR_START>>>{{ diagnostics.dpe.classe_ges }}<<<VAR_END>>>
@@ -1420,6 +1434,10 @@ Le notaire a procédé à la vérification de l'authenticité de ces documents c
 
 {% if diagnostics and (diagnostics.erp or diagnostics.sinistres or diagnostics.environnement) %}
 {% include 'sections/section_diagnostics_environnementaux.md' %}
+{% endif %}
+
+{% if diagnostics and diagnostics.dpe %}
+{% include 'sections/section_performance_energetique.md' %}
 {% endif %}
 
 {% if obligation_declarative or aides %}

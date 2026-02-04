@@ -1,5 +1,31 @@
 {
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"import json,sys; d=json.load(sys.stdin); p=d.get('tool_input',{}).get('file_path',''); blocked=['docs_original','docs_original/'];any_blocked=any(b in p.replace('\\\\','/') for b in blocked); sys.exit(2) if any_blocked else sys.exit(0)\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"import json,sys; d=json.load(sys.stdin); p=d.get('tool_input',{}).get('file_path',''); ext=p.rsplit('.',1)[-1] if '.' in p else ''; print(f'[hook] Written: {p.split(chr(92))[-1].split(chr(47))[-1]}') if ext in ['py','md','json','ts','tsx'] else None\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
   }
 }

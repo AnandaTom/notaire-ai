@@ -3,225 +3,662 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NotaireAI - Formulaire Vendeur</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Notomai - Plateforme Notariale Intelligente</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a365d'%3E%3Cpath d='M12 3L2 12h3v9h14v-9h3L12 3z'/%3E%3C/svg%3E">
+    <style>
+        :root {
+            --navy: #1a365d;
+            --navy-light: #2a4a7f;
+            --navy-dark: #0f2340;
+            --gold: #c9a84c;
+            --gold-light: #e2c973;
+            --gold-dark: #a88a3a;
+            --cream: #faf8f5;
+            --white: #ffffff;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --font-main: 'Segoe UI', 'Roboto', -apple-system, sans-serif;
+            --font-serif: Georgia, 'Times New Roman', serif;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.15);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--cream);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        /* === NAVIGATION === */
+        .navbar {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+
+        .navbar-logo {
+            width: 42px;
+            height: 42px;
+            background: var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(201,168,76,0.3);
+        }
+
+        .navbar-logo svg { width: 24px; height: 24px; color: var(--navy-dark); }
+
+        .navbar-name {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-tag {
+            font-size: 0.7rem;
+            color: var(--gold-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+
+        .navbar-link:hover { color: white; background: rgba(255,255,255,0.1); }
+
+        .btn-dashboard {
+            background: var(--gold);
+            color: var(--navy-dark);
+            padding: 10px 24px;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(201,168,76,0.3);
+        }
+
+        .btn-dashboard:hover {
+            background: var(--gold-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(201,168,76,0.4);
+        }
+
+        /* === HERO === */
+        .hero {
+            margin-top: 70px;
+            background: linear-gradient(160deg, var(--navy) 0%, var(--navy-light) 40%, #3a5fa0 100%);
+            padding: 100px 40px 80px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 1;
+        }
+
+        .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(201,168,76,0.2);
+            border: 1px solid rgba(201,168,76,0.4);
+            color: var(--gold-light);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span { color: var(--gold-light); }
+
+        .hero p {
+            font-size: 1.15rem;
+            opacity: 0.85;
+            line-height: 1.6;
+            margin-bottom: 36px;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero-primary {
+            background: var(--gold);
+            color: var(--navy-dark);
+            padding: 16px 36px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(201,168,76,0.35);
+        }
+
+        .btn-hero-primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(201,168,76,0.45);
+        }
+
+        .btn-hero-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.4);
+            padding: 14px 32px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.25s;
+        }
+
+        .btn-hero-outline:hover {
+            border-color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* === SERVICES (cartes questionnaires) === */
+        .services {
+            padding: 80px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .services-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .services-header h2 {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+
+        .services-header p {
+            color: var(--gray-600);
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 32px 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            border-color: transparent;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .service-card.vente-appart::before { background: var(--gold); }
+        .service-card.vente-maison::before { background: #2d8a4e; }
+        .service-card.achat::before { background: #1565c0; }
+        .service-card.etat-civil::before { background: #7b1fa2; }
+
+        .service-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .service-icon svg { width: 26px; height: 26px; }
+
+        .service-card.vente-appart .service-icon { background: #fef3cd; color: var(--gold-dark); }
+        .service-card.vente-maison .service-icon { background: #e6f4ea; color: #2d8a4e; }
+        .service-card.achat .service-icon { background: #e3f2fd; color: #1565c0; }
+        .service-card.etat-civil .service-icon { background: #f3e5f5; color: #7b1fa2; }
+
+        .service-card h3 {
+            font-size: 1.1rem;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .service-card p {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .service-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .service-card.vente-appart .service-tag { background: #fef3cd; color: var(--gold-dark); }
+        .service-card.vente-maison .service-tag { background: #e6f4ea; color: #2d8a4e; }
+        .service-card.achat .service-tag { background: #e3f2fd; color: #1565c0; }
+        .service-card.etat-civil .service-tag { background: #f3e5f5; color: #7b1fa2; }
+
+        /* === FEATURES === */
+        .features {
+            background: white;
+            padding: 80px 40px;
+        }
+
+        .features-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .features-header h2 {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+
+        .features-header p { color: var(--gray-600); font-size: 1.05rem; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .feature-icon svg { width: 28px; height: 28px; color: var(--navy); }
+
+        .feature-item h3 {
+            font-size: 1rem;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            font-size: 0.88rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* === CTA === */
+        .cta {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+            padding: 64px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .cta h2 {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            opacity: 0.8;
+            margin-bottom: 28px;
+            font-size: 1.05rem;
+        }
+
+        .cta a {
+            background: var(--gold);
+            color: var(--navy-dark);
+            padding: 14px 36px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.25s;
+            display: inline-block;
+        }
+
+        .cta a:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+        /* === FOOTER === */
+        .footer {
+            padding: 32px 40px;
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .footer-brand {
+            font-family: var(--font-serif);
+            color: var(--navy);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; height: 60px; }
+            .navbar-name { font-size: 1.2rem; }
+            .navbar-link { display: none; }
+
+            .hero { padding: 70px 20px 60px; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .hero-actions { flex-direction: column; align-items: center; }
+
+            .services { padding: 48px 20px; }
+            .services-grid { grid-template-columns: 1fr; }
+
+            .features { padding: 48px 20px; }
+            .features-grid { grid-template-columns: 1fr; gap: 16px; }
+
+            .cta { padding: 48px 20px; }
+            .cta h2 { font-size: 1.4rem; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🏛️ NotaireAI</h1>
-            <p class="subtitle">Formulaire de collecte des informations du vendeur</p>
-        </header>
 
-        <form id="vendeurForm">
-            <!-- Identité -->
-            <section class="form-section">
-                <h2>👤 Identité du vendeur</h2>
+<!-- === NAVIGATION === -->
+<nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+        <div class="navbar-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+            </svg>
+        </div>
+        <div>
+            <div class="navbar-name">Notomai</div>
+            <div class="navbar-tag">Plateforme Notariale</div>
+        </div>
+    </a>
+    <div class="navbar-actions">
+        <a href="#services" class="navbar-link">Questionnaires</a>
+        <a href="#features" class="navbar-link">Fonctionnalites</a>
+        <a href="dashboard-notaire.html" class="btn-dashboard">Espace Notaire</a>
+    </div>
+</nav>
 
-                <div class="form-group">
-                    <label for="civilite">Civilité *</label>
-                    <select id="civilite" name="civilite" required>
-                        <option value="">Sélectionner</option>
-                        <option value="M">Monsieur</option>
-                        <option value="Mme">Madame</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="nom">Nom de naissance *</label>
-                    <input type="text" id="nom" name="nom" required placeholder="DUPONT">
-                </div>
-
-                <div class="form-group">
-                    <label for="nom_usage">Nom d'usage</label>
-                    <input type="text" id="nom_usage" name="nom_usage" placeholder="Si différent du nom de naissance">
-                </div>
-
-                <div class="form-group">
-                    <label for="prenoms">Prénoms (dans l'ordre de l'acte de naissance) *</label>
-                    <input type="text" id="prenoms" name="prenoms" required placeholder="Jean, Pierre, Marie">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date_naissance">Date de naissance *</label>
-                        <input type="date" id="date_naissance" name="date_naissance" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lieu_naissance">Lieu de naissance *</label>
-                        <input type="text" id="lieu_naissance" name="lieu_naissance" required placeholder="Paris (75)">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="nationalite">Nationalité *</label>
-                    <input type="text" id="nationalite" name="nationalite" required value="Française">
-                </div>
-
-                <div class="form-group">
-                    <label for="profession">Profession</label>
-                    <input type="text" id="profession" name="profession" placeholder="Ingénieur, Retraité, etc.">
-                </div>
-            </section>
-
-            <!-- Adresse -->
-            <section class="form-section">
-                <h2>📍 Adresse actuelle</h2>
-
-                <div class="form-group">
-                    <label for="adresse">Adresse complète *</label>
-                    <input type="text" id="adresse" name="adresse" required placeholder="12 rue de la République">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="code_postal">Code postal *</label>
-                        <input type="text" id="code_postal" name="code_postal" required placeholder="75001">
-                    </div>
-                    <div class="form-group">
-                        <label for="ville">Ville *</label>
-                        <input type="text" id="ville" name="ville" required placeholder="Paris">
-                    </div>
-                </div>
-            </section>
-
-            <!-- Situation matrimoniale -->
-            <section class="form-section">
-                <h2>💑 Situation matrimoniale</h2>
-
-                <div class="form-group">
-                    <label for="regime_matrimonial">Régime matrimonial *</label>
-                    <select id="regime_matrimonial" name="regime_matrimonial" required>
-                        <option value="">Sélectionner</option>
-                        <option value="celibataire">Célibataire</option>
-                        <option value="marie">Marié(e)</option>
-                        <option value="pacs">Pacsé(e)</option>
-                        <option value="divorce">Divorcé(e)</option>
-                        <option value="veuf">Veuf(ve)</option>
-                        <option value="separe">Séparé(e) de corps</option>
-                    </select>
-                </div>
-
-                <div id="conjoint_section" class="hidden">
-                    <h3>Informations du conjoint / partenaire</h3>
-
-                    <div class="form-group">
-                        <label for="conjoint_nom">Nom *</label>
-                        <input type="text" id="conjoint_nom" name="conjoint_nom" placeholder="MARTIN">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="conjoint_prenoms">Prénoms *</label>
-                        <input type="text" id="conjoint_prenoms" name="conjoint_prenoms" placeholder="Sophie, Marie">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="date_mariage">Date de mariage / PACS *</label>
-                        <input type="date" id="date_mariage" name="date_mariage">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lieu_mariage">Lieu de mariage / PACS *</label>
-                        <input type="text" id="lieu_mariage" name="lieu_mariage" placeholder="Lyon (69)">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="type_regime">Type de régime *</label>
-                        <select id="type_regime" name="type_regime">
-                            <option value="">Sélectionner</option>
-                            <option value="communaute_legale">Communauté légale (défaut)</option>
-                            <option value="communaute_universelle">Communauté universelle</option>
-                            <option value="separation_biens">Séparation de biens</option>
-                            <option value="participation_acquets">Participation aux acquêts</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="conjoint_intervient" name="conjoint_intervient">
-                            Le conjoint/partenaire intervient à l'acte
-                        </label>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Pièces justificatives -->
-            <section class="form-section">
-                <h2>📄 Pièces justificatives</h2>
-
-                <div class="form-group">
-                    <label for="cni_numero">Numéro de carte d'identité *</label>
-                    <input type="text" id="cni_numero" name="cni_numero" required placeholder="123456789012">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="cni_date_emission">Date d'émission *</label>
-                        <input type="date" id="cni_date_emission" name="cni_date_emission" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="cni_date_expiration">Date d'expiration *</label>
-                        <input type="date" id="cni_date_expiration" name="cni_date_expiration" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="cni_autorite">Autorité émettrice *</label>
-                    <input type="text" id="cni_autorite" name="cni_autorite" required placeholder="Préfecture de Paris">
-                </div>
-            </section>
-
-            <!-- Coordonnées bancaires -->
-            <section class="form-section">
-                <h2>🏦 Coordonnées bancaires (pour le versement du prix)</h2>
-
-                <div class="form-group">
-                    <label for="iban">IBAN *</label>
-                    <input type="text" id="iban" name="iban" required placeholder="FR76 1234 5678 9012 3456 7890 123">
-                </div>
-
-                <div class="form-group">
-                    <label for="bic">BIC *</label>
-                    <input type="text" id="bic" name="bic" required placeholder="BNPAFRPPXXX">
-                </div>
-
-                <div class="form-group">
-                    <label for="banque">Nom de la banque *</label>
-                    <input type="text" id="banque" name="banque" required placeholder="BNP Paribas">
-                </div>
-            </section>
-
-            <!-- Contact -->
-            <section class="form-section">
-                <h2>📞 Coordonnées de contact</h2>
-
-                <div class="form-group">
-                    <label for="telephone">Téléphone *</label>
-                    <input type="tel" id="telephone" name="telephone" required placeholder="06 12 34 56 78">
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required placeholder="jean.dupont@email.com">
-                </div>
-            </section>
-
-            <!-- Buttons -->
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="resetForm()">Réinitialiser</button>
-                <button type="button" class="btn btn-secondary" onclick="fillExample()">Remplir avec exemple</button>
-                <button type="submit" class="btn btn-primary">Enregistrer les informations</button>
-            </div>
-        </form>
-
-        <div id="result" class="result hidden">
-            <h3>✅ Données collectées</h3>
-            <pre id="resultJson"></pre>
-            <button class="btn btn-primary" onclick="downloadJson()">Télécharger JSON</button>
-            <button class="btn btn-secondary" onclick="copyJson()">Copier JSON</button>
+<!-- === HERO === -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">Plateforme securisee</div>
+        <h1>La collecte d'informations <span>simplifiee</span> pour les notaires</h1>
+        <p>Envoyez des questionnaires securises a vos clients, recevez leurs reponses chiffrees, et generez vos actes en quelques clics.</p>
+        <div class="hero-actions">
+            <a href="dashboard-notaire.html" class="btn-hero-primary">Acceder a l'espace notaire</a>
+            <a href="#services" class="btn-hero-outline">Decouvrir les questionnaires</a>
         </div>
     </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- === QUESTIONNAIRES DISPONIBLES === -->
+<section class="services" id="services">
+    <div class="services-header">
+        <h2>Questionnaires disponibles</h2>
+        <p>Quatre types de formulaires pour couvrir l'ensemble de vos besoins en collecte d'informations clients.</p>
+    </div>
+
+    <div class="services-grid">
+        <!-- Vente appartement -->
+        <div class="service-card vente-appart">
+            <div class="service-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M3 9h18M9 21V9"/>
+                </svg>
+            </div>
+            <h3>Vente Appartement</h3>
+            <p>Questionnaire complet pour les vendeurs d'appartements en copropriete : identite, coordonnees, syndic, charges, diagnostics, fiscalite.</p>
+            <span class="service-tag">7 etapes</span>
+        </div>
+
+        <!-- Vente maison -->
+        <div class="service-card vente-maison">
+            <div class="service-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+                    <path d="M9 10h.01M15 10h.01"/>
+                </svg>
+            </div>
+            <h3>Vente Maison</h3>
+            <p>Formulaire adapte aux vendeurs de maisons individuelles : terrain, batiment, assainissement, travaux, situation fiscale.</p>
+            <span class="service-tag">8 etapes</span>
+        </div>
+
+        <!-- Achat bien -->
+        <div class="service-card achat">
+            <div class="service-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+            </div>
+            <h3>Achat Bien</h3>
+            <p>Questionnaire acquereur : identite, situation familiale, financement, prets, apport personnel, conditions suspensives.</p>
+            <span class="service-tag">6 etapes</span>
+        </div>
+
+        <!-- Etat civil -->
+        <div class="service-card etat-civil">
+            <div class="service-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <circle cx="8" cy="11" r="2"/>
+                    <path d="M14 10h4M14 14h4"/>
+                </svg>
+            </div>
+            <h3>Fiche Etat Civil</h3>
+            <p>Collecte rapide d'identite : etat civil complet, coordonnees, situation matrimoniale et copie de piece d'identite (recto/verso).</p>
+            <span class="service-tag">4 etapes</span>
+        </div>
+    </div>
+</section>
+
+<!-- === FONCTIONNALITES === -->
+<section class="features" id="features">
+    <div class="features-inner">
+        <div class="features-header">
+            <h2>Securite et simplicite</h2>
+            <p>Une plateforme concue pour les exigences du metier notarial.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+                </div>
+                <h3>Chiffrement de bout en bout</h3>
+                <p>Les donnees sont chiffrees avec AES-256-GCM directement dans le navigateur du client. La cle ne transite jamais par le serveur.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <h3>Recapitulatif DOCX automatique</h3>
+                <p>A chaque soumission, un document Word recapitulatif est genere et envoye par email au notaire avec toutes les informations structurees.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <h3>Liens a usage unique</h3>
+                <p>Chaque lien est valable 7 jours, utilisable une seule fois. Le token et la cle sont generes de maniere unique pour chaque formulaire.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                <h3>Envoi par email au client</h3>
+                <p>Envoyez le lien du questionnaire directement au client par email depuis le dashboard. Un email professionnel avec les instructions.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
+                </div>
+                <h3>Multi-formulaires</h3>
+                <p>Envoyez plusieurs formulaires en meme temps au client : un questionnaire immobilier ET une fiche d'etat civil dans un seul envoi.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h3>Conforme RGPD</h3>
+                <p>Consentement explicite collecte a chaque formulaire. Les donnees personnelles sont chiffrees et les acces sont traces.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- === CTA === -->
+<section class="cta">
+    <h2>Pret a simplifier votre collecte d'informations ?</h2>
+    <p>Connectez-vous a votre espace notaire pour creer votre premier questionnaire.</p>
+    <a href="dashboard-notaire.html">Acceder a l'espace notaire</a>
+</section>
+
+<!-- === FOOTER === -->
+<footer class="footer">
+    <div class="footer-brand">Notomai</div>
+    <p>&copy; 2026 Notomai - Plateforme notariale intelligente. Tous droits reserves.</p>
+</footer>
+
 </body>
 </html>

@@ -187,6 +187,16 @@ class PatternsAvances:
         (r'cadastr[ée]\s+section\s+([A-Z]{1,2})\s+n(?:uméro|°)?\s*(\d+)', 'cadastre_simple', 0.85),
         # "figurant au cadastre pour X m²"
         (r'figurant\s+au\s+cadastre\s+pour\s+(\d+(?:\s*\d+)?)\s*m[²2]', 'superficie_cadastre', 0.90),
+        # Tableau cadastral: "| AB | 145 | 12 RUE DE LA PAIX | 00 ha 05 a 30 ca |"
+        (r'\|\s*([A-Z]{1,2})\s*\|\s*(\d{1,5})\s*\|\s*([^|]+?)\s*\|\s*(\d{1,2}\s*ha\s*\d{1,2}\s*a\s*\d{1,2}\s*ca)\s*\|', 'cadastre_tableau', 0.95),
+        # "commune de PARIS, cadastré section AB numéro 145"
+        (r'commune\s+de\s+([A-ZÉÈÊË][A-ZÉÈÊËa-zéèêë\-\s]+?)\s*,?\s*cadastr[ée]\s+section\s+([A-Z]{1,2})\s+n(?:uméro|°)?\s*(\d+)', 'cadastre_commune', 0.90),
+        # "parcelle cadastrée section AB numéro 145, lieudit LES VIGNES, pour une contenance de 00 ha 05 a 30 ca"
+        (r'parcelle\s+cadastr[ée]e?\s+section\s+([A-Z]{1,2})\s+n(?:uméro|°)?\s*(\d+)\s*,?\s*(?:lieudit\s+([^,]+?))?\s*,?\s*pour\s+(?:une\s+)?contenance\s+de\s+(\d{1,2}\s*ha\s*\d{1,2}\s*a\s*\d{1,2}\s*ca)', 'cadastre_contenance', 0.95),
+        # "section AH n° 211 pour 00 ha 28 a 21 ca" (format titre propriété)
+        (r'section\s+([A-Z]{1,2})\s+n°?\s*(\d+)\s+pour\s+(\d{1,2}\s*ha\s*\d{1,2}\s*a\s*\d{1,2}\s*ca)', 'cadastre_titre', 0.90),
+        # "Figurant ainsi au cadastre :" (marqueur de section)
+        (r'[Ff]igurant\s+(?:ainsi\s+)?au\s+cadastre', 'cadastre_marqueur', 0.80),
     ]
 
     PATTERNS_LOT = [

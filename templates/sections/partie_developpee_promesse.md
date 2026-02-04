@@ -1,25 +1,47 @@
 {# ============================================================================
    PARTIE DÉVELOPPÉE - PROMESSE DE VENTE
-   Version: 2.0.0 - 27 janvier 2026
+   Version: 3.0.0 - 29 janvier 2026
 
    Sections spécifiques aux promesses unilatérales de vente.
-   Basé sur l'analyse de 3 trames réelles (A, B, C).
+   Basé sur l'analyse de 7 trames réelles (Principale + A, B, C, D, E, F).
 
    Contient :
    - Conclusion du contrat & Devoir d'information
    - Terminologie
-   - Carence
-   - Avenant éventuel
-   - Conditions suspensives
-   - Délai de réalisation
+   - Liste des meubles / Absence de meubles
+   - Carence & Avenant éventuel
+   - Conditions suspensives (prêt, vente préalable, urbanisme, préemption,
+     hypothécaire, permis construire, déclaration travaux, conformité, absence prêt)
+   - Délai de réalisation & Prorogation
    - Indemnité d'immobilisation / Clause pénale
    - Séquestre
+   - Force exécutoire & Information rendez-vous signature
+   - Ventilation du prix & Provision sur frais
+   - Coût de l'opération et financement prévisionnel
    - Faculté de substitution / Absence de faculté
    - Propriété & Jouissance
-   - Pouvoirs
-   - Élection de domicile
-   - Faculté de rétractation
+   - Garantie hypothécaire & État du bien
+   - Pouvoirs & Élection de domicile
+   - Communication pièces & Faculté de rétractation
    - Réitération par acte authentique
+   - État des meubles
+   - Charges et conditions réglementaires
+   - Absence construction/rénovation & APL
+   - Équipements (15+ types: détecteur fumée, alarme, vidéo, broyeur,
+     climatisation, chaudière, fibre, cheminée/poêle, citerne gaz,
+     cuve fuel, cuve enterrée, ancienne cuve, panneaux PV,
+     récupération eaux, puits/forages, piscines)
+   - Ascenseurs
+   - Domicile fiscal & Reprise ayants droit
+   - Accès au bien & Division cadastrale & Bornage
+   - Constitution de servitudes
+   - Événement sanitaire (COVID)
+   - Construction (conformité, RC décennale, géotechnique, réseaux,
+     assurance-construction, DIUO, factures, contrat maison)
+   - Diagnostics environnementaux détaillés (PPR, sismicité, sols, argiles)
+   - Responsabilité environnementale & Déchets
+   - Taxe terrain constructible
+   - Anomalies diagnostics
    ============================================================================ #}
 
 # EXPOSÉ
@@ -178,13 +200,13 @@ Les parties s'engagent à être disponibles à la date de convocation et à info
 
 {% if prix.ventilation %}
 Le prix ci-dessus est ventilé comme suit :
-* **Biens immobiliers** : {{ prix.ventilation.immobilier | format_nombre }} €
-{% if prix.ventilation.meubles %}
-* **Meubles meublants** : {{ prix.ventilation.meubles | format_nombre }} €
-{% endif %}
-{% if prix.ventilation.autres %}
-* **Autres éléments** : {{ prix.ventilation.autres | format_nombre }} €
-{% endif %}
+
+| Élément | Montant |
+| :---- | ----: |
+| Biens immobiliers | {{ prix.ventilation.immobilier | format_nombre }} EUR |
+{% if prix.ventilation.meubles %}| Meubles meublants | {{ prix.ventilation.meubles | format_nombre }} EUR |
+{% endif %}{% if prix.ventilation.autres %}| Autres éléments | {{ prix.ventilation.autres | format_nombre }} EUR |
+{% endif %}| **TOTAL** | **{{ prix.montant | format_nombre }} EUR** |
 
 Cette ventilation est retenue pour le calcul des droits d'enregistrement et des émoluments du notaire.
 
@@ -305,6 +327,46 @@ Le délai de préemption est de **{{ conditions_suspensives.droit_preemption.del
 ### Condition suspensive d'état hypothécaire
 
 La réalisation de la présente promesse est subordonnée à l'obtention d'un état hypothécaire sur formalités ne révélant que les inscriptions connues des parties et mentionnées aux présentes.
+{% endif %}
+
+{% if conditions_suspensives.permis_construire and conditions_suspensives.permis_construire.applicable %}
+### Condition suspensive d'obtention de permis de construire
+
+La réalisation de la présente promesse est subordonnée à l'obtention par le **BÉNÉFICIAIRE** d'un permis de construire pour {{ conditions_suspensives.permis_construire.projet | default("le projet envisagé") }}.
+
+Le **BÉNÉFICIAIRE** s'engage à déposer sa demande de permis de construire dans les **{{ conditions_suspensives.permis_construire.delai_depot | default(30) }} jours** de ce jour.
+
+Cette condition devra être réalisée au plus tard le **{{ conditions_suspensives.permis_construire.date_butoir | format_date }}**.
+
+{% if conditions_suspensives.permis_construire.affichage %}
+**Modalités d'affichage du permis de construire** - L'affichage sur le terrain du permis de construire est assuré par les soins du bénéficiaire dudit permis de construire, conformément aux dispositions des articles R 424-15 et A 424-15 à A 424-19 du Code de l'urbanisme. Le panneau doit être installé de telle sorte que les renseignements qu'il contient demeurent lisibles de la voie publique, pendant toute la durée du chantier.
+{% endif %}
+
+{% if conditions_suspensives.permis_construire.transfert_possible %}
+**Possibilité de transfert du permis de construire** - Au cas où le permis de construire serait obtenu et que les présentes ne puissent se réaliser, le **PROMETTANT** pourra exiger du **BÉNÉFICIAIRE** le transfert du permis de construire à son profit, ou à défaut, l'annulation dudit permis.
+{% endif %}
+{% endif %}
+
+{% if conditions_suspensives.declaration_prealable_travaux and conditions_suspensives.declaration_prealable_travaux.applicable %}
+### Condition suspensive d'obtention d'arrêté de non-opposition à déclaration préalable de travaux
+
+Pour la réalisation des présentes, le **PROMETTANT** devra obtenir les arrêtés de non-opposition à déclaration de travaux portant sur {{ conditions_suspensives.declaration_prealable_travaux.objet | default("les travaux projetés") }}.
+
+Cette condition devra être réalisée au plus tard le **{{ conditions_suspensives.declaration_prealable_travaux.date_butoir | format_date }}**.
+{% endif %}
+
+{% if conditions_suspensives.attestation_conformite and conditions_suspensives.attestation_conformite.applicable %}
+### Condition suspensive d'obtention d'une attestation de non-contestation à la conformité
+
+Pour la réalisation des présentes, le **PROMETTANT** devra obtenir{% if conditions_suspensives.attestation_conformite.delai %} dans un délai de **{{ conditions_suspensives.attestation_conformite.delai }}** à compter des présentes{% endif %} une attestation de non-contestation de la conformité des travaux réalisés, conformément aux dispositions des articles L 462-1 et suivants du Code de l'urbanisme.
+{% endif %}
+
+{% if conditions_suspensives.absence_pret %}
+### Absence de prêt
+
+Le **BÉNÉFICIAIRE** déclare qu'il n'entend pas contracter d'emprunt pour le financement de l'acquisition envisagée, le financement s'effectuant exclusivement au moyen de ses fonds personnels.
+
+Si, contrairement à cette déclaration, il avait néanmoins recours à un tel prêt, il reconnaît avoir été informé qu'il ne pourrait se prévaloir des dispositions protectrices prévues par les articles L 312-15 et suivants du Code de la consommation en cas de non-obtention de ce prêt.
 {% endif %}
 
 {% if conditions_suspensives.autres %}
@@ -588,6 +650,50 @@ Le **PROMETTANT** s'engage à faire installer un détecteur de fumée conforme �
 
 **Climatisation** - {% if bien.equipements and bien.equipements.climatisation %}Le **BIEN** est équipé d'un système de climatisation. Le **PROMETTANT** déclare que ce système est en état de fonctionnement et que les contrôles obligatoires ont été réalisés.{% else %}Le **BIEN** n'est pas équipé d'un système de climatisation.{% endif %}
 
+{% if bien.equipements and bien.equipements.chaudiere is defined %}
+**Chaudière – Contrôle – Information** - {% if bien.equipements.chaudiere %}Le **BIEN** est équipé d'une chaudière{% if bien.equipements.chaudiere_type %} de type {{ bien.equipements.chaudiere_type }}{% endif %}. Le **PROMETTANT** déclare que cette chaudière a fait l'objet de l'entretien annuel obligatoire. La facture du dernier entretien sera transmise au **BÉNÉFICIAIRE** au plus tard à la réitération des présentes.{% else %}Le **BIEN** n'est pas équipé d'une chaudière.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.fibre_optique is defined %}
+**Fibre optique** - {% if bien.equipements.fibre_optique %}Le **BIEN** est raccordé à la fibre optique. Le **PROMETTANT** déclare que l'installation est en état de fonctionnement.{% else %}Le **BIEN** n'est pas raccordé à la fibre optique.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.cheminee is defined %}
+**Cheminée / Poêle** - {% if bien.equipements.cheminee %}Le **BIEN** est équipé d'un{{ " " + bien.equipements.cheminee_type if bien.equipements.cheminee_type else " poêle ou d'une cheminée" }}{% if bien.equipements.cheminee_date_installation %} installé(e) {{ bien.equipements.cheminee_date_installation }}{% endif %}. Le **PROMETTANT** déclare qu'il est à ce jour en bon état de fonctionnement. La facture du dernier ramonage{% if bien.equipements.cheminee_date_ramonage %} (effectué le {{ bien.equipements.cheminee_date_ramonage | format_date }}){% endif %} sera transmise par le **PROMETTANT** au plus tard à la réitération des présentes.{% else %}Le **BIEN** n'est pas équipé de cheminée ni de poêle.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.citerne_gaz is defined %}
+**Citerne de gaz** - {% if bien.equipements.citerne_gaz %}Le **BIEN** est équipé d'une citerne de gaz{% if bien.equipements.citerne_gaz_propriete == "locative" %} en location auprès de {{ bien.equipements.citerne_gaz_fournisseur | default("son fournisseur") }}. Le contrat sera transféré au **BÉNÉFICIAIRE**{% else %} appartenant au **PROMETTANT**{% endif %}.{% else %}Le **PROMETTANT** déclare que l'immeuble n'est pas équipé d'une citerne de gaz.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.cuve_fuel is defined %}
+**Cuve à fuel** - {% if bien.equipements.cuve_fuel %}Le **BIEN** est équipé d'une cuve à fuel{% if bien.equipements.cuve_fuel_enterree %} enterrée{% endif %}{% if bien.equipements.cuve_fuel_capacite %} d'une capacité de {{ bien.equipements.cuve_fuel_capacite }} litres{% endif %}. Le **PROMETTANT** déclare que cette cuve est conforme à la réglementation en vigueur.{% else %}Le **PROMETTANT** déclare que l'immeuble n'est pas équipé d'une cuve à fuel.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.cuve_enterree is defined %}
+**Cuve enterrée** - {% if bien.equipements.cuve_enterree %}Le **BIEN** est équipé d'une cuve enterrée{% if bien.equipements.cuve_enterree_usage %} utilisée pour {{ bien.equipements.cuve_enterree_usage }}{% endif %}. Le **PROMETTANT** déclare que cette cuve est conforme à la réglementation en vigueur et qu'elle a fait l'objet des contrôles obligatoires.{% else %}Le **PROMETTANT** déclare que l'immeuble n'est pas équipé d'une cuve enterrée.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.ancienne_cuve is defined %}
+**Ancienne cuve** - {% if bien.equipements.ancienne_cuve %}Le **PROMETTANT** déclare que l'immeuble est équipé d'une ancienne cuve enterrée{% if bien.equipements.ancienne_cuve_neutralisee %}, qui a été neutralisée conformément à la réglementation{% else %}. Le **PROMETTANT** s'engage à procéder à sa neutralisation avant la réitération{% endif %}.{% else %}Le **PROMETTANT** déclare que l'immeuble n'est pas équipé d'une ancienne cuve enterrée sur le terrain.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.panneaux_photovoltaiques is defined %}
+**Panneaux photovoltaïques** - {% if bien.equipements.panneaux_photovoltaiques %}Le **BIEN** est équipé de panneaux photovoltaïques{% if bien.equipements.pv_puissance %} d'une puissance de {{ bien.equipements.pv_puissance }}{% endif %}{% if bien.equipements.pv_contrat_rachat %}, avec un contrat de rachat d'électricité auprès de {{ bien.equipements.pv_fournisseur | default("EDF OA") }}{% endif %}. Le **PROMETTANT** transmettra au **BÉNÉFICIAIRE** l'ensemble des documents relatifs à cette installation.{% else %}Le **PROMETTANT** déclare que le **BIEN** n'est pas équipé de panneaux photovoltaïques.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.recuperation_eaux is defined %}
+**Dispositif de récupération des eaux de pluie** - {% if bien.equipements.recuperation_eaux %}Le **BIEN** est équipé d'un système de récupération et de distribution d'eaux de pluie{% if bien.equipements.recuperation_eaux_description %} ({{ bien.equipements.recuperation_eaux_description }}){% endif %}. Le **PROMETTANT** déclare que cette installation est conforme à l'arrêté du 21 août 2008 et a fait l'objet des déclarations obligatoires en mairie.{% else %}Le **PROMETTANT** déclare que le **BIEN** n'est pas équipé d'un système de récupération et de distribution d'eaux de pluie.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.puits_forages is defined %}
+**Puits et forages domestiques** - {% if bien.equipements.puits_forages %}Le **PROMETTANT** déclare que l'immeuble est équipé d'un {{ bien.equipements.puits_forages_type | default("puits") }}{% if bien.equipements.puits_forages_usage %} utilisé pour {{ bien.equipements.puits_forages_usage }}{% endif %}. Les parties sont informées que la loi sur l'eau et les milieux aquatiques fait obligation de déclarer en mairie les puits et forages domestiques existants. Est assimilé à un usage domestique de l'eau tout prélèvement inférieur ou égal à 1 000 m³ d'eau par an. Les services de distribution d'eau potable ont la possibilité de contrôler l'ouvrage de prélèvement, les réseaux intérieurs et les ouvrages de récupération des eaux de pluie.{% else %}Le **PROMETTANT** déclare que l'immeuble n'est pas équipé de puits ou de forage domestique.{% endif %}
+{% endif %}
+
+{% if bien.equipements and bien.equipements.piscine is defined %}
+**Sécurité des piscines** - {% if bien.equipements.piscine %}Les parties déclarent qu'il existe une piscine{% if bien.equipements.piscine_type %} ({{ bien.equipements.piscine_type }}){% endif %}. Elles sont informées des dispositions de l'article L 134-10 du Code de la construction et de l'habitation, aux termes desquelles les piscines enterrées non closes privatives, neuves ou existantes, à usage individuel ou à usage collectif, sont pourvues d'au moins un des dispositifs de sécurité normalisés visant à prévenir le risque de noyade : barrière de protection (NF P 90-306), couverture de sécurité (NF P 90-308), abri (NF P 90-309) ou alarme (NF P 90-307). {% if bien.equipements.piscine_dispositif_securite %}Le dispositif en place est : {{ bien.equipements.piscine_dispositif_securite }}.{% endif %}{% else %}Les parties déclarent qu'il n'existe pas de piscine.{% endif %}
+{% endif %}
+
 ## Règlementation - Ascenseurs
 
 {% if copropriete and copropriete.ascenseurs %}
@@ -619,6 +725,212 @@ L'immeuble n'est pas pourvu d'ascenseur. Sans objet pour la sécurité, le contr
 En cas de décès du **PROMETTANT** avant la réitération de la vente par acte authentique, ses ayants droit seront tenus de reprendre l'engagement résultant de la présente promesse.
 
 La présente promesse conservera tous ses effets à l'égard des héritiers et ayants droit du **PROMETTANT**, lesquels seront tenus solidairement de toutes les obligations qui en découlent.
+
+{# ============================================================================
+   SECTIONS ENRICHIES - TRAMES D, E, F (v1.6.0 - Janvier 2026)
+   Ajout de sections pour maisons, terrains et construction
+   ============================================================================ #}
+
+{% if bien.acces %}
+## Accès au bien
+
+Le **PROMETTANT** déclare que l'accès au **BIEN** vendu s'effectue {{ bien.acces.description | default("par la voie publique") }}.
+
+{% if bien.acces.servitude_passage %}
+Cet accès s'effectue par le biais d'une servitude de passage{% if bien.acces.servitude_passage_details %} {{ bien.acces.servitude_passage_details }}{% endif %}.
+{% endif %}
+
+{% if bien.acces.second_acces %}
+Le **PROMETTANT** déclare avoir également créé un second accès {{ bien.acces.second_acces_description }}.
+{% endif %}
+
+Le **BÉNÉFICIAIRE** atteste avoir pu vérifier les modalités d'accès.
+{% endif %}
+
+{% if bien.division_cadastrale %}
+## Division cadastrale à effectuer
+
+{% if bien.division_cadastrale.a_effectuer %}
+Il est ici précisé que la parcelle ci-dessus cadastrée section {{ bien.division_cadastrale.section }} numéro {{ bien.division_cadastrale.numero }} est d'une contenance totale de {{ bien.division_cadastrale.contenance_totale }}. La vente ne porte que sur une partie de cette parcelle d'une contenance de {{ bien.division_cadastrale.contenance_vendue }}.
+
+Un document modificatif du parcellaire sera établi aux frais du **PROMETTANT** par tout géomètre-expert de son choix. Cette division s'effectuera conformément au plan établi et approuvé par les parties, lequel est annexé.
+{% endif %}
+
+{% if bien.division_cadastrale.declaration_prealable %}
+## DÉCLARATION PRÉALABLE DE DIVISION CADASTRALE
+
+Conformément aux dispositions de l'article L 442-3 du Code de l'Urbanisme, la division cadastrale a fait l'objet d'une déclaration préalable.
+
+{% if bien.division_cadastrale.arrete_non_opposition %}
+Un arrêté de non-opposition à cette déclaration préalable a été délivré par {{ bien.division_cadastrale.autorite_delivrance | default("la Mairie") }}, le {{ bien.division_cadastrale.date_arrete | format_date }}.
+
+Le **PROMETTANT** déclare avoir procédé à l'affichage dudit arrêté de non-opposition à déclaration préalable sur le **BIEN**, objet des présentes.
+{% endif %}
+
+Le **PROMETTANT** déclare, sous son entière responsabilité, que cet arrêté de non-opposition à déclaration préalable n'a fait l'objet d'aucun retrait administratif ni d'aucun recours de tiers.
+{% endif %}
+{% endif %}
+
+{% if bien.bornage %}
+## OBLIGATION D'INFORMATION SUR LE BORNAGE
+
+{% if bien.bornage.a_effectuer %}
+En application des dispositions de l'article L 115-4 du Code de l'urbanisme, la destination envisagée sur le terrain objet des présentes nécessite un bornage qui sera réalisé avant la réitération de la vente. Les frais de bornage seront à la charge {{ bien.bornage.frais_charge | default("du PROMETTANT") }}.
+{% else %}
+Le terrain a fait l'objet d'un bornage{% if bien.bornage.date %} en date du {{ bien.bornage.date | format_date }}{% endif %}{% if bien.bornage.geometre %} par {{ bien.bornage.geometre }}{% endif %}.
+{% endif %}
+{% endif %}
+
+{% if bien.constitution_servitudes %}
+## CONSTITUTION DE SERVITUDES
+
+Sous réserve de la constatation authentique de la réalisation des présentes, il est convenu entre les parties ce qui suit :
+
+{% for servitude in bien.constitution_servitudes %}
+**{{ servitude.type | default("Servitude") }}**
+
+{% if servitude.description %}
+{{ servitude.description }}
+{% endif %}
+
+{% if servitude.fonds_servant %}
+Fonds servant : {{ servitude.fonds_servant }}
+{% endif %}
+{% if servitude.fonds_dominant %}
+Fonds dominant : {{ servitude.fonds_dominant }}
+{% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if evenement_sanitaire %}
+## Prise en compte d'un évènement sanitaire
+
+Les parties attestent être instruites de l'impact d'une crise sanitaire à l'image de celle de la Covid-19 en ce qui concerne l'éventuelle paralysie de l'activité juridique et administrative pouvant résulter de mesures d'urgence sanitaire.
+
+Si une telle crise venait à se reproduire pendant le délai de réalisation des présentes, et que des dispositions d'origine légale ou réglementaire venaient à suspendre, prolonger, reporter ou aménager les délais contractuels et/ou légaux applicables aux présentes, les parties conviennent que les délais seront ajustés en conséquence.
+{% endif %}
+
+{% if cout_operation %}
+## COÛT DE L'OPÉRATION ET FINANCEMENT PRÉVISIONNEL
+
+À titre indicatif, le coût de l'opération et le financement prévisionnel sont les suivants :
+
+| | |
+| :---- | ----: |
+| Prix de vente | {{ prix.montant | format_nombre }} {{ prix.devise | default("EUR") }} |
+{% if cout_operation.frais_notaire %}| Frais de notaire estimés | {{ cout_operation.frais_notaire | format_nombre }} {{ prix.devise | default("EUR") }} |{% endif %}
+{% if cout_operation.frais_agence %}| Frais d'agence | {{ cout_operation.frais_agence | format_nombre }} {{ prix.devise | default("EUR") }} |{% endif %}
+{% if cout_operation.frais_pret %}| Frais de prêt estimés | {{ cout_operation.frais_pret | format_nombre }} {{ prix.devise | default("EUR") }} |{% endif %}
+| **Coût total estimé** | **{{ cout_operation.total | format_nombre }} {{ prix.devise | default("EUR") }}** |
+| | |
+| **FINANCEMENT** | |
+{% if cout_operation.apport_personnel %}| Apport personnel | {{ cout_operation.apport_personnel | format_nombre }} {{ prix.devise | default("EUR") }} |{% endif %}
+{% if cout_operation.fonds_empruntes %}| Fonds empruntés | {{ cout_operation.fonds_empruntes | format_nombre }} {{ prix.devise | default("EUR") }} |{% endif %}
+{% endif %}
+
+{% if construction %}
+## Dispositions relatives à la construction
+
+{% if construction.absence_certification_conformite %}
+**Absence de certification de la conformité** - La construction de l'immeuble n'a pas fait l'objet de la délivrance ni d'un certificat de conformité ni d'une attestation de non-contestation de la conformité. Le propriétaire déclare avoir fait édifier l'immeuble en respectant la totalité des prescriptions édictées par les autorisations d'urbanisme. Les parties sont averties des sanctions résultant de l'absence de certificat de conformité (sanctions pénales, civiles et administratives conformément à l'article L 480-14 du Code de l'urbanisme).
+{% endif %}
+
+{% if construction.assurances_rc_decennale %}
+**Assurances de responsabilité civile décennale des entreprises** - Le **BÉNÉFICIAIRE** bénéficie de la garantie accordée dans le cadre de la responsabilité décennale prévue par l'article 1792 du Code civil. La garantie décennale est obligatoire pour toutes les entreprises impliquées dans la réalisation de gros ouvrages ou d'éléments d'équipement indissociables. Elle est due dans deux cas : un vice compromet la solidité de l'ouvrage ou le rend impropre à sa destination (articles 1792 et 1792-1 du Code civil) ; un vice affecte un élément d'équipement indissociable de l'ouvrage (article 1792-2 du Code civil). Le délai de garantie expire dix ans après la réception de l'ouvrage.
+{% endif %}
+
+{% if construction.etude_geotechnique %}
+**Étude géotechnique** - Conformément aux articles L 132-5 et suivants du Code de la construction et de l'habitation, {% if construction.etude_geotechnique.fournie %}une étude géotechnique préalable est fournie par le **PROMETTANT** et annexée aux présentes.{% elif construction.etude_geotechnique.non_requise %}la parcelle de terrain à bâtir ne se trouvant pas dans une zone moyenne ou forte exposée au phénomène de mouvement de terrain différentiel lié au retrait-gonflement des argiles, la fourniture de l'étude géotechnique préalable n'est pas requise.{% else %}en cas de vente d'un terrain non bâti constructible, une étude géotechnique préalable devra être fournie par le vendeur et annexée à l'acte de vente.{% endif %}
+{% endif %}
+
+{% if construction.raccordement_reseaux %}
+**Raccordement aux réseaux** - Les frais de raccordement aux réseaux de distribution, notamment d'eau{% if construction.raccordement_reseaux.eau %} (existant){% endif %} et d'électricité{% if construction.raccordement_reseaux.electricite %} (existant){% endif %}, de la construction à édifier seront entièrement à la charge du **BÉNÉFICIAIRE**.
+{% endif %}
+
+{% if construction.assurance_construction %}
+**Assurance-construction** - Le **BÉNÉFICIAIRE** reconnaît avoir été averti par le notaire soussigné de l'obligation qui est faite par les dispositions de l'article L 242-1 du Code des assurances de souscrire une assurance « dommages-ouvrage » avant l'ouverture du chantier. Il devra effectuer toutes les démarches nécessaires pour bénéficier de ce type d'assurance et se faire remettre par la compagnie un justificatif de cette assurance.
+{% endif %}
+
+{% if construction.diuo %}
+**Dossier d'intervention ultérieure sur l'ouvrage** - Le notaire soussigné a informé le **BÉNÉFICIAIRE** qu'un dossier d'intervention ultérieure sur l'ouvrage (DIUO) tel que visé par l'article R. 4532-95 du Code du travail doit être constitué pour tout ouvrage de construction et remis par le constructeur.{% if construction.diuo.non_obligatoire %} Toutefois, ce dossier n'est pas obligatoire lorsque la construction est affectée à l'usage personnel du maître d'ouvrage.{% endif %}
+{% endif %}
+
+{% if construction.conservation_factures %}
+**Conservation des factures des travaux** - Le notaire rappelle au **BÉNÉFICIAIRE** la nécessité de conserver les factures des travaux et achats de matériaux, ainsi que les plans de l'immeuble tel que construit, le DIUO, les procès-verbaux de réception et les attestations d'assurance des constructeurs, afin de pouvoir les transmettre aux propriétaires successifs de l'immeuble.
+{% endif %}
+
+{% if construction.contrat_construction_maison %}
+**Contrat de construction d'une maison individuelle** - Le rédacteur des présentes rappelle au **BÉNÉFICIAIRE** l'obligation faite à son constructeur de lui remettre lors de la signature du contrat une notice descriptive conforme à un modèle type, ainsi qu'une notice d'information destinée à l'informer de ses droits et obligations en application de la loi n° 90-1129 du 19 décembre 1990.
+{% endif %}
+{% endif %}
+
+{% if diagnostics_environnementaux_detail %}
+## Diagnostics environnementaux détaillés
+
+{% if diagnostics_environnementaux_detail.ppr_naturels is defined %}
+**Plan de prévention des risques naturels** - {% if diagnostics_environnementaux_detail.ppr_naturels.existe %}L'immeuble est situé dans le périmètre d'un plan de prévention des risques naturels approuvé{% if diagnostics_environnementaux_detail.ppr_naturels.date_approbation %} en date du {{ diagnostics_environnementaux_detail.ppr_naturels.date_approbation | format_date }}{% endif %}. Le risque naturel pris en considération est lié à : {{ diagnostics_environnementaux_detail.ppr_naturels.risque | default("inondation") }}.{% if diagnostics_environnementaux_detail.ppr_naturels.prescriptions_travaux %} L'immeuble est concerné par des prescriptions de travaux dans le règlement de ce plan.{% endif %}{% else %}L'immeuble n'est pas situé dans le périmètre d'un plan de prévention des risques naturels.{% endif %}
+{% endif %}
+
+{% if diagnostics_environnementaux_detail.ppr_miniers is defined %}
+**Plan de prévention des risques miniers** - {% if diagnostics_environnementaux_detail.ppr_miniers.existe %}L'immeuble est situé dans le périmètre d'un plan de prévention des risques miniers.{% else %}L'immeuble n'est pas situé dans le périmètre d'un plan de prévention des risques miniers.{% endif %}
+{% endif %}
+
+{% if diagnostics_environnementaux_detail.ppr_technologiques is defined %}
+**Plan de prévention des risques technologiques** - {% if diagnostics_environnementaux_detail.ppr_technologiques.existe %}L'immeuble est situé dans le périmètre d'un plan de prévention des risques technologiques.{% else %}L'immeuble n'est pas situé dans le périmètre d'un plan de prévention des risques technologiques.{% endif %}
+{% endif %}
+
+{% if diagnostics_environnementaux_detail.sismicite is defined %}
+**Sismicité** - L'immeuble est situé dans une zone {{ diagnostics_environnementaux_detail.sismicite.zone | default("1") }} ({{ diagnostics_environnementaux_detail.sismicite.niveau | default("très faible") }}).
+{% endif %}
+
+{% if diagnostics_environnementaux_detail.secteur_information_sols is defined %}
+**Secteur d'information sur les sols** - {% if diagnostics_environnementaux_detail.secteur_information_sols.existe %}L'immeuble est situé dans un secteur d'information sur les sols en application de l'article L. 125-6 du Code de l'environnement.{% else %}L'immeuble n'est pas situé dans un secteur d'information sur les sols.{% endif %}
+{% endif %}
+
+{% if diagnostics_environnementaux_detail.alea_argiles is defined %}
+**Aléa – Retrait gonflement des argiles** - L'immeuble est concerné par la cartographie des zones exposées au phénomène de mouvement de terrain différentiel consécutif à la sécheresse et à la réhydratation des sols argileux. La carte identifie quatre catégories : exposition forte, moyenne, faible et résiduelle. En l'espèce, l'immeuble se trouve dans une zone d'exposition {{ diagnostics_environnementaux_detail.alea_argiles.niveau | default("faible") }}.
+{% endif %}
+{% endif %}
+
+{% if situation_environnementale_detail %}
+{% if situation_environnementale_detail.responsabilite %}
+## Responsabilité environnementale
+
+Toute atteinte non négligeable aux éléments ou aux fonctions des écosystèmes ou aux bénéfices collectifs tirés par l'homme de l'environnement est susceptible d'engager la responsabilité environnementale du propriétaire conformément aux dispositions des articles L 160-1 et suivants du Code de l'environnement.
+{% endif %}
+
+{% if situation_environnementale_detail.elimination_dechets %}
+## Obligation générale d'élimination des déchets
+
+Le propriétaire doit supporter le coût de la gestion jusqu'à l'élimination des déchets, qu'ils soient les siens, ceux de ses locataires ou ceux des précédents occupants. Conformément à l'article L 541-1-1 du Code de l'environnement, le déchet désigne « toute substance ou tout objet, ou plus généralement tout bien meuble, dont le détenteur se défait ou dont il a l'intention ou l'obligation de se défaire ».
+
+Selon les dispositions de l'article L 541-2 du Code de l'environnement, tout producteur ou détenteur de déchets est tenu d'en assurer ou d'en faire assurer la gestion. L'élimination des déchets comporte les opérations de collecte, transport, stockage, tri et traitement nécessaires à la récupération des éléments et matériaux réutilisables ou de l'énergie, ainsi que le dépôt ou le rejet dans le milieu naturel de tous les autres produits dans des conditions propres à éviter les nuisances.
+{% endif %}
+{% endif %}
+
+{% if taxe_terrain_constructible %}
+## Taxe sur la cession de terrain devenu constructible
+
+{% if taxe_terrain_constructible.article_1529 is defined %}
+**Taxe prévue par l'article 1529 du Code général des impôts** - {% if taxe_terrain_constructible.article_1529.due %}Conformément aux dispositions de l'article 1529 du Code général des impôts, une taxe forfaitaire est due sur la cession de terrains nus devenus constructibles.{% else %}Cette taxe n'est pas due, le terrain étant classé en zone constructible depuis plus de dix-huit ans.{% endif %}
+{% endif %}
+
+{% if taxe_terrain_constructible.article_1605_nonies is defined %}
+**Taxe prévue par l'article 1605 nonies du Code général des impôts** - {% if taxe_terrain_constructible.article_1605_nonies.due %}La taxe prévue par l'article 1605 nonies du Code général des impôts est applicable à la présente cession.{% else %}Le terrain étant classé en zone constructible depuis plus de dix-huit ans, la taxe prévue par l'article 1605 nonies du Code général des impôts n'est pas applicable.{% endif %}
+{% endif %}
+{% endif %}
+
+{% if anomalies_diagnostics %}
+## Information du bénéficiaire sur les anomalies révélées par les diagnostics
+
+Le **BÉNÉFICIAIRE** déclare avoir pris connaissance, préalablement à la signature, des anomalies révélées par les diagnostics techniques immobiliers obligatoires joints aux présentes.
+
+Le **BÉNÉFICIAIRE** déclare avoir été informé par le notaire soussigné, préalablement à la signature des présentes, notamment :
+* des conséquences de ces anomalies au regard du contrat d'assurance qui sera souscrit pour la couverture de l'immeuble en question ;
+* de la nécessité, soit de faire effectuer par un professionnel compétent les travaux permettant de remédier à ces anomalies, soit d'en aviser la compagnie d'assurance préalablement à la signature du contrat d'assurance ;
+* qu'à défaut, le **BÉNÉFICIAIRE** pourrait perdre tout droit à garantie et toute indemnité en cas de sinistre même sans rapport avec les anomalies relevées.
+{% endif %}
 
 {# ============================================================================
    SECTIONS AVANCÉES PROMESSE DE VENTE (v1.5.1)

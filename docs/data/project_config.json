@@ -1,0 +1,180 @@
+{
+  "version": "1.5.0",
+  "dashboard_version": "3.0",
+  "last_manual_update": "2026-01-29",
+
+  "templates": {
+    "vente_lots_copropriete.md": {
+      "name": "Vente lots copropriété",
+      "conformity": 80.2,
+      "status": "prod",
+      "bookmarks": 361,
+      "sections": 37,
+      "trames_source": 1,
+      "notes": "Template stable, conformité validée par comparer_documents.py"
+    },
+    "promesse_vente_lots_copropriete.md": {
+      "name": "Promesse de vente",
+      "conformity": 94.3,
+      "status": "prod",
+      "bookmarks": 298,
+      "sections": 165,
+      "trames_source": 7,
+      "notes": "v3.0.0 - Enrichi depuis 7 trames (Principale + A-F). 40+ sections ajoutées."
+    },
+    "reglement_copropriete_edd.md": {
+      "name": "Règlement copropriété",
+      "conformity": 85.5,
+      "status": "prod",
+      "bookmarks": 116,
+      "sections": 111,
+      "trames_source": 1,
+      "notes": "Template complet avec 22 tableaux"
+    },
+    "modificatif_edd.md": {
+      "name": "Modificatif EDD",
+      "conformity": 91.7,
+      "status": "prod",
+      "bookmarks": 60,
+      "sections": 13,
+      "trames_source": 1,
+      "notes": "Template le plus abouti"
+    }
+  },
+
+  "conformity_details": {
+    "promesse": {
+      "titres_score": 97.2,
+      "tableaux_score": 86.0,
+      "sections_critiques_score": 100.0,
+      "longueur_score": 96.2,
+      "weighted_total": 94.3,
+      "weights": {
+        "titres": 0.40,
+        "tableaux": 0.30,
+        "sections_critiques": 0.20,
+        "longueur": 0.10
+      },
+      "last_tested": "2026-01-29",
+      "test_command": "python execution/analyse/comparer_documents.py --original docs_original/Trame_promesse_Principale.docx --genere .tmp/actes_generes/*/acte.docx"
+    }
+  },
+
+  "tasks": {
+    "done": [
+      {"task": "Template vente 80.2% conformité", "dev": "Tom"},
+      {"task": "Template promesse 94.3% conformité (v3.0)", "dev": "Tom"},
+      {"task": "Pipeline génération rapide", "dev": "Tom"},
+      {"task": "Documentation RGPD", "dev": "Tom"},
+      {"task": "Template CGU créé", "dev": "Tom"},
+      {"task": "Dashboard v2.5 dynamique", "dev": "Tom"},
+      {"task": "Tests automatisés", "dev": "Payoss"},
+      {"task": "Analyse obligations CSN", "dev": "Tom"},
+      {"task": "Script génération dashboard", "dev": "Tom"},
+      {"task": "GitHub Actions auto-update", "dev": "Tom"},
+      {"task": "Template promesse sections spécifiques", "dev": "Tom"},
+      {"task": "Enrichissement 7 trames promesse", "dev": "Tom"},
+      {"task": "Support multi-parties (A & B → C)", "dev": "Tom"},
+      {"task": "Score confiance détaillé", "dev": "Tom"},
+      {"task": "Validation intégrée dans agent", "dev": "Tom"},
+      {"task": "Système formulaires clients sécurisés", "dev": "Augustin"},
+      {"task": "Intégration Supabase MCP", "dev": "Tom"},
+      {"task": "Historique Supabase", "dev": "Payoss"},
+      {"task": "Gestionnaire promesses avancé (4 types)", "dev": "Tom"},
+      {"task": "Catalogue unifié promesse", "dev": "Tom"},
+      {"task": "Workflow Titre → Promesse → Vente", "dev": "Tom"},
+      {"task": "Extraction titre propriété (OCR+ML)", "dev": "Tom"},
+      {"task": "Anonymisation DOCX (RGPD)", "dev": "Tom"},
+      {"task": "Architecture v1.5.0 restructuration", "dev": "Tom"}
+    ],
+    "in_progress": [
+      {"task": "Formulaires web notaire v2", "dev": "Augustin", "progress": 50},
+      {"task": "API backend génération", "dev": "Payoss", "progress": 40},
+      {"task": "Chat fonctionnel sur Modal", "dev": "Payoss", "progress": 30}
+    ],
+    "todo": [
+      {"task": "Créer structure juridique (SAS/SASU)", "priority": "high", "assignee": null},
+      {"task": "Souscrire RC Pro", "priority": "high", "assignee": null},
+      {"task": "Valider CGU avec avocat", "priority": "medium", "assignee": null},
+      {"task": "Template donation-partage", "priority": "medium", "assignee": "Tom"},
+      {"task": "Documentation API frontend (pour Paul)", "priority": "medium", "assignee": "Tom"},
+      {"task": "Validation métier avancée (conjoint, diagnostics)", "priority": "high", "assignee": "Tom"},
+      {"task": "Label ETIK (optionnel)", "priority": "low", "assignee": null}
+    ]
+  },
+
+  "sprint": {
+    "name": "Sprint 2",
+    "start_date": "2026-01-27",
+    "end_date": "2026-02-09",
+    "objective": "API + Formulaires + Validation métier",
+    "status": "in_progress",
+    "tasks": [
+      {"task": "Validation métier avancée", "dev": "Tom", "status": "pending"},
+      {"task": "API backend génération", "dev": "Payoss", "status": "in_progress"},
+      {"task": "Chat Modal fonctionnel", "dev": "Payoss", "status": "in_progress"},
+      {"task": "Formulaires web v2", "dev": "Augustin", "status": "in_progress"},
+      {"task": "Documentation API frontend", "dev": "Tom", "status": "pending"}
+    ]
+  },
+
+  "weaknesses": [
+    {"problem": "Pas de validation conjoint/diagnostics", "impact": "Erreurs possibles", "priority": "P1"},
+    {"problem": "Template vente conformité 80.2%", "impact": "Marge d'amélioration", "priority": "P2"},
+    {"problem": "Pas de template donation-partage", "impact": "Limite types d'actes", "priority": "P2"},
+    {"problem": "Pas de dialogue multi-tour web", "impact": "UX limitée", "priority": "P2"}
+  ],
+
+  "system_scores": {
+    "architecture": {"score": 9.5, "max": 10, "label": "Architecture 3 couches"},
+    "documentation": {"score": 9, "max": 10, "label": "Documentation"},
+    "templates_promesse": {"score": 9.4, "max": 10, "label": "Templates Promesse"},
+    "templates_vente": {"score": 8, "max": 10, "label": "Templates Vente"},
+    "agent": {"score": 8, "max": 10, "label": "Agent Autonome"},
+    "pipeline": {"score": 8.5, "max": 10, "label": "Pipeline Performance"},
+    "securite": {"score": 9.5, "max": 10, "label": "Sécurité & RGPD"}
+  },
+
+  "capabilities": [
+    {"icon": "📄", "name": "Générer actes", "description": "4 types: vente, promesse, EDD, modificatif", "active": true},
+    {"icon": "📋", "name": "4 types promesses", "description": "Standard, Premium, Mobilier, Multi-biens", "active": true},
+    {"icon": "💬", "name": "Dialogue notaire", "description": "Collecte interactive 100+ questions", "active": true},
+    {"icon": "✅", "name": "Validation", "description": "Cohérence, complétude, quotités", "active": true},
+    {"icon": "🔍", "name": "Détection auto", "description": "Type d'acte + type promesse", "active": true},
+    {"icon": "💡", "name": "Suggestions", "description": "Clauses contextuelles intelligentes", "active": true},
+    {"icon": "📊", "name": "Conformité", "description": "Score automatique vs 7 trames", "active": true},
+    {"icon": "🗄️", "name": "Historique", "description": "Supabase + chiffrement E2E", "active": true},
+    {"icon": "⚡", "name": "Pipeline rapide", "description": "~6 secondes / acte", "active": true},
+    {"icon": "📑", "name": "Extraction titre", "description": "PDF/DOCX → JSON (OCR+ML)", "active": true},
+    {"icon": "🔄", "name": "Workflow chaîné", "description": "Titre → Promesse → Vente", "active": true},
+    {"icon": "🔐", "name": "Sécurité RGPD", "description": "Anonymisation + chiffrement AES-256", "active": true}
+  ],
+
+  "okrs": [
+    {
+      "objective": "Tous les templates en production",
+      "key_results": [
+        {"kr": "Template promesse ≥85%", "current": 94.3, "target": 85, "unit": "%"},
+        {"kr": "Template vente ≥85%", "current": 80.2, "target": 85, "unit": "%"},
+        {"kr": "Tests e2e couvrant 90% des cas", "current": 75, "target": 90, "unit": "%"},
+        {"kr": "Temps génération <3s", "current": 5.7, "target": 3, "unit": "s", "lower_is_better": true}
+      ]
+    },
+    {
+      "objective": "Lancement commercial",
+      "key_results": [
+        {"kr": "Structure juridique créée", "current": 0, "target": 1, "unit": "done"},
+        {"kr": "RC Pro souscrite", "current": 0, "target": 1, "unit": "done"},
+        {"kr": "CGU validées avocat", "current": 0, "target": 1, "unit": "done"}
+      ]
+    },
+    {
+      "objective": "Acquisition premiers clients",
+      "key_results": [
+        {"kr": "Démos réalisées", "current": 0, "target": 5, "unit": ""},
+        {"kr": "Clients signés", "current": 0, "target": 2, "unit": ""},
+        {"kr": "MRR", "current": 0, "target": 500, "unit": "€"}
+      ]
+    }
+  ]
+}

@@ -210,8 +210,9 @@ class ChatHandler:
                 "GENERER": IntentionChat.CONSULTER,
             }
 
+            raw_intention = analyse.intention.value if hasattr(analyse.intention, 'value') else str(analyse.intention)
             intention = intention_map.get(
-                analyse.intention.value if hasattr(analyse.intention, 'value') else str(analyse.intention),
+                raw_intention.upper(),
                 IntentionChat.INCONNU
             )
 
@@ -227,21 +228,34 @@ class ChatHandler:
             # Nettoyer les None
             entites = {k: v for k, v in entites.items() if v}
 
+            # Si le parseur retourne INCONNU, tenter le fallback par mots-cles
+            if intention == IntentionChat.INCONNU:
+                fallback = self._fallback_intention(msg_lower)
+                if fallback is not None:
+                    return fallback
+
             return intention, analyse.confiance, entites
 
         except Exception as e:
             if self.verbose:
                 print(f"[ChatHandler] Erreur parsing: {e}")
 
-            # Fallback sur detection simple
-            if "vente" in msg_lower or "créer" in msg_lower or "acte" in msg_lower:
-                return IntentionChat.CREER, 0.6, {}
-            if "dossier" in msg_lower or "voir" in msg_lower or "liste" in msg_lower:
-                return IntentionChat.CONSULTER, 0.6, {}
-            if "cherche" in msg_lower or "trouve" in msg_lower or "client" in msg_lower:
-                return IntentionChat.RECHERCHER, 0.6, {}
+            fallback = self._fallback_intention(msg_lower)
+            if fallback is not None:
+                return fallback
 
             return IntentionChat.INCONNU, 0.3, {}
+
+    def _fallback_intention(self, msg_lower: str):
+        """Detection d'intention par mots-cles quand le parseur echoue."""
+        if any(mot in msg_lower for mot in ["vente", "créer", "creer", "acte", "promesse", "générer", "generer"]):
+            return IntentionChat.CREER, 0.6, {}
+        # RECHERCHER avant CONSULTER car "cherche dossier" = recherche, pas consultation
+        if any(mot in msg_lower for mot in ["cherche", "trouve", "recherche"]):
+            return IntentionChat.RECHERCHER, 0.6, {}
+        if any(mot in msg_lower for mot in ["dossier", "voir", "liste", "consulter", "client"]):
+            return IntentionChat.CONSULTER, 0.6, {}
+        return None
 
     def _generer_reponse(
         self,
@@ -604,6 +618,15 @@ class SimpleParseur:
 # API Endpoint (pour Modal/FastAPI)
 # =============================================================================
 
+def _get_supabase():
+    """Retourne un client Supabase si disponible."""
+    try:
+        from execution.database.supabase_client import get_supabase_client
+        return get_supabase_client()
+    except Exception:
+        return None
+
+
 def create_chat_router():
     """
     Cree le router FastAPI pour le chat.
@@ -617,8 +640,8 @@ def create_chat_router():
 
     class ChatRequest(BaseModel):
         message: str
-        user_id: str
-        etude_id: str
+        user_id: str = ""
+        etude_id: str = ""
         conversation_id: Optional[str] = None
         history: Optional[List[dict]] = None
         context: Optional[dict] = None
@@ -630,27 +653,117 @@ def create_chat_router():
         intention: str
         confiance: float
         conversation_id: Optional[str] = None
+        section: Optional[str] = None
+        fichier_url: Optional[str] = None
+        contexte_mis_a_jour: Optional[dict] = None
 
     @router.post("/", response_model=ChatResponse)
     async def chat(request: ChatRequest):
         """
-        Endpoint principal du chatbot.
+        Endpoint principal du chatbot avec persistance conversationnelle.
 
         Securite:
         - Authentification via API key (geree par main.py)
         - RLS Supabase active (isolation par etude)
         - Aucune donnee sensible envoyee a un LLM externe
+
+        Persistance:
+        - Si conversation_id fourni, charge l'historique depuis Supabase
+        - Sauvegarde chaque message (user + assistant) dans conversation_messages
+        - Met a jour le contexte de la conversation
         """
         try:
             handler = ChatHandler(verbose=False)
+            historique = request.history or []
+            contexte = request.context or {}
+            conversation_id = request.conversation_id
+
+            # Charger l'historique depuis Supabase si conversation_id fourni
+            supabase = _get_supabase()
+            if supabase and conversation_id and request.etude_id:
+                try:
+                    conv_resp = supabase.table("conversations").select("*").eq(
+                        "id", conversation_id
+                    ).maybe_single().execute()
+
+                    if conv_resp.data:
+                        # Charger le contexte persiste
+                        stored_ctx = conv_resp.data.get("contexte") or {}
+                        contexte = {**stored_ctx, **contexte}
+
+                        # Charger les messages precedents
+                        msgs_resp = supabase.table("conversation_messages").select(
+                            "role, content"
+                        ).eq(
+                            "conversation_id", conversation_id
+                        ).order("created_at").execute()
+
+                        if msgs_resp.data:
+                            historique = msgs_resp.data
+                    else:
+                        # Creer la conversation
+                        supabase.table("conversations").insert({
+                            "id": conversation_id,
+                            "etude_id": request.etude_id,
+                            "user_id": request.user_id,
+                            "statut": "active",
+                            "contexte": contexte,
+                        }).execute()
+                except Exception:
+                    pass  # Fallback silencieux
 
             reponse = handler.traiter_message(
                 message=request.message,
                 user_id=request.user_id,
                 etude_id=request.etude_id,
-                historique=request.history,
-                contexte=request.context
+                historique=historique,
+                contexte=contexte
             )
+
+            # Persister les messages dans Supabase
+            if supabase and conversation_id and request.etude_id:
+                try:
+                    supabase.table("conversation_messages").insert([
+                        {
+                            "conversation_id": conversation_id,
+                            "role": "user",
+                            "content": request.message,
+                        },
+                        {
+                            "conversation_id": conversation_id,
+                            "role": "assistant",
+                            "content": reponse.content,
+                            "intention": reponse.intention_detectee,
+                            "confiance": reponse.confiance,
+                            "metadata": {
+                                "suggestions": reponse.suggestions,
+                            },
+                        },
+                    ]).execute()
+
+                    # Mettre a jour le contexte
+                    update_data = {}
+                    if reponse.contexte_mis_a_jour:
+                        update_data["contexte"] = reponse.contexte_mis_a_jour
+                        type_acte = reponse.contexte_mis_a_jour.get("type_acte_en_cours")
+                        if type_acte:
+                            update_data["type_acte"] = type_acte
+                    if update_data:
+                        supabase.table("conversations").update(update_data).eq(
+                            "id", conversation_id
+                        ).execute()
+                except Exception:
+                    pass  # Fallback silencieux
+
+            # Extraire fichier_url depuis action si présent
+            fichier_url = None
+            if reponse.action and isinstance(reponse.action, dict):
+                fichier_url = reponse.action.get("fichier_url")
+
+            # Extraire section depuis le contexte
+            section = None
+            if reponse.contexte_mis_a_jour:
+                section = reponse.contexte_mis_a_jour.get("etape_workflow")
 
             return ChatResponse(
                 content=reponse.content,
@@ -658,7 +771,10 @@ def create_chat_router():
                 action=reponse.action,
                 intention=reponse.intention_detectee,
                 confiance=reponse.confiance,
-                conversation_id=request.conversation_id
+                conversation_id=conversation_id,
+                section=section,
+                fichier_url=fichier_url,
+                contexte_mis_a_jour=reponse.contexte_mis_a_jour,
             )
 
         except Exception as e:

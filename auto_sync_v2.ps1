@@ -159,7 +159,8 @@ while ($true) {
                 Write-Log "📤 Changes detected, committing and pushing..." "INFO"
 
                 # Add all changes
-                git add . 2>&1 | Out-Null
+                git add --update 2>&1 | Out-Null
+                git reset -- .env .env.* .mcp.json .claude/settings.local.json 2>&1 | Out-Null
 
                 # Commit with timestamp
                 $commitMsg = "auto: Sauvegarde automatique sur $BRANCH - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"

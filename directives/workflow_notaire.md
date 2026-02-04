@@ -2,13 +2,30 @@
 
 > Cette directive décrit le workflow complet pour qu'un notaire génère un acte avec NotaireAI.
 
-**Version**: 2.0.0 | **Date**: 2026-01-28
+**Version**: 2.3.0 | **Date**: 2026-01-29
 
 ---
 
 ## 🎯 Objectif
 
 Générer des actes notariaux **100% identiques** aux trames originales en suivant un processus guidé, fiable et rapide.
+
+---
+
+## ⚡ Raccourcis Claude Code (Skills)
+
+Les workflows les plus courants sont accessibles via des commandes `/slash` dans Claude Code:
+
+| Besoin | Commande | Ce qui se passe |
+|--------|----------|----------------|
+| Générer un acte | `/generer-acte vente` | Pipeline complet: validation → assemblage → DOCX |
+| Générer une promesse | `/generer-promesse copropriete` | Détection auto du type + génération |
+| Tester le pipeline | `/test-pipeline` | pytest + conformité templates |
+| Auditer un template | `/valider-template all` | Comparaison vs trames originales |
+| Déployer en prod | `/deploy-modal prod` | Tests → deploy Modal |
+| Voir le status | `/status` | Dashboard complet du projet |
+
+Ces skills appellent les mêmes scripts Python que le workflow ci-dessous, mais automatisent l'enchainement.
 
 ---
 
@@ -31,18 +48,17 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 |----------|-----------|--------|--------|
 | `reglement_copropriete_edd.md` | **85.5%** | ✅ PROD | Utiliser directement |
 | `modificatif_edd.md` | **91.7%** | ✅ PROD | Utiliser directement |
-| `vente_lots_copropriete.md` | **85.1%** | ✅ PROD | 37 sections, données enrichies requises |
+| `vente_lots_copropriete.md` | **80.2%** | ✅ PROD | 37 sections, données enrichies requises |
 
 #### 🆕 Promesses de Vente (Système Multi-Templates v1.4.0)
 
-| Type | Template | Conformité | Cas d'usage |
-|------|----------|-----------|-------------|
-| **Standard** | `promesse/promesse_standard.md` | **88.9%** | ✅ PROD | 1 bien simple |
-| **Premium** | `promesse/promesse_premium.md` | **85.2%** | ✅ PROD | Diagnostics exhaustifs |
-| **Avec mobilier** | `promesse/promesse_avec_mobilier.md` | **87.1%** | ✅ PROD | Vente meublée |
-| **Multi-biens** | `promesse/promesse_multi_biens.md` | **82.4%** | ✅ PROD | Lot + parking + cave |
+| Type | Template | Conformité | Statut | Cas d'usage |
+|------|----------|-----------|--------|-------------|
+| **Promesse copropriété** | `promesse_vente_lots_copropriete.md` | **88.9%** | ✅ PROD | Appartement, lots de copro |
+| **Promesse hors copropriété** | `promesse_hors_copropriete.md` | NEW | ✅ PROD | Maison, villa, local |
+| **Promesse terrain à bâtir** | `promesse_terrain_a_batir.md` | NEW | ✅ PROD | Terrain, lotissement |
 
-**Détection automatique**: Le système choisit le bon template selon les données fournies.
+**Détection automatique**: Le système choisit le bon template selon la nature du bien (copropriété / hors copropriété / terrain).
 
 ### ⚡ Performance Pipeline (v1.4.0)
 
@@ -64,6 +80,47 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 
 **Si template <80%**: Utiliser les exemples fournis dans `exemples/` jusqu'à enrichissement complet.
 
+### 🆕 Collecte Interactive Q&R Sprint 3 (v1.6.0)
+
+Le `CollecteurInteractif` dans `agent_autonome.py` permet une collecte schema-driven:
+
+| Mode | Description | Pré-remplissage |
+|------|-------------|-----------------|
+| `cli` | Questions interactives terminal | 64% depuis données existantes |
+| `prefill_only` | Automatique, pas de questions | 100% (données + défauts) |
+
+```bash
+# Mode interactif (pose les questions manquantes)
+python execution/agent_autonome.py interactif-qr --type promesse_vente
+
+# Mode automatique (pré-remplit tout)
+python execution/agent_autonome.py interactif-qr --type promesse_vente --auto
+
+# Demo complète: titre → Q&R → promesse → DOCX
+python execution/demo_titre_promesse.py --auto
+python execution/demo_titre_promesse.py --titre titre.json --prix 500000
+```
+
+**Pipeline démo complet**: ~26s pour titre → collecte → validation → assemblage → DOCX.
+
+### 🆕 Intégration Backend Sprint 2 (v1.5.1)
+
+| Fonctionnalité | Endpoint | Statut |
+|----------------|----------|--------|
+| Streaming SSE | `POST /agent/execute-stream` | ✅ Déployé |
+| Téléchargement DOCX | `GET /files/{filename}` | ✅ Déployé |
+| Persistance conversations | `POST /chat` + Supabase | ✅ Déployé |
+| Validation pré-génération | `POST /promesses/valider` | ✅ Déployé |
+
+**Flux complet :**
+```
+Dashboard/Chat → POST /promesses/generer → DOCX → GET /files/{name} → Download
+                 ↑                                        ↑
+        X-API-Key header                          X-API-Key header
+```
+
+**Donnée de démo complète** : `exemples/donnees_demo_complete.json` (vendeur + acquéreur + bien complet)
+
 ---
 
 ## 🔄 Workflow en 5 Étapes
@@ -82,7 +139,7 @@ if type_acte == "promesse":
     from execution.gestionnaire_promesses import GestionnairePromesses
     gestionnaire = GestionnairePromesses()
     detection = gestionnaire.detecter_type(donnees)
-    # detection.type_promesse: standard | premium | avec_mobilier | multi_biens
+    # detection.type_promesse: copropriete | hors_copropriete | terrain_a_batir
 
 # 3. Vérifier conformité template
 conformite = verifier_conformite_template(type_acte)
@@ -93,10 +150,10 @@ if conformite < 80:
 ```
 
 **Agent dit** (pour promesse):
-> "Je vais créer une promesse de vente. D'après les données, je détecte une vente **avec mobilier** (confiance 85%). Le template correspondant est prêt à 87.1%. Je génère le document."
+> "Je vais créer une promesse de vente. D'après les données, je détecte une promesse **hors copropriété** (confiance 85%). Le template correspondant est prêt. Je génère le document."
 
 **Agent dit** (pour vente):
-> "Je vais créer un acte de vente. Le template est prêt à 85.1%. Voulez-vous que je collecte vos données ou utilise un exemple?"
+> "Je vais créer un acte de vente. Le template est prêt à 80.2%. Voulez-vous que je collecte vos données ou utilise un exemple?"
 
 ---
 
@@ -282,8 +339,8 @@ python notaire.py promesse-avancee generer \
 # Avec profil prédéfini
 python notaire.py promesse-avancee generer \
     --donnees donnees.json \
-    --profil agence_premium \
-    --output promesse_premium.docx
+    --profil agence_standard \
+    --output promesse_copropriete.docx
 ```
 
 #### Génération depuis titre de propriété
@@ -339,13 +396,13 @@ python notaire.py promesse-avancee types
 
 ### Cas 2: "Génère-moi une promesse de vente"
 
-**Conformité template**: 82-89% ✅ (selon type détecté)
+**Conformité template**: 85-89% ✅ (selon type détecté)
 
 **Agent dit**:
-> "Je détecte une promesse de type **avec mobilier** (confiance 92%). Le template correspondant est prêt à 87.1%. Je génère le document."
+> "Je détecte une promesse de type **hors copropriété** (confiance 92%). Le template correspondant est prêt. Je génère le document."
 
 **Agent fait**:
-1. 🔍 Détection automatique du type (standard/premium/avec_mobilier/multi_biens)
+1. 🔍 Détection automatique du type (copropriete/hors_copropriete/terrain_a_batir)
 2. ✅ Validation des données obligatoires
 3. 📋 Suggestions de sections conditionnelles
 4. 🔧 Génération avec template spécialisé
@@ -462,23 +519,26 @@ python execution/extraire_bookmarks_contenu.py \
 
 ### Métriques de Succès
 
-| Métrique | Objectif | Actuel (v1.4.0) |
+| Métrique | Objectif | Actuel (v1.6.0) |
 |----------|----------|-----------------|
 | Templates PROD (≥80%) | 8/8 | **7/8** ✅ |
 | Conformité moyenne | ≥85% | **86.2%** ✅ |
 | Temps génération | <1 min | ~8s |
 | Taux erreur | <5% | ~1.5% |
 | Promesses avec détection auto | 100% | **100%** ✅ |
+| Tests automatisés | 100% pass | **194/194** ✅ |
+| Pipeline E2E promesse→DOCX | OK | **92.8 Ko** ✅ |
+| Pipeline E2E vente→DOCX | OK | **72 Ko** ✅ |
+| Collecte Q&R pré-remplissage | ≥60% | **64%** ✅ |
 
 #### Détail par type d'acte
 
 | Type | Templates | Conformité | Statut |
 |------|-----------|-----------|--------|
-| Vente | 1 | 85.1% | ✅ PROD |
-| Promesse Standard | 1 | 88.9% | ✅ PROD |
-| Promesse Premium | 1 | 85.2% | ✅ PROD |
-| Promesse Mobilier | 1 | 87.1% | ✅ PROD |
-| Promesse Multi-biens | 1 | 82.4% | ✅ PROD |
+| Vente | 1 | 80.2% | ✅ PROD |
+| Promesse Copropriété | 1 | 88.9% | ✅ PROD |
+| Promesse Hors Copropriété | 1 | NEW | ✅ PROD |
+| Promesse Terrain à Bâtir | 1 | NEW | ✅ PROD |
 | Règlement Copro | 1 | 85.5% | ✅ PROD |
 | Modificatif EDD | 1 | 91.7% | ✅ PROD |
 
@@ -602,16 +662,68 @@ if titres:
 
 ---
 
+---
+
+## 🔄 Workflow Promesse → Vente (v1.5.1)
+
+Lorsqu'une promesse a été signée, le notaire peut convertir les données de la promesse pour générer l'acte de vente définitif. Ce workflow conserve automatiquement les données déjà collectées.
+
+```
+Données Promesse                     Données Vente
+┌─────────────────┐                  ┌─────────────────┐
+│ promettants[] ──────────────────►  │ vendeurs[]       │
+│ beneficiaires[] ────────────────►  │ acquereurs[]     │
+│ bien {}  ───────────────────────►  │ bien {}          │
+│ prix {}  ───────────────────────►  │ prix {}          │
+│ copropriete {} ─────────────────►  │ copropriete {}   │
+│ diagnostics {} ─────────────────►  │ diagnostics {}   │
+│ origine_propriete {} ───────────►  │ origine {} + ref │
+│ conditions_suspensives ─────────►  │ avant_contrat {} │
+└─────────────────┘                  └─────────────────┘
+                                     + paiement{}
+                                     + jouissance{}
+                                     + fiscalite{}
+                                     + publication{}
+```
+
+### Utilisation
+
+```bash
+# Convertir une promesse en données de vente
+python execution/utils/convertir_promesse_vente.py \
+    --promesse exemples/donnees_promesse_exemple.json \
+    --output .tmp/donnees_vente_depuis_promesse.json
+
+# Compléter les données spécifiques à la vente puis générer
+python execution/workflow_rapide.py --type vente \
+    --donnees .tmp/donnees_vente_depuis_promesse.json
+```
+
+### Champs ajoutés automatiquement
+
+| Champ vente | Source |
+|-------------|--------|
+| `avant_contrat.type` | `"promesse_unilaterale"` |
+| `avant_contrat.date` | date de la promesse |
+| `paiement.mode` | déduit de `financement` |
+| `jouissance.date_propriete` | `"ce jour"` (par défaut) |
+| `fiscalite.plus_value` | conservé de la promesse |
+| `publication` | service de publicité foncière |
+
+---
+
 ## Voir aussi
 
 - [directives/creer_promesse_vente.md](creer_promesse_vente.md) - Création promesses (4 types)
 - [directives/generation_promesses_avancee.md](generation_promesses_avancee.md) - Documentation complète v1.4
 - [directives/workflow_titre_promesse_vente.md](workflow_titre_promesse_vente.md) - Workflow titre → promesse → vente
 - [execution/gestionnaire_promesses.py](../execution/gestionnaire_promesses.py) - Gestionnaire principal
+- [execution/utils/convertir_promesse_vente.py](../execution/utils/convertir_promesse_vente.py) - Conversion promesse → vente
 - [schemas/promesse_catalogue_unifie.json](../schemas/promesse_catalogue_unifie.json) - Catalogue unifié
 
 ---
 
-**Version**: 2.0.0
-**Dernière mise à jour**: 2026-01-28
+**Version**: 2.3.0
+**Dernière mise à jour**: 2026-01-29
+**Sprint 3 (P3+P4)**: Collecte Q&R interactive, démo titre→promesse→DOCX, conversion promesse→vente, 194 tests
 **Prochaine révision**: Quand support autres types d'actes (donation, succession)

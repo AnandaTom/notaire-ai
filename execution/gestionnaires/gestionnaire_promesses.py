@@ -44,7 +44,7 @@ if sys.platform == "win32":
 
 # Chemins
 SCRIPT_DIR = Path(__file__).parent
-PROJECT_ROOT = SCRIPT_DIR.parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # execution/gestionnaires/ -> execution/ -> racine
 SCHEMAS_DIR = PROJECT_ROOT / "schemas"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 
@@ -57,12 +57,26 @@ class TypePromesse(Enum):
     MULTI_BIENS = "multi_biens"
 
 
+class CategorieBien(Enum):
+    """Catégorie de bien immobilier — détermine la trame de base.
+
+    Classification issue de l'analyse des 8 trames originales:
+    - COPROPRIETE: Trames Principale, A, B, C (lots, tantièmes, EDD, syndic)
+    - HORS_COPROPRIETE: Trames E, F (maison individuelle, local commercial)
+    - TERRAIN_A_BATIR: Trames D, PUV GUNTZER (lotissement, parcelles, viabilisation)
+    """
+    COPROPRIETE = "copropriete"
+    HORS_COPROPRIETE = "hors_copropriete"
+    TERRAIN_A_BATIR = "terrain_a_batir"
+
+
 @dataclass
 class ResultatDetection:
     """Résultat de la détection du type de promesse."""
     type_promesse: TypePromesse
-    raison: str
-    confiance: float
+    categorie_bien: CategorieBien = CategorieBien.COPROPRIETE
+    raison: str = ""
+    confiance: float = 0.5
     sections_recommandees: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
 
@@ -82,6 +96,7 @@ class ResultatGeneration:
     """Résultat de la génération d'une promesse."""
     succes: bool
     type_promesse: TypePromesse
+    categorie_bien: CategorieBien = CategorieBien.COPROPRIETE
     fichier_md: Optional[str] = None
     fichier_docx: Optional[str] = None
     sections_incluses: List[str] = field(default_factory=list)
@@ -144,19 +159,97 @@ class GestionnairePromesses:
         return templates
 
     # =========================================================================
-    # DÉTECTION DU TYPE
+    # DÉTECTION 2 NIVEAUX: CATÉGORIE BIEN + TYPE TRANSACTION
     # =========================================================================
 
-    def detecter_type(self, donnees: Dict) -> ResultatDetection:
+    def detecter_categorie_bien(self, donnees: Dict) -> CategorieBien:
         """
-        Détecte automatiquement le type de promesse approprié.
+        Détecte la catégorie de bien immobilier (niveau 1 de détection).
+
+        Priorités:
+        1. Lotissement/terrain explicite → TERRAIN_A_BATIR
+        2. Copropriété explicite ou marqueurs copro → COPROPRIETE
+        3. Maison/local/hors-copro explicite → HORS_COPROPRIETE
+        4. Défaut → COPROPRIETE (rétrocompatibilité)
 
         Args:
             donnees: Données de la promesse
 
         Returns:
-            ResultatDetection avec le type et les détails
+            CategorieBien détectée
         """
+        bien = donnees.get("bien", {})
+        biens = donnees.get("biens", [])
+        copro = donnees.get("copropriete", {})
+
+        # Si multi-biens, examiner le premier bien
+        if biens and not bien:
+            bien = biens[0] if biens else {}
+
+        # --- Priorité 1: Terrain à bâtir / Lotissement ---
+        if bien.get("lotissement"):
+            return CategorieBien.TERRAIN_A_BATIR
+
+        type_bien = str(bien.get("type_bien", "")).lower()
+        nature = str(bien.get("nature", "")).lower()
+
+        terrain_keywords = ("terrain", "parcelle", "lotissement", "lot a batir",
+                            "lot à bâtir", "terrain a batir", "terrain à bâtir")
+        if type_bien in terrain_keywords or nature in terrain_keywords:
+            return CategorieBien.TERRAIN_A_BATIR
+
+        # Marqueurs lotissement dans les données
+        if bien.get("permis_amenager") or bien.get("cahier_charges_lotissement"):
+            return CategorieBien.TERRAIN_A_BATIR
+        if bien.get("viabilisation") or bien.get("constructibilite"):
+            return CategorieBien.TERRAIN_A_BATIR
+
+        # --- Priorité 2: Copropriété ---
+        if bien.get("copropriete") is True:
+            return CategorieBien.COPROPRIETE
+        if copro.get("syndic") or copro.get("nom_syndic"):
+            return CategorieBien.COPROPRIETE
+        if bien.get("lots") and isinstance(bien.get("lots"), list):
+            return CategorieBien.COPROPRIETE
+        if bien.get("tantiemes") or copro.get("immatriculation"):
+            return CategorieBien.COPROPRIETE
+        if bien.get("edd") or copro.get("reglement"):
+            return CategorieBien.COPROPRIETE
+
+        # --- Priorité 3: Hors copropriété ---
+        if bien.get("copropriete") is False:
+            return CategorieBien.HORS_COPROPRIETE
+
+        hors_copro_types = ("maison", "villa", "pavillon", "local_commercial",
+                            "local commercial", "hangar", "entrepot", "entrepôt",
+                            "immeuble", "corps de ferme")
+        if type_bien in hors_copro_types or nature in hors_copro_types:
+            return CategorieBien.HORS_COPROPRIETE
+
+        # Marqueurs maison individuelle
+        if bien.get("surface_terrain") and not bien.get("lots"):
+            return CategorieBien.HORS_COPROPRIETE
+
+        # --- Défaut: copropriété (rétrocompatibilité) ---
+        return CategorieBien.COPROPRIETE
+
+    def detecter_type(self, donnees: Dict) -> ResultatDetection:
+        """
+        Détecte automatiquement le type de promesse approprié (détection 2 niveaux).
+
+        Niveau 1: Catégorie de bien (copropriété, hors copro, terrain)
+        Niveau 2: Type de transaction (standard, premium, mobilier, multi-biens)
+
+        Args:
+            donnees: Données de la promesse
+
+        Returns:
+            ResultatDetection avec le type, la catégorie et les détails
+        """
+        # Niveau 1: Catégorie de bien
+        categorie = self.detecter_categorie_bien(donnees)
+
+        # Niveau 2: Type de transaction (logique existante)
         regles = self.catalogue.get("detection_automatique", {}).get("regles", [])
         warnings = []
 
@@ -178,6 +271,7 @@ class GestionnairePromesses:
 
                     return ResultatDetection(
                         type_promesse=type_promesse,
+                        categorie_bien=categorie,
                         raison=regle.get("raison", "Détection automatique"),
                         confiance=confiance,
                         sections_recommandees=self._get_sections_pour_type(type_promesse, donnees),
@@ -190,6 +284,7 @@ class GestionnairePromesses:
         # Par défaut: standard
         return ResultatDetection(
             type_promesse=TypePromesse.STANDARD,
+            categorie_bien=categorie,
             raison="Type par défaut",
             confiance=0.5,
             sections_recommandees=self._get_sections_pour_type(TypePromesse.STANDARD, donnees),
@@ -829,13 +924,15 @@ class GestionnairePromesses:
         errors = []
         warnings = []
 
-        # 1. Détecter le type
+        # 1. Détecter le type (2 niveaux: catégorie + type transaction)
         if type_force:
             type_promesse = type_force
+            categorie = self.detecter_categorie_bien(donnees)
             raison = "Type forcé par l'utilisateur"
         else:
             detection = self.detecter_type(donnees)
             type_promesse = detection.type_promesse
+            categorie = detection.categorie_bien
             raison = detection.raison
             warnings.extend(detection.warnings)
 
@@ -845,21 +942,40 @@ class GestionnairePromesses:
             return ResultatGeneration(
                 succes=False,
                 type_promesse=type_promesse,
+                categorie_bien=categorie,
                 erreurs=validation.erreurs,
                 warnings=validation.warnings
             )
         warnings.extend(validation.warnings)
 
+        # 2b. Enrichir le cadastre via API gouvernementale
+        try:
+            from execution.services.cadastre_service import CadastreService
+            cadastre_svc = CadastreService()
+            resultat_cadastre = cadastre_svc.enrichir_cadastre(donnees)
+            donnees = resultat_cadastre["donnees"]
+            rapport_cad = resultat_cadastre["rapport"]
+            if rapport_cad["cadastre_enrichi"]:
+                print(f"[INFO] Cadastre enrichi: {rapport_cad['parcelles_validees']} parcelle(s) "
+                      f"validee(s), INSEE {rapport_cad['code_insee']}")
+            for w in rapport_cad.get("warnings", []):
+                warnings.append(f"Cadastre: {w}")
+        except ImportError:
+            pass
+        except Exception as e:
+            warnings.append(f"Enrichissement cadastre echoue: {e}")
+
         # 3. Sélectionner les sections
         sections = self._get_sections_pour_type(type_promesse, donnees)
 
-        # 4. Sélectionner le template
-        template_path = self._selectionner_template(type_promesse)
+        # 4. Sélectionner le template (catégorie + type)
+        template_path = self._selectionner_template(type_promesse, categorie)
         if not template_path:
-            errors.append(f"Template non trouvé pour type: {type_promesse.value}")
+            errors.append(f"Template non trouvé pour {categorie.value}/{type_promesse.value}")
             return ResultatGeneration(
                 succes=False,
                 type_promesse=type_promesse,
+                categorie_bien=categorie,
                 erreurs=errors,
                 warnings=warnings
             )
@@ -874,10 +990,11 @@ class GestionnairePromesses:
         try:
             from execution.core.assembler_acte import assembler_acte
 
-            # Enrichir les données avec les sections actives
+            # Enrichir les données avec les sections actives et la catégorie
             donnees_enrichies = copy.deepcopy(donnees)
             donnees_enrichies["_sections_actives"] = sections
             donnees_enrichies["_type_promesse"] = type_promesse.value
+            donnees_enrichies["_categorie_bien"] = categorie.value
 
             # Assembler
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -901,6 +1018,7 @@ class GestionnairePromesses:
             return ResultatGeneration(
                 succes=False,
                 type_promesse=type_promesse,
+                categorie_bien=categorie,
                 erreurs=errors,
                 warnings=warnings
             )
@@ -932,6 +1050,7 @@ class GestionnairePromesses:
         return ResultatGeneration(
             succes=True,
             type_promesse=type_promesse,
+            categorie_bien=categorie,
             fichier_md=str(fichier_md) if fichier_md else None,
             fichier_docx=str(fichier_docx) if fichier_docx else None,
             sections_incluses=sections,
@@ -940,27 +1059,50 @@ class GestionnairePromesses:
             duree_generation=duree,
             metadata={
                 "raison_type": raison,
+                "categorie_bien": categorie.value,
                 "template": str(template_path),
                 "timestamp": datetime.now().isoformat()
             }
         )
 
-    def _selectionner_template(self, type_promesse: TypePromesse) -> Optional[Path]:
-        """Sélectionne le template approprié."""
-        type_str = type_promesse.value
+    def _selectionner_template(
+        self,
+        type_promesse: TypePromesse,
+        categorie_bien: CategorieBien = CategorieBien.COPROPRIETE
+    ) -> Optional[Path]:
+        """Sélectionne le template approprié selon catégorie de bien + type transaction.
 
-        # Chercher template spécialisé
-        if type_str in self.templates_disponibles:
-            return self.templates_disponibles[type_str]
+        Détection 2 niveaux:
+        - Niveau 1 (catégorie): copropriété, hors copro, terrain → template de base
+        - Niveau 2 (type): standard, premium, mobilier, multi-biens → variante
 
-        # Fallback vers template standard
-        if "standard" in self.templates_disponibles:
-            return self.templates_disponibles["standard"]
+        Note: Les templates hors-copro et terrain seront créés en P1.1.
+        En attendant, fallback sur le template copropriété principal.
+        """
+        # Templates par catégorie de bien
+        category_templates = {
+            CategorieBien.COPROPRIETE: TEMPLATES_DIR / "promesse_vente_lots_copropriete.md",
+            CategorieBien.HORS_COPROPRIETE: TEMPLATES_DIR / "promesse_hors_copropriete.md",
+            CategorieBien.TERRAIN_A_BATIR: TEMPLATES_DIR / "promesse_terrain_a_batir.md",
+        }
 
-        # Fallback vers template principal
+        # Essayer le template spécifique à la catégorie
+        template_categorie = category_templates.get(categorie_bien)
+        if template_categorie and template_categorie.exists():
+            return template_categorie
+
+        # Fallback: template copropriété principal (88.9% conformité)
         main_template = TEMPLATES_DIR / "promesse_vente_lots_copropriete.md"
         if main_template.exists():
             return main_template
+
+        # Fallback: chercher template spécialisé par type de transaction
+        type_str = type_promesse.value
+        if type_str in self.templates_disponibles:
+            return self.templates_disponibles[type_str]
+
+        if "standard" in self.templates_disponibles:
+            return self.templates_disponibles["standard"]
 
         return None
 
@@ -1149,7 +1291,8 @@ def main():
 
         resultat = gestionnaire.detecter_type(donnees)
         print(f"\n[DÉTECTION]")
-        print(f"  Type: {resultat.type_promesse.value}")
+        print(f"  Catégorie bien: {resultat.categorie_bien.value}")
+        print(f"  Type transaction: {resultat.type_promesse.value}")
         print(f"  Raison: {resultat.raison}")
         print(f"  Confiance: {resultat.confiance:.0%}")
         print(f"  Sections: {len(resultat.sections_recommandees)}")

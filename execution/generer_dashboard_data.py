@@ -3,11 +3,18 @@
 Générateur de données pour le dashboard Notomai.
 Analyse le codebase et génère des fichiers JSON pour le dashboard dynamique.
 
+Lit la configuration depuis docs/data/project_config.json pour les valeurs
+manuelles (conformité, tâches, OKRs) et calcule dynamiquement les métriques
+automatiques (git, scripts, schémas).
+
 Usage:
     python execution/generer_dashboard_data.py
 
 Output:
     docs/data/dashboard.json - Données complètes du dashboard
+
+Config source:
+    docs/data/project_config.json - Valeurs configurables (conformité, tâches, etc.)
 """
 
 import json
@@ -26,6 +33,22 @@ from collections import defaultdict
 PROJECT_ROOT = Path(__file__).parent.parent
 DOCS_DATA_DIR = PROJECT_ROOT / "docs" / "data"
 OUTPUT_FILE = DOCS_DATA_DIR / "dashboard.json"
+CONFIG_FILE = DOCS_DATA_DIR / "project_config.json"
+
+
+def load_config() -> dict:
+    """Charge la configuration depuis project_config.json."""
+    if CONFIG_FILE.exists():
+        try:
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load config: {e}", file=sys.stderr)
+    return {}
+
+
+# Charger la config au démarrage
+CONFIG = load_config()
 
 
 def count_files(directory: Path, pattern: str) -> int:
@@ -229,24 +252,29 @@ def get_dev_stats() -> dict:
 
 
 def analyze_templates() -> list:
-    """Analyse les templates et leur conformité."""
+    """Analyse les templates et leur conformité.
+
+    Lit les valeurs de conformité depuis CONFIG['templates'] (project_config.json).
+    Les métriques dynamiques (lignes, date de modification) sont calculées en live.
+    """
     templates_dir = PROJECT_ROOT / "templates"
     templates = []
 
-    template_info = {
+    # Fallback hardcodé si pas de config
+    default_info = {
         "vente_lots_copropriete.md": {
             "name": "Vente lots copropriété",
-            "conformity": 85.1,
+            "conformity": 80.2,
             "status": "prod",
             "bookmarks": 361,
             "sections": 37
         },
         "promesse_vente_lots_copropriete.md": {
             "name": "Promesse de vente",
-            "conformity": 60.9,
-            "status": "dev",
+            "conformity": 94.3,
+            "status": "prod",
             "bookmarks": 298,
-            "sections": 127
+            "sections": 165
         },
         "reglement_copropriete_edd.md": {
             "name": "Règlement copropriété",
@@ -264,23 +292,32 @@ def analyze_templates() -> list:
         }
     }
 
-    for template_file, info in template_info.items():
+    # Utiliser la config si disponible, sinon les valeurs par défaut
+    config_templates = CONFIG.get("templates", {})
+
+    for template_file, fallback in default_info.items():
         template_path = templates_dir / template_file
+
+        # Lire depuis config ou utiliser fallback
+        cfg = config_templates.get(template_file, fallback)
+        info = {
+            "name": cfg.get("name", fallback["name"]),
+            "conformity": cfg.get("conformity", fallback["conformity"]),
+            "status": cfg.get("status", fallback["status"]),
+            "bookmarks": cfg.get("bookmarks", fallback["bookmarks"]),
+            "sections": cfg.get("sections", fallback["sections"]),
+        }
+
         if template_path.exists():
-            # Compter les lignes
+            # Métriques dynamiques
             with open(template_path, "r", encoding="utf-8") as f:
                 lines = len(f.readlines())
-
-            # Récupérer la date de modification
             mtime = datetime.fromtimestamp(template_path.stat().st_mtime)
 
             templates.append({
                 "file": template_file,
-                "name": info["name"],
-                "conformity": info["conformity"],
-                "status": info["status"],
-                "bookmarks": info["bookmarks"],
-                "sections": info["sections"],
+                **info,
+                "trames_source": cfg.get("trames_source", 1),
                 "lines": lines,
                 "last_modified": mtime.strftime("%Y-%m-%d")
             })
@@ -387,301 +424,174 @@ def analyze_docs() -> dict:
 
 
 def get_project_tasks() -> dict:
-    """Récupère les tâches du projet avec attribution développeur."""
-    tasks = {
-        "todo": [],
+    """Récupère les tâches du projet depuis la config.
+
+    Source: CONFIG['tasks'] dans project_config.json.
+    Pour mettre à jour les tâches, éditer docs/data/project_config.json.
+    """
+    config_tasks = CONFIG.get("tasks", {})
+
+    if config_tasks:
+        return {
+            "todo": config_tasks.get("todo", []),
+            "in_progress": config_tasks.get("in_progress", []),
+            "done": config_tasks.get("done", [])
+        }
+
+    # Fallback si pas de config
+    return {
+        "todo": [
+            {"task": "Créer structure juridique (SAS/SASU)", "priority": "high", "assignee": None},
+            {"task": "Souscrire RC Pro", "priority": "high", "assignee": None},
+        ],
         "in_progress": [],
         "done": []
     }
 
-    # Tâches terminées avec développeur (basées sur git blame/fichiers existants)
-    done_indicators = [
-        ("templates/vente_lots_copropriete.md", "Template vente 85% conformité", "Tom"),
-        ("execution/workflow_rapide.py", "Pipeline génération rapide", "Tom"),
-        ("docs/legal/REGISTRE_TRAITEMENTS.md", "Documentation RGPD", "Tom"),
-        ("docs/legal/CGU_TEMPLATE.md", "Template CGU créé", "Tom"),
-        (".mcp.json", "Intégration Supabase MCP", "Tom"),
-        ("execution/historique_supabase.py", "Historique Supabase", "Payoss"),
-        ("docs/index.html", "Dashboard v2.4 dynamique", "Tom"),
-        ("execution/comparer_documents.py", "Comparaison conformité", "Tom"),
-        ("execution/test_fiabilite.py", "Tests automatisés", "Payoss"),
-        ("docs/legal/OBLIGATIONS_CSN.md", "Analyse obligations CSN", "Tom"),
-        ("execution/generer_dashboard_data.py", "Script génération dashboard", "Tom"),
-        (".github/workflows/update-dashboard.yml", "GitHub Actions auto-update", "Tom"),
-    ]
-
-    for item in done_indicators:
-        path, task, dev = item[0], item[1], item[2] if len(item) > 2 else None
-        if (PROJECT_ROOT / path).exists():
-            tasks["done"].append({
-                "task": task,
-                "dev": dev,
-                "path": path
-            })
-
-    # Tâches en cours avec assignation
-    tasks["in_progress"] = [
-        {"task": "Enrichir template promesse (60.9% → 80%)", "dev": "Tom", "progress": 60},
-        {"task": "Formulaires web notaire", "dev": "Augustin", "progress": 40},
-        {"task": "API backend génération", "dev": "Payoss", "progress": 30}
-    ]
-
-    # Tâches à faire avec priorité
-    tasks["todo"] = [
-        {"task": "Créer structure juridique (SAS/SASU)", "priority": "high", "assignee": None},
-        {"task": "Souscrire RC Pro", "priority": "high", "assignee": None},
-        {"task": "Valider CGU avec avocat", "priority": "medium", "assignee": None},
-        {"task": "Template donation-partage", "priority": "medium", "assignee": "Tom"},
-        {"task": "Intégration extraction titre propriété", "priority": "low", "assignee": "Payoss"},
-        {"task": "Label ETIK (optionnel)", "priority": "low", "assignee": None}
-    ]
-
-    return tasks
-
 
 def get_capabilities() -> list:
-    """Liste les capacités du système."""
-    capabilities = [
-        {"icon": "📄", "name": "Générer actes", "description": "DOCX/PDF fidèles aux trames", "active": True},
+    """Liste les capacités du système depuis la config."""
+    config_caps = CONFIG.get("capabilities", None)
+    if config_caps:
+        return config_caps
+
+    return [
+        {"icon": "📄", "name": "Générer actes", "description": "4 types: vente, promesse, EDD, modificatif", "active": True},
         {"icon": "💬", "name": "Dialogue notaire", "description": "Collecte interactive 100+ questions", "active": True},
         {"icon": "✅", "name": "Validation", "description": "Cohérence et complétude", "active": True},
-        {"icon": "🔍", "name": "Détection auto", "description": "Type d'acte automatique", "active": True},
-        {"icon": "💡", "name": "Suggestions", "description": "Clauses contextuelles", "active": True},
-        {"icon": "📊", "name": "Conformité", "description": "Score automatique vs trame", "active": True},
-        {"icon": "🗄️", "name": "Historique", "description": "Supabase + mode offline", "active": True},
+        {"icon": "🔍", "name": "Détection auto", "description": "Type d'acte + type promesse", "active": True},
+        {"icon": "💡", "name": "Suggestions", "description": "Clauses contextuelles intelligentes", "active": True},
+        {"icon": "📊", "name": "Conformité", "description": "Score automatique vs 7 trames", "active": True},
+        {"icon": "🗄️", "name": "Historique", "description": "Supabase + chiffrement E2E", "active": True},
         {"icon": "⚡", "name": "Pipeline rapide", "description": "~6 secondes / acte", "active": True},
+        {"icon": "📑", "name": "Extraction titre", "description": "PDF/DOCX vers JSON (OCR+ML)", "active": True},
+        {"icon": "🔄", "name": "Workflow chaîné", "description": "Titre vers Promesse vers Vente", "active": True},
+        {"icon": "🔐", "name": "Sécurité RGPD", "description": "Anonymisation + chiffrement AES-256", "active": True},
     ]
-
-    return capabilities
 
 
 def get_recommendations() -> dict:
-    """Récupère les recommandations stratégiques par développeur."""
+    """Récupère les recommandations stratégiques.
 
-    # Analyse des templates pour déterminer les priorités dynamiques
-    templates_dir = PROJECT_ROOT / "templates"
-    promesse_conformity = 60.9  # Default
+    Lit les scores système et faiblesses depuis CONFIG.
+    Les priorités sont calculées dynamiquement selon l'état du projet.
+    """
+    # Scores depuis config
+    system_scores = CONFIG.get("system_scores", {
+        "architecture": {"score": 9.5, "max": 10, "label": "Architecture 3 couches"},
+        "documentation": {"score": 9, "max": 10, "label": "Documentation"},
+        "templates_promesse": {"score": 9.4, "max": 10, "label": "Templates Promesse"},
+        "templates_vente": {"score": 8, "max": 10, "label": "Templates Vente"},
+        "agent": {"score": 8, "max": 10, "label": "Agent Autonome"},
+        "pipeline": {"score": 8.5, "max": 10, "label": "Pipeline Performance"},
+        "securite": {"score": 9.5, "max": 10, "label": "Sécurité & RGPD"}
+    })
 
-    # Vérifier si le fichier partie_developpee_promesse.md existe
-    partie_dev_promesse_exists = (PROJECT_ROOT / "templates" / "sections" / "partie_developpee_promesse.md").exists()
+    # Faiblesses depuis config
+    weaknesses = CONFIG.get("weaknesses", [
+        {"problem": "Pas de validation conjoint/diagnostics", "impact": "Erreurs possibles", "priority": "P1"},
+        {"problem": "Template vente conformité 80.2%", "impact": "Marge d'amélioration", "priority": "P2"}
+    ])
 
-    # Recommandations par priorité
+    # Priorités calculées dynamiquement
+    config_templates = CONFIG.get("templates", {})
+    promesse_cfg = config_templates.get("promesse_vente_lots_copropriete.md", {})
+    promesse_conformity = promesse_cfg.get("conformity", 94.3)
+    vente_cfg = config_templates.get("vente_lots_copropriete.md", {})
+    vente_conformity = vente_cfg.get("conformity", 80.2)
+
     priorities = {
-        "P0": {
-            "label": "CRITIQUE",
-            "color": "#ef4444",
-            "items": []
-        },
-        "P1": {
-            "label": "IMPORTANT",
-            "color": "#f59e0b",
-            "items": []
-        },
-        "P2": {
-            "label": "NICE TO HAVE",
-            "color": "#10b981",
-            "items": []
-        }
+        "P0": {"label": "CRITIQUE", "color": "#ef4444", "items": []},
+        "P1": {"label": "IMPORTANT", "color": "#f59e0b", "items": []},
+        "P2": {"label": "NICE TO HAVE", "color": "#10b981", "items": []}
     }
 
-    # P0 - Critique
-    if not partie_dev_promesse_exists:
+    # P0 - Auto-détection des problèmes critiques
+    if promesse_conformity < 80:
         priorities["P0"]["items"].append({
-            "task": "Compléter template promesse (60.9% → 85%)",
-            "dev": "Tom",
-            "effort": "3j",
-            "impact": 5,
-            "details": "Créer sections/partie_developpee_promesse.md avec conditions suspensives, indemnité d'immobilisation"
+            "task": f"Template promesse à {promesse_conformity}% - Enrichir",
+            "dev": "Tom", "impact": 5
+        })
+    if vente_conformity < 80:
+        priorities["P0"]["items"].append({
+            "task": f"Template vente à {vente_conformity}% - Enrichir",
+            "dev": "Tom", "impact": 5
         })
 
-    # P1 - Important
+    # P1 - Prochaines priorités
     priorities["P1"]["items"].extend([
-        {
-            "task": "Intégrer validation dans l'agent",
-            "dev": "Payoss",
-            "effort": "2j",
-            "impact": 4,
-            "details": "Ajouter _valider_donnees() dans executer() avant génération"
-        },
-        {
-            "task": "Support multi-parties (A & B → C)",
-            "dev": "Payoss",
-            "effort": "3j",
-            "impact": 4,
-            "details": "Parser 'Martin & Pierre → Dupont' avec PATTERN_FLECHE_MULTI"
-        },
-        {
-            "task": "Formulaires web collecte données",
-            "dev": "Augustin",
-            "effort": "5j",
-            "impact": 4,
-            "details": "Interface React/Vue pour questionnaire notaire interactif"
-        }
+        {"task": "Validation métier avancée (conjoint, diagnostics)", "dev": "Tom", "impact": 4},
+        {"task": "API backend + Chat Modal", "dev": "Payoss", "impact": 4},
+        {"task": "Formulaires web v2", "dev": "Augustin", "impact": 4}
     ])
 
-    # P2 - Nice to have
+    if vente_conformity < 85:
+        priorities["P1"]["items"].append({
+            "task": f"Améliorer vente ({vente_conformity}% → 85%+)", "dev": "Tom", "impact": 4
+        })
+
+    # P2
     priorities["P2"]["items"].extend([
-        {
-            "task": "Mode interactif agent",
-            "dev": "Payoss",
-            "effort": "3j",
-            "impact": 3,
-            "details": "Dialogue multi-tour avec questions/réponses"
-        },
-        {
-            "task": "Suggestions contextuelles clauses",
-            "dev": "Tom",
-            "effort": "2j",
-            "impact": 3,
-            "details": "Suggérer clauses basées sur contexte (multi-acquéreurs, prix, etc.)"
-        },
-        {
-            "task": "Dashboard analytics temps réel",
-            "dev": "Augustin",
-            "effort": "3j",
-            "impact": 3,
-            "details": "Graphiques d'utilisation, métriques génération"
-        }
+        {"task": "Template donation-partage", "dev": "Tom", "impact": 3},
+        {"task": "Dashboard analytics temps réel", "dev": "Augustin", "impact": 3},
+        {"task": "Optimisation performance (<3s)", "dev": "Payoss", "impact": 3}
     ])
 
-    # Recommandations par développeur
-    dev_recommendations = {
-        "Tom": {
-            "role": "Lead Dev / Templates",
-            "focus": "Templates & Conformité",
-            "current_sprint": "Sprint 1",
-            "priorities": [],
-            "checklist": [
-                {"item": "Ajouter {% include 'sections/partie_developpee_promesse.md' %}", "done": partie_dev_promesse_exists},
-                {"item": "Créer sections spécifiques promesse", "done": partie_dev_promesse_exists},
-                {"item": "Tester conformité ≥85%", "done": False},
-                {"item": "Standardiser variables promesse/vente", "done": False}
-            ],
-            "next_actions": [
-                "Créer partie_developpee_promesse.md avec conditions suspensives",
-                "Ajouter indemnité d'immobilisation et délai réalisation",
-                "Valider avec comparer_documents.py"
-            ]
-        },
-        "Augustin": {
-            "role": "Frontend / Formulaires",
-            "focus": "Interface Utilisateur",
-            "current_sprint": "Sprint 2",
-            "priorities": [],
-            "checklist": [
-                {"item": "Maquette formulaire collecte", "done": False},
-                {"item": "Composants React/Vue questionnaire", "done": False},
-                {"item": "Intégration API backend", "done": False},
-                {"item": "Validation côté client", "done": False}
-            ],
-            "next_actions": [
-                "Designer wireframes formulaire notaire",
-                "Créer composants pour 100+ questions",
-                "Implémenter navigation conditionnelle"
-            ]
-        },
-        "Payoss": {
-            "role": "Backend / Scripts",
-            "focus": "Agent & API",
-            "current_sprint": "Sprint 1-2",
-            "priorities": [],
-            "checklist": [
-                {"item": "Validation intégrée dans agent", "done": False},
-                {"item": "Pattern multi-parties", "done": False},
-                {"item": "Score confiance détaillé", "done": False},
-                {"item": "API REST génération", "done": False}
-            ],
-            "next_actions": [
-                "Ajouter _valider_donnees() dans agent_autonome.py",
-                "Créer PATTERN_FLECHE_MULTI pour couples/indivisions",
-                "Implémenter ScoreConfianceDetaille dataclass"
-            ]
-        }
-    }
-
-    # Assigner les priorités par dev
-    for priority_key, priority_data in priorities.items():
-        for item in priority_data["items"]:
-            dev = item.get("dev")
-            if dev and dev in dev_recommendations:
-                dev_recommendations[dev]["priorities"].append({
-                    **item,
-                    "priority": priority_key,
-                    "priority_label": priority_data["label"],
-                    "priority_color": priority_data["color"]
-                })
-
-    # Sprints planning
+    # Sprint depuis config
+    config_sprint = CONFIG.get("sprint", {})
     sprints = [
         {
             "name": "Sprint 1",
             "weeks": "Semaine 1-2",
             "objective": "Template promesse ≥85%",
-            "status": "in_progress",
+            "status": "done",
             "tasks": [
-                {"task": "Compléter template promesse", "dev": "Tom", "effort": "3j", "status": "in_progress"},
-                {"task": "Créer partie_developpee_promesse.md", "dev": "Tom", "effort": "2j", "status": "pending"},
-                {"task": "Intégrer validation agent", "dev": "Payoss", "effort": "2j", "status": "pending"},
-                {"task": "Tests génération promesse", "dev": "Payoss", "effort": "1j", "status": "pending"}
+                {"task": "Template promesse 94.3%", "dev": "Tom", "status": "done"},
+                {"task": "Enrichissement 7 trames", "dev": "Tom", "status": "done"},
+                {"task": "Validation intégrée agent", "dev": "Tom", "status": "done"},
+                {"task": "Support multi-parties", "dev": "Tom", "status": "done"}
             ]
         },
         {
-            "name": "Sprint 2",
+            "name": config_sprint.get("name", "Sprint 2"),
             "weeks": "Semaine 3-4",
-            "objective": "Agent gère 90% des cas",
-            "status": "pending",
-            "tasks": [
-                {"task": "Support multi-parties", "dev": "Payoss", "effort": "3j", "status": "pending"},
-                {"task": "Score confiance détaillé", "dev": "Payoss", "effort": "2j", "status": "pending"},
-                {"task": "Formulaires web v1", "dev": "Augustin", "effort": "5j", "status": "pending"},
-                {"task": "Documentation API", "dev": "Tom", "effort": "2j", "status": "pending"}
-            ]
+            "objective": config_sprint.get("objective", "API + Formulaires + Validation métier"),
+            "status": config_sprint.get("status", "in_progress"),
+            "tasks": config_sprint.get("tasks", [
+                {"task": "Validation métier avancée", "dev": "Tom", "status": "pending"},
+                {"task": "API backend", "dev": "Payoss", "status": "in_progress"},
+                {"task": "Chat Modal", "dev": "Payoss", "status": "in_progress"},
+                {"task": "Formulaires web v2", "dev": "Augustin", "status": "in_progress"}
+            ])
         },
         {
             "name": "Sprint 3",
             "weeks": "Semaine 5-6",
-            "objective": "UX excellente, <2s",
+            "objective": "UX excellente, donation-partage",
             "status": "pending",
             "tasks": [
-                {"task": "Mode interactif", "dev": "Payoss", "effort": "3j", "status": "pending"},
-                {"task": "Suggestions contextuelles", "dev": "Tom", "effort": "2j", "status": "pending"},
-                {"task": "Dashboard analytics", "dev": "Augustin", "effort": "3j", "status": "pending"},
-                {"task": "Optimisations perf", "dev": "Payoss", "effort": "2j", "status": "pending"}
+                {"task": "Template donation-partage", "dev": "Tom", "status": "pending"},
+                {"task": "Dashboard analytics", "dev": "Augustin", "status": "pending"},
+                {"task": "Optimisations perf", "dev": "Payoss", "status": "pending"}
             ]
         }
     ]
 
-    # Scores du système
-    system_scores = {
-        "architecture": {"score": 9, "max": 10, "label": "Architecture 3 couches"},
-        "documentation": {"score": 8, "max": 10, "label": "Documentation"},
-        "templates_vente": {"score": 8.5, "max": 10, "label": "Templates Vente"},
-        "agent": {"score": 7, "max": 10, "label": "Agent Autonome"},
-        "pipeline": {"score": 8, "max": 10, "label": "Pipeline Performance"}
-    }
-
-    # Faiblesses critiques
-    weaknesses = [
-        {"problem": "Template Promesse incomplet (60.9%)", "impact": "Bloque production", "priority": "P0"},
-        {"problem": "Agent sans validation intégrée", "impact": "Erreurs silencieuses", "priority": "P1"},
-        {"problem": "Pas de support multi-parties", "impact": "Limite cas réels", "priority": "P1"},
-        {"problem": "Pas de dialogue multi-tour", "impact": "UX limitée", "priority": "P2"}
-    ]
-
     return {
         "priorities": priorities,
-        "dev_recommendations": dev_recommendations,
         "sprints": sprints,
         "system_scores": system_scores,
         "weaknesses": weaknesses,
-        "source_file": "docs/RECOMMANDATIONS_STRATEGIQUES.md",
+        "source_file": "docs/data/project_config.json",
         "last_updated": datetime.now().strftime("%Y-%m-%d")
     }
 
 
 def get_project_overview() -> dict:
-    """Génère une vue d'ensemble complète du projet."""
+    """Génère une vue d'ensemble complète du projet.
 
+    Calcule dynamiquement le score de santé, lit les OKRs depuis CONFIG.
+    """
     # Calculer le score de santé projet
     templates = analyze_templates()
     prod_templates = sum(1 for t in templates if t["status"] == "prod")
@@ -704,7 +614,7 @@ def get_project_overview() -> dict:
     else:
         phase = {"name": "MVP", "color": "#ef4444", "icon": "🔨"}
 
-    # Milestones
+    # Milestones dynamiques
     milestones = [
         {
             "name": "Architecture 3 couches",
@@ -714,9 +624,15 @@ def get_project_overview() -> dict:
         },
         {
             "name": "Templates Production",
-            "status": "in_progress",
+            "status": "done" if prod_templates == 4 else "in_progress",
             "progress": int(prod_templates / 4 * 100),
-            "description": f"{prod_templates}/4 templates ≥80% conformité"
+            "description": f"{prod_templates}/4 templates >=80% conformite"
+        },
+        {
+            "name": "Enrichissement 7 trames promesse",
+            "status": "done",
+            "date": "2026-01",
+            "description": f"Promesse a {avg_conformity:.1f}% conformite (v3.0.0)"
         },
         {
             "name": "Premier client payant",
@@ -731,83 +647,71 @@ def get_project_overview() -> dict:
         }
     ]
 
-    # OKRs du trimestre
-    okrs = [
+    # OKRs depuis config
+    okrs = CONFIG.get("okrs", [
         {
             "objective": "Tous les templates en production",
             "key_results": [
-                {"kr": "Template promesse ≥85%", "current": 60.9, "target": 85, "unit": "%"},
-                {"kr": "Tests e2e couvrant 90% des cas", "current": 60, "target": 90, "unit": "%"},
-                {"kr": "Temps génération <3s", "current": 5.7, "target": 3, "unit": "s", "lower_is_better": True}
-            ]
-        },
-        {
-            "objective": "Lancement commercial",
-            "key_results": [
-                {"kr": "Structure juridique créée", "current": 0, "target": 1, "unit": "done"},
-                {"kr": "RC Pro souscrite", "current": 0, "target": 1, "unit": "done"},
-                {"kr": "CGU validées avocat", "current": 0, "target": 1, "unit": "done"}
-            ]
-        },
-        {
-            "objective": "Acquisition premiers clients",
-            "key_results": [
-                {"kr": "Démos réalisées", "current": 0, "target": 5, "unit": ""},
-                {"kr": "Clients signés", "current": 0, "target": 2, "unit": ""},
-                {"kr": "MRR", "current": 0, "target": 500, "unit": "€"}
+                {"kr": "Template promesse >=85%", "current": 94.3, "target": 85, "unit": "%"},
+                {"kr": "Template vente >=85%", "current": 80.2, "target": 85, "unit": "%"},
+                {"kr": "Tests e2e couvrant 90% des cas", "current": 75, "target": 90, "unit": "%"},
+                {"kr": "Temps generation <3s", "current": 5.7, "target": 3, "unit": "s", "lower_is_better": True}
             ]
         }
-    ]
+    ])
 
-    # Sprint actuel
+    # Sprint depuis config
+    config_sprint = CONFIG.get("sprint", {})
     current_sprint = {
-        "name": "Sprint 1",
-        "start_date": "2026-01-27",
-        "end_date": "2026-02-09",
-        "days_remaining": 13,
-        "progress": 25,
-        "velocity_target": 20,
-        "velocity_current": 5,
-        "burndown": [
-            {"day": 1, "remaining": 20, "ideal": 20},
-            {"day": 2, "remaining": 18, "ideal": 18.5},
-            {"day": 3, "remaining": 15, "ideal": 17}
-        ],
+        "name": config_sprint.get("name", "Sprint 2"),
+        "start_date": config_sprint.get("start_date", "2026-01-27"),
+        "end_date": config_sprint.get("end_date", "2026-02-09"),
+        "objective": config_sprint.get("objective", "API + Formulaires + Validation metier"),
+        "status": config_sprint.get("status", "in_progress"),
         "blockers": [
-            {"issue": "Template promesse incomplet", "assigned": "Tom", "severity": "high"},
+            {"issue": "Structure juridique manquante", "assigned": "Fondateur", "severity": "high"},
         ],
         "risks": [
-            {"risk": "Délai structure juridique", "probability": "high", "impact": "Bloque facturation"}
+            {"risk": "Delai structure juridique", "probability": "high", "impact": "Bloque facturation"}
         ]
     }
 
-    # Ce qui reste à faire (priorité décroissante)
+    # Ce qui reste a faire
     remaining_work = {
         "critical": [
-            {"task": "Compléter template promesse", "effort": "3j", "assigned": "Tom"},
-            {"task": "Créer structure juridique", "effort": "2j", "assigned": None}
+            {"task": "Creer structure juridique", "assigned": None},
+            {"task": "Souscrire RC Pro", "assigned": None},
+            {"task": "Validation metier avancee (conjoint, diagnostics)", "assigned": "Tom"}
         ],
         "important": [
-            {"task": "Intégrer validation dans agent", "effort": "2j", "assigned": "Payoss"},
-            {"task": "Souscrire RC Pro", "effort": "1j", "assigned": None},
-            {"task": "Formulaires web v1", "effort": "5j", "assigned": "Augustin"}
+            {"task": "Ameliorer template vente (80.2% -> 85%+)", "assigned": "Tom"},
+            {"task": "API backend + Chat Modal", "assigned": "Payoss"},
+            {"task": "Formulaires web v2", "assigned": "Augustin"},
+            {"task": "Documentation API frontend", "assigned": "Tom"}
         ],
         "nice_to_have": [
-            {"task": "Mode interactif agent", "effort": "3j", "assigned": "Payoss"},
-            {"task": "Dashboard analytics", "effort": "3j", "assigned": "Augustin"},
-            {"task": "Label ETIK", "effort": "60j", "assigned": None}
+            {"task": "Template donation-partage", "assigned": "Tom"},
+            {"task": "Dashboard analytics", "assigned": "Augustin"},
+            {"task": "Label ETIK", "assigned": None}
         ]
     }
 
-    # Suggestions intelligentes basées sur l'état
+    # Suggestions intelligentes basees sur l'etat
     suggestions = []
 
-    if avg_conformity < 80:
+    if avg_conformity >= 85:
+        suggestions.append({
+            "type": "tech",
+            "priority": "low",
+            "message": f"Conformite moyenne a {avg_conformity:.1f}% - Excellent! 4/4 templates en prod.",
+            "action": "Focus sur validation metier et optimisations"
+        })
+    elif avg_conformity < 80:
         suggestions.append({
             "type": "tech",
             "priority": "high",
-            "message": f"Conformité moyenne à {avg_conformity:.1f}% - Prioriser template promesse",
-            "action": "Exécuter: python execution/comparer_documents.py"
+            "message": f"Conformite moyenne a {avg_conformity:.1f}% - Enrichir les templates",
+            "action": "Executer: python execution/analyse/comparer_documents.py"
         })
 
     if legal_score < 70:
@@ -815,23 +719,16 @@ def get_project_overview() -> dict:
             "type": "business",
             "priority": "high",
             "message": "Structure juridique manquante - Bloque la facturation",
-            "action": "Créer SASU via Legalstart ou Infogreffe"
+            "action": "Creer SASU via Legalstart ou Infogreffe"
         })
 
     if business_score < 50:
         suggestions.append({
             "type": "growth",
             "priority": "medium",
-            "message": "Aucun client actif - Démarrer les démos",
-            "action": "Contacter 3 notaires pour démo cette semaine"
+            "message": "Aucun client actif - Demarrer les demos",
+            "action": "Contacter 3 notaires pour demo cette semaine"
         })
-
-    suggestions.append({
-        "type": "quick_win",
-        "priority": "low",
-        "message": "Documentation à jour - Continuer sur cette lancée",
-        "action": "Maintenir CLAUDE.md et CHANGELOG.md"
-    })
 
     return {
         "overall_score": overall_score,
@@ -851,61 +748,77 @@ def get_project_overview() -> dict:
 
 
 def get_chef_projet_briefing() -> dict:
-    """Génère le briefing chef de projet avec priorités par développeur."""
+    """Génère le briefing chef de projet.
 
-    # Priorités par développeur
+    Utilise les données dynamiques (conformité templates) et la config.
+    """
+    # Lire conformité actuelle pour contexte
+    config_templates = CONFIG.get("templates", {})
+    promesse_conf = config_templates.get("promesse_vente_lots_copropriete.md", {}).get("conformity", 94.3)
+    vente_conf = config_templates.get("vente_lots_copropriete.md", {}).get("conformity", 80.2)
+
     dev_priorities = {
         "Tom": {
             "role": "Lead Dev / Templates",
-            "focus": "Template Promesse",
+            "focus": "Validation metier + Vente",
             "color": "#6366f1",
             "this_week": [
                 {
-                    "task": "Compléter template promesse → 85%",
+                    "task": "Validation metier avancee",
                     "priority": "critical",
                     "subtasks": [
-                        "Créer partie_developpee_promesse.md",
-                        "Ajouter conditions suspensives",
-                        "Ajouter indemnité d'immobilisation",
-                        "Tester avec comparer_documents.py"
+                        "Validation conjoint (communaute)",
+                        "Validation diagnostics expires",
+                        "Validation coherence dates",
+                        "Tests unitaires"
                     ],
-                    "deadline": "Vendredi",
-                    "progress": 60
+                    "progress": 0
+                },
+                {
+                    "task": f"Ameliorer template vente ({vente_conf}% -> 85%+)",
+                    "priority": "important",
+                    "subtasks": [
+                        "Analyser sections manquantes vs trame originale",
+                        "Ajouter sections agent immobilier, plus-value",
+                        "Tester conformite"
+                    ],
+                    "progress": 0
                 }
             ],
-            "quick_wins": [
-                "Lancer comparer_documents.py sur promesses anonymisées",
-                "Identifier sections manquantes dans docs_original/"
+            "achievements": [
+                f"Template promesse a {promesse_conf}% (objectif 85% depasse!)",
+                "Enrichissement depuis 7 trames originales",
+                "40+ nouvelles sections ajoutees (v3.0.0)",
+                "7 bugs templates corriges"
             ],
             "blocked_by": None
         },
         "Augustin": {
             "role": "Frontend / Formulaires",
-            "focus": "Maquette Formulaires",
+            "focus": "Formulaires web v2",
             "color": "#06b6d4",
             "this_week": [
                 {
-                    "task": "Maquette formulaire collecte notaire",
+                    "task": "Formulaires web collecte notaire v2",
                     "priority": "important",
                     "subtasks": [
-                        "Identifier 20 questions critiques",
-                        "Créer wireframe Figma/Excalidraw",
-                        "Proposer navigation conditionnelle",
-                        "Valider avec Tom"
+                        "Composants React/Vue questionnaire",
+                        "Navigation conditionnelle",
+                        "Integration API backend",
+                        "Validation cote client"
                     ],
-                    "deadline": "Mercredi",
-                    "progress": 20
+                    "progress": 50
                 }
             ],
-            "quick_wins": [
-                "Lire schemas/questions_promesse_vente.json",
-                "Commencer par formulaire promesse (plus simple)"
+            "achievements": [
+                "Systeme formulaires clients securises",
+                "Dashboard notaire HTML"
             ],
             "blocked_by": None
         },
         "Payoss": {
             "role": "Backend / Chat / Modal",
-            "focus": "Déploiement Modal",
+            "focus": "API + Chat Modal",
             "color": "#10b981",
             "this_week": [
                 {
@@ -913,92 +826,75 @@ def get_chef_projet_briefing() -> dict:
                     "priority": "critical",
                     "subtasks": [
                         "Endpoint /generate qui appelle l'agent",
-                        "Streaming de réponses",
+                        "Streaming de reponses",
                         "Gestion d'erreurs avec fallback",
-                        "URL de démo partageable"
+                        "URL de demo partageable"
                     ],
-                    "deadline": "Vendredi",
                     "progress": 30
                 },
                 {
-                    "task": "Intégrer validation dans l'agent",
+                    "task": "API backend generation",
                     "priority": "important",
                     "subtasks": [
-                        "Ajouter _valider_donnees() avant génération",
-                        "Retourner erreurs structurées"
+                        "Endpoints promesse/vente",
+                        "Validation donnees API",
+                        "Documentation OpenAPI"
                     ],
-                    "deadline": "Sprint 1",
-                    "progress": 0
+                    "progress": 40
                 }
             ],
-            "quick_wins": [
-                "Tester modal deploy modal_app.py",
-                "Vérifier que le setup fonctionne"
+            "achievements": [
+                "Historique Supabase",
+                "Tests automatises"
             ],
             "blocked_by": None
         }
     }
 
-    # Actions business urgentes
     business_actions = [
         {
-            "action": "Créer SASU sur Legalstart",
-            "effort": "2h + 150€",
-            "impact": "Débloquer facturation",
+            "action": "Creer SASU sur Legalstart",
+            "impact": "Debloquer facturation",
             "owner": "Fondateur",
-            "status": "todo",
-            "url": "https://www.legalstart.fr/creation-entreprise/sasu/"
+            "status": "todo"
         },
         {
             "action": "Souscrire RC Pro",
-            "effort": "1h + ~1000€/an",
             "impact": "Couvrir risques",
             "owner": "Fondateur",
             "status": "blocked",
-            "blocked_by": "SASU",
-            "options": ["MACSF", "Hiscox", "AXA"]
+            "blocked_by": "SASU"
         },
         {
-            "action": "Contacter 3 notaires pour démo",
-            "effort": "2h",
+            "action": "Contacter 3 notaires pour demo",
             "impact": "Pipeline prospects",
             "owner": "Tom",
             "status": "todo"
         }
     ]
 
-    # Objectifs fin de sprint
     sprint_objectives = [
-        {"objective": "Template promesse ≥85% conformité", "owner": "Tom", "status": "in_progress"},
+        {"objective": f"Template promesse >=85% conformite", "owner": "Tom", "status": "done",
+         "result": f"{promesse_conf}%"},
         {"objective": "Chat fonctionnel sur Modal", "owner": "Payoss", "status": "in_progress"},
-        {"objective": "Maquette formulaire validée", "owner": "Augustin", "status": "in_progress"},
-        {"objective": "SASU créée", "owner": "Business", "status": "todo"},
-        {"objective": "1-2 démos notaires programmées", "owner": "Tom", "status": "pending"}
+        {"objective": "Formulaires web v2", "owner": "Augustin", "status": "in_progress"},
+        {"objective": "Validation metier avancee", "owner": "Tom", "status": "pending"},
+        {"objective": "SASU creee", "owner": "Business", "status": "todo"}
     ]
 
-    # Rituels recommandés
-    rituals = [
-        {"name": "Daily async", "frequency": "Quotidien 9h", "duration": "2min", "format": "Slack: Hier/Aujourd'hui/Bloqué"},
-        {"name": "Démo vendredi", "frequency": "Vendredi 14h", "duration": "30min", "format": "Call + screen share"},
-        {"name": "Sprint review", "frequency": "Bi-hebdo", "duration": "45min", "format": "Rétro + planning"}
-    ]
-
-    # Alerte principale
     main_alert = {
-        "type": "warning",
-        "message": "Sans structure juridique, impossible de facturer. C'est le vrai bloqueur.",
-        "action": "Créer SASU cette semaine",
-        "icon": "⚠️"
+        "type": "success",
+        "message": f"Template promesse a {promesse_conf}% - Objectif Sprint 1 depasse! 4/4 templates en PROD.",
+        "action": "Focus: structure juridique + API + validation metier",
+        "icon": "🎉"
     }
 
     return {
         "dev_priorities": dev_priorities,
         "business_actions": business_actions,
         "sprint_objectives": sprint_objectives,
-        "rituals": rituals,
         "main_alert": main_alert,
-        "week": "27 Janvier - 2 Février 2026",
-        "sprint": "Sprint 1",
+        "sprint": CONFIG.get("sprint", {}).get("name", "Sprint 2"),
         "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M")
     }
 
@@ -1120,11 +1016,15 @@ def generate_dashboard_data() -> dict:
         stats = dev_stats.get(member["name"], {})
         member["commits_7d"] = stats.get("commits_7d", 0)
 
+    config_version = CONFIG.get("version", "1.5.0")
+    dashboard_version = CONFIG.get("dashboard_version", "3.0")
+
     data = {
         "meta": {
             "generated_at": datetime.now().isoformat(),
-            "version": "1.3.0",
-            "dashboard_version": "2.5"
+            "version": config_version,
+            "dashboard_version": dashboard_version,
+            "config_source": "docs/data/project_config.json"
         },
         "metrics": {
             "templates_count": len(templates),
@@ -1148,7 +1048,8 @@ def generate_dashboard_data() -> dict:
         "activity": activity[:20],  # 20 dernières actions
         "recommendations": recommendations,
         "overview": overview,
-        "chef_projet": chef_projet
+        "chef_projet": chef_projet,
+        "conformity_details": CONFIG.get("conformity_details", {})
     }
 
     return data

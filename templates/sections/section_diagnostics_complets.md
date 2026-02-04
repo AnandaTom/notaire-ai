@@ -129,6 +129,24 @@ La commune est classée en zone <<<VAR_START>>>{{ diagnostics.radon.zone }}<<<VA
 {% endif %}
 {% endif %}
 
+{% if diagnostics.dpe and diagnostics.amiante %}
+### Tableau récapitulatif des diagnostics
+
+| Diagnostic | Date | Diagnostiqueur | Validité | Résultat |
+| :---- | :---- | :---- | :---- | :---- |
+{% if diagnostics.dpe %}| DPE | {{ diagnostics.dpe.date }} | {{ diagnostics.dpe.diagnostiqueur.nom | default("-") }} | {{ diagnostics.dpe.validite | default("10 ans") }} | Classe {{ diagnostics.dpe.classe_energie | default("?") }} |
+{% endif %}{% if diagnostics.amiante %}| Amiante | {{ diagnostics.amiante.date }} | {{ diagnostics.amiante.diagnostiqueur | default("-") }} | {{ diagnostics.amiante.validite | default("Illimitée si négatif") }} | {{ "Présence" if diagnostics.amiante.presence else "Négatif" }} |
+{% endif %}{% if diagnostics.plomb %}| CREP (plomb) | {{ diagnostics.plomb.date }} | {{ diagnostics.plomb.diagnostiqueur | default("-") }} | {{ diagnostics.plomb.validite | default("Illimitée si négatif") }} | {{ "Présence" if diagnostics.plomb.presence else "Négatif" }} |
+{% endif %}{% if diagnostics.termites %}| Termites | {{ diagnostics.termites.date }} | {{ diagnostics.termites.diagnostiqueur | default("-") }} | {{ diagnostics.termites.validite | default("6 mois") }} | {{ "Présence" if diagnostics.termites.presence else "Négatif" }} |
+{% endif %}{% if diagnostics.electricite %}| Électricité | {{ diagnostics.electricite.date | default("-") }} | {{ diagnostics.electricite.diagnostiqueur | default("-") }} | {{ diagnostics.electricite.validite | default("3 ans") }} | {{ diagnostics.electricite.resultat | default("-") }} |
+{% endif %}{% if diagnostics.gaz and diagnostics.gaz.resultat %}| Gaz | {{ diagnostics.gaz.date | default("-") }} | {{ diagnostics.gaz.diagnostiqueur | default("-") }} | {{ diagnostics.gaz.validite | default("3 ans") }} | {{ diagnostics.gaz.resultat | default("-") }} |
+{% endif %}{% if diagnostics.assainissement %}| Assainissement | {{ diagnostics.assainissement.date | default("-") }} | {{ diagnostics.assainissement.diagnostiqueur | default("-") }} | {{ diagnostics.assainissement.validite | default("3 ans") }} | {{ diagnostics.assainissement.resultat | default("-") }} |
+{% endif %}{% if diagnostics.bruit %}| Bruit | {{ diagnostics.bruit.date | default("-") }} | - | - | Zone {{ diagnostics.bruit.zone | default("-") }} |
+{% endif %}{% if diagnostics.radon %}| Radon | - | - | - | Zone {{ diagnostics.radon.zone | default("-") }} |
+{% endif %}
+
+{% endif %}
+
 {% else %}
 Les diagnostics techniques obligatoires ont été réalisés et sont annexés au présent acte.
 {% endif %}

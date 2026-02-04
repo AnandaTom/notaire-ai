@@ -591,6 +591,36 @@ def extraire_donnees_titre(filepath: Path, verbose: bool = False) -> Dict:
         if verbose:
             console.print(f"[green]✓[/green] Copropriété: règlement trouvé")
 
+    # ── Enrichissement cadastre via API gouvernementale ──
+    try:
+        from execution.services.cadastre_service import CadastreService
+        cadastre_svc = CadastreService()
+        resultat_cadastre = cadastre_svc.enrichir_cadastre(donnees)
+        donnees = resultat_cadastre["donnees"]
+        rapport_cadastre = resultat_cadastre["rapport"]
+        if verbose:
+            if rapport_cadastre["cadastre_enrichi"]:
+                console.print(
+                    f"[green]✓[/green] Cadastre enrichi: "
+                    f"{rapport_cadastre['parcelles_validees']} parcelle(s) validée(s), "
+                    f"code INSEE {rapport_cadastre['code_insee']}"
+                )
+            elif rapport_cadastre["code_insee"]:
+                console.print(
+                    f"[yellow]⚠[/yellow] Code INSEE {rapport_cadastre['code_insee']} trouvé "
+                    f"mais parcelle(s) non validée(s)"
+                )
+            for w in rapport_cadastre.get("warnings", []):
+                console.print(f"[yellow]  → {w}[/yellow]")
+    except ImportError:
+        rapport_cadastre = None
+        if verbose:
+            console.print("[dim]Module cadastre non disponible, enrichissement ignoré[/dim]")
+    except Exception as e:
+        rapport_cadastre = None
+        if verbose:
+            console.print(f"[yellow]⚠ Enrichissement cadastre échoué: {e}[/yellow]")
+
     # Métadonnées
     champs_extraits = [k for k, v in donnees.items() if v and k not in ["reference", "source", "metadata"]]
     champs_attendus = ["date_acte", "notaire", "publication", "proprietaires_actuels", "bien", "prix", "origine_propriete"]
@@ -602,6 +632,12 @@ def extraire_donnees_titre(filepath: Path, verbose: bool = False) -> Dict:
         "confiance": round(len(champs_extraits) / len(champs_attendus), 2),
         "champs_manquants": champs_manquants
     }
+    if rapport_cadastre:
+        donnees["metadata"]["cadastre"] = {
+            "enrichi": rapport_cadastre["cadastre_enrichi"],
+            "code_insee": rapport_cadastre["code_insee"],
+            "parcelles_validees": rapport_cadastre["parcelles_validees"],
+        }
 
     if verbose:
         console.print(f"\n[bold]Score de confiance:[/bold] {donnees['metadata']['confiance'] * 100:.0f}%")

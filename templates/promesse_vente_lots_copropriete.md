@@ -213,9 +213,15 @@ Demeurent annexées aux présentes :
 **Annexe n°2 : Plans des lots et plan de masse**
 
 ## Mention de la superficie de la partie privative – Application
+{% if bien.superficie_carrez is mapping %}
 La superficie de la partie privative des lots de copropriété soumis aux dispositions de l'article 46 de la loi du 10 juillet 1965, est de **{{ bien.superficie_carrez.superficie_m2 }} m².**
 
+{% if bien.superficie_carrez.date_mesurage and bien.superficie_carrez.diagnostiqueur %}
 Ainsi qu'il résulte d'une attestation établie le {{ bien.superficie_carrez.date_mesurage | format_date }} par le cabinet {{ bien.superficie_carrez.diagnostiqueur }}, demeurant annexée aux présentes.
+{% endif %}
+{% else %}
+La superficie de la partie privative des lots de copropriété soumis aux dispositions de l'article 46 de la loi du 10 juillet 1965, est de **{{ bien.superficie_carrez }} m².**
+{% endif %}
 
 Les parties ont été informées de la possibilité pour le **BENEFICIAIRE** d'agir en révision du prix, si la superficie réelle est inférieure de plus d'un vingtième à celle exprimée aux présentes.
 La révision du prix consistera en une diminution de la valeur du lot concerné proportionnelle à la moindre mesure.
@@ -777,7 +783,7 @@ Le **PROMETTANT** déclare qu'à sa connaissance :
 ## Dossier de diagnostics techniques
 Pour l'information des parties a été dressé ci-après le tableau du dossier de diagnostics techniques tel que prévu par les articles L 271-4 à L 271-6 du Code de la construction et de l'habitation.
 
-Conformément aux dispositions de l'article L 271-6 du Code de la construction et de l'habitation, le dossier de diagnostic technique a été établi par **{{ diagnostics.diagnostiqueur.nom }}**, diagnostiqueur immobilier certifié par un organisme spécialisé accrédité.
+{% if diagnostics and diagnostics.diagnostiqueur %}Conformément aux dispositions de l'article L 271-6 du Code de la construction et de l'habitation, le dossier de diagnostic technique a été établi par **{{ diagnostics.diagnostiqueur.nom }}**, diagnostiqueur immobilier certifié par un organisme spécialisé accrédité.{% else %}Conformément aux dispositions de l'article L 271-6 du Code de la construction et de l'habitation, le dossier de diagnostic technique a été établi par un diagnostiqueur immobilier certifié par un organisme spécialisé accrédité.{% endif %}
 
 ## Diagnostics techniques
 {% if diagnostics.plomb %}

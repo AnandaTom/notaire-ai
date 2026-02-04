@@ -27,9 +27,11 @@ from typing import Any, Dict, List, Optional, Tuple
 try:
     import questionary
     from questionary import Style
+    HAS_QUESTIONARY = True
 except ImportError:
-    print("Erreur: questionary n'est pas installé. Exécutez: pip install questionary")
-    sys.exit(1)
+    HAS_QUESTIONARY = False
+    questionary = None
+    Style = None
 
 try:
     from rich.console import Console
@@ -37,24 +39,35 @@ try:
     from rich.table import Table
     from rich.progress import Progress, SpinnerColumn, TextColumn
     from rich.markdown import Markdown
+    HAS_RICH = True
 except ImportError:
-    print("Erreur: rich n'est pas installé. Exécutez: pip install rich")
-    sys.exit(1)
+    HAS_RICH = False
+    Console = None
+
+
+def _check_interactive_deps():
+    """Verifie les dependances pour le mode interactif CLI."""
+    if not HAS_QUESTIONARY:
+        print("Erreur: questionary n'est pas installe. Executez: pip install questionary")
+        sys.exit(1)
+    if not HAS_RICH:
+        print("Erreur: rich n'est pas installe. Executez: pip install rich")
+        sys.exit(1)
 
 # Configuration
 SCRIPT_DIR = Path(__file__).parent
-PROJECT_ROOT = SCRIPT_DIR.parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # execution/utils/ -> execution/ -> racine
 SCHEMAS_DIR = PROJECT_ROOT / "schemas"
 TMP_DIR = PROJECT_ROOT / ".tmp"
 
 # Types d'actes supportés
 TYPES_ACTES = {
     "vente": {
-        "schema": "questions_vente.json",
+        "schema": "questions_notaire.json",
         "titre": "Acte de Vente de Lots de Copropriété"
     },
     "promesse": {
-        "schema": "questions_promesse.json",
+        "schema": "questions_promesse_vente.json",
         "titre": "Promesse de Vente"
     },
     "reglement": {
@@ -67,18 +80,21 @@ TYPES_ACTES = {
     }
 }
 
-# Style personnalisé pour questionary
-STYLE = Style([
-    ('question', 'bold'),
-    ('answer', 'fg:green bold'),
-    ('pointer', 'fg:yellow bold'),
-    ('highlighted', 'fg:yellow bold'),
-    ('selected', 'fg:green'),
-    ('separator', 'fg:gray'),
-    ('instruction', 'fg:gray italic'),
-])
+# Style personnalisé pour questionary (optionnel en mode non-interactif)
+if HAS_QUESTIONARY and Style is not None:
+    STYLE = Style([
+        ('question', 'bold'),
+        ('answer', 'fg:green bold'),
+        ('pointer', 'fg:yellow bold'),
+        ('highlighted', 'fg:yellow bold'),
+        ('selected', 'fg:green'),
+        ('separator', 'fg:gray'),
+        ('instruction', 'fg:gray italic'),
+    ])
+else:
+    STYLE = None
 
-console = Console()
+console = Console() if HAS_RICH and Console is not None else None
 
 
 def charger_schema_questions(type_acte: str) -> Dict:
@@ -545,6 +561,7 @@ def afficher_resume(data: Dict) -> None:
 
 def main():
     """Point d'entrée principal."""
+    _check_interactive_deps()
     parser = argparse.ArgumentParser(
         description="Collecte interactive des informations pour actes notariés",
         formatter_class=argparse.RawDescriptionHelpFormatter,

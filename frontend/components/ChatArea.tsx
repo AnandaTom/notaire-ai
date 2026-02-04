@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { Scale, Paperclip, Mic, Send, FileText, FilePlus, Edit } from 'lucide-react'
+import { Scale, Paperclip, Mic, Send, FileText, FilePlus, Edit, Download } from 'lucide-react'
 import type { Message } from '@/app/page'
 import ReactMarkdown from 'react-markdown'
 
@@ -73,6 +73,8 @@ export default function ChatArea({
             showFormatSelector={message.content.includes('format')}
             selectedFormat={selectedFormat}
             onFormatChange={onFormatChange}
+            suggestions={message.suggestions}
+            metadata={message.metadata}
           />
         ))}
 
@@ -127,6 +129,8 @@ function MessageBubble({
   showFormatSelector,
   selectedFormat,
   onFormatChange,
+  suggestions,
+  metadata,
 }: {
   message: Message
   quickActions?: { icon: any; label: string }[]
@@ -134,6 +138,8 @@ function MessageBubble({
   showFormatSelector?: boolean
   selectedFormat?: 'pdf' | 'docx'
   onFormatChange?: (format: 'pdf' | 'docx') => void
+  suggestions?: string[]
+  metadata?: { fichier_url?: string; [key: string]: unknown }
 }) {
   const isAssistant = message.role === 'assistant'
 
@@ -237,6 +243,33 @@ function MessageBubble({
                 <p className="text-[0.7rem] text-slate">Modifiable</p>
               </div>
             </button>
+          </div>
+        )}
+
+        {/* Download Link */}
+        {isAssistant && message.metadata?.fichier_url && (
+          <a
+            href={`${process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'}${message.metadata.fichier_url}`}
+            download
+            className="inline-flex items-center gap-2 mt-3 px-4 py-2.5 bg-gold text-white rounded-xl text-[0.82rem] font-medium hover:bg-gold-dark transition-all shadow-sm"
+          >
+            <Download className="w-4 h-4" />
+            Télécharger le document
+          </a>
+        )}
+
+        {/* Suggestions */}
+        {isAssistant && message.suggestions && message.suggestions.length > 0 && onQuickAction && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {message.suggestions.map((suggestion, idx) => (
+              <button
+                key={idx}
+                onClick={() => onQuickAction(suggestion)}
+                className="px-3.5 py-2 bg-ivory border border-champagne rounded-xl text-[0.8rem] text-graphite hover:border-gold hover:bg-sand transition-all"
+              >
+                {suggestion}
+              </button>
+            ))}
           </div>
         )}
 
