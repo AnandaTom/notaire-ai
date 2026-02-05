@@ -35,7 +35,7 @@ from dataclasses import dataclass, asdict
 try:
     from dotenv import load_dotenv
 except ImportError:
-    def load_dotenv():
+    def load_dotenv(*args, **kwargs):
         pass
 
 try:

@@ -195,7 +195,9 @@
 | Sous-traitant | Pays | Données | Garanties |
 |---------------|------|---------|-----------|
 | Supabase Inc. | USA (stockage EU) | Toutes | DPA signé, SCCs, région eu-central-1 |
-| Anthropic | USA | Prompts (sans données perso) | Pas de stockage permanent |
+| Anthropic | USA | **Conversations chatbot incluant potentiellement des données personnelles** (noms, adresses, situation matrimoniale, patrimoine) transmises via l'API Claude pour assistance à la rédaction | DPA Anthropic, zero data retention policy (données non utilisées pour entraînement), pas de stockage au-delà de 30 jours. **ACTION REQUISE** : implémenter l'anonymisation des messages avant envoi (module `ChatAnonymizer` disponible) ou obtenir les SCCs spécifiques d'Anthropic. |
+
+> **⚠️ AVERTISSEMENT CONFORMITE** (ajouté le 05/02/2026) : Le chatbot frontend (`frontend/app/api/chat/route.ts`) transmet actuellement l'intégralité des conversations à l'API Anthropic, y compris les données personnelles saisies par le notaire. Un module d'anonymisation (`execution/security/chat_anonymizer.py`) existe mais n'est pas encore intégré au flux. Cette intégration est **prioritaire** avant toute utilisation avec des données réelles de clients.
 
 ### 4.2 Destinataires institutionnels
 

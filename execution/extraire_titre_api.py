@@ -35,6 +35,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+from execution.security.secure_delete import secure_delete_file
+
 # Configuration encodage Windows
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding='utf-8')
@@ -248,12 +250,9 @@ class ExtractionTitreAPI:
             )
 
         finally:
-            # Nettoyer le fichier temporaire
+            # Nettoyer le fichier temporaire (ecrasement securise)
             if 'tmp_path' in locals() and tmp_path.exists():
-                try:
-                    tmp_path.unlink()
-                except Exception:
-                    pass
+                secure_delete_file(tmp_path)
 
     async def extraire_depuis_fichier(
         self,

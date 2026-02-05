@@ -60,6 +60,8 @@ class ContexteConversation:
     type_acte_en_cours: Optional[str] = None
     etape_workflow: Optional[str] = None
     donnees_collectees: Dict[str, Any] = field(default_factory=dict)
+    questionnaire_active: bool = False
+    questionnaire_state: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -138,6 +140,18 @@ class ChatHandler:
 
         if self.verbose:
             print(f"[ChatHandler] Message recu: {message[:50]}...")
+
+        # 0. Si questionnaire actif, traiter la reponse dans ce mode
+        if contexte.questionnaire_active and contexte.questionnaire_state:
+            # Verifier si c'est une annulation
+            msg_lower = message.lower().strip()
+            if msg_lower in ["annuler", "stop", "non", "arreter"]:
+                return ReponseChat(
+                    content="Questionnaire annule. Comment puis-je vous aider ?",
+                    suggestions=["Creer un acte", "Voir mes dossiers", "Aide"],
+                    contexte_mis_a_jour={"questionnaire_active": False, "questionnaire_state": None, "etape_workflow": None}
+                )
+            return self._reponse_questionnaire(message, contexte, etude_id)
 
         # 1. Analyser l'intention
         intention, confiance, entites = self._analyser_intention(message)
@@ -322,11 +336,11 @@ Que souhaitez-vous faire ?""",
         )
 
     def _reponse_creer(self, entites, message, contexte, etude_id) -> ReponseChat:
-        """Reponse pour la creation d'actes."""
+        """Reponse pour la creation d'actes. Demarre le questionnaire si type detecte."""
         type_acte = entites.get("type_acte")
 
         if type_acte:
-            # Type d'acte detecte
+            # Demarrer le questionnaire interactif
             type_lisible = {
                 "vente": "acte de vente",
                 "promesse_vente": "promesse de vente",
@@ -334,6 +348,32 @@ Que souhaitez-vous faire ?""",
                 "modificatif_edd": "modificatif EDD"
             }.get(str(type_acte), str(type_acte))
 
+            try:
+                from execution.questionnaire_manager import QuestionnaireManager
+                qm = QuestionnaireManager(str(type_acte))
+                next_q = qm.get_next_question()
+
+                if next_q:
+                    article = "une" if str(type_acte) == "promesse_vente" else "un"
+                    return ReponseChat(
+                        content=f"""Je vais vous guider pour creer {article} {type_lisible}.
+
+[{next_q['progress']}%] **Section : {next_q['section_titre']}**
+{next_q['question']}""" + (f"\n\nChoix possibles : {', '.join(next_q['options'])}" if next_q.get('options') else ""),
+                        suggestions=next_q.get("options", ["Annuler"]),
+                        action={"type": "start_questionnaire", "type_acte": str(type_acte)},
+                        contexte_mis_a_jour={
+                            "type_acte_en_cours": str(type_acte),
+                            "etape_workflow": "questionnaire",
+                            "questionnaire_active": True,
+                            "questionnaire_state": qm.serialize()
+                        }
+                    )
+            except Exception as e:
+                if self.verbose:
+                    print(f"[ChatHandler] Erreur questionnaire: {e}")
+
+            # Fallback sans questionnaire
             return ReponseChat(
                 content=f"""Je vais vous aider a creer un {type_lisible}.
 
@@ -369,6 +409,70 @@ Par quoi souhaitez-vous commencer ?""",
                     "Modificatif EDD"
                 ]
             )
+
+    def _reponse_questionnaire(self, message, contexte, etude_id) -> ReponseChat:
+        """Traite une reponse dans le mode questionnaire interactif."""
+        try:
+            from execution.questionnaire_manager import QuestionnaireManager
+
+            qm = QuestionnaireManager(
+                type_acte=contexte.type_acte_en_cours or "promesse_vente",
+                state=contexte.questionnaire_state
+            )
+
+            # Trouver la question en attente de reponse
+            current_q = qm.get_next_question()
+            if not current_q:
+                # Deja complet
+                return self._reponse_questionnaire_complet(qm, contexte, etude_id)
+
+            # Enregistrer la reponse
+            qm.record_answer(current_q["id"], message.strip())
+
+            # Passer a la question suivante
+            next_q = qm.get_next_question()
+
+            if next_q is None or qm.is_complete():
+                return self._reponse_questionnaire_complet(qm, contexte, etude_id)
+
+            # Poser la question suivante
+            return ReponseChat(
+                content=f"""[{next_q['progress']}%] **Section : {next_q['section_titre']}**
+{next_q['question']}""" + (f"\n\nChoix possibles : {', '.join(next_q['options'])}" if next_q.get('options') else ""),
+                suggestions=next_q.get("options", []),
+                contexte_mis_a_jour={
+                    "questionnaire_active": True,
+                    "questionnaire_state": qm.serialize()
+                }
+            )
+
+        except Exception as e:
+            if self.verbose:
+                print(f"[ChatHandler] Erreur questionnaire: {e}")
+            return ReponseChat(
+                content="Une erreur est survenue dans le questionnaire. Voulez-vous recommencer ?",
+                suggestions=["Recommencer", "Annuler"],
+                contexte_mis_a_jour={"questionnaire_active": False, "questionnaire_state": None}
+            )
+
+    def _reponse_questionnaire_complet(self, qm, contexte, etude_id) -> ReponseChat:
+        """Genere la reponse quand le questionnaire est complet."""
+        resume = qm.get_summary()
+        return ReponseChat(
+            content=f"""[100%] Toutes les informations sont collectees !
+
+{resume}
+
+Souhaitez-vous generer le document ?""",
+            suggestions=["Generer le document", "Modifier une reponse", "Annuler"],
+            action={"type": "questionnaire_complete", "acte_data": qm.to_acte_data()},
+            contexte_mis_a_jour={
+                "questionnaire_active": False,
+                "questionnaire_state": qm.serialize(),
+                "etape_workflow": "generation_prete",
+                "donnees_collectees": qm.to_acte_data()
+            }
+        )
 
     def _reponse_modifier(self, entites, message, contexte, etude_id) -> ReponseChat:
         """Reponse pour la modification d'actes."""
@@ -492,13 +596,13 @@ class SimpleParseur:
 
         analyse = AnalyseSimple()
 
-        if "vente" in texte_lower or "créer" in texte_lower:
-            analyse.intention = "CREER"
-            analyse.type_acte = "vente"
-            analyse.confiance = 0.7
-        elif "promesse" in texte_lower:
+        if "promesse" in texte_lower:
             analyse.intention = "CREER"
             analyse.type_acte = "promesse_vente"
+            analyse.confiance = 0.7
+        elif "vente" in texte_lower or "créer" in texte_lower or "creer" in texte_lower:
+            analyse.intention = "CREER"
+            analyse.type_acte = "vente"
             analyse.confiance = 0.7
         elif "dossier" in texte_lower or "liste" in texte_lower:
             analyse.intention = "GENERER"
@@ -569,85 +673,123 @@ def create_chat_router():
         - Met a jour le contexte de la conversation
         """
         try:
-            handler = ChatHandler(verbose=False)
             historique = request.history or []
             contexte = request.context or {}
             conversation_id = request.conversation_id
 
             # Charger l'historique depuis Supabase si conversation_id fourni
+            # Vrais UUIDs pour satisfaire les FK Supabase (pas d'auth frontend)
+            REAL_USER_ID = "9776afda-de1f-4241-8dcf-a8ae0fd4e53d"
+            REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
+
             supabase = _get_supabase()
-            if supabase and conversation_id and request.etude_id:
+            if supabase and conversation_id:
                 try:
                     conv_resp = supabase.table("conversations").select("*").eq(
                         "id", conversation_id
                     ).maybe_single().execute()
 
                     if conv_resp.data:
-                        # Charger le contexte persiste
-                        stored_ctx = conv_resp.data.get("contexte") or {}
+                        # Charger le contexte persiste (colonne = "context")
+                        stored_ctx = conv_resp.data.get("context") or {}
                         contexte = {**stored_ctx, **contexte}
 
-                        # Charger les messages precedents
-                        msgs_resp = supabase.table("conversation_messages").select(
-                            "role, content"
-                        ).eq(
-                            "conversation_id", conversation_id
-                        ).order("created_at").execute()
-
-                        if msgs_resp.data:
-                            historique = msgs_resp.data
+                        # Charger les messages depuis conversations.messages JSONB
+                        stored_messages = conv_resp.data.get("messages") or []
+                        if stored_messages:
+                            historique = [
+                                {"role": m["role"], "content": m["content"]}
+                                for m in stored_messages
+                            ]
                     else:
-                        # Creer la conversation
+                        # Creer la conversation avec vrais UUIDs
                         supabase.table("conversations").insert({
                             "id": conversation_id,
-                            "etude_id": request.etude_id,
-                            "user_id": request.user_id,
-                            "statut": "active",
-                            "contexte": contexte,
+                            "etude_id": REAL_ETUDE_ID,
+                            "user_id": REAL_USER_ID,
+                            "context": contexte,
+                            "messages": [],
+                            "message_count": 0,
                         }).execute()
                 except Exception:
                     pass  # Fallback silencieux
 
-            reponse = handler.traiter_message(
-                message=request.message,
-                user_id=request.user_id,
-                etude_id=request.etude_id,
-                historique=historique,
-                contexte=contexte
-            )
+            # ============================================================
+            # Agent Anthropic intelligent (avec fallback keyword)
+            # ============================================================
+            reponse = None
+            try:
+                from execution.anthropic_agent import AnthropicAgent
+                agent = AnthropicAgent(supabase_client=supabase)
+                agent_result = await agent.process_message(
+                    message=request.message,
+                    user_id=request.user_id,
+                    etude_id=request.etude_id,
+                    conversation_id=conversation_id,
+                    history=historique,
+                    context=contexte,
+                )
+                # Convertir AgentResponse -> ReponseChat (meme interface)
+                reponse = ReponseChat(
+                    content=agent_result.content,
+                    suggestions=agent_result.suggestions,
+                    action=agent_result.action,
+                    contexte_mis_a_jour=agent_result.contexte_mis_a_jour,
+                    intention_detectee=agent_result.intention,
+                    confiance=agent_result.confiance,
+                )
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(
+                    f"Agent Anthropic indisponible, fallback keyword: {e}"
+                )
 
-            # Persister les messages dans Supabase
-            if supabase and conversation_id and request.etude_id:
+            # Fallback: ancien handler par mots-cles (si Anthropic echoue)
+            if reponse is None:
+                handler = ChatHandler(verbose=False)
+                reponse = handler.traiter_message(
+                    message=request.message,
+                    user_id=request.user_id,
+                    etude_id=request.etude_id,
+                    historique=historique,
+                    contexte=contexte
+                )
+
+            # Persister les messages dans Supabase (JSONB dans conversations.messages)
+            if supabase and conversation_id:
                 try:
-                    supabase.table("conversation_messages").insert([
-                        {
-                            "conversation_id": conversation_id,
-                            "role": "user",
-                            "content": request.message,
-                        },
-                        {
-                            "conversation_id": conversation_id,
-                            "role": "assistant",
-                            "content": reponse.content,
-                            "intention": reponse.intention_detectee,
-                            "confiance": reponse.confiance,
-                            "metadata": {
-                                "suggestions": reponse.suggestions,
-                            },
-                        },
-                    ]).execute()
+                    from datetime import datetime
+                    # Charger messages existants
+                    conv = supabase.table("conversations").select(
+                        "messages, message_count"
+                    ).eq("id", conversation_id).maybe_single().execute()
 
-                    # Mettre a jour le contexte
-                    update_data = {}
+                    existing = (conv.data.get("messages") or []) if conv.data else []
+                    existing.append({
+                        "role": "user",
+                        "content": request.message,
+                        "timestamp": datetime.now().isoformat(),
+                    })
+                    existing.append({
+                        "role": "assistant",
+                        "content": reponse.content,
+                        "timestamp": datetime.now().isoformat(),
+                        "intention": reponse.intention_detectee,
+                        "confiance": reponse.confiance,
+                        "suggestions": reponse.suggestions,
+                    })
+
+                    update_data = {
+                        "messages": existing,
+                        "message_count": len(existing),
+                        "last_message_at": datetime.now().isoformat(),
+                    }
                     if reponse.contexte_mis_a_jour:
-                        update_data["contexte"] = reponse.contexte_mis_a_jour
-                        type_acte = reponse.contexte_mis_a_jour.get("type_acte_en_cours")
-                        if type_acte:
-                            update_data["type_acte"] = type_acte
-                    if update_data:
-                        supabase.table("conversations").update(update_data).eq(
-                            "id", conversation_id
-                        ).execute()
+                        update_data["context"] = reponse.contexte_mis_a_jour
+
+                    supabase.table("conversations").update(update_data).eq(
+                        "id", conversation_id
+                    ).execute()
                 except Exception:
                     pass  # Fallback silencieux
 
@@ -676,22 +818,266 @@ def create_chat_router():
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+    # =================================================================
+    # Streaming SSE endpoint
+    # =================================================================
+
+    @router.post("/stream")
+    async def chat_stream(request: ChatRequest):
+        """
+        Version streaming du chat via Server-Sent Events.
+
+        Events:
+          status  → {"message": "Recherche des questions..."}
+          token   → {"text": "Bonjour, "}
+          done    → {"suggestions": [...], "section": "...", "progress_pct": 42}
+          error   → {"message": "..."}
+        """
+        from sse_starlette.sse import EventSourceResponse
+
+        async def event_generator():
+            try:
+                historique = request.history or []
+                contexte = request.context or {}
+                conversation_id = request.conversation_id
+
+                REAL_USER_ID = "9776afda-de1f-4241-8dcf-a8ae0fd4e53d"
+                REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
+
+                supabase = _get_supabase()
+                if supabase and conversation_id:
+                    try:
+                        conv_resp = supabase.table("conversations").select("*").eq(
+                            "id", conversation_id
+                        ).maybe_single().execute()
+
+                        if conv_resp and conv_resp.data:
+                            stored_ctx = conv_resp.data.get("context") or {}
+                            contexte = {**stored_ctx, **contexte}
+                            stored_messages = conv_resp.data.get("messages") or []
+                            if stored_messages:
+                                historique = [
+                                    {"role": m["role"], "content": m["content"]}
+                                    for m in stored_messages
+                                ]
+                        else:
+                            supabase.table("conversations").insert({
+                                "id": conversation_id,
+                                "etude_id": REAL_ETUDE_ID,
+                                "user_id": REAL_USER_ID,
+                                "context": contexte,
+                                "messages": [],
+                                "message_count": 0,
+                            }).execute()
+                    except Exception:
+                        pass
+
+                # Agent Anthropic en streaming
+                from execution.anthropic_agent import AnthropicAgent
+                agent = AnthropicAgent(supabase_client=supabase)
+
+                full_content = ""
+                full_metadata = {}
+
+                async for event in agent.process_message_stream(
+                    message=request.message,
+                    user_id=request.user_id,
+                    etude_id=request.etude_id,
+                    conversation_id=conversation_id,
+                    history=historique,
+                    context=contexte,
+                ):
+                    if event["event"] == "done":
+                        done_data = json.loads(event["data"])
+                        full_content = done_data.get("content", "")
+                        full_metadata = done_data
+
+                        # Persister dans Supabase avant de yielder done
+                        if supabase and conversation_id:
+                            try:
+                                conv = supabase.table("conversations").select(
+                                    "messages, message_count"
+                                ).eq("id", conversation_id).maybe_single().execute()
+
+                                existing = (conv.data.get("messages") or []) if conv and conv.data else []
+                                existing.append({
+                                    "role": "user",
+                                    "content": request.message,
+                                    "timestamp": datetime.now().isoformat(),
+                                })
+                                existing.append({
+                                    "role": "assistant",
+                                    "content": full_content,
+                                    "timestamp": datetime.now().isoformat(),
+                                    "suggestions": full_metadata.get("suggestions", []),
+                                })
+
+                                update_data = {
+                                    "messages": existing,
+                                    "message_count": len(existing),
+                                    "last_message_at": datetime.now().isoformat(),
+                                }
+                                ctx_update = {}
+                                if full_metadata.get("progress_pct"):
+                                    ctx_update["progress_pct"] = full_metadata["progress_pct"]
+                                if full_metadata.get("categorie_bien"):
+                                    ctx_update["categorie_bien"] = full_metadata["categorie_bien"]
+                                if ctx_update:
+                                    update_data["context"] = {**contexte, **ctx_update}
+
+                                supabase.table("conversations").update(update_data).eq(
+                                    "id", conversation_id
+                                ).execute()
+                            except Exception:
+                                pass
+
+                    yield event
+
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Streaming error: {e}")
+
+                # Fallback keyword handler
+                try:
+                    handler = ChatHandler(verbose=False)
+                    reponse = handler.traiter_message(
+                        message=request.message,
+                        user_id=request.user_id,
+                        etude_id=request.etude_id,
+                        historique=[],
+                        contexte={},
+                    )
+                    yield {
+                        "event": "token",
+                        "data": json.dumps({"text": reponse.content}),
+                    }
+                    yield {
+                        "event": "done",
+                        "data": json.dumps({
+                            "content": reponse.content,
+                            "suggestions": reponse.suggestions,
+                        }),
+                    }
+                except Exception as e2:
+                    yield {
+                        "event": "error",
+                        "data": json.dumps({"message": str(e2)}),
+                    }
+
+        return EventSourceResponse(
+            event_generator(),
+            ping=15,  # Keepalive toutes les 15s (evite coupure pendant generation)
+            headers={
+                "X-Accel-Buffering": "no",
+                "Cache-Control": "no-cache",
+            },
+        )
+
+    @router.get("/conversations")
+    async def list_conversations():
+        """Liste les conversations recentes (max 20)."""
+        supabase = _get_supabase()
+        if not supabase:
+            return {"conversations": []}
+        try:
+            resp = supabase.table("conversations").select(
+                "id, message_count, context, created_at, updated_at, messages"
+            ).order("updated_at", desc=True).limit(20).execute()
+
+            conversations = []
+            for conv in (resp.data or []):
+                # Extraire le titre du 1er message user
+                messages = conv.get("messages") or []
+                title = "Nouvelle conversation"
+                for m in messages:
+                    if m.get("role") == "user":
+                        title = m["content"][:60]
+                        break
+
+                ctx = conv.get("context") or {}
+                conversations.append({
+                    "id": conv["id"],
+                    "title": title,
+                    "type_acte": ctx.get("type_acte_en_cours"),
+                    "message_count": conv.get("message_count") or 0,
+                    "progress_pct": ctx.get("progress_pct"),
+                    "created_at": conv.get("created_at"),
+                    "updated_at": conv.get("updated_at"),
+                })
+            return {"conversations": conversations}
+        except Exception:
+            return {"conversations": []}
+
+    @router.get("/conversations/{conversation_id}")
+    async def get_conversation(conversation_id: str):
+        """Charge une conversation complete avec ses messages."""
+        supabase = _get_supabase()
+        if not supabase:
+            raise HTTPException(status_code=503, detail="Supabase non disponible")
+        try:
+            resp = supabase.table("conversations").select("*").eq(
+                "id", conversation_id
+            ).maybe_single().execute()
+
+            if not resp or not resp.data:
+                raise HTTPException(status_code=404, detail="Conversation non trouvee")
+
+            ctx = resp.data.get("context") or {}
+            return {
+                "id": resp.data["id"],
+                "messages": resp.data.get("messages") or [],
+                "context": ctx,
+                "type_acte": ctx.get("type_acte_en_cours"),
+                "message_count": resp.data.get("message_count") or 0,
+                "created_at": resp.data.get("created_at"),
+                "updated_at": resp.data.get("updated_at"),
+            }
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    class FeedbackRequest(BaseModel):
+        conversation_id: str
+        message_index: int
+        rating: int  # 1 = bon, -1 = mauvais
+        comment: Optional[str] = None
+
     @router.post("/feedback")
-    async def submit_feedback(
-        conversation_id: str,
-        message_index: int,
-        rating: int,
-        feedback_type: Optional[str] = None,
-        correction: Optional[str] = None
-    ):
-        """
-        Enregistre un feedback pour l'apprentissage continu.
-        """
-        # En production, sauvegarder dans Supabase
-        return {
-            "status": "ok",
-            "message": "Feedback enregistre. Merci pour votre contribution !"
-        }
+    async def submit_feedback(request: FeedbackRequest):
+        """Enregistre un feedback sur un message assistant."""
+        REAL_USER_ID = "9776afda-de1f-4241-8dcf-a8ae0fd4e53d"
+        REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
+
+        supabase = _get_supabase()
+        if not supabase:
+            return {"status": "ok", "saved": False}
+
+        try:
+            # Charger le message assistant pour le champ agent_response (requis)
+            conv = supabase.table("conversations").select(
+                "messages"
+            ).eq("id", request.conversation_id).maybe_single().execute()
+
+            agent_response = ""
+            if conv.data:
+                messages = conv.data.get("messages") or []
+                if request.message_index < len(messages):
+                    agent_response = messages[request.message_index].get("content", "")
+
+            supabase.table("feedbacks").insert({
+                "conversation_id": request.conversation_id,
+                "message_index": request.message_index,
+                "rating": request.rating,
+                "correction": request.comment,
+                "agent_response": agent_response,
+                "user_id": REAL_USER_ID,
+                "etude_id": REAL_ETUDE_ID,
+            }).execute()
+            return {"status": "ok", "saved": True}
+        except Exception:
+            # Fallback: retourner ok meme si sauvegarde echoue
+            return {"status": "ok", "saved": False}
 
     return router
 

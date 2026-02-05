@@ -33,6 +33,8 @@ from typing import Optional
 import markdown
 from datetime import datetime
 
+from execution.security.secure_delete import secure_delete_file
+
 
 # CSS pour la mise en page notariale - Basé sur audit_pdf_complet.py
 # Original: Times New Roman 11pt, interligne 12.6pt, espacement para 12pt
@@ -562,11 +564,11 @@ def exporter_avec_pdfkit(html: str, chemin_sortie: Path) -> bool:
         else:
             pdfkit.from_string(html, str(chemin_sortie), options=options)
 
-        # Nettoyer le fichier header temporaire
+        # Nettoyer le fichier header temporaire (ecrasement securise)
+        secure_delete_file(chemin_header)
         try:
-            chemin_header.unlink()
             chemin_temp.rmdir()
-        except:
+        except OSError:
             pass
 
         return True
