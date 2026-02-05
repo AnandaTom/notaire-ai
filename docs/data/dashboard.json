@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-05T06:58:33.261304",
+    "generated_at": "2026-02-05T19:36:48.190755",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,19 +9,19 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 63,
+    "scripts_count": 69,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 196
+    "commits": 204
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "73efedd",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-02-04"
+      "hash": "0aed352",
+      "message": "Merge branch 'payoss/dev'",
+      "date": "2026-02-05"
     },
-    "total_commits": 196,
+    "total_commits": 204,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 54
+        "commits": 55
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 15
+        "commits": 17
       },
       {
         "name": "Automai",
@@ -92,11 +92,11 @@
     }
   ],
   "scripts": {
-    "total": 63,
-    "total_lines": 37791,
+    "total": 69,
+    "total_lines": 40963,
     "categories": {
       "generation": 6,
-      "utils": 49,
+      "utils": 55,
       "tests": 3,
       "export": 3,
       "validation": 2
@@ -119,13 +119,18 @@
       },
       {
         "name": "orchestrateur.py",
-        "lines": 1460,
+        "lines": 1461,
         "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "gestionnaire_promesses.py",
         "lines": 1374,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
+      },
+      {
+        "name": "chat_handler.py",
+        "lines": 1117,
+        "path": "execution/chat_handler.py"
       },
       {
         "name": "generer_dashboard_data.py",
@@ -139,18 +144,13 @@
       },
       {
         "name": "secure_client_manager.py",
-        "lines": 951,
+        "lines": 937,
         "path": "execution/security/secure_client_manager.py"
       },
       {
         "name": "gestionnaire_titres.py",
         "lines": 919,
         "path": "execution/gestionnaires/gestionnaire_titres.py"
-      },
-      {
-        "name": "comparer_documents.py",
-        "lines": 859,
-        "path": "execution/analyse/comparer_documents.py"
       }
     ]
   },
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "0aed352",
+      "author": "Payoss",
+      "date": "2026-02-05",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "9109002",
+      "author": "Payoss",
+      "date": "2026-02-05",
+      "message": "Améliorations chat, sécurité et services",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "00b32c4",
+      "author": "github-actions[bot]",
+      "date": "2026-02-05",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "73efedd",
       "author": "github-actions[bot]",
       "date": "2026-02-04",
@@ -732,6 +762,26 @@
       "type_color": "purple"
     },
     {
+      "hash": "2563304",
+      "author": "Payoss",
+      "date": "2026-02-04",
+      "message": "Merge remote-tracking branch 'origin/master' into payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "01c8c6b",
+      "author": "Payoss",
+      "date": "2026-02-04",
+      "message": "questionnaire intelligent avec extraction NLP + flow chat complet",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
       "hash": "255ef27",
       "author": "github-actions[bot]",
       "date": "2026-02-04",
@@ -765,56 +815,6 @@
       "hash": "fa490d7",
       "author": "github-actions[bot]",
       "date": "2026-02-04",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "31fe1e6",
-      "author": "Augustin",
-      "date": "2026-02-04",
-      "message": "suppression fichiers obsolètes web/",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "498e700",
-      "author": "github-actions[bot]",
-      "date": "2026-02-04",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "6fabe8a",
-      "author": "Augustin",
-      "date": "2026-02-04",
-      "message": "ajout module pilotage ERP avec KPIs",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "0e13aae",
-      "author": "github-actions[bot]",
-      "date": "2026-02-04",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "062cc5b",
-      "author": "github-actions[bot]",
-      "date": "2026-02-03",
       "message": "auto-update dashboard data [skip ci]",
       "type": "chore",
       "type_label": "Maintenance",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-05 06:58"
+    "last_updated": "2026-02-05 19:36"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-05 06:58"
+    "last_updated": "2026-02-05 19:36"
   },
   "conformity_details": {
     "promesse": {
