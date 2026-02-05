@@ -152,19 +152,21 @@ class SecureClientManager:
         self.etude_id = etude_id
         self.user_id = user_id or os.getenv("AGENT_USER_ID", "system")
 
-        # Initialiser le chiffrement
-        if CRYPTO_AVAILABLE:
-            try:
-                self.encryption = EncryptionService(master_key=encryption_key)
-                self._encryption_enabled = True
-            except ValueError as e:
-                console.print(f"[yellow]Chiffrement desactive: {e}[/yellow]")
-                self._encryption_enabled = False
-                self.encryption = None
-        else:
-            console.print("[yellow]Package cryptography non installe. Chiffrement desactive.[/yellow]")
-            self._encryption_enabled = False
-            self.encryption = None
+        # Initialiser le chiffrement - OBLIGATOIRE pour les donnees notariales
+        if not CRYPTO_AVAILABLE:
+            raise RuntimeError(
+                "SECURITE: Le package 'cryptography' est requis pour manipuler des donnees clients. "
+                "Installez-le avec: pip install cryptography"
+            )
+
+        try:
+            self.encryption = EncryptionService(master_key=encryption_key)
+            self._encryption_enabled = True
+        except ValueError as e:
+            raise RuntimeError(
+                f"SECURITE: Impossible d'initialiser le chiffrement: {e}. "
+                "Verifiez que ENCRYPTION_MASTER_KEY est defini dans .env"
+            ) from e
 
         # Initialiser le client Supabase
         self.url = os.getenv("SUPABASE_URL")
@@ -718,14 +720,6 @@ class SecureClientManager:
         """Chiffre les champs sensibles des donnees client."""
         result = data.copy()
 
-        if not self._encryption_enabled:
-            # Sans chiffrement, juste renommer les champs
-            for field in SENSITIVE_FIELDS:
-                if field in result and result[field]:
-                    result[f"{field}_encrypted"] = result[field]
-                    del result[field]
-            return result
-
         for field in SENSITIVE_FIELDS:
             if field in result and result[field]:
                 result[f"{field}_encrypted"] = self.encryption.encrypt(str(result[field]))
@@ -741,10 +735,7 @@ class SecureClientManager:
             encrypted_field = f"{field}_encrypted"
             if encrypted_field in result and result[encrypted_field]:
                 try:
-                    if self._encryption_enabled:
-                        result[field] = self.encryption.decrypt(result[encrypted_field])
-                    else:
-                        result[field] = result[encrypted_field]
+                    result[field] = self.encryption.decrypt(result[encrypted_field])
                 except Exception:
                     result[field] = "[ERREUR DECHIFFREMENT]"
                 del result[encrypted_field]
@@ -753,12 +744,7 @@ class SecureClientManager:
 
     def _hash_for_search(self, value: str) -> str:
         """Cree un hash recherchable."""
-        if self._encryption_enabled:
-            return self.encryption.hash_for_search(value)
-        else:
-            import hashlib
-            normalized = value.strip().lower()
-            return hashlib.sha256(normalized.encode('utf-8')).hexdigest()
+        return self.encryption.hash_for_search(value)
 
     def _to_client_object(self, data: Dict[str, Any]) -> ClientData:
         """Convertit une ligne DB en objet ClientData avec dechiffrement."""

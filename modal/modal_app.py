@@ -28,16 +28,27 @@ from pathlib import Path
 # Configuration Modal
 # =============================================================================
 
-# Image Docker avec les dépendances
-image = modal.Image.debian_slim(python_version="3.11").pip_install(
-    "fastapi>=0.104.0",
-    "uvicorn>=0.24.0",
-    "python-docx>=1.1.0",
-    "jinja2>=3.1.2",
-    "pydantic>=2.5.0",
-    "supabase>=2.0.0",
-    "python-multipart>=0.0.6",
-    "sse-starlette>=1.6.0",
+# Racine du projet (notaire-ai/)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# Image Docker avec les dépendances + fichiers du projet
+image = (
+    modal.Image.debian_slim(python_version="3.11")
+    .pip_install(
+        "fastapi>=0.104.0",
+        "uvicorn>=0.24.0",
+        "python-docx>=1.1.0",
+        "jinja2>=3.1.2",
+        "pydantic>=2.5.0",
+        "supabase>=2.0.0",
+        "python-multipart>=0.0.6",
+        "sse-starlette>=1.6.0",
+        "anthropic>=0.40.0",
+    )
+    .add_local_dir(PROJECT_ROOT / "api", remote_path="/root/project/api")
+    .add_local_dir(PROJECT_ROOT / "execution", remote_path="/root/project/execution")
+    .add_local_dir(PROJECT_ROOT / "schemas", remote_path="/root/project/schemas")
+    .add_local_dir(PROJECT_ROOT / "templates", remote_path="/root/project/templates")
 )
 
 # Stub Modal
@@ -46,6 +57,7 @@ app = modal.App(
     image=image,
     secrets=[
         modal.Secret.from_name("supabase-credentials"),  # SUPABASE_URL, SUPABASE_KEY
+        modal.Secret.from_name("anthropic-credentials"),    # ANTHROPIC_API_KEY
     ]
 )
 
@@ -61,21 +73,22 @@ volume = modal.Volume.from_name("notaire-ai-outputs", create_if_missing=True)
     timeout=300,  # 5 minutes max par requête
     memory=1024,  # 1 GB RAM
     cpu=1.0,
-    allow_concurrent_inputs=10,  # 10 requêtes simultanées par instance
-    container_idle_timeout=60,  # Garde le container 60s après la dernière requête
+    scaledown_window=300,  # Garde le container 5min après la dernière requête
+    min_containers=1,  # Toujours 1 container chaud (élimine cold start)
 )
+@modal.concurrent(max_inputs=10)  # 10 requêtes simultanées par instance
 @modal.asgi_app()
 def fastapi_app():
     """Point d'entrée FastAPI sur Modal."""
     import sys
     import os
 
-    # Ajouter le projet au path
-    project_root = Path(__file__).parent.parent
-    sys.path.insert(0, str(project_root))
+    # Ajouter le projet monte au path
+    sys.path.insert(0, "/root/project")
 
     # Configurer les chemins pour Modal
     os.environ["NOTAIRE_OUTPUT_DIR"] = "/outputs"
+    os.environ["MODAL_ENVIRONMENT"] = "production"
 
     # Importer l'app FastAPI
     from api.main import app
@@ -272,10 +285,8 @@ def generate_deed(
         dict avec le chemin du fichier et les métadonnées
     """
     import sys
-    from pathlib import Path
 
-    project_root = Path(__file__).parent.parent
-    sys.path.insert(0, str(project_root))
+    sys.path.insert(0, "/root/project")
 
     from execution.gestionnaires.orchestrateur import OrchestratorNotaire
 
@@ -306,10 +317,8 @@ def parse_request(texte: str) -> dict:
         dict avec l'analyse détaillée
     """
     import sys
-    from pathlib import Path
 
-    project_root = Path(__file__).parent.parent
-    sys.path.insert(0, str(project_root))
+    sys.path.insert(0, "/root/project")
 
     from execution.agent_autonome import ParseurDemandeNL
 

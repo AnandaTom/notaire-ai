@@ -37,7 +37,7 @@ import json
 import hashlib
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Encodage UTF-8 pour Windows
 if sys.platform == 'win32':
@@ -467,8 +467,22 @@ class AgentDB:
         resource_id: str = None,
         details: Dict = None
     ) -> None:
-        """Enregistre une action dans les logs d'audit."""
+        """Enregistre une action dans les logs d'audit.
+
+        Si Supabase est indisponible, ecrit dans un fichier local de fallback
+        pour ne jamais perdre de logs de securite.
+        """
+        log_entry = {
+            "action": action,
+            "resource_type": resource_type,
+            "etude_id": etude_id,
+            "resource_id": resource_id,
+            "details": details or {},
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
         if self._offline:
+            self._write_local_audit_log(log_entry)
             return
 
         try:
@@ -479,8 +493,24 @@ class AgentDB:
                 "resource_id": resource_id,
                 "details": details or {}
             }).execute()
+        except Exception as e:
+            # Fallback: ecrire en local pour ne jamais perdre un log de securite
+            log_entry["supabase_error"] = str(e)
+            self._write_local_audit_log(log_entry)
+            print(f"[AUDIT] Echec Supabase, log sauvegarde localement: {action} {resource_type}")
+
+    def _write_local_audit_log(self, entry: Dict) -> None:
+        """Ecrit un log d'audit dans un fichier local de fallback."""
+        try:
+            log_dir = Path(__file__).parent.parent.parent / ".tmp" / "audit_logs"
+            log_dir.mkdir(parents=True, exist_ok=True)
+            log_file = log_dir / f"audit_{datetime.now(timezone.utc).strftime('%Y%m%d')}.jsonl"
+            with open(log_file, "a", encoding="utf-8") as f:
+                f.write(json.dumps(entry, ensure_ascii=False, default=str) + "\n")
         except Exception:
-            pass  # Non bloquant
+            # Dernier recours: stderr pour ne jamais perdre silencieusement
+            import sys
+            print(f"[AUDIT CRITICAL] Impossible d'ecrire le log: {entry}", file=sys.stderr)
 
 
 # =============================================================================

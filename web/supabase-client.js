@@ -7,6 +7,19 @@ const SUPABASE_URL = 'https://wcklvjckzktijtgakdrk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indja2x2amNremt0aWp0Z2FrZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDI1NzksImV4cCI6MjA4NDU3ODU3OX0.lyfrGeuVSkivopQVWlq3tf6Uo5k4Z6BqOEPt5WuYXS4';
 
 const SupabaseClient = {
+    // Session Supabase Auth (access_token, refresh_token, user)
+    _session: null,
+
+    /**
+     * Retourne le token d'autorisation a utiliser.
+     * Si un utilisateur est connecte via Supabase Auth, utilise son access_token.
+     * Sinon, utilise la cle anon (pour les endpoints publics comme form_submissions).
+     * @returns {string}
+     */
+    _getAuthToken() {
+        return this._session?.access_token || SUPABASE_ANON_KEY;
+    },
+
     /**
      * Effectue une requête à l'API Supabase
      * @param {string} endpoint - Endpoint (ex: '/rest/v1/form_submissions')
@@ -18,7 +31,7 @@ const SupabaseClient = {
 
         const headers = {
             'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Authorization': `Bearer ${this._getAuthToken()}`,
             'Content-Type': 'application/json',
             'Prefer': options.prefer || 'return=representation',
             ...options.headers
@@ -30,6 +43,22 @@ const SupabaseClient = {
         });
 
         if (!response.ok) {
+            // Si 401 et session existante, tenter un refresh
+            if (response.status === 401 && this._session?.refresh_token) {
+                const refreshed = await this.refreshSession();
+                if (refreshed) {
+                    // Retenter la requete avec le nouveau token
+                    headers['Authorization'] = `Bearer ${this._getAuthToken()}`;
+                    const retryResponse = await fetch(url, { ...options, headers });
+                    if (retryResponse.ok) {
+                        const ct = retryResponse.headers.get('content-type');
+                        if (ct && ct.includes('application/json')) {
+                            return await retryResponse.json();
+                        }
+                        return null;
+                    }
+                }
+            }
             const error = await response.text();
             throw new Error(`Supabase error: ${response.status} - ${error}`);
         }
@@ -41,6 +70,163 @@ const SupabaseClient = {
         }
 
         return null;
+    },
+
+    // =========================================================================
+    // AUTHENTIFICATION (Supabase Auth / GoTrue)
+    // =========================================================================
+
+    /**
+     * Connecte un notaire via Supabase Auth (email + mot de passe)
+     * Utilise l'API GoTrue REST directement.
+     * @param {string} email
+     * @param {string} password
+     * @returns {Promise<object|null>} Profil notaire avec info etude, ou null si echec
+     */
+    async signIn(email, password) {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const data = await response.json();
+
+        // Stocker la session (access_token, refresh_token, user)
+        this._session = {
+            access_token: data.access_token,
+            refresh_token: data.refresh_token,
+            expires_at: Date.now() + (data.expires_in * 1000),
+            user: data.user,
+        };
+
+        // Persister la session
+        try {
+            localStorage.setItem('supabase_session', JSON.stringify(this._session));
+        } catch (e) { /* storage indisponible */ }
+
+        // Recuperer le profil notaire depuis notaire_users
+        const profiles = await this.request(
+            `/rest/v1/notaire_users?email=eq.${encodeURIComponent(email)}&is_active=eq.true&select=*,etudes(*)`,
+            { method: 'GET' }
+        );
+
+        if (!profiles || profiles.length === 0) {
+            return null;
+        }
+
+        const profile = profiles[0];
+
+        // Mettre a jour last_login
+        await this.request(
+            `/rest/v1/notaire_users?id=eq.${profile.id}`,
+            {
+                method: 'PATCH',
+                body: JSON.stringify({ last_login_at: new Date().toISOString() })
+            }
+        ).catch(() => {}); // non bloquant
+
+        return profile;
+    },
+
+    /**
+     * Deconnecte l'utilisateur courant
+     */
+    async signOut() {
+        if (this._session?.access_token) {
+            try {
+                await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${this._session.access_token}`,
+                    },
+                });
+            } catch (e) { /* best effort */ }
+        }
+        this._session = null;
+        try {
+            localStorage.removeItem('supabase_session');
+            localStorage.removeItem('notaire_session');
+        } catch (e) { /* storage indisponible */ }
+    },
+
+    /**
+     * Rafraichit le token d'acces via le refresh_token
+     * @returns {Promise<boolean>} true si le refresh a reussi
+     */
+    async refreshSession() {
+        if (!this._session?.refresh_token) return false;
+
+        try {
+            const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ refresh_token: this._session.refresh_token }),
+            });
+
+            if (!response.ok) {
+                this._session = null;
+                localStorage.removeItem('supabase_session');
+                return false;
+            }
+
+            const data = await response.json();
+            this._session = {
+                access_token: data.access_token,
+                refresh_token: data.refresh_token,
+                expires_at: Date.now() + (data.expires_in * 1000),
+                user: data.user,
+            };
+
+            localStorage.setItem('supabase_session', JSON.stringify(this._session));
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
+
+    /**
+     * Restaure la session depuis localStorage au chargement de la page.
+     * Rafraichit le token si expire ou proche de l'expiration.
+     * @returns {Promise<object|null>} La session restauree ou null
+     */
+    async restoreSession() {
+        try {
+            const saved = localStorage.getItem('supabase_session');
+            if (!saved) return null;
+
+            this._session = JSON.parse(saved);
+
+            // Si le token expire dans moins de 60s, rafraichir
+            if (this._session.expires_at - Date.now() < 60000) {
+                const ok = await this.refreshSession();
+                if (!ok) return null;
+            }
+
+            return this._session;
+        } catch (e) {
+            this._session = null;
+            return null;
+        }
+    },
+
+    /**
+     * Verifie si un utilisateur est actuellement connecte
+     * @returns {boolean}
+     */
+    isAuthenticated() {
+        return !!(this._session?.access_token);
     },
 
     /**
@@ -218,43 +404,8 @@ const SupabaseClient = {
         );
     },
 
-    /**
-     * Authentifie un notaire par email/mot de passe
-     * @param {string} email
-     * @param {string} password
-     * @returns {Promise<object|null>} Notaire user object with étude info
-     */
-    async authenticateNotaire(email, password) {
-        // Hash password client-side with SHA-256
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-        // Query notaire_users with email and check hash
-        const users = await this.request(
-            `/rest/v1/notaire_users?email=eq.${encodeURIComponent(email)}&password_hash=eq.${passwordHash}&is_active=eq.true&select=*,etudes(*)`,
-            { method: 'GET' }
-        );
-
-        if (!users || users.length === 0) {
-            return null;
-        }
-
-        const user = users[0];
-
-        // Update last login
-        await this.request(
-            `/rest/v1/notaire_users?id=eq.${user.id}`,
-            {
-                method: 'PATCH',
-                body: JSON.stringify({ last_login_at: new Date().toISOString() })
-            }
-        );
-
-        return user;
-    },
+    // authenticateNotaire() SUPPRIME - Remplace par signIn() qui utilise Supabase Auth
+    // L'ancienne methode utilisait SHA-256 sans sel, hash dans l'URL = dangereux
 
     /**
      * Liste les dossiers d'une étude

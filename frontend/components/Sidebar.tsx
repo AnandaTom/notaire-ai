@@ -1,8 +1,32 @@
 'use client'
 
-import { FileText, Book, FolderOpen, Scale, HelpCircle, Shield } from 'lucide-react'
+import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen } from 'lucide-react'
+import type { ConversationSummary } from '@/app/page'
 
-export default function Sidebar() {
+interface SidebarProps {
+  conversations: ConversationSummary[]
+  activeConversationId: string
+  onSelectConversation: (id: string) => void
+  onNewConversation: () => void
+}
+
+function timeAgo(dateStr: string): string {
+  const now = new Date()
+  const date = new Date(dateStr)
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000)
+  if (diff < 60) return "à l'instant"
+  if (diff < 3600) return `il y a ${Math.floor(diff / 60)}min`
+  if (diff < 86400) return `il y a ${Math.floor(diff / 3600)}h`
+  if (diff < 604800) return `il y a ${Math.floor(diff / 86400)}j`
+  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+}
+
+export default function Sidebar({
+  conversations,
+  activeConversationId,
+  onSelectConversation,
+  onNewConversation,
+}: SidebarProps) {
   return (
     <aside className="bg-navy flex flex-col relative overflow-hidden">
       {/* Pattern background */}
@@ -36,25 +60,63 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="p-4 flex-1 relative z-10">
-        <div className="mb-6">
-          <p className="text-[0.65rem] text-white/35 uppercase tracking-widest px-2 mb-2.5">
-            Actions
-          </p>
-          <NavItem icon={FileText} label="Nouvel acte" active />
-          <NavItem icon={FolderOpen} label="Mes actes" />
-          <NavItem icon={Book} label="Modèles" />
-        </div>
+      {/* New conversation button + list */}
+      <div className="p-4 flex-1 relative z-10 flex flex-col min-h-0">
+        <button
+          onClick={onNewConversation}
+          className="flex items-center gap-2.5 w-full px-3.5 py-3 mb-3 bg-gold/15 text-gold-light rounded-xl cursor-pointer hover:bg-gold/25 transition-all text-[0.85rem] font-medium"
+        >
+          <Plus className="w-[18px] h-[18px]" />
+          Nouvelle conversation
+        </button>
 
-        <div className="mb-6">
+        {/* Conversations */}
+        {conversations.length > 0 && (
+          <div className="mb-4">
+            <p className="text-[0.65rem] text-white/35 uppercase tracking-widest px-2 mb-2.5">
+              Conversations
+            </p>
+            <div className="flex flex-col gap-0.5 overflow-y-auto max-h-[240px] scrollbar-thin">
+              {conversations.map((conv) => (
+                <button
+                  key={conv.id}
+                  onClick={() => onSelectConversation(conv.id)}
+                  className={`flex items-start gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all text-left w-full ${
+                    conv.id === activeConversationId
+                      ? 'bg-gold/15 text-gold-light'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 opacity-70" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[0.8rem] truncate">{conv.title}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[0.65rem] opacity-50">
+                        {timeAgo(conv.updated_at)}
+                      </span>
+                      {conv.progress_pct != null && conv.progress_pct > 0 && (
+                        <span className="text-[0.6rem] text-gold/80">
+                          {Math.round(conv.progress_pct)}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* References */}
+        <div className="mb-4">
           <p className="text-[0.65rem] text-white/35 uppercase tracking-widest px-2 mb-2.5">
             Références
           </p>
           <NavItem icon={HelpCircle} label="Code civil" />
           <NavItem icon={FolderOpen} label="Clauses types" />
+          <NavItem icon={Book} label="Modèles" />
         </div>
-      </nav>
+      </div>
 
       {/* Footer */}
       <div className="p-5 border-t border-white/10 relative z-10">
@@ -73,21 +135,13 @@ export default function Sidebar() {
 function NavItem({
   icon: Icon,
   label,
-  active = false
 }: {
-  icon: any
+  icon: React.ComponentType<{ className?: string }>
   label: string
-  active?: boolean
 }) {
   return (
-    <div className={`
-      flex items-center gap-3 px-3.5 py-3 rounded-xl cursor-pointer transition-all mb-1
-      ${active
-        ? 'bg-gold/15 text-gold-light'
-        : 'text-white/70 hover:bg-white/10 hover:text-white'
-      }
-    `}>
-      <Icon className={`w-[18px] h-[18px] ${active ? 'opacity-100' : 'opacity-70'}`} />
+    <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl cursor-pointer transition-all mb-1 text-white/70 hover:bg-white/10 hover:text-white">
+      <Icon className="w-[18px] h-[18px] opacity-70" />
       <span className="text-[0.85rem]">{label}</span>
     </div>
   )

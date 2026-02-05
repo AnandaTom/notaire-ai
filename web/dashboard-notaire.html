@@ -2181,27 +2181,36 @@
     let generatedLinks = [];
 
     // =====================================================
-    // INITIALISATION
+    // INITIALISATION (Supabase Auth session restore)
     // =====================================================
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedSession = localStorage.getItem('notaire_session');
-        if (savedSession) {
-            try {
-                const session = JSON.parse(savedSession);
-                currentUser = session.user;
-                currentEtude = session.etude;
-                showDashboard();
-                loadSubmissions();
-                loadDossiers();
-                loadDocumentsStatus(); // Load documents for badge
-            } catch (e) {
-                localStorage.removeItem('notaire_session');
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Tenter de restaurer la session Supabase Auth
+        const session = await SupabaseClient.restoreSession();
+        if (session) {
+            // Session JWT valide, recuperer le profil notaire
+            const savedProfile = localStorage.getItem('notaire_session');
+            if (savedProfile) {
+                try {
+                    const profile = JSON.parse(savedProfile);
+                    currentUser = profile.user;
+                    currentEtude = profile.etude;
+                    showDashboard();
+                    loadSubmissions();
+                    loadDossiers();
+                    loadDocumentsStatus();
+                } catch (e) {
+                    // Profil corrompu, forcer re-login
+                    await SupabaseClient.signOut();
+                }
             }
+        } else {
+            // Pas de session valide, nettoyer
+            localStorage.removeItem('notaire_session');
         }
     });
 
     // =====================================================
-    // AUTHENTIFICATION EMAIL / MOT DE PASSE
+    // AUTHENTIFICATION EMAIL / MOT DE PASSE (Supabase Auth)
     // =====================================================
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -2215,7 +2224,7 @@
         errorDiv.style.display = 'none';
 
         try {
-            const user = await SupabaseClient.authenticateNotaire(email, password);
+            const user = await SupabaseClient.signIn(email, password);
 
             if (!user) {
                 errorDiv.textContent = 'Email ou mot de passe incorrect.';
@@ -2234,7 +2243,7 @@
 
             currentEtude = user.etudes || { nom: 'Mon étude' };
 
-            // Save session
+            // Sauvegarder le profil (les tokens JWT sont dans supabase_session)
             localStorage.setItem('notaire_session', JSON.stringify({
                 user: currentUser,
                 etude: currentEtude
@@ -2243,7 +2252,7 @@
             showDashboard();
             loadSubmissions();
             loadDossiers();
-            loadDocumentsStatus(); // Load documents for badge
+            loadDocumentsStatus();
 
         } catch (error) {
             console.error('Erreur authentification:', error);
@@ -2255,8 +2264,8 @@
         }
     });
 
-    function logout() {
-        localStorage.removeItem('notaire_session');
+    async function logout() {
+        await SupabaseClient.signOut();
         currentUser = null;
         currentEtude = null;
         document.getElementById('dashboardPage').classList.add('hidden');
