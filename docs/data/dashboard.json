@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T20:58:00.586475",
+    "generated_at": "2026-02-05T06:58:33.261304",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 195
+    "commits": 196
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "d45644a",
-      "message": "chore(dashboard): renommage NotaireAI → Notomai",
+      "hash": "73efedd",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-02-04"
     },
-    "total_commits": 195,
+    "total_commits": 196,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 124
+        "commits": 127
       },
       {
         "name": "github-actions[bot]",
-        "commits": 52
+        "commits": 54
       },
       {
         "name": "augustinfrance-aico",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-05"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1536,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-05"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-05"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,7 +88,7 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-05"
     }
   ],
   "scripts": {
@@ -622,6 +622,16 @@
   ],
   "activity": [
     {
+      "hash": "73efedd",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "d45644a",
       "author": "Augustin",
       "date": "2026-02-04",
@@ -805,16 +815,6 @@
       "hash": "062cc5b",
       "author": "github-actions[bot]",
       "date": "2026-02-03",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "c89d37e",
-      "author": "github-actions[bot]",
-      "date": "2026-02-02",
       "message": "auto-update dashboard data [skip ci]",
       "type": "chore",
       "type_label": "Maintenance",
@@ -1023,7 +1023,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-04"
+    "last_updated": "2026-02-05"
   },
   "overview": {
     "overall_score": 67,
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 20:58"
+    "last_updated": "2026-02-05 06:58"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 20:58"
+    "last_updated": "2026-02-05 06:58"
   },
   "conformity_details": {
     "promesse": {
