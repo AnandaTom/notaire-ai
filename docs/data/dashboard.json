@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T17:53:53.960846",
+    "generated_at": "2026-02-04T20:50:38.686990",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,32 +12,32 @@
     "scripts_count": 63,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 181
+    "commits": 193
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "31fe1e6",
-      "message": "chore: suppression fichiers obsolètes web/",
+      "hash": "c638d5e",
+      "message": "feat(dashboard): ajout citation motivation quotidienne",
       "date": "2026-02-04"
     },
-    "total_commits": 181,
+    "total_commits": 193,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 121
+        "commits": 124
       },
       {
         "name": "github-actions[bot]",
-        "commits": 47
+        "commits": 51
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 24
+        "commits": 38
       },
       {
         "name": "Payoss",
-        "commits": 13
+        "commits": 15
       },
       {
         "name": "Automai",
@@ -622,6 +622,126 @@
   ],
   "activity": [
     {
+      "hash": "c638d5e",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "ajout citation motivation quotidienne",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "c35fcf1",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "37edf15",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "ajout modèle pricing setup 5-10K€ + projections CA",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "d408693",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "frise chronologique + analyse business complète",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "b8b950d",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "estimations réalistes - objectif PERFECTION ABSOLUE",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "afc211b",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "manuel Best Practice complet et lisible",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "32da2db",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "ajout section Stratégie Business (VI)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "8c5a4a7",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "ajout manuel Best Practice Business + intégration dashboard",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "255ef27",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "23d6d2f",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ef2f7b3",
+      "author": "Augustin",
+      "date": "2026-02-04",
+      "message": "ajout bouton Agent IA + audit concurrence + stratégie génération",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "fa490d7",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "31fe1e6",
       "author": "Augustin",
       "date": "2026-02-04",
@@ -700,126 +820,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "88747f8",
-      "author": "github-actions[bot]",
-      "date": "2026-02-02",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "5c83278",
-      "author": "github-actions[bot]",
-      "date": "2026-02-01",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "d56c1e4",
-      "author": "Automai",
-      "date": "2026-01-31",
-      "message": "Security fixes + CI Jinja2 filter registration (#18)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "88bb476",
-      "author": "github-actions[bot]",
-      "date": "2026-01-31",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "22db26c",
-      "author": "github-actions[bot]",
-      "date": "2026-01-30",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "7005c70",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "8fc7f26",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "register custom Jinja2 filters in template syntax test",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "1ac7192",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "112a32f",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "72d2937",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Sprint 3+4 - Q&R interactif, pipeline E2E, conversion promesse→vente",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "d3c44e5",
-      "author": "github-actions[bot]",
-      "date": "2026-01-29",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "bb26e17",
-      "author": "Tom",
-      "date": "2026-01-29",
-      "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 17:53"
+    "last_updated": "2026-02-04 20:50"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 17:53"
+    "last_updated": "2026-02-04 20:50"
   },
   "conformity_details": {
     "promesse": {
