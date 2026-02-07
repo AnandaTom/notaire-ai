@@ -26,6 +26,8 @@ import os
 import sys
 import json
 import hashlib
+import time
+import collections
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Any
@@ -63,6 +65,64 @@ def escape_like_pattern(pattern: str) -> str:
     if not pattern or not isinstance(pattern, str):
         return ""
     return pattern.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+
+
+# =============================================================================
+# Rate Limiter en memoire (par cle API)
+# =============================================================================
+
+class RateLimiter:
+    """
+    Limite le nombre de requetes par cle API par fenetre de temps.
+    Utilise un algorithme de fenetre glissante en memoire.
+    """
+
+    def __init__(self, default_rpm: int = 60, window_seconds: int = 60):
+        self._default_rpm = default_rpm
+        self._window = window_seconds
+        # {api_key_id: deque de timestamps}
+        self._requests: Dict[str, collections.deque] = {}
+
+    def check(self, key_id: str, limit_rpm: int = None) -> bool:
+        """
+        Verifie si la requete est autorisee.
+        Retourne True si OK, False si limite depassee.
+        """
+        now = time.monotonic()
+        limit = limit_rpm or self._default_rpm
+        cutoff = now - self._window
+
+        if key_id not in self._requests:
+            self._requests[key_id] = collections.deque()
+
+        q = self._requests[key_id]
+
+        # Purger les anciennes requetes
+        while q and q[0] < cutoff:
+            q.popleft()
+
+        if len(q) >= limit:
+            return False
+
+        q.append(now)
+        return True
+
+    def cleanup(self):
+        """Nettoie les entrees perimees (appeler periodiquement)."""
+        now = time.monotonic()
+        cutoff = now - self._window
+        empty_keys = []
+        for key_id, q in self._requests.items():
+            while q and q[0] < cutoff:
+                q.popleft()
+            if not q:
+                empty_keys.append(key_id)
+        for k in empty_keys:
+            del self._requests[k]
+
+
+rate_limiter = RateLimiter(default_rpm=60)
+
 
 # Ajouter le projet au path
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -257,6 +317,12 @@ async def verify_api_key(
     if key_hash in _api_key_cache:
         cached_auth, cached_time = _api_key_cache[key_hash]
         if now - cached_time < CACHE_TTL_SECONDS:
+            # Rate limiting
+            if not rate_limiter.check(cached_auth.api_key_id, cached_auth.rate_limit_rpm):
+                raise HTTPException(
+                    status_code=429,
+                    detail=f"Limite de requetes depassee ({cached_auth.rate_limit_rpm}/min). Reessayez dans quelques secondes."
+                )
             return cached_auth
 
     # 2. Vérifier dans Supabase
@@ -293,6 +359,13 @@ async def verify_api_key(
                 rate_limit_rpm=key_data.get("rate_limit_rpm", 60)
             )
 
+            # Rate limiting
+            if not rate_limiter.check(auth_context.api_key_id, auth_context.rate_limit_rpm):
+                raise HTTPException(
+                    status_code=429,
+                    detail=f"Limite de requetes depassee ({auth_context.rate_limit_rpm}/min). Reessayez dans quelques secondes."
+                )
+
             # Mettre en cache
             _api_key_cache[key_hash] = (auth_context, now)
 
@@ -314,8 +387,9 @@ async def verify_api_key(
             print(f"⚠️ Erreur Supabase auth: {e}")
 
     # 3. Mode offline/dégradé - accepter avec contexte limité
-    # Utile pour le développement local
-    if os.getenv("NOTOMAI_DEV_MODE") == "1":
+    # UNIQUEMENT en local (jamais sur Modal/production)
+    if os.getenv("NOTOMAI_DEV_MODE") == "1" and not os.getenv("MODAL_ENVIRONMENT"):
+        print("[WARN] Mode developpement actif - authentification desactivee")
         return AuthContext(
             etude_id="dev-etude-id",
             etude_nom="Mode Développement",
@@ -374,15 +448,14 @@ app = FastAPI(
 ALLOWED_ORIGINS = [
     "https://anandatom.github.io",
     "https://notaire-ai--fastapi-app.modal.run",
+    "https://notomai--notaire-ai-fastapi-app.modal.run",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:8000",
 ]
-# Mode développement: autoriser localhost
-if os.getenv("NOTOMAI_DEV_MODE") == "1":
-    ALLOWED_ORIGINS.extend([
-        "http://localhost:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:8000",
-    ])
 
 app.add_middleware(
     CORSMiddleware,

@@ -38,6 +38,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import quote_plus, urlencode
 
+from execution.security.secure_delete import secure_delete_file
+
 try:
     import requests
 except ImportError:
@@ -74,7 +76,7 @@ class CacheLocal:
             data = json.loads(fichier.read_text(encoding="utf-8"))
             age = time.time() - data.get("_timestamp", 0)
             if age > self.ttl_secondes:
-                fichier.unlink(missing_ok=True)
+                secure_delete_file(fichier)
                 return None
             return data.get("valeur")
         except (json.JSONDecodeError, OSError):

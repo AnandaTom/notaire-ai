@@ -202,10 +202,10 @@
                 <h1>Notomai</h1>
             </div>
             <nav class="landing-nav">
-                <a href="#features">Fonctionnalites</a>
-                <a href="#securite">Securite</a>
+                <a href="#features">Fonctionnalités</a>
+                <a href="#securite">Sécurité</a>
                 <a href="pages/login.html">Connexion</a>
-                <a href="pages/chat.html" class="btn-primary">Demarrer</a>
+                <a href="pages/chat.html" class="btn-primary">Démarrer</a>
             </nav>
         </header>
 
@@ -213,8 +213,8 @@
             <div class="hero-content">
                 <h2>L'assistant <span>intelligent</span> pour les notaires</h2>
                 <p>
-                    Creez vos actes notariaux en quelques minutes grace a l'intelligence artificielle.
-                    Notomai comprend vos demandes en langage naturel et genere des documents conformes.
+                    Créez vos actes notariaux en quelques minutes grâce à l'intelligence artificielle.
+                    Notomai comprend vos demandes en langage naturel et génère des documents conformes.
                 </p>
                 <div class="hero-cta">
                     <a href="pages/chat.html" class="btn btn-primary">Essayer gratuitement</a>
@@ -223,11 +223,11 @@
                 <div class="hero-features">
                     <div class="hero-feature">
                         <span class="icon">🔒</span>
-                        <span>Donnees chiffrees</span>
+                        <span>Données chiffrées</span>
                     </div>
                     <div class="hero-feature">
                         <span class="icon">🇪🇺</span>
-                        <span>Hebergement europeen</span>
+                        <span>Hébergement européen</span>
                     </div>
                     <div class="hero-feature">
                         <span class="icon">✓</span>
@@ -243,7 +243,7 @@
     </div>
 
     <script>
-        // Redirection automatique si deja connecte
+        // Redirection automatique si déjà connecté
         document.addEventListener('DOMContentLoaded', async () => {
             const SUPABASE_URL = 'https://wcklvjckzktijtgakdrk.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indja2x2amNremt0aWp0Z2FrZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDI1NzksImV4cCI6MjA4NDU3ODU3OX0.lyfrGeuVSkivopQVWlq3tf6Uo5k4Z6BqOEPt5WuYXS4';
@@ -253,7 +253,7 @@
                     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     const { data } = await supabaseClient.auth.getUser();
                     if (data?.user) {
-                        // Utilisateur connecte -> rediriger vers le chat
+                        // Utilisateur connecté -> rediriger vers le chat
                         window.location.href = 'pages/chat.html';
                     }
                 }

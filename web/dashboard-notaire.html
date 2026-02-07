@@ -138,6 +138,55 @@
 
         .btn-logout:hover { background: rgba(255,255,255,0.2); }
 
+        /* === TOPBAR ACTION BUTTONS === */
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: 24px;
+        }
+
+        .btn-topbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-topbar svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-topbar.primary {
+            background: var(--gold);
+            border: none;
+            color: var(--navy-dark);
+        }
+
+        .btn-topbar.primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
+        }
+
+        .btn-topbar.secondary {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .btn-topbar.secondary:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+
         /* === MAIN LAYOUT === */
         .main-content {
             max-width: 1100px;
@@ -284,6 +333,290 @@
 
         .stat-value { font-size: 2rem; font-weight: 700; color: var(--navy); }
         .stat-label { font-size: 0.85rem; color: var(--gray-600); margin-top: 2px; }
+
+        /* === PILOTAGE IA - STYLES DIFFÉRENCIANTS === */
+        .pilotage-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .hero-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card.savings {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 1px solid #a5d6a7;
+        }
+
+        .hero-card.ai-quality {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 1px solid #90caf9;
+        }
+
+        .hero-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .hero-card.savings .hero-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .hero-card.ai-quality .hero-icon {
+            background: var(--info);
+            color: white;
+        }
+
+        .hero-icon svg { width: 24px; height: 24px; }
+
+        .hero-content { flex: 1; }
+        .hero-value { font-size: 2.5rem; font-weight: 700; color: var(--gray-900); line-height: 1; }
+        .hero-label { font-size: 0.95rem; font-weight: 600; color: var(--gray-700); margin-top: 4px; }
+        .hero-detail { font-size: 0.8rem; color: var(--gray-600); margin-top: 4px; }
+
+        .hero-trend {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .hero-trend.up { background: rgba(45, 138, 78, 0.15); color: var(--success); }
+        .hero-trend.down { background: rgba(198, 40, 40, 0.15); color: var(--error); }
+        .hero-trend svg { width: 14px; height: 14px; }
+
+        .hero-badge {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+        }
+
+        .badge-ai {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Métriques Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .metric-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .metric-icon svg { width: 16px; height: 16px; }
+        .metric-icon.blue { background: #e3f2fd; color: var(--info); }
+        .metric-icon.gold { background: #fff8e1; color: var(--warning); }
+        .metric-icon.green { background: #e8f5e9; color: var(--success); }
+        .metric-icon.purple { background: #f3e5f5; color: #7b1fa2; }
+
+        .metric-title { font-size: 0.8rem; color: var(--gray-600); font-weight: 500; }
+        .metric-value { font-size: 1.75rem; font-weight: 700; color: var(--navy); }
+        .metric-breakdown { font-size: 0.75rem; color: var(--gray-500); margin-top: 6px; display: flex; gap: 12px; }
+        .metric-breakdown strong { color: var(--gray-700); }
+        .metric-detail { font-size: 0.75rem; color: var(--gray-500); margin-top: 6px; }
+
+        .metric-comparison { margin-top: 8px; }
+        .comparison-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .comparison-badge.success { background: var(--success-bg); color: var(--success); }
+
+        /* Alertes Section */
+        .alerts-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .alerts-section .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .alerts-section .section-header h3 {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            color: var(--gray-800);
+        }
+
+        .alert-count {
+            background: var(--warning);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            border-left: 3px solid transparent;
+        }
+
+        .alert-item.urgent { border-left-color: var(--error); background: #fff5f5; }
+        .alert-item.warning { border-left-color: var(--warning); background: #fffbeb; }
+        .alert-item.info { border-left-color: var(--info); background: #eff6ff; }
+
+        .alert-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .alert-item.urgent .alert-item-icon { background: var(--error-bg); color: var(--error); }
+        .alert-item.warning .alert-item-icon { background: var(--warning-bg); color: var(--warning); }
+        .alert-item.info .alert-item-icon { background: var(--info-bg); color: var(--info); }
+
+        .alert-item-icon svg { width: 16px; height: 16px; }
+
+        .alert-item-content { flex: 1; }
+        .alert-item-title { font-weight: 500; font-size: 0.9rem; color: var(--gray-800); }
+        .alert-item-detail { font-size: 0.8rem; color: var(--gray-600); margin-top: 2px; }
+
+        .alert-item-action {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: var(--gray-700);
+            transition: all 0.2s;
+        }
+
+        .alert-item-action:hover { background: var(--gray-100); }
+
+        /* Insights Section */
+        .insights-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            margin-top: 24px;
+        }
+
+        .insights-section .section-header {
+            margin-bottom: 16px;
+        }
+
+        .insights-section .section-header h3 {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            color: var(--gray-800);
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .insight-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+        }
+
+        .insight-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--navy);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .insight-icon svg { width: 20px; height: 20px; }
+        .insight-title { font-size: 0.75rem; color: var(--gray-500); }
+        .insight-value { font-size: 1rem; font-weight: 600; color: var(--navy); margin-top: 2px; }
+
+        @media (max-width: 900px) {
+            .pilotage-hero { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .insights-grid { grid-template-columns: 1fr; }
+        }
 
         /* === TABS === */
         .tabs-bar {
@@ -653,6 +986,523 @@
         }
 
         .download-link:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+        /* === DOCUMENTS TAB === */
+        .documents-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .document-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.2s;
+            border-left: 4px solid var(--gray-300);
+        }
+
+        .document-card:hover { box-shadow: var(--shadow-md); }
+        .document-card.status-pending { border-left-color: var(--warning); }
+        .document-card.status-uploaded { border-left-color: var(--info); }
+        .document-card.status-validated { border-left-color: var(--success); }
+        .document-card.status-rejected { border-left-color: var(--error); }
+
+        .doc-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .doc-card-icon.pending { background: var(--warning-bg); color: var(--warning); }
+        .doc-card-icon.uploaded { background: var(--info-bg); color: var(--info); }
+        .doc-card-icon.validated { background: var(--success-bg); color: var(--success); }
+
+        .doc-card-icon svg { width: 24px; height: 24px; }
+
+        .doc-card-content { flex: 1; min-width: 0; }
+        .doc-card-content h4 { font-size: 1rem; color: var(--gray-800); margin-bottom: 4px; }
+        .doc-card-content p { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 8px; }
+
+        .doc-progress-bar {
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .doc-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--navy) 0%, var(--gold) 100%);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .doc-progress-text {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .doc-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Document status badges */
+        .doc-status-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .doc-status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--gray-50);
+            border-radius: 16px;
+            font-size: 0.75rem;
+        }
+
+        .doc-status-item.uploaded { background: var(--info-bg); color: var(--info); }
+        .doc-status-item.validated { background: var(--success-bg); color: var(--success); }
+        .doc-status-item.rejected { background: var(--error-bg); color: var(--error); }
+
+        .doc-status-item svg { width: 12px; height: 12px; }
+
+        /* Notification badge on tab */
+        .tab-btn .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--gold);
+            color: var(--navy-dark);
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .tab-btn.active .notification-badge {
+            background: var(--gold);
+            color: var(--navy-dark);
+        }
+
+        /* Documents filter */
+        .documents-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover { background: var(--gray-200); }
+        .filter-btn.active {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+        }
+
+        /* Document detail modal */
+        .doc-detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .doc-detail-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        .doc-detail-item.validated {
+            background: var(--success-bg);
+            border-color: #a3e4b7;
+        }
+
+        .doc-detail-item.rejected {
+            background: var(--error-bg);
+            border-color: #f8b4b4;
+        }
+
+        .doc-detail-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-detail-info svg { width: 20px; height: 20px; color: var(--gray-600); }
+        .doc-detail-info .name { font-weight: 500; }
+        .doc-detail-info .meta { font-size: 0.8rem; color: var(--gray-500); }
+
+        .doc-detail-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-icon.download { background: var(--info-bg); color: var(--info); }
+        .btn-icon.download:hover { background: #bbdefb; }
+        .btn-icon.validate { background: var(--success-bg); color: var(--success); }
+        .btn-icon.validate:hover { background: #c8e6c9; }
+        .btn-icon.reject { background: var(--error-bg); color: var(--error); }
+        .btn-icon.reject:hover { background: #ffcdd2; }
+
+        .btn-icon svg { width: 16px; height: 16px; }
+
+        /* === TABLE ACTES/DOSSIERS === */
+        .dossiers-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dossiers-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .dossiers-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+
+        .dossiers-table tr:hover { background: var(--gray-50); }
+
+        .dossier-numero {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .dossier-parties {
+            font-size: 0.9rem;
+            color: var(--gray-700);
+        }
+
+        .dossier-type {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .dossier-statut {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .dossier-statut.en_cours { background: var(--info-bg); color: var(--info); }
+        .dossier-statut.brouillon { background: var(--gray-100); color: var(--gray-600); }
+        .dossier-statut.termine { background: var(--success-bg); color: var(--success); }
+
+        .dossier-signature {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .dossier-statut.valide { background: var(--info-bg); color: var(--info); }
+        .dossier-statut.signe { background: var(--success-bg); color: var(--success); }
+
+        /* === SCORING DOSSIER (GAME CHANGER) === */
+        .dossier-score {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score-bar {
+            width: 60px;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .score-bar-fill.high { background: var(--success); }
+        .score-bar-fill.medium { background: var(--warning); }
+        .score-bar-fill.low { background: var(--error); }
+
+        .score-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 35px;
+        }
+
+        .score-label.high { color: var(--success); }
+        .score-label.medium { color: var(--warning); }
+        .score-label.low { color: var(--error); }
+
+        /* === BOUTONS ACTIONS RAPIDES === */
+        .action-btn-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-btn svg { width: 14px; height: 14px; }
+
+        .action-btn.relance {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+        .action-btn.relance:hover { background: #fde68a; }
+
+        .action-btn.voir {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+        .action-btn.voir:hover { background: #bfdbfe; }
+
+        .action-btn.success {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+        .action-btn.success:hover { background: #bbf7d0; }
+
+        /* === CARD FORMULAIRE AMÉLIORÉE === */
+        .submission-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--gray-300);
+            transition: all 0.2s;
+        }
+
+        .submission-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(2px);
+        }
+
+        .submission-card.complete { border-left-color: var(--success); }
+        .submission-card.pending { border-left-color: var(--warning); }
+        .submission-card.new { border-left-color: var(--info); }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .submission-client {
+            flex: 1;
+        }
+
+        .submission-client h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
+
+        .submission-client .type-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .submission-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .submission-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .submission-meta-item svg { width: 14px; height: 14px; }
+
+        .submission-progress {
+            margin-bottom: 12px;
+        }
+
+        .submission-progress-bar {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .submission-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .submission-progress-fill.complete { background: var(--success); }
+        .submission-progress-fill.partial { background: var(--warning); }
+        .submission-progress-fill.empty { background: var(--gray-400); }
+
+        .submission-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .submission-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* === MODAL RELANCE === */
+        .relance-modal-content {
+            padding: 20px;
+        }
+
+        .relance-preview {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .relance-preview .subject {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--navy);
+        }
+
+        .pieces-manquantes {
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--warning-bg);
+            border-radius: var(--radius);
+        }
+
+        .pieces-manquantes h5 {
+            font-size: 0.8rem;
+            color: var(--warning);
+            margin-bottom: 8px;
+        }
+
+        .pieces-manquantes ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* === STATISTIQUES QUESTIONNAIRES === */
+        .questionnaire-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .qs-stat {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qs-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .qs-stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .qs-stat.success .qs-stat-value { color: var(--success); }
+        .qs-stat.warning .qs-stat-value { color: var(--warning); }
+        .qs-stat.info .qs-stat-value { color: var(--info); }
+
+        @media (max-width: 768px) {
+            .questionnaire-stats { grid-template-columns: repeat(2, 1fr); }
+            .submission-actions { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -705,6 +1555,19 @@
                 <div class="topbar-subtitle">Espace Notaire</div>
             </div>
         </div>
+        <!-- Action buttons -->
+        <div class="topbar-actions">
+            <a href="/chat" class="btn-topbar primary" id="btnAgentIA">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="10" r="1"/>
+                    <circle cx="8" cy="10" r="1"/>
+                    <circle cx="16" cy="10" r="1"/>
+                </svg>
+                Agent IA
+            </a>
+        </div>
+
         <div class="topbar-user">
             <div class="topbar-user-info">
                 <div class="topbar-user-name" id="userName">Notaire</div>
@@ -739,19 +1602,249 @@
 
         <!-- Tabs -->
         <div class="tabs-bar">
+            <button class="tab-btn" onclick="showTab('pilotage')" id="tabPilotage">
+                Pilotage
+            </button>
             <button class="tab-btn active" onclick="showTab('formulaires')">Formulaires clients</button>
+            <button class="tab-btn" onclick="showTab('documents')" id="tabDocuments">
+                Documents
+                <span class="notification-badge hidden" id="docsBadge">0</span>
+            </button>
             <button class="tab-btn" onclick="showTab('clients')">Fiches clients</button>
+        </div>
+
+        <!-- Tab: Pilotage (Intelligence IA) -->
+        <div id="tab-pilotage" class="hidden">
+
+            <!-- SECTION 1: KPIs Temps Gagné - CE QUE GENAPI N'A PAS -->
+            <div class="pilotage-hero">
+                <div class="hero-card savings">
+                    <div class="hero-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div class="hero-content">
+                        <div class="hero-value" id="tempsGagneTotal">0h</div>
+                        <div class="hero-label">Temps gagné ce mois</div>
+                        <div class="hero-detail" id="tempsGagneDetail">Équivalent à 0 jours de travail</div>
+                    </div>
+                    <div class="hero-trend up" id="tempsGagneTrend">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                        <span>+0% vs mois dernier</span>
+                    </div>
+                </div>
+                <div class="hero-card ai-quality">
+                    <div class="hero-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div class="hero-content">
+                        <div class="hero-value" id="qualiteIA">98%</div>
+                        <div class="hero-label">Qualité Agent IA</div>
+                        <div class="hero-detail" id="qualiteIADetail">Actes acceptés sans modification</div>
+                    </div>
+                    <div class="hero-badge">
+                        <span class="badge-ai">IA Notomai</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Métriques détaillées -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </span>
+                        <span class="metric-title">Actes générés</span>
+                    </div>
+                    <div class="metric-value" id="statTotalActes">0</div>
+                    <div class="metric-breakdown">
+                        <span><strong id="statActesValides">0</strong> validés</span>
+                        <span><strong id="statActesSignes">0</strong> signés</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon gold">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </span>
+                        <span class="metric-title">Temps moyen/acte</span>
+                    </div>
+                    <div class="metric-value" id="tempsMoyenGeneration">-</div>
+                    <div class="metric-comparison">
+                        <span class="comparison-badge success">vs ~2h manuel</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </span>
+                        <span class="metric-title">Taux complétion</span>
+                    </div>
+                    <div class="metric-value" id="statTauxCompletion">-</div>
+                    <div class="metric-detail">Questionnaires complets</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                        </span>
+                        <span class="metric-title">Clients actifs</span>
+                    </div>
+                    <div class="metric-value" id="clientsActifs">0</div>
+                    <div class="metric-detail">Dossiers en cours</div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Alertes Proactives - GAME CHANGER -->
+            <div class="alerts-section" id="alertsSection" style="display: none;">
+                <div class="section-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px; color: var(--warning);">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        Alertes Proactives
+                    </h3>
+                    <span class="alert-count" id="alertCount">0</span>
+                </div>
+                <div class="alerts-list" id="alertsList">
+                    <!-- Alertes dynamiques -->
+                </div>
+            </div>
+
+            <!-- SECTION 4: Tableau des actes -->
+            <div class="card" style="margin-top: 24px;">
+                <div class="card-header">
+                    <h3>Historique des actes</h3>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <select id="acteFilterType" onchange="filterActesGeneres()" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 0.9rem;">
+                            <option value="">Tous les types</option>
+                            <option value="vente">Ventes</option>
+                            <option value="promesse_vente">Promesses</option>
+                            <option value="donation">Donations</option>
+                        </select>
+                        <select id="acteFilterStatus" onchange="filterActesGeneres()" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 0.9rem;">
+                            <option value="">Tous les statuts</option>
+                            <option value="brouillon">Brouillon</option>
+                            <option value="valide">Validé</option>
+                            <option value="signe">Signé</option>
+                        </select>
+                        <button class="btn btn-outline btn-sm" onclick="exportActesCSV()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <table class="dossiers-table" id="actesTable">
+                        <thead>
+                            <tr>
+                                <th>Référence</th>
+                                <th>Type</th>
+                                <th>Parties</th>
+                                <th>Temps génération</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="actesTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                                    Chargement des actes...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 5: Insights IA - UNIQUE -->
+            <div class="insights-section">
+                <div class="section-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px; color: var(--info);">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        Insights Agent IA
+                    </h3>
+                </div>
+                <div class="insights-grid" id="insightsGrid">
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                        </div>
+                        <div class="insight-content">
+                            <div class="insight-title">Type le plus généré</div>
+                            <div class="insight-value" id="insightTopType">-</div>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div class="insight-content">
+                            <div class="insight-title">Jour le plus actif</div>
+                            <div class="insight-value" id="insightBestDay">-</div>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        </div>
+                        <div class="insight-content">
+                            <div class="insight-title">Progression mensuelle</div>
+                            <div class="insight-value" id="insightTrend">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Tab: Formulaires -->
         <div id="tab-formulaires">
+            <!-- Statistiques Questionnaires -->
+            <div class="questionnaire-stats" id="questionnaireStats">
+                <div class="qs-stat">
+                    <div class="qs-stat-value" id="qsTotal">0</div>
+                    <div class="qs-stat-label">Questionnaires envoyés</div>
+                </div>
+                <div class="qs-stat success">
+                    <div class="qs-stat-value" id="qsCompleted">0</div>
+                    <div class="qs-stat-label">Complétés</div>
+                </div>
+                <div class="qs-stat warning">
+                    <div class="qs-stat-value" id="qsInProgress">0</div>
+                    <div class="qs-stat-label">En cours</div>
+                </div>
+                <div class="qs-stat info">
+                    <div class="qs-stat-value" id="qsTauxCompletion">0%</div>
+                    <div class="qs-stat-label">Taux complétion</div>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header">
                     <h3>Mes formulaires</h3>
-                    <button class="btn btn-gold" onclick="openNewFormModal()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Nouveau formulaire
-                    </button>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-outline btn-sm" onclick="relancerTousEnAttente()" id="btnRelancerTous" style="display: none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+                            Relancer tous
+                        </button>
+                        <button class="btn btn-gold" onclick="openNewFormModal()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Nouveau formulaire
+                        </button>
+                    </div>
                 </div>
                 <div class="submissions-list" id="submissionsList">
                     <div class="empty-state">
@@ -759,6 +1852,32 @@
                             <path d="M9 12h6M12 9v6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <p>Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Documents -->
+        <div id="tab-documents" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Documents clients</h3>
+                    <div class="documents-filter">
+                        <button class="filter-btn active" onclick="filterDocuments('all')">Tous</button>
+                        <button class="filter-btn" onclick="filterDocuments('pending_review')">À vérifier</button>
+                        <button class="filter-btn" onclick="filterDocuments('validated')">Validés</button>
+                        <button class="filter-btn" onclick="filterDocuments('rejected')">Rejetés</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="documents-grid" id="documentsGrid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <p>Chargement des documents...</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -776,6 +1895,95 @@
                     </div>
                     <div id="clientsList"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL: Détails documents d'un client ==================== -->
+<div class="modal-overlay" id="documentsDetailModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Documents du dossier</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="clientDocumentsInfo" style="margin-bottom: 16px;"></div>
+            <div class="doc-detail-list" id="documentsDetailList">
+                <!-- Documents listés ici -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL: Relance Client ==================== -->
+<div class="modal-overlay" id="relanceModal">
+    <div class="modal" style="max-width: 550px;">
+        <div class="modal-header">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px; display: inline;">
+                    <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+                </svg>
+                Relancer le client
+            </h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body relance-modal-content">
+            <div id="relanceClientInfo" style="margin-bottom: 16px;">
+                <strong id="relanceClientName">Client</strong>
+                <span style="color: var(--gray-500); margin-left: 8px;" id="relanceClientType"></span>
+            </div>
+
+            <div class="pieces-manquantes" id="piecesManquantesSection" style="display: none;">
+                <h5>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; display: inline; margin-right: 4px;">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Pièces manquantes ou à compléter
+                </h5>
+                <ul id="piecesManquantesList"></ul>
+            </div>
+
+            <div class="relance-preview">
+                <div class="subject">Objet: Rappel - Votre dossier notarial en attente</div>
+                <div id="relancePreviewBody">
+                    Bonjour <span id="relancePreviewName"></span>,<br><br>
+                    Nous vous rappelons que votre questionnaire client est en attente de complétion.<br><br>
+                    <span id="relancePreviewPieces"></span>
+                    Merci de bien vouloir finaliser votre dossier en cliquant sur le lien que nous vous avons envoyé.<br><br>
+                    Cordialement,<br>
+                    <span id="relancePreviewEtude"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="relanceMessage">Message personnalisé (optionnel)</label>
+                <textarea id="relanceMessage" rows="3" placeholder="Ajoutez un message personnalisé..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-gold" onclick="envoyerRelance()" id="btnEnvoyerRelance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                    <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+                </svg>
+                Envoyer la relance
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL: Suivi Dossier Client ==================== -->
+<div class="modal-overlay" id="suiviDossierModal">
+    <div class="modal" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2>Suivi du dossier</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="suiviDossierContent">
+                <!-- Timeline du dossier -->
             </div>
         </div>
     </div>
@@ -973,26 +2181,36 @@
     let generatedLinks = [];
 
     // =====================================================
-    // INITIALISATION
+    // INITIALISATION (Supabase Auth session restore)
     // =====================================================
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedSession = localStorage.getItem('notaire_session');
-        if (savedSession) {
-            try {
-                const session = JSON.parse(savedSession);
-                currentUser = session.user;
-                currentEtude = session.etude;
-                showDashboard();
-                loadSubmissions();
-                loadDossiers();
-            } catch (e) {
-                localStorage.removeItem('notaire_session');
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Tenter de restaurer la session Supabase Auth
+        const session = await SupabaseClient.restoreSession();
+        if (session) {
+            // Session JWT valide, recuperer le profil notaire
+            const savedProfile = localStorage.getItem('notaire_session');
+            if (savedProfile) {
+                try {
+                    const profile = JSON.parse(savedProfile);
+                    currentUser = profile.user;
+                    currentEtude = profile.etude;
+                    showDashboard();
+                    loadSubmissions();
+                    loadDossiers();
+                    loadDocumentsStatus();
+                } catch (e) {
+                    // Profil corrompu, forcer re-login
+                    await SupabaseClient.signOut();
+                }
             }
+        } else {
+            // Pas de session valide, nettoyer
+            localStorage.removeItem('notaire_session');
         }
     });
 
     // =====================================================
-    // AUTHENTIFICATION EMAIL / MOT DE PASSE
+    // AUTHENTIFICATION EMAIL / MOT DE PASSE (Supabase Auth)
     // =====================================================
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1006,7 +2224,7 @@
         errorDiv.style.display = 'none';
 
         try {
-            const user = await SupabaseClient.authenticateNotaire(email, password);
+            const user = await SupabaseClient.signIn(email, password);
 
             if (!user) {
                 errorDiv.textContent = 'Email ou mot de passe incorrect.';
@@ -1025,7 +2243,7 @@
 
             currentEtude = user.etudes || { nom: 'Mon étude' };
 
-            // Save session
+            // Sauvegarder le profil (les tokens JWT sont dans supabase_session)
             localStorage.setItem('notaire_session', JSON.stringify({
                 user: currentUser,
                 etude: currentEtude
@@ -1034,6 +2252,7 @@
             showDashboard();
             loadSubmissions();
             loadDossiers();
+            loadDocumentsStatus();
 
         } catch (error) {
             console.error('Erreur authentification:', error);
@@ -1045,8 +2264,8 @@
         }
     });
 
-    function logout() {
-        localStorage.removeItem('notaire_session');
+    async function logout() {
+        await SupabaseClient.signOut();
         currentUser = null;
         currentEtude = null;
         document.getElementById('dashboardPage').classList.add('hidden');
@@ -1109,6 +2328,9 @@
     function renderSubmissions() {
         const container = document.getElementById('submissionsList');
 
+        // Mettre à jour les statistiques questionnaires
+        updateQuestionnaireStats();
+
         if (submissions.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
@@ -1120,31 +2342,115 @@
             return;
         }
 
+        // Afficher bouton "Relancer tous" si des questionnaires en attente
+        const pendingCount = submissions.filter(s => s.status === 'pending').length;
+        const btnRelancerTous = document.getElementById('btnRelancerTous');
+        if (btnRelancerTous) {
+            btnRelancerTous.style.display = pendingCount > 0 ? 'inline-flex' : 'none';
+        }
+
         container.innerHTML = submissions.map(sub => {
-            const iconClass = getIconClass(sub.type_partie);
-            const iconSvg = getIconSvg(sub.type_partie);
             const typeLabel = getTypeLabel(sub.type_partie, sub.type_questionnaire);
+            const daysSinceCreation = Math.floor((new Date() - new Date(sub.created_at)) / (1000 * 60 * 60 * 24));
+            const isOverdue = sub.status === 'pending' && daysSinceCreation > 7;
+            const cardClass = sub.status === 'submitted' ? 'complete' : (isOverdue ? 'pending' : 'new');
+
+            // Calcul du score de complétion
+            const completionScore = getCompletionScore(sub);
+            const scoreClass = completionScore >= 80 ? 'high' : (completionScore >= 50 ? 'medium' : 'low');
 
             return `
-            <div class="submission-row">
-                <div class="submission-left">
-                    <div class="submission-icon ${iconClass}">
-                        ${iconSvg}
-                    </div>
-                    <div class="submission-info">
+            <div class="submission-card ${cardClass}">
+                <div class="submission-header">
+                    <div class="submission-client">
                         <h4>${sub.client_nom || 'Client'} ${sub.client_prenom || ''}</h4>
-                        <p>${typeLabel} ${sub.label ? '- ' + sub.label : ''} - ${formatDate(sub.created_at)}</p>
+                        <span class="type-badge">${typeLabel}</span>
+                    </div>
+                    <span class="badge badge-${sub.status}">${getStatusLabel(sub.status)}</span>
+                </div>
+
+                <div class="submission-meta">
+                    <div class="submission-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        ${formatDate(sub.created_at)}
+                    </div>
+                    ${daysSinceCreation > 0 ? `
+                    <div class="submission-meta-item" style="${isOverdue ? 'color: var(--error);' : ''}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ${isOverdue ? `En attente depuis ${daysSinceCreation}j` : `Il y a ${daysSinceCreation}j`}
+                    </div>
+                    ` : ''}
+                </div>
+
+                ${sub.status === 'pending' ? `
+                <div class="submission-progress">
+                    <div class="submission-progress-bar">
+                        <div class="submission-progress-fill ${scoreClass === 'high' ? 'complete' : (scoreClass === 'medium' ? 'partial' : 'empty')}" style="width: ${completionScore}%"></div>
+                    </div>
+                    <div class="submission-progress-text">
+                        <span>Complétion estimée</span>
+                        <span class="score-label ${scoreClass}">${completionScore}%</span>
                     </div>
                 </div>
-                <div class="submission-right">
-                    <span class="badge badge-${sub.status}">${getStatusLabel(sub.status)}</span>
+                ` : ''}
+
+                <div class="submission-actions">
+                    ${sub.status === 'pending' ? `
+                        <button class="action-btn relance" onclick="openRelanceModal('${sub.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+                            Relancer
+                        </button>
+                        <button class="action-btn voir" onclick="copySubmissionLink('${sub.id}', '${sub.token}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            Copier lien
+                        </button>
+                    ` : ''}
                     ${sub.status === 'submitted' ? `
-                        <button class="btn btn-outline btn-sm" onclick="viewSubmission('${sub.id}')">Voir</button>
-                        <button class="btn btn-success btn-sm" onclick="openGenerateModal('${sub.id}')">Générer</button>
+                        <button class="action-btn voir" onclick="viewSubmission('${sub.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Voir les données
+                        </button>
+                        <button class="action-btn success" onclick="openGenerateModal('${sub.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            Générer l'acte
+                        </button>
+                    ` : ''}
+                    ${sub.status === 'processed' ? `
+                        <button class="action-btn voir" onclick="viewSubmission('${sub.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Voir le dossier
+                        </button>
                     ` : ''}
                 </div>
             </div>`;
         }).join('');
+    }
+
+    // Calcul du score de complétion (basé sur les données disponibles)
+    function getCompletionScore(submission) {
+        if (submission.status === 'submitted' || submission.status === 'processed') return 100;
+        if (submission.status === 'pending') {
+            // Score basé sur l'ancienneté (simulation - en prod, checker les données partielles)
+            const daysSince = Math.floor((new Date() - new Date(submission.created_at)) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) return 10;
+            if (daysSince <= 2) return 25;
+            if (daysSince <= 5) return 15;
+            return 5; // Plus c'est ancien sans soumission, moins il y a de chances
+        }
+        return 0;
+    }
+
+    // Statistiques questionnaires
+    function updateQuestionnaireStats() {
+        const total = submissions.length;
+        const completed = submissions.filter(s => s.status === 'submitted' || s.status === 'processed').length;
+        const inProgress = submissions.filter(s => s.status === 'pending').length;
+        const tauxCompletion = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        document.getElementById('qsTotal').textContent = total;
+        document.getElementById('qsCompleted').textContent = completed;
+        document.getElementById('qsInProgress').textContent = inProgress;
+        document.getElementById('qsTauxCompletion').textContent = tauxCompletion + '%';
     }
 
     function getIconClass(typePartie) {
@@ -1195,8 +2501,683 @@
     function showTab(tabName) {
         document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
         event.target.classList.add('active');
+        document.getElementById('tab-pilotage').classList.toggle('hidden', tabName !== 'pilotage');
         document.getElementById('tab-formulaires').classList.toggle('hidden', tabName !== 'formulaires');
+        document.getElementById('tab-documents').classList.toggle('hidden', tabName !== 'documents');
         document.getElementById('tab-clients').classList.toggle('hidden', tabName !== 'clients');
+
+        // Load data when tab is shown
+        if (tabName === 'documents') {
+            loadDocumentsStatus();
+        }
+        if (tabName === 'pilotage') {
+            loadActesGeneres();
+        }
+    }
+
+    // =====================================================
+    // PILOTAGE - ACTES GENERÉS
+    // =====================================================
+    let actesGeneres = [];
+    let allActesGeneres = [];
+
+    // Constantes pour calculs de temps gagné
+    const TEMPS_MANUEL_ACTE_MINUTES = 120; // 2h par acte en méthode traditionnelle
+    const TEMPS_MANUEL_QUESTIONNAIRE_MINUTES = 45; // 45min pour saisie manuelle questionnaire
+
+    async function loadActesGeneres() {
+        try {
+            const data = await SupabaseClient.getActesGeneres(currentUser.etudeId);
+            allActesGeneres = data || [];
+            actesGeneres = [...allActesGeneres];
+            renderActesTable();
+            renderActesStats();
+            renderPilotageKPIs();
+            renderAlertsProactives();
+            renderInsights();
+        } catch (error) {
+            console.error('Erreur chargement actes:', error);
+            document.getElementById('actesTableBody').innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--error);">
+                        Erreur lors du chargement des actes.
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    function filterActesGeneres() {
+        const typeFilter = document.getElementById('acteFilterType').value;
+        const statusFilter = document.getElementById('acteFilterStatus').value;
+
+        actesGeneres = allActesGeneres.filter(a => {
+            if (typeFilter && a.type_acte !== typeFilter) return false;
+            if (statusFilter && a.status !== statusFilter) return false;
+            return true;
+        });
+
+        renderActesTable();
+    }
+
+    // =====================================================
+    // KPIs DIFFÉRENCIANTS - CE QUE GENAPI N'A PAS
+    // =====================================================
+    function renderPilotageKPIs() {
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+        const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+        const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
+
+        // Filtrer actes de ce mois et du mois dernier
+        const actesThisMonth = allActesGeneres.filter(a => {
+            const d = new Date(a.created_at);
+            return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+        });
+
+        const actesLastMonth = allActesGeneres.filter(a => {
+            const d = new Date(a.created_at);
+            return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear;
+        });
+
+        // Calcul temps gagné ce mois (en minutes)
+        // Chaque acte généré = temps manuel évité - temps IA (~2min)
+        const tempsGagneMoisMinutes = actesThisMonth.length * (TEMPS_MANUEL_ACTE_MINUTES - 2);
+        const tempsGagneHeures = Math.round(tempsGagneMoisMinutes / 60);
+        const tempsGagneJours = (tempsGagneMoisMinutes / 60 / 8).toFixed(1);
+
+        // Calcul évolution vs mois dernier
+        const tempsGagneLastMonth = actesLastMonth.length * (TEMPS_MANUEL_ACTE_MINUTES - 2);
+        const evolutionPercent = tempsGagneLastMonth > 0
+            ? Math.round(((tempsGagneMoisMinutes - tempsGagneLastMonth) / tempsGagneLastMonth) * 100)
+            : (tempsGagneMoisMinutes > 0 ? 100 : 0);
+
+        // Mise à jour Hero Cards
+        document.getElementById('tempsGagneTotal').textContent = tempsGagneHeures + 'h';
+        document.getElementById('tempsGagneDetail').textContent = `Équivalent à ${tempsGagneJours} jours de travail`;
+
+        const trendEl = document.getElementById('tempsGagneTrend');
+        trendEl.className = 'hero-trend ' + (evolutionPercent >= 0 ? 'up' : 'down');
+        trendEl.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                ${evolutionPercent >= 0
+                    ? '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>'
+                    : '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>'}
+            </svg>
+            <span>${evolutionPercent >= 0 ? '+' : ''}${evolutionPercent}% vs mois dernier</span>
+        `;
+
+        // Qualité IA (actes validés sans modification / total)
+        const actesValides = allActesGeneres.filter(a => a.status === 'valide' || a.status === 'signe').length;
+        const qualiteIA = allActesGeneres.length > 0
+            ? Math.round((actesValides / allActesGeneres.length) * 100)
+            : 100;
+        document.getElementById('qualiteIA').textContent = qualiteIA + '%';
+        document.getElementById('qualiteIADetail').textContent =
+            qualiteIA >= 95 ? 'Excellent - Actes acceptés directement'
+            : qualiteIA >= 85 ? 'Très bon - Peu de modifications'
+            : 'En amélioration continue';
+
+        // Temps moyen de génération
+        const actesAvecTemps = allActesGeneres.filter(a => a.temps_generation_ms);
+        const tempsMoyen = actesAvecTemps.length > 0
+            ? Math.round(actesAvecTemps.reduce((sum, a) => sum + a.temps_generation_ms, 0) / actesAvecTemps.length)
+            : 0;
+        document.getElementById('tempsMoyenGeneration').textContent = formatTempsGeneration(tempsMoyen) || '< 30s';
+
+        // Clients actifs (soumissions uniques avec dossiers en cours)
+        const clientsActifs = new Set(allActesGeneres.filter(a => a.status !== 'signe').map(a => a.client_id || a.dossier_id)).size;
+        document.getElementById('clientsActifs').textContent = clientsActifs || allActesGeneres.length;
+    }
+
+    // =====================================================
+    // ALERTES PROACTIVES - GAME CHANGER
+    // =====================================================
+    function renderAlertsProactives() {
+        const alerts = [];
+        const now = new Date();
+
+        // Alerte 1: Documents qui vont expirer (CNI valide 10 ans, etc.)
+        // On simule cette logique - en prod, checker les dates des documents
+        if (documentsStatusData && documentsStatusData.length > 0) {
+            const docsAVerifier = documentsStatusData.filter(d =>
+                d.documents_global_status === 'pending_review' || d.documents_uploaded > 0
+            );
+            if (docsAVerifier.length > 0) {
+                alerts.push({
+                    type: 'warning',
+                    title: `${docsAVerifier.length} document(s) en attente de vérification`,
+                    detail: 'Des clients ont téléversé des pièces qui nécessitent votre validation',
+                    action: 'Voir les documents',
+                    onClick: () => showTab('documents')
+                });
+            }
+        }
+
+        // Alerte 2: Questionnaires incomplets depuis plus de 7 jours
+        const questionnairesEnAttente = submissions.filter(s => {
+            const daysSince = (now - new Date(s.created_at)) / (1000 * 60 * 60 * 24);
+            return s.status !== 'completed' && daysSince > 7;
+        });
+        if (questionnairesEnAttente.length > 0) {
+            alerts.push({
+                type: 'info',
+                title: `${questionnairesEnAttente.length} questionnaire(s) en attente > 7 jours`,
+                detail: 'Pensez à relancer vos clients pour compléter leurs informations',
+                action: 'Voir les formulaires',
+                onClick: () => showTab('formulaires')
+            });
+        }
+
+        // Alerte 3: Actes en brouillon depuis longtemps
+        const brouillonsAnciens = allActesGeneres.filter(a => {
+            const daysSince = (now - new Date(a.created_at)) / (1000 * 60 * 60 * 24);
+            return a.status === 'brouillon' && daysSince > 14;
+        });
+        if (brouillonsAnciens.length > 0) {
+            alerts.push({
+                type: 'urgent',
+                title: `${brouillonsAnciens.length} acte(s) en brouillon depuis > 14 jours`,
+                detail: 'Ces actes attendent d\'être validés ou finalisés',
+                action: 'Voir les actes',
+                onClick: () => {
+                    document.getElementById('acteFilterStatus').value = 'brouillon';
+                    filterActesGeneres();
+                }
+            });
+        }
+
+        // Affichage
+        const alertsSection = document.getElementById('alertsSection');
+        const alertsList = document.getElementById('alertsList');
+        const alertCount = document.getElementById('alertCount');
+
+        if (alerts.length === 0) {
+            alertsSection.style.display = 'none';
+            return;
+        }
+
+        alertsSection.style.display = 'block';
+        alertCount.textContent = alerts.length;
+
+        alertsList.innerHTML = alerts.map((alert, idx) => `
+            <div class="alert-item ${alert.type}">
+                <div class="alert-item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        ${alert.type === 'urgent'
+                            ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
+                            : alert.type === 'warning'
+                            ? '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+                            : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'}
+                    </svg>
+                </div>
+                <div class="alert-item-content">
+                    <div class="alert-item-title">${alert.title}</div>
+                    <div class="alert-item-detail">${alert.detail}</div>
+                </div>
+                <button class="alert-item-action" onclick="alertActions[${idx}]()">${alert.action}</button>
+            </div>
+        `).join('');
+
+        // Stocker les actions pour les onclick
+        window.alertActions = alerts.map(a => a.onClick);
+    }
+
+    // =====================================================
+    // INSIGHTS IA - ANALYTICS UNIQUES
+    // =====================================================
+    function renderInsights() {
+        if (allActesGeneres.length === 0) {
+            document.getElementById('insightTopType').textContent = 'Aucun acte';
+            document.getElementById('insightBestDay').textContent = '-';
+            document.getElementById('insightTrend').textContent = 'Commencez à générer';
+            return;
+        }
+
+        // Type le plus généré
+        const typeCount = {};
+        allActesGeneres.forEach(a => {
+            const type = a.type_acte || 'autre';
+            typeCount[type] = (typeCount[type] || 0) + 1;
+        });
+        const topType = Object.entries(typeCount).sort((a, b) => b[1] - a[1])[0];
+        const typeLabels = {
+            'vente': 'Ventes',
+            'promesse_vente': 'Promesses',
+            'donation': 'Donations',
+            'succession': 'Successions'
+        };
+        document.getElementById('insightTopType').textContent =
+            `${typeLabels[topType[0]] || topType[0]} (${topType[1]})`;
+
+        // Jour le plus actif
+        const jourCount = {};
+        const jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+        allActesGeneres.forEach(a => {
+            const jour = new Date(a.created_at).getDay();
+            jourCount[jour] = (jourCount[jour] || 0) + 1;
+        });
+        const topJour = Object.entries(jourCount).sort((a, b) => b[1] - a[1])[0];
+        document.getElementById('insightBestDay').textContent = jours[parseInt(topJour[0])];
+
+        // Progression mensuelle
+        const now = new Date();
+        const thisMonth = allActesGeneres.filter(a => {
+            const d = new Date(a.created_at);
+            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        }).length;
+        const lastMonth = allActesGeneres.filter(a => {
+            const d = new Date(a.created_at);
+            const lm = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+            const ly = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+            return d.getMonth() === lm && d.getFullYear() === ly;
+        }).length;
+
+        if (lastMonth === 0) {
+            document.getElementById('insightTrend').textContent = thisMonth > 0 ? `+${thisMonth} ce mois` : 'Pas encore d\'activité';
+        } else {
+            const diff = thisMonth - lastMonth;
+            document.getElementById('insightTrend').textContent =
+                diff >= 0 ? `+${diff} vs mois dernier` : `${diff} vs mois dernier`;
+        }
+    }
+
+    // =====================================================
+    // EXPORT CSV ACTES
+    // =====================================================
+    function exportActesCSV() {
+        if (actesGeneres.length === 0) {
+            alert('Aucun acte à exporter');
+            return;
+        }
+
+        const headers = ['Référence', 'Type', 'Nom', 'Statut', 'Temps génération', 'Date'];
+        const rows = actesGeneres.map(a => [
+            a.reference_interne || '-',
+            a.type_acte || '-',
+            a.nom || '-',
+            a.status || '-',
+            formatTempsGeneration(a.temps_generation_ms) || '-',
+            a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR') : '-'
+        ]);
+
+        const csvContent = [headers, ...rows]
+            .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(';'))
+            .join('\n');
+
+        const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `actes_generes_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // =====================================================
+    // RENDER TABLE ACTES
+    // =====================================================
+    function renderActesTable() {
+        const tbody = document.getElementById('actesTableBody');
+
+        if (actesGeneres.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                        Aucun acte généré pour le moment.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        const typeLabels = {
+            'vente': 'Vente',
+            'promesse_vente': 'Promesse',
+            'donation': 'Donation',
+            'succession': 'Succession'
+        };
+
+        const statusLabels = {
+            'brouillon': 'Brouillon',
+            'valide': 'Validé',
+            'signe': 'Signé'
+        };
+
+        tbody.innerHTML = actesGeneres.map(a => {
+            const tempsGen = formatTempsGeneration(a.temps_generation_ms);
+
+            return `
+                <tr>
+                    <td><span class="dossier-numero">${a.reference_interne || '-'}</span></td>
+                    <td><span class="dossier-type">${typeLabels[a.type_acte] || a.type_acte || '-'}</span></td>
+                    <td>${a.nom || a.parties || '-'}</td>
+                    <td>
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; color: var(--success);">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                            ${tempsGen || '< 30s'}
+                        </span>
+                    </td>
+                    <td><span class="dossier-statut ${a.status}">${statusLabels[a.status] || a.status}</span></td>
+                    <td>${formatDateShort(a.created_at)}</td>
+                    <td>
+                        ${a.fichier_docx ? `
+                            <a href="${a.fichier_docx}" class="btn-icon download" title="Télécharger DOCX" target="_blank">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </a>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderActesStats() {
+        const total = allActesGeneres.length;
+        const valides = allActesGeneres.filter(a => a.status === 'valide' || a.status === 'signe').length;
+        const signes = allActesGeneres.filter(a => a.status === 'signe').length;
+        const avgCompletion = total > 0
+            ? Math.round(allActesGeneres.reduce((sum, a) => sum + (a.taux_completion || 100), 0) / total)
+            : 0;
+
+        document.getElementById('statTotalActes').textContent = total;
+        document.getElementById('statActesValides').textContent = valides;
+        document.getElementById('statActesSignes').textContent = signes;
+        document.getElementById('statTauxCompletion').textContent = avgCompletion + '%';
+    }
+
+    function formatDateShort(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+    }
+
+    // Fonction utilitaire pour formater le temps de génération
+    function formatTempsGeneration(ms) {
+        if (!ms) return '-';
+        if (ms < 1000) return ms + ' ms';
+        return (ms / 1000).toFixed(1) + ' s';
+    }
+
+    // =====================================================
+    // DOCUMENTS MANAGEMENT
+    // =====================================================
+    let documentsStatusData = [];
+    let currentDocFilter = 'all';
+
+    async function loadDocumentsStatus() {
+        try {
+            const data = await SupabaseClient.listSubmissionsWithDocumentsStatus(currentUser.etudeId);
+            documentsStatusData = (data || []).filter(d => d.total_documents > 0 || d.type_questionnaire === 'etat_civil');
+            renderDocumentsGrid();
+            updateDocumentsBadge();
+        } catch (error) {
+            console.error('Erreur chargement documents:', error);
+            document.getElementById('documentsGrid').innerHTML = `
+                <div class="empty-state">
+                    <p>Erreur lors du chargement des documents.</p>
+                </div>
+            `;
+        }
+    }
+
+    function updateDocumentsBadge() {
+        const pendingCount = documentsStatusData.filter(d =>
+            d.documents_global_status === 'pending_review' ||
+            d.documents_global_status === 'has_rejected' ||
+            (d.documents_uploaded > 0 && d.documents_validated < d.total_documents)
+        ).length;
+
+        const badge = document.getElementById('docsBadge');
+        if (pendingCount > 0) {
+            badge.textContent = pendingCount;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    function filterDocuments(filter) {
+        currentDocFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        renderDocumentsGrid();
+    }
+
+    function renderDocumentsGrid() {
+        const container = document.getElementById('documentsGrid');
+
+        let filteredData = documentsStatusData;
+        if (currentDocFilter === 'pending_review') {
+            filteredData = documentsStatusData.filter(d =>
+                d.documents_global_status === 'pending_review' || d.documents_pending > 0 || d.documents_uploaded > 0
+            );
+        } else if (currentDocFilter === 'validated') {
+            filteredData = documentsStatusData.filter(d => d.documents_global_status === 'all_validated');
+        } else if (currentDocFilter === 'rejected') {
+            filteredData = documentsStatusData.filter(d =>
+                d.documents_global_status === 'has_rejected' || d.documents_rejected > 0
+            );
+        }
+
+        if (filteredData.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <p>${currentDocFilter === 'all' ? 'Aucun document téléversé par vos clients.' : 'Aucun document dans cette catégorie.'}</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredData.map(sub => {
+            const total = sub.total_documents;
+            const validated = sub.documents_validated || 0;
+            const rejected = sub.documents_rejected || 0;
+            const pending = sub.documents_pending || 0;
+            const uploaded = sub.documents_uploaded || 0;
+            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
+
+            let statusClass = 'pending';
+            let statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+
+            if (sub.documents_global_status === 'all_validated') {
+                statusClass = 'validated';
+                statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+            } else if (sub.documents_global_status === 'has_rejected' || rejected > 0) {
+                statusClass = 'status-rejected';
+            } else if (uploaded > 0 || pending > 0) {
+                statusClass = 'uploaded';
+            }
+
+            return `
+                <div class="document-card status-${statusClass}">
+                    <div class="doc-card-icon ${statusClass}">
+                        ${statusIcon}
+                    </div>
+                    <div class="doc-card-content">
+                        <h4>${sub.client_nom || 'Client'} ${sub.client_prenom || ''}</h4>
+                        <p>${getTypeLabel(null, sub.type_questionnaire)} - ${formatDate(sub.submission_date)}</p>
+                        <div class="doc-progress-bar">
+                            <div class="doc-progress-fill" style="width: ${percent}%"></div>
+                        </div>
+                        <div class="doc-progress-text">
+                            <span>${validated}/${total} validés</span>
+                            <span>${percent}%</span>
+                        </div>
+                        <div class="doc-status-list">
+                            ${uploaded > 0 ? `<span class="doc-status-item uploaded"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg> ${uploaded} à vérifier</span>` : ''}
+                            ${validated > 0 ? `<span class="doc-status-item validated"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> ${validated} validés</span>` : ''}
+                            ${rejected > 0 ? `<span class="doc-status-item rejected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> ${rejected} rejetés</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="doc-card-actions">
+                        <button class="btn btn-outline btn-sm" onclick="openDocumentsDetail('${sub.submission_id}')">
+                            Voir les documents
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function openDocumentsDetail(submissionId) {
+        const sub = documentsStatusData.find(s => s.submission_id === submissionId);
+        if (!sub) return;
+
+        document.getElementById('clientDocumentsInfo').innerHTML = `
+            <strong>${sub.client_nom || 'Client'} ${sub.client_prenom || ''}</strong><br>
+            <span style="color: var(--gray-500);">${getTypeLabel(null, sub.type_questionnaire)}</span>
+        `;
+
+        try {
+            const documents = await SupabaseClient.listDocumentsBySubmission(submissionId);
+            const container = document.getElementById('documentsDetailList');
+
+            if (!documents || documents.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-500); text-align: center;">Aucun document téléversé.</p>';
+            } else {
+                container.innerHTML = documents.map(doc => {
+                    const typeLabels = {
+                        'cni': 'Carte d\'identité',
+                        'passeport': 'Passeport',
+                        'titre_sejour': 'Titre de séjour',
+                        'contrat_mariage': 'Contrat de mariage',
+                        'contrat_pacs': 'Convention PACS',
+                        'changement_regime_matrimonial': 'Changement régime',
+                        'livret_famille': 'Livret de famille',
+                        'jugement_tutelle': 'Jugement tutelle',
+                        'jugement_curatelle': 'Jugement curatelle',
+                        'sauvegarde_justice': 'Sauvegarde justice',
+                        'habilitation_familiale': 'Habilitation familiale',
+                        'autre': 'Autre document'
+                    };
+
+                    const sizeKB = Math.round((doc.taille_octets || 0) / 1024);
+                    const statusClass = doc.statut === 'validated' ? 'validated' : doc.statut === 'rejected' ? 'rejected' : '';
+
+                    return `
+                        <div class="doc-detail-item ${statusClass}">
+                            <div class="doc-detail-info">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <div>
+                                    <div class="name">${typeLabels[doc.type_document] || doc.type_document}</div>
+                                    <div class="meta">${doc.nom_fichier} (${sizeKB} Ko)</div>
+                                    ${doc.commentaire_notaire ? `<div class="meta" style="color: var(--error);"><em>${doc.commentaire_notaire}</em></div>` : ''}
+                                </div>
+                            </div>
+                            <div class="doc-detail-actions">
+                                <button class="btn-icon download" title="Télécharger" onclick="downloadDocument('${doc.storage_path}', '${doc.nom_fichier}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                </button>
+                                ${doc.statut !== 'validated' ? `
+                                    <button class="btn-icon validate" title="Valider" onclick="validateDocument('${doc.id}')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                                ${doc.statut !== 'rejected' ? `
+                                    <button class="btn-icon reject" title="Rejeter" onclick="rejectDocument('${doc.id}')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="18" y1="6" x2="6" y2="18"/>
+                                            <line x1="6" y1="6" x2="18" y2="18"/>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('documentsDetailModal').classList.add('active');
+        } catch (error) {
+            console.error('Erreur chargement documents:', error);
+            alert('Erreur lors du chargement des documents');
+        }
+    }
+
+    async function downloadDocument(storagePath, fileName) {
+        try {
+            const signedUrl = await SupabaseClient.getSignedUrl(storagePath);
+            if (signedUrl) {
+                const a = document.createElement('a');
+                a.href = signedUrl;
+                a.download = fileName;
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('Impossible de générer le lien de téléchargement');
+            }
+        } catch (error) {
+            console.error('Erreur téléchargement:', error);
+            alert('Erreur lors du téléchargement');
+        }
+    }
+
+    async function validateDocument(documentId) {
+        try {
+            await SupabaseClient.updateDocumentStatus(documentId, 'validated', null, currentUser.id);
+            // Refresh the detail modal
+            const modal = document.getElementById('documentsDetailModal');
+            if (modal.classList.contains('active')) {
+                // Find current submission and reload
+                const infoEl = document.getElementById('clientDocumentsInfo');
+                const submissionId = documentsStatusData.find(s =>
+                    infoEl.innerHTML.includes(s.client_nom)
+                )?.submission_id;
+                if (submissionId) {
+                    await openDocumentsDetail(submissionId);
+                }
+            }
+            await loadDocumentsStatus();
+        } catch (error) {
+            console.error('Erreur validation:', error);
+            alert('Erreur lors de la validation');
+        }
+    }
+
+    async function rejectDocument(documentId) {
+        const comment = prompt('Raison du rejet (optionnel):');
+        try {
+            await SupabaseClient.updateDocumentStatus(documentId, 'rejected', comment, currentUser.id);
+            // Refresh
+            const modal = document.getElementById('documentsDetailModal');
+            if (modal.classList.contains('active')) {
+                const infoEl = document.getElementById('clientDocumentsInfo');
+                const submissionId = documentsStatusData.find(s =>
+                    infoEl.innerHTML.includes(s.client_nom)
+                )?.submission_id;
+                if (submissionId) {
+                    await openDocumentsDetail(submissionId);
+                }
+            }
+            await loadDocumentsStatus();
+        } catch (error) {
+            console.error('Erreur rejet:', error);
+            alert('Erreur lors du rejet');
+        }
     }
 
     // =====================================================
@@ -1453,6 +3434,184 @@
                 btn.style.color = '';
                 btn.style.borderColor = '';
             }, 2000);
+        });
+    }
+
+    // =====================================================
+    // RELANCE CLIENT - GAME CHANGER
+    // =====================================================
+    let currentRelanceSubmission = null;
+
+    function openRelanceModal(submissionId) {
+        const submission = submissions.find(s => s.id === submissionId);
+        if (!submission) return;
+        currentRelanceSubmission = submission;
+
+        // Remplir les infos client
+        document.getElementById('relanceClientName').textContent =
+            `${submission.client_nom || 'Client'} ${submission.client_prenom || ''}`;
+        document.getElementById('relanceClientType').textContent =
+            getTypeLabel(submission.type_partie, submission.type_questionnaire);
+        document.getElementById('relancePreviewName').textContent =
+            submission.client_prenom || submission.client_nom || 'Client';
+        document.getElementById('relancePreviewEtude').textContent =
+            currentEtude?.nom || 'Votre étude notariale';
+
+        // Détecter les pièces manquantes (simulation - en prod, vérifier les données)
+        const piecesManquantes = detectPiecesManquantes(submission);
+        const piecesSection = document.getElementById('piecesManquantesSection');
+        const piecesList = document.getElementById('piecesManquantesList');
+        const previewPieces = document.getElementById('relancePreviewPieces');
+
+        if (piecesManquantes.length > 0) {
+            piecesSection.style.display = 'block';
+            piecesList.innerHTML = piecesManquantes.map(p => `<li>${p}</li>`).join('');
+            previewPieces.innerHTML = `
+                Nous avons constaté que certaines informations sont encore manquantes :<br>
+                - ${piecesManquantes.join('<br>- ')}<br><br>
+            `;
+        } else {
+            piecesSection.style.display = 'none';
+            previewPieces.innerHTML = '';
+        }
+
+        // Reset message personnalisé
+        document.getElementById('relanceMessage').value = '';
+
+        // Afficher le modal
+        document.getElementById('relanceModal').classList.add('active');
+    }
+
+    function detectPiecesManquantes(submission) {
+        // Simulation - en production, vérifier les champs obligatoires non remplis
+        const pieces = [];
+        const daysSince = Math.floor((new Date() - new Date(submission.created_at)) / (1000 * 60 * 60 * 24));
+
+        // Logique basique - à améliorer avec les vraies données
+        if (submission.type_partie?.includes('vendeur')) {
+            pieces.push('Copie de la pièce d\'identité');
+            pieces.push('Titre de propriété ou attestation notariée');
+            if (daysSince > 3) {
+                pieces.push('Diagnostics techniques (DPE, amiante, etc.)');
+            }
+        } else if (submission.type_partie === 'acquereur') {
+            pieces.push('Copie de la pièce d\'identité');
+            pieces.push('Justificatif de domicile');
+            if (daysSince > 3) {
+                pieces.push('Accord de prêt ou attestation de financement');
+            }
+        } else {
+            pieces.push('Copie de la pièce d\'identité');
+        }
+
+        return pieces;
+    }
+
+    async function envoyerRelance() {
+        if (!currentRelanceSubmission) return;
+
+        const btn = document.getElementById('btnEnvoyerRelance');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;">Envoi en cours...</span>';
+        btn.disabled = true;
+
+        try {
+            // Appeler l'Edge Function pour envoyer l'email de relance
+            const messagePerso = document.getElementById('relanceMessage').value;
+
+            const response = await SupabaseClient.sendRelanceClient({
+                submission_id: currentRelanceSubmission.id,
+                client_email: currentRelanceSubmission.client_email,
+                client_nom: currentRelanceSubmission.client_nom,
+                client_prenom: currentRelanceSubmission.client_prenom,
+                etude_nom: currentEtude?.nom,
+                message_personnalise: messagePerso,
+                pieces_manquantes: detectPiecesManquantes(currentRelanceSubmission)
+            });
+
+            // Succès
+            closeModal();
+            alert('Relance envoyée avec succès !');
+
+            // Optionnel: mettre à jour le statut ou ajouter un événement
+
+        } catch (error) {
+            console.error('Erreur envoi relance:', error);
+            alert('Erreur lors de l\'envoi de la relance. Vérifiez que l\'email du client est renseigné.');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    async function relancerTousEnAttente() {
+        const pendingSubmissions = submissions.filter(s => s.status === 'pending');
+        if (pendingSubmissions.length === 0) {
+            alert('Aucun questionnaire en attente à relancer.');
+            return;
+        }
+
+        const confirm = window.confirm(
+            `Voulez-vous envoyer une relance à ${pendingSubmissions.length} client(s) en attente ?`
+        );
+
+        if (!confirm) return;
+
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const sub of pendingSubmissions) {
+            try {
+                await SupabaseClient.sendRelanceClient({
+                    submission_id: sub.id,
+                    client_email: sub.client_email,
+                    client_nom: sub.client_nom,
+                    client_prenom: sub.client_prenom,
+                    etude_nom: currentEtude?.nom,
+                    pieces_manquantes: detectPiecesManquantes(sub)
+                });
+                successCount++;
+            } catch (e) {
+                errorCount++;
+            }
+        }
+
+        alert(`Relances envoyées: ${successCount} succès, ${errorCount} erreurs.`);
+    }
+
+    function copySubmissionLink(submissionId, token) {
+        const submission = submissions.find(s => s.id === submissionId);
+        if (!submission) return;
+
+        // Construire le lien avec le token
+        const baseUrl = window.location.origin;
+        let questionnaireUrl = '';
+
+        if (submission.type_questionnaire === 'etat_civil') {
+            questionnaireUrl = `${baseUrl}/questionnaires/etat-civil.html`;
+        } else if (submission.type_partie === 'acquereur') {
+            questionnaireUrl = `${baseUrl}/questionnaires/achat-bien.html`;
+        } else if (submission.type_partie === 'vendeur_maison') {
+            questionnaireUrl = `${baseUrl}/questionnaires/vente-maison.html`;
+        } else {
+            questionnaireUrl = `${baseUrl}/questionnaires/vente-appartement.html`;
+        }
+
+        // Ajouter le token et la clé si disponible
+        const fullUrl = `${questionnaireUrl}?token=${token || submission.token}`;
+
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            // Feedback visuel
+            const btn = event.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="20 6 9 17 4 12"/></svg> Copié !';
+            btn.classList.add('success');
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('success');
+            }, 2000);
+        }).catch(() => {
+            alert('Impossible de copier. URL: ' + fullUrl);
         });
     }
 

@@ -93,14 +93,19 @@ Vos données peuvent être communiquées à :
 |---------------|------|--------------|
 | Notomai | Assistance à la rédaction d'actes | France/UE |
 | Supabase | Hébergement sécurisé des données | Union Européenne (Francfort) |
+| Anthropic | Assistant IA pour l'aide à la rédaction (chatbot) | États-Unis |
 
 Tous les sous-traitants sont contractuellement tenus aux mêmes obligations de protection des données.
+
+> **Concernant Anthropic** : Lors de l'utilisation du chatbot d'assistance, les échanges textuels peuvent être transmis à l'API Anthropic (Claude) pour générer des réponses. Anthropic s'engage contractuellement à ne pas utiliser ces données pour l'entraînement de ses modèles et à ne pas les conserver au-delà de 30 jours. Un module d'anonymisation est en cours d'intégration pour supprimer les données personnelles avant transmission.
 
 ---
 
 ## 5. Transferts de Données
 
 **Vos données sont stockées exclusivement dans l'Union Européenne** (région Francfort).
+
+**Exception** : Les échanges avec le chatbot d'assistance sont transmis à Anthropic (États-Unis) pour le traitement par intelligence artificielle, dans le cadre des Clauses Contractuelles Types (SCCs) de la Commission Européenne. Un module d'anonymisation est en cours de déploiement pour minimiser les données personnelles transmises.
 
 Aucun transfert de données personnelles n'est effectué vers des pays tiers hors UE, sauf obligation légale.
 

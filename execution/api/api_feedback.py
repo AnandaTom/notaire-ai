@@ -573,13 +573,26 @@ def creer_app_fastapi():
         version="1.0.0"
     )
 
-    # CORS pour le frontend
+    # CORS - domaines autorises uniquement (jamais wildcard en production)
+    allowed_origins = [
+        "https://anandatom.github.io",
+        "https://notaire-ai--fastapi-app.modal.run",
+    ]
+    if os.getenv("NOTOMAI_DEV_MODE") == "1":
+        allowed_origins.extend([
+            "http://localhost:3000",
+            "http://localhost:8000",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:8000",
+        ])
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=allowed_origins,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "X-API-Key"],
+        max_age=3600,
     )
 
     api = APIFeedbackNotaire()

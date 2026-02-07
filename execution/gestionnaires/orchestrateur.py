@@ -38,6 +38,8 @@ from dataclasses import dataclass, field, asdict
 from enum import Enum
 import logging
 
+from execution.security.secure_delete import secure_delete_file, secure_delete_dir
+
 # Import du module d'historique Supabase
 try:
     from execution.database.historique import HistoriqueActes, Acte
@@ -213,13 +215,12 @@ class OrchestratorNotaire:
             try:
                 if chemin.exists():
                     if chemin.is_file():
-                        chemin.unlink()
+                        secure_delete_file(chemin)
                         count += 1
                     elif chemin.is_dir():
-                        import shutil
-                        shutil.rmtree(chemin)
+                        secure_delete_dir(chemin)
                         count += 1
-                    self._log(f"Nettoyé: {chemin.name}", "info")
+                    self._log(f"Nettoyé (secure): {chemin.name}", "info")
             except Exception as e:
                 self._log(f"Erreur cleanup {chemin}: {e}", "warning")
 

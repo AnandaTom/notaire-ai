@@ -1,10 +1,12 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { Scale, Paperclip, Mic, Send, FileText, FilePlus, Edit, Download, ClipboardCheck } from 'lucide-react'
+import { Scale, Paperclip, Mic, Send, FileText, FilePlus, Edit, Download, ClipboardCheck, ThumbsUp, ThumbsDown } from 'lucide-react'
 import type { Message } from '@/app/page'
 import ReactMarkdown from 'react-markdown'
 import ParagraphReview from './ParagraphReview'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
 
 interface ChatAreaProps {
   messages: Message[]
@@ -13,6 +15,8 @@ interface ChatAreaProps {
   selectedFormat: 'pdf' | 'docx'
   onFormatChange: (format: 'pdf' | 'docx') => void
   onReviewRequest?: (workflowId: string) => void
+  onFeedback: (messageIndex: number, rating: number) => void
+  statusText?: string | null
 }
 
 export default function ChatArea({
@@ -22,6 +26,8 @@ export default function ChatArea({
   selectedFormat,
   onFormatChange,
   onReviewRequest,
+  onFeedback,
+  statusText,
 }: ChatAreaProps) {
   const [input, setInput] = useState('')
   const chatRef = useRef<HTMLDivElement>(null)
@@ -67,22 +73,32 @@ export default function ChatArea({
     <>
       {/* Messages Area */}
       <div ref={chatRef} className="flex-1 overflow-y-auto p-7 flex flex-col gap-5 bg-ivory">
-        {messages.map((message) => (
-          <MessageBubble
-            key={message.id}
-            message={message}
-            quickActions={message.id === '1' ? quickActions : undefined}
-            onQuickAction={(label) => onSendMessage(label)}
-            showFormatSelector={message.content.includes('format')}
-            selectedFormat={selectedFormat}
-            onFormatChange={onFormatChange}
-            suggestions={message.suggestions}
-            metadata={message.metadata}
-            onReviewRequest={onReviewRequest}
-          />
-        ))}
+        {messages.map((message, idx) => {
+          // Masquer le placeholder vide pendant le streaming
+          if (message.role === 'assistant' && message.content === '' && idx === messages.length - 1) {
+            return null
+          }
+          return (
+            <MessageBubble
+              key={message.id}
+              message={message}
+              messageIndex={idx}
+              quickActions={message.id === '1' ? quickActions : undefined}
+              onQuickAction={(label) => onSendMessage(label)}
+              showFormatSelector={message.content.includes('format')}
+              selectedFormat={selectedFormat}
+              onFormatChange={onFormatChange}
+              suggestions={message.suggestions}
+              metadata={message.metadata}
+              onReviewRequest={onReviewRequest}
+              onFeedback={onFeedback}
+            />
+          )
+        })}
 
-        {isLoading && <TypingIndicator />}
+        {isLoading && (messages.length === 0 || messages[messages.length - 1].role === 'user' || messages[messages.length - 1].content === '') && (
+          <TypingIndicator statusText={statusText} />
+        )}
       </div>
 
       {/* Input Area */}
@@ -128,6 +144,7 @@ export default function ChatArea({
 
 function MessageBubble({
   message,
+  messageIndex,
   quickActions,
   onQuickAction,
   showFormatSelector,
@@ -135,9 +152,12 @@ function MessageBubble({
   onFormatChange,
   suggestions,
   metadata,
+  onReviewRequest,
+  onFeedback,
 }: {
   message: Message
-  quickActions?: { icon: any; label: string }[]
+  messageIndex: number
+  quickActions?: { icon: React.ComponentType<{ className?: string }>; label: string }[]
   onQuickAction?: (label: string) => void
   showFormatSelector?: boolean
   selectedFormat?: 'pdf' | 'docx'
@@ -145,8 +165,10 @@ function MessageBubble({
   suggestions?: string[]
   metadata?: { fichier_url?: string; workflow_id?: string; [key: string]: unknown }
   onReviewRequest?: (workflowId: string) => void
+  onFeedback: (messageIndex: number, rating: number) => void
 }) {
   const isAssistant = message.role === 'assistant'
+  const isWelcome = message.id === '1'
 
   return (
     <div
@@ -255,12 +277,12 @@ function MessageBubble({
         {isAssistant && message.metadata?.fichier_url && (
           <div className="flex flex-wrap gap-2 mt-3">
             <a
-              href={`${process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'}${message.metadata.fichier_url}`}
+              href={`${API_URL}${message.metadata.fichier_url}`}
               download
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl text-[0.82rem] font-medium hover:bg-gold-dark transition-all shadow-sm"
             >
               <Download className="w-4 h-4" />
-              Telecharger le document
+              Télécharger le document
             </a>
             {message.metadata?.workflow_id && onReviewRequest && (
               <button
@@ -290,10 +312,38 @@ function MessageBubble({
         )}
 
         {/* Legal Reference */}
-        {isAssistant && message.id === '1' && (
+        {isAssistant && isWelcome && (
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-navy/5 rounded-md text-[0.7rem] text-navy font-medium mt-3">
             <Scale className="w-3 h-3" />
             Art. 1582 et s. Code civil
+          </div>
+        )}
+
+        {/* Feedback Buttons */}
+        {isAssistant && !isWelcome && (
+          <div className="flex items-center gap-1.5 mt-3 pt-2.5 border-t border-champagne/50">
+            <button
+              onClick={() => onFeedback(messageIndex, 1)}
+              className={`p-1.5 rounded-lg transition-all ${
+                message.feedbackRating === 1
+                  ? 'text-green-600 bg-green-50'
+                  : 'text-slate/40 hover:text-green-600 hover:bg-green-50'
+              }`}
+              title="Utile"
+            >
+              <ThumbsUp className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => onFeedback(messageIndex, -1)}
+              className={`p-1.5 rounded-lg transition-all ${
+                message.feedbackRating === -1
+                  ? 'text-red-500 bg-red-50'
+                  : 'text-slate/40 hover:text-red-500 hover:bg-red-50'
+              }`}
+              title="Pas utile"
+            >
+              <ThumbsDown className="w-3.5 h-3.5" />
+            </button>
           </div>
         )}
       </div>
@@ -301,18 +351,22 @@ function MessageBubble({
   )
 }
 
-function TypingIndicator() {
+function TypingIndicator({ statusText }: { statusText?: string | null }) {
   return (
     <div className="flex gap-3.5 max-w-[85%] self-start animate-fade-in">
       <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-sand border border-champagne">
         <Scale className="w-[18px] h-[18px] text-gold-dark" />
       </div>
       <div className="px-5 py-4 bg-cream border border-champagne rounded-2xl rounded-bl-md">
-        <div className="flex gap-1">
-          <span className="w-2 h-2 bg-slate rounded-full typing-dot" />
-          <span className="w-2 h-2 bg-slate rounded-full typing-dot" />
-          <span className="w-2 h-2 bg-slate rounded-full typing-dot" />
-        </div>
+        {statusText ? (
+          <p className="text-[0.8rem] text-slate italic">{statusText}</p>
+        ) : (
+          <div className="flex gap-1">
+            <span className="w-2 h-2 bg-slate rounded-full typing-dot" />
+            <span className="w-2 h-2 bg-slate rounded-full typing-dot" />
+            <span className="w-2 h-2 bg-slate rounded-full typing-dot" />
+          </div>
+        )}
       </div>
     </div>
   )
