@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-08T06:07:00.176596",
+    "generated_at": "2026-02-08T06:49:46.393718",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 69,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 219
+    "commits": 220
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "c4ca925",
-      "message": "Merge branch 'augustin/dev'",
+      "hash": "96e652f",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-02-08"
     },
-    "total_commits": 219,
+    "total_commits": 220,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 59
+        "commits": 60
       },
       {
         "name": "augustinfrance-aico",
@@ -622,6 +622,16 @@
   ],
   "activity": [
     {
+      "hash": "96e652f",
+      "author": "github-actions[bot]",
+      "date": "2026-02-08",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "c4ca925",
       "author": "Augustin",
       "date": "2026-02-08",
@@ -810,16 +820,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "b8b950d",
-      "author": "Augustin",
-      "date": "2026-02-04",
-      "message": "estimations réalistes - objectif PERFECTION ABSOLUE",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-08 06:07"
+    "last_updated": "2026-02-08 06:49"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-08 06:07"
+    "last_updated": "2026-02-08 06:49"
   },
   "conformity_details": {
     "promesse": {
