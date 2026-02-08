@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback } from 'react'
 import Sidebar from '@/components/Sidebar'
 import ChatArea from '@/components/ChatArea'
 import Header from '@/components/Header'
+import ParagraphReview from '@/components/ParagraphReview'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ''
 
 export interface Message {
   id: string
@@ -16,11 +18,20 @@ export interface Message {
   suggestions?: string[]
   metadata?: {
     fichier_url?: string
+    workflow_id?: string
     intention?: string
     confiance?: number
     [key: string]: unknown
   }
   feedbackRating?: number
+}
+
+interface DocumentSection {
+  id: string
+  index: number
+  title: string
+  content: string
+  heading_level: number
 }
 
 export interface ConversationSummary {
@@ -63,6 +74,10 @@ export default function Home() {
   const [progressPct, setProgressPct] = useState<number | null>(null)
   const [conversations, setConversations] = useState<ConversationSummary[]>([])
   const [statusText, setStatusText] = useState<string | null>(null)
+
+  // Review state (Tom)
+  const [reviewSections, setReviewSections] = useState<DocumentSection[] | null>(null)
+  const [reviewWorkflowId, setReviewWorkflowId] = useState<string | null>(null)
 
   // Init: load userId + conversationId from localStorage
   useEffect(() => {
@@ -138,7 +153,7 @@ export default function Home() {
   }
 
   // ================================================================
-  // Envoi de message avec SSE streaming
+  // Envoi de message avec SSE streaming (Paul)
   // ================================================================
 
   const sendMessage = async (content: string) => {
@@ -210,7 +225,12 @@ export default function Home() {
                       ...m,
                       suggestions: meta.suggestions,
                       section: meta.section,
-                      metadata: { fichier_url: meta.fichier_url },
+                      metadata: {
+                        fichier_url: meta.fichier_url,
+                        workflow_id: meta.workflow_id,
+                        intention: meta.intention,
+                        confiance: meta.confiance,
+                      },
                     }
                   : m
               )
@@ -236,7 +256,7 @@ export default function Home() {
         if (done) break
 
         sseBuffer += decoder.decode(value, { stream: true })
-        // Normaliser \r\n → \n (le protocole SSE utilise \r\n)
+        // Normaliser \r\n -> \n (le protocole SSE utilise \r\n)
         const normalized = sseBuffer.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
         const lines = normalized.split('\n')
         sseBuffer = lines.pop()!
@@ -299,6 +319,10 @@ export default function Home() {
     }
   }
 
+  // ================================================================
+  // Feedback thumbs up/down (Paul)
+  // ================================================================
+
   const sendFeedback = async (messageIndex: number, rating: number) => {
     // Optimistic update
     setMessages((prev) =>
@@ -322,6 +346,35 @@ export default function Home() {
     }
   }
 
+  // ================================================================
+  // Review section par section (Tom)
+  // ================================================================
+
+  const handleReviewRequest = async (workflowId: string) => {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (API_KEY) headers['X-API-Key'] = API_KEY
+
+      const response = await fetch(`${API_URL}/document/${workflowId}/sections`, {
+        headers,
+      })
+
+      if (!response.ok) throw new Error('Document non trouve')
+
+      const data = await response.json()
+      setReviewSections(data.sections)
+      setReviewWorkflowId(workflowId)
+    } catch (error) {
+      console.error('Review error:', error)
+    }
+  }
+
+  const handleReviewComplete = () => {
+    setReviewSections(null)
+    setReviewWorkflowId(null)
+    sendMessage('La relecture du document est terminee. Merci.')
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen p-5">
       <div className="w-full max-w-[1100px] h-[92vh] bg-ivory rounded-[20px] shadow-lg grid grid-cols-[280px_1fr] overflow-hidden border border-gold/10">
@@ -339,11 +392,24 @@ export default function Home() {
             onSendMessage={sendMessage}
             selectedFormat={selectedFormat}
             onFormatChange={setSelectedFormat}
+            onReviewRequest={handleReviewRequest}
             onFeedback={sendFeedback}
             statusText={statusText}
           />
         </main>
       </div>
+
+      {/* Paragraph Review Modal (Tom) */}
+      {reviewSections && reviewWorkflowId && (
+        <ParagraphReview
+          workflowId={reviewWorkflowId}
+          sections={reviewSections}
+          onComplete={handleReviewComplete}
+          onClose={() => { setReviewSections(null); setReviewWorkflowId(null) }}
+          apiUrl={API_URL}
+          apiKey={API_KEY}
+        />
+      )}
     </div>
   )
 }

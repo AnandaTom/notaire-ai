@@ -72,9 +72,10 @@ class CategorieBien(Enum):
 
 @dataclass
 class ResultatDetection:
-    """Résultat de la détection du type de promesse."""
+    """Résultat de la détection du type de promesse (détection 3 niveaux v1.9.0)."""
     type_promesse: TypePromesse
     categorie_bien: CategorieBien = CategorieBien.COPROPRIETE
+    sous_type: Optional[str] = None  # v1.9.0: lotissement, groupe_habitations, servitudes, viager, creation
     raison: str = ""
     confiance: float = 0.5
     sections_recommandees: List[str] = field(default_factory=list)
@@ -187,15 +188,17 @@ class GestionnairePromesses:
             bien = biens[0] if biens else {}
 
         # --- Priorité 1: Terrain à bâtir / Lotissement ---
-        if bien.get("lotissement"):
-            return CategorieBien.TERRAIN_A_BATIR
+        # Note: lotissement seul NE suffit PAS pour catégoriser en TERRAIN
+        # (une maison dans un lotissement = HORS_COPRO, pas TERRAIN)
+        # Vérifions d'abord les marqueurs terrain EXPLICITES
 
         type_bien = str(bien.get("type_bien", "")).lower()
         nature = str(bien.get("nature", "")).lower()
+        usage = str(bien.get("usage_actuel", "")).lower()
 
-        terrain_keywords = ("terrain", "parcelle", "lotissement", "lot a batir",
+        terrain_keywords = ("terrain", "parcelle", "lot a batir",
                             "lot à bâtir", "terrain a batir", "terrain à bâtir")
-        if type_bien in terrain_keywords or nature in terrain_keywords:
+        if type_bien in terrain_keywords or nature in terrain_keywords or usage in terrain_keywords:
             return CategorieBien.TERRAIN_A_BATIR
 
         # Marqueurs lotissement dans les données
@@ -230,24 +233,101 @@ class GestionnairePromesses:
         if bien.get("surface_terrain") and not bien.get("lots"):
             return CategorieBien.HORS_COPROPRIETE
 
+        # Marqueurs groupe habitations / lotissement hors copro (v1.9.0)
+        if bien.get("groupe_habitations") or bien.get("lotissement"):
+            return CategorieBien.HORS_COPROPRIETE
+
         # --- Défaut: copropriété (rétrocompatibilité) ---
         return CategorieBien.COPROPRIETE
 
+    def detecter_sous_type(self, donnees: Dict, categorie: CategorieBien) -> Optional[str]:
+        """
+        Détecte les sous-types spécifiques au sein d'une catégorie de bien (v1.9.0).
+
+        Sous-types supportés:
+        - Hors copro: "lotissement", "groupe_habitations", "avec_servitudes"
+        - Copro: "creation" (création de copropriété), "viager"
+        - Terrain: "lotissement"
+
+        Args:
+            donnees: Données de la promesse
+            categorie: Catégorie de bien détectée
+
+        Returns:
+            Sous-type détecté ou None
+        """
+        bien = donnees.get("bien", {})
+
+        # Sous-types hors copropriété
+        if categorie == CategorieBien.HORS_COPROPRIETE:
+            # Lotissement (priorité haute)
+            if bien.get("lotissement"):
+                return "lotissement"
+
+            description = str(bien.get("description", "")).lower()
+            type_bien = str(bien.get("type_bien", "")).lower()
+
+            if "lotissement" in description or "lotissement" in type_bien:
+                return "lotissement"
+            if "ASL" in description or "association syndicale" in description:
+                return "lotissement"
+
+            # Groupe d'habitations
+            if bien.get("groupe_habitations"):
+                return "groupe_habitations"
+            if "groupe" in description or "groupe d'habitations" in description:
+                return "groupe_habitations"
+
+            # Servitudes (priorité basse - souvent combiné avec autres)
+            if bien.get("servitudes") and len(bien.get("servitudes", [])) > 0:
+                return "avec_servitudes"
+
+        # Sous-types copropriété
+        elif categorie == CategorieBien.COPROPRIETE:
+            copro = donnees.get("copropriete", {})
+            prix = donnees.get("prix", {})
+
+            # Création de copropriété
+            if bien.get("etat") == "creation" or copro.get("creation") is True:
+                return "creation"
+            if not copro.get("reglement") and not copro.get("syndic"):
+                # Pas de règlement ni syndic existant = création probable
+                return "creation"
+
+            # Viager
+            if prix.get("viager") or prix.get("rente_viagere"):
+                return "viager"
+            modalites = str(prix.get("modalites_paiement", "")).lower()
+            if "viager" in modalites or "rente" in modalites:
+                return "viager"
+
+        # Sous-types terrain
+        elif categorie == CategorieBien.TERRAIN_A_BATIR:
+            # Lotissement (déjà détecté au niveau catégorie normalement)
+            if bien.get("lotissement"):
+                return "lotissement"
+
+        return None
+
     def detecter_type(self, donnees: Dict) -> ResultatDetection:
         """
-        Détecte automatiquement le type de promesse approprié (détection 2 niveaux).
+        Détecte automatiquement le type de promesse approprié (détection 3 niveaux v1.9.0).
 
         Niveau 1: Catégorie de bien (copropriété, hors copro, terrain)
         Niveau 2: Type de transaction (standard, premium, mobilier, multi-biens)
+        Niveau 3: Sous-type (lotissement, groupe habitations, servitudes, viager, création)
 
         Args:
             donnees: Données de la promesse
 
         Returns:
-            ResultatDetection avec le type, la catégorie et les détails
+            ResultatDetection avec le type, la catégorie, le sous-type et les détails
         """
         # Niveau 1: Catégorie de bien
         categorie = self.detecter_categorie_bien(donnees)
+
+        # Niveau 3: Sous-type (v1.9.0)
+        sous_type = self.detecter_sous_type(donnees, categorie)
 
         # Niveau 2: Type de transaction (logique existante)
         regles = self.catalogue.get("detection_automatique", {}).get("regles", [])
@@ -272,6 +352,7 @@ class GestionnairePromesses:
                     return ResultatDetection(
                         type_promesse=type_promesse,
                         categorie_bien=categorie,
+                        sous_type=sous_type,
                         raison=regle.get("raison", "Détection automatique"),
                         confiance=confiance,
                         sections_recommandees=self._get_sections_pour_type(type_promesse, donnees),
@@ -285,6 +366,7 @@ class GestionnairePromesses:
         return ResultatDetection(
             type_promesse=TypePromesse.STANDARD,
             categorie_bien=categorie,
+            sous_type=sous_type,
             raison="Type par défaut",
             confiance=0.5,
             sections_recommandees=self._get_sections_pour_type(TypePromesse.STANDARD, donnees),

@@ -1,18 +1,18 @@
 # Directive : Création d'une Promesse Unilatérale de Vente
 
-**Version**: 3.0.0 | **Date**: 2026-01-30
+**Version**: 3.1.0 | **Date**: 2026-02-04
 
 ---
 
 ## Objectif
 
-Guider la création complète d'une **promesse unilatérale de vente** pour les 3 catégories de biens immobiliers, avec détection automatique à 2 niveaux.
+Guider la création complète d'une **promesse unilatérale de vente** pour les 3 catégories de biens immobiliers, avec détection automatique à **3 niveaux** (v1.9.0).
 
 ---
 
-## Architecture 2 niveaux (v1.7.0)
+## Architecture 3 niveaux (v1.9.0)
 
-Le système utilise une détection à 2 niveaux:
+Le système utilise une détection à **3 niveaux** pour adapter le template et les sections:
 
 ### Niveau 1 : Catégorie de bien (détermine le template de base)
 
@@ -31,7 +31,34 @@ Le système utilise une détection à 2 niveaux:
 | **Avec mobilier** | Liste mobilier, ventilation prix |
 | **Multi-biens** | Multi-désignation, multi-cadastre |
 
-### Détection Automatique
+### Niveau 3 : Sous-types spécifiques (v1.9.0) ✨
+
+Sections activées selon le contexte du bien:
+
+| Catégorie | Sous-type | Marqueur | Section activée |
+|-----------|-----------|----------|-----------------|
+| **Hors copro** | `lotissement` | `bien.lotissement` | DISPOSITIONS RELATIVES AU LOTISSEMENT |
+| **Hors copro** | `groupe_habitations` | `bien.groupe_habitations` | GROUPE D'HABITATIONS |
+| **Hors copro / Toutes** | `avec_servitudes` | `bien.servitudes[]` | SERVITUDES (actives/passives) |
+| **Copro** | `creation` | Pas de `syndic`/`reglement` | Sections création copropriété |
+| **Copro** | `viager` | `prix.viager` ou `prix.rente_viagere` | Clauses viager (bouquet + rente) |
+
+**Exemple lotissement**:
+```json
+{
+  "bien": {
+    "lotissement": {
+      "nom": "Les Jardins de Marcy",
+      "arrete": {"date": "12/06/2018", "autorite": "Préfecture du Rhône"},
+      "association_syndicale": {"nom": "ASL Les Jardins", "cotisation_annuelle": 350}
+    }
+  }
+}
+```
+
+→ Active automatiquement la section "DISPOSITIONS RELATIVES AU LOTISSEMENT" dans le template
+
+### Détection Automatique (3 niveaux)
 
 ```python
 from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
@@ -39,20 +66,27 @@ from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 gestionnaire = GestionnairePromesses()
 detection = gestionnaire.detecter_type(donnees)
 
-# Résultat:
-# categorie_bien: CategorieBien.TERRAIN_A_BATIR
+# Résultat v1.9.0 (3 niveaux):
+# categorie_bien: CategorieBien.HORS_COPROPRIETE
 # type_promesse: TypePromesse.STANDARD
+# sous_type: "lotissement"  # ✨ NOUVEAU
 # confiance: 0.90
+# raison: "Détecté bien.lotissement + usage_actuel=Habitation"
 ```
+
+Le champ `sous_type` est utilisé pour activer les sections conditionnelles spécifiques dans le template.
 
 ### Règles de Détection Catégorie (Niveau 1)
 
 | Priorité | Condition | Catégorie |
 |----------|-----------|-----------|
-| 1 | `bien.lotissement` ou `type_bien == "terrain"` | TERRAIN_A_BATIR |
+| 1 | `usage_actuel == "terrain"` ou `type_bien == "terrain"` | TERRAIN_A_BATIR |
 | 2 | `bien.copropriete` ou `syndic` ou `lots` | COPROPRIETE |
-| 3 | `type_bien in (maison, villa, local)` | HORS_COPROPRIETE |
-| 4 | Par défaut | COPROPRIETE |
+| 3 | `usage_actuel == "Habitation"` ou `copropriete == False` | HORS_COPROPRIETE |
+| 4 | `bien.lotissement` ou `bien.groupe_habitations` | HORS_COPROPRIETE |
+| 5 | Par défaut | COPROPRIETE |
+
+**Note v1.9.0**: `bien.lotissement` seul NE détermine PLUS la catégorie TERRAIN. Une maison dans un lotissement = HORS_COPROPRIETE avec sous-type "lotissement".
 
 ### Règles de Détection Type (Niveau 2)
 
@@ -62,6 +96,27 @@ detection = gestionnaire.detecter_type(donnees)
 | 2 | `mobilier.existe == True` | avec_mobilier |
 | 3 | `diagnostics.exhaustifs == True` | premium |
 | 4 | Par défaut | standard |
+
+### Règles de Détection Sous-Type (Niveau 3) ✨
+
+**Pour HORS_COPROPRIETE**:
+
+| Priorité | Condition | Sous-type | Confiance |
+|----------|-----------|-----------|-----------|
+| 1 | `bien.lotissement` existe | `lotissement` | 95% |
+| 2 | `bien.groupe_habitations` existe | `groupe_habitations` | 95% |
+| 3 | `bien.servitudes[]` non vide | `avec_servitudes` | 90% |
+| 4 | Aucun marqueur | `None` | - |
+
+**Pour COPROPRIETE**:
+
+| Priorité | Condition | Sous-type | Confiance |
+|----------|-----------|-----------|-----------|
+| 1 | `prix.viager` ou `prix.rente_viagere` | `viager` | 95% |
+| 2 | Pas de `syndic` ni `reglement` | `creation` | 85% |
+| 3 | Aucun marqueur | `None` | - |
+
+**Cas de priorité combinée**: Si lotissement + servitudes → `lotissement` (priorité haute)
 
 ---
 

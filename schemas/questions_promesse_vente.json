@@ -1,9 +1,9 @@
 {
   "titre": "Questions pour Promesse Unilatérale de Vente",
-  "description": "Questions structurées pour collecter les informations nécessaires à la rédaction d'une promesse unilatérale de vente — 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir)",
-  "version": "3.0.0",
-  "date_modification": "2026-01-30",
-  "note_multi_templates": "Ce questionnaire supporte 3 catégories de biens et 4 types de transactions. Les sections sont filtrées par condition_categorie.",
+  "description": "Questions structurées pour collecter les informations nécessaires à la rédaction d'une promesse unilatérale de vente — 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir) + 5 cas spéciaux (lotissement, groupe habitations, servitudes, viager, création copro)",
+  "version": "3.1.0",
+  "date_modification": "2026-02-04",
+  "note_multi_templates": "Ce questionnaire supporte 3 catégories de biens, 4 types de transactions, et 5 cas spéciaux. Les sections sont filtrées par condition_categorie et condition_personnalisee.",
   "sections": {
     "0_detection_type": {
       "titre": "Détection du type de promesse",
@@ -526,6 +526,175 @@
       ]
     },
 
+    "6b_lotissement": {
+      "condition_categorie": ["hors_copropriete", "terrain_a_batir"],
+      "condition_personnalisee": "bien.type_descriptif contains 'lotissement' OR bien.description contains 'lotissement'",
+      "titre": "Lotissement (si applicable)",
+      "questions": [
+        {
+          "id": "lotissement_existe",
+          "question": "Le bien fait-il partie d'un lotissement autorisé ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.lotissement"
+        },
+        {
+          "id": "lotissement_nom",
+          "question": "Nom du lotissement :",
+          "type": "texte",
+          "condition": "lotissement_existe == true",
+          "variable": "bien.lotissement.nom"
+        },
+        {
+          "id": "lotissement_arrete_date",
+          "question": "Date de l'arrêté d'autorisation du lotissement :",
+          "type": "date",
+          "obligatoire": true,
+          "condition": "lotissement_existe == true",
+          "variable": "bien.lotissement.arrete.date"
+        },
+        {
+          "id": "lotissement_arrete_autorite",
+          "question": "Autorité ayant délivré l'arrêté (ex: Maire de ...) :",
+          "type": "texte",
+          "obligatoire": true,
+          "condition": "lotissement_existe == true",
+          "variable": "bien.lotissement.arrete.autorite"
+        },
+        {
+          "id": "lotissement_arrete_numero",
+          "question": "Numéro de référence de l'arrêté (si disponible) :",
+          "type": "texte",
+          "condition": "lotissement_existe == true",
+          "variable": "bien.lotissement.arrete.numero"
+        },
+        {
+          "id": "lotissement_cahier_charges",
+          "question": "Existe-t-il un cahier des charges du lotissement ?",
+          "type": "booleen",
+          "condition": "lotissement_existe == true",
+          "variable": "bien.lotissement.cahier_charges"
+        },
+        {
+          "id": "lotissement_asl",
+          "question": "Y a-t-il une association syndicale libre (ASL) gérant le lotissement ?",
+          "type": "booleen",
+          "condition": "lotissement_existe == true",
+          "variable": "bien.lotissement.association_syndicale"
+        },
+        {
+          "id": "lotissement_asl_nom",
+          "question": "Nom de l'association syndicale :",
+          "type": "texte",
+          "condition": "lotissement_asl == true",
+          "variable": "bien.lotissement.association_syndicale.nom"
+        },
+        {
+          "id": "lotissement_asl_cotisation",
+          "question": "Montant de la cotisation annuelle ASL (en €) :",
+          "type": "nombre",
+          "condition": "lotissement_asl == true",
+          "variable": "bien.lotissement.association_syndicale.cotisation_annuelle"
+        }
+      ]
+    },
+
+    "6c_groupe_habitations": {
+      "condition_categorie": "hors_copropriete",
+      "condition_personnalisee": "bien.type_descriptif contains 'groupe' OR bien.description contains 'groupe d\\'habitations'",
+      "titre": "Groupe d'habitations (si applicable)",
+      "questions": [
+        {
+          "id": "groupe_habitations_existe",
+          "question": "Le bien fait-il partie d'un groupe d'habitations ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.groupe_habitations",
+          "note": "Groupe d'habitations = plusieurs maisons/lots avec parties communes (non copropriété)"
+        },
+        {
+          "id": "groupe_nombre_lots",
+          "question": "Nombre de lots dans le groupe d'habitations :",
+          "type": "nombre",
+          "obligatoire": true,
+          "condition": "groupe_habitations_existe == true",
+          "variable": "bien.groupe_habitations.nombre_lots"
+        },
+        {
+          "id": "groupe_parties_communes",
+          "question": "Y a-t-il des parties communes (ex: voies d'accès, espaces verts, parking) ?",
+          "type": "booleen",
+          "condition": "groupe_habitations_existe == true",
+          "variable": "bien.groupe_habitations.parties_communes"
+        },
+        {
+          "id": "groupe_charges_quote_part",
+          "question": "Quote-part du lot vendu dans les charges communes (ex: 1 pour 1/15) :",
+          "type": "nombre",
+          "condition": "groupe_habitations_existe == true",
+          "variable": "bien.groupe_habitations.charges.quote_part"
+        },
+        {
+          "id": "groupe_charges_total",
+          "question": "Total des quotes-parts (ex: 15 pour 1/15) :",
+          "type": "nombre",
+          "condition": "groupe_habitations_existe == true",
+          "variable": "bien.groupe_habitations.charges.total"
+        },
+        {
+          "id": "groupe_charges_montant",
+          "question": "Montant annuel estimé des charges communes (en €) :",
+          "type": "nombre",
+          "condition": "groupe_habitations_existe == true",
+          "variable": "bien.groupe_habitations.charges.montant_annuel"
+        },
+        {
+          "id": "groupe_reglement_existe",
+          "question": "Existe-t-il un règlement du groupe d'habitations ?",
+          "type": "booleen",
+          "condition": "groupe_habitations_existe == true",
+          "variable": "bien.groupe_habitations.reglement"
+        },
+        {
+          "id": "groupe_reglement_date",
+          "question": "Date d'établissement du règlement :",
+          "type": "date",
+          "condition": "groupe_reglement_existe == true",
+          "variable": "bien.groupe_habitations.reglement.date"
+        }
+      ]
+    },
+
+    "6d_servitudes": {
+      "titre": "Servitudes",
+      "note": "Servitudes affectant le bien ou dont il bénéficie (passage, vue, écoulement, etc.)",
+      "questions": [
+        {
+          "id": "servitudes_existence",
+          "question": "Le bien est-il grevé de servitudes ou en bénéficie-t-il ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.servitudes",
+          "note": "Servitudes = droits réels immobiliers (passage, vue, puisage, écoulement, etc.)"
+        },
+        {
+          "id": "servitudes_liste",
+          "question": "Pour chaque servitude, précisez : type (active/passive), nature (passage, vue...), description, origine",
+          "type": "array",
+          "condition": "servitudes_existence == true",
+          "variable": "bien.servitudes",
+          "items_schema": {
+            "type": { "type": "select", "options": ["active", "passive"], "obligatoire": true },
+            "nature": { "type": "text", "obligatoire": true },
+            "description": { "type": "textarea" },
+            "origine": { "type": "text" },
+            "origine_date": { "type": "date" }
+          },
+          "note": "Active = le bien en bénéficie, Passive = le bien la subit"
+        }
+      ]
+    },
+
     "8_copropriete": {
       "condition_categorie": "copropriete",
       "titre": "Copropriété",
@@ -615,6 +784,56 @@
           "type": "booleen",
           "obligatoire": true,
           "variable": "copropriete.emprunt_collectif.existe"
+        },
+        {
+          "id": "garantie_superficie_mesureur",
+          "question": "Qui a réalisé le mesurage loi Carrez (nom du diagnostiqueur) ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "copropriete.garantie_superficie.mesureur"
+        },
+        {
+          "id": "garantie_superficie_date",
+          "question": "Quelle est la date du certificat de mesurage Carrez ?",
+          "type": "date",
+          "obligatoire": false,
+          "variable": "copropriete.garantie_superficie.date_mesurage"
+        },
+        {
+          "id": "assurance_copro_assureur",
+          "question": "Quel est l'assureur de la copropriété (responsabilité civile) ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "copropriete.assurance.assureur"
+        },
+        {
+          "id": "assurance_copro_police",
+          "question": "Quel est le numéro de police d'assurance de la copropriété ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "copropriete.assurance.numero_police"
+        }
+      ]
+    },
+
+    "8d_restrictions": {
+      "titre": "Restrictions d'usage",
+      "condition": "toujours",
+      "questions": [
+        {
+          "id": "restrictions_existent",
+          "question": "Le bien est-il soumis à des restrictions d'usage particulières (servitudes spécifiques, restrictions conventionnelles) ?",
+          "type": "booleen",
+          "obligatoire": false,
+          "variable": "_restrictions_existent"
+        },
+        {
+          "id": "restrictions_details",
+          "question": "Décrivez chaque restriction d'usage (type, description, origine)",
+          "type": "texte_libre",
+          "obligatoire": false,
+          "condition": "_restrictions_existent == true",
+          "variable": "restrictions_usage"
         }
       ]
     },

@@ -81,7 +81,8 @@ python notaire.py dashboard
 | `execution/utils/` | collecter_informations.py, suggerer_clauses.py, extraire_bookmarks.py, extraire_titre.py | Utilitaires |
 | `execution/extraction/` | patterns_avances.py, ml_extractor.py, ocr_processor.py | Module ML |
 | `execution/security/` | encryption_service.py, anonymiser_docx.py, secure_client_manager.py | Sécurité RGPD |
-| `execution/api/` | api_validation.py, api_feedback.py | Endpoints API internes |
+| `execution/services/` | cadastre_service.py | 🆕 **APIs gouvernementales** (cadastre, geocoding) |
+| `execution/api/` | api_validation.py, api_feedback.py, api_cadastre.py | Endpoints API internes |
 
 **Scripts à la racine de execution/ :**
 | Script | Fonction |
@@ -90,7 +91,7 @@ python notaire.py dashboard
 | `execution/demo_titre_promesse.py` | 🆕 **DEMO** - Titre → Q&R → Promesse → DOCX |
 | `execution/utils/convertir_promesse_vente.py` | 🆕 **CONVERSION** - Promesse → Vente (conservation données) |
 | `execution/workflow_rapide.py` | 🚀 **Génération 1 commande** - Validation → Assemblage → Export |
-| `execution/test_fiabilite.py` | ✅ **Tests automatisés** (194 tests) |
+| `execution/test_fiabilite.py` | ✅ **Tests automatisés** (219 tests) |
 | `execution/generer_dashboard_data.py` | Génération données dashboard |
 | `notaire.py` | **CLI SIMPLIFIÉ** - Point d'entrée racine (`python notaire.py`) |
 
@@ -460,18 +461,18 @@ Be pragmatic. Be reliable. Self-anneal. **Build knowledge.**
    - Enrichir catalogues si nouvelles clauses/situations
    - Documenter dans `lecons_apprises.md` si edge case
 
-### Templates Actuels (v1.7.0) - Janvier 2026
+### Templates Actuels (v1.9.0) - Février 2026
 
-| Template | Conformité | Statut |
-|----------|-----------|--------|
-| Règlement copropriété | 85.5% | ✅ PROD |
-| Modificatif EDD | 91.7% | ✅ PROD |
-| **Promesse copropriété** | **88.9%** | ✅ PROD |
-| **Promesse hors copropriété** | NEW | ✅ PROD |
-| **Promesse terrain à bâtir** | NEW | ✅ PROD |
-| **Vente** | **80.2%** | ✅ PROD |
+| Template | Conformité | Statut | Nouveautés v1.9 |
+|----------|-----------|--------|-----------------|
+| Règlement copropriété | 85.5% | ✅ PROD | - |
+| Modificatif EDD | 91.7% | ✅ PROD | - |
+| **Promesse copropriété** | **88.9%** | ✅ PROD | Sous-types: creation, viager |
+| **Promesse hors copropriété** | NEW | ✅ PROD | **+3 sections: lotissement, groupe, servitudes** |
+| **Promesse terrain à bâtir** | NEW | ✅ PROD | - |
+| **Vente** | **80.2%** | ✅ PROD | - |
 
-**6 templates PROD — 3 catégories de biens couvertes**
+**6 templates PROD — 3 catégories de biens — 5 sous-types conditionnels**
 
 ### Garanties au Notaire
 
@@ -486,6 +487,162 @@ modal serve modal/modal_app.py    # Test local
 ```
 
 Endpoint: `https://notaire-ai--fastapi-app.modal.run/`
+
+---
+
+## Version 1.9.0 - Sections Conditionnelles & Sous-types (Février 2026)
+
+### 🆕 Détection 3 niveaux  (catégorie + type + sous-type)
+
+Extension du système de détection v1.7.0 avec un **niveau 3 — sous-types** pour activer des sections spécifiques selon le contexte:
+
+**Sous-types hors copropriété** (ajoutés dans v1.9.0):
+
+| Sous-type | Marqueur | Section activée | Template |
+|-----------|----------|-----------------|----------|
+| `lotissement` | `bien.lotissement` | DISPOSITIONS RELATIVES AU LOTISSEMENT | promesse_hors_copropriete.md |
+| `groupe_habitations` | `bien.groupe_habitations` | GROUPE D'HABITATIONS | promesse_hors_copropriete.md |
+| `avec_servitudes` | `bien.servitudes[]` | SERVITUDES (actives/passives) | partie_developpee_promesse.md |
+
+**Sous-types copropriété** (détection améliorée):
+
+| Sous-type | Marqueur | Comportement |
+|-----------|----------|--------------|
+| `creation` | Pas de `syndic`/`reglement` | Sections création copro |
+| `viager` | `prix.viager` | Clauses viager |
+
+### 🔧 Nouvelles Sections Conditionnelles
+
+**1. DISPOSITIONS RELATIVES AU LOTISSEMENT** ([promesse_hors_copropriete.md](templates/promesse_hors_copropriete.md):~L233)
+
+Activée si `bien.lotissement` présent:
+- Arrêté d'autorisation
+- Association syndicale libre (ASL)
+- Cotisations annuelles
+
+**2. GROUPE D'HABITATIONS** ([promesse_hors_copropriete.md](templates/promesse_hors_copropriete.md):~L261)
+
+Activée si `bien.groupe_habitations` présent:
+- Nombre de lots
+- Quote-part des charges
+- Modalités de répartition
+
+**3. SERVITUDES** ([partie_developpee_promesse.md](templates/sections/partie_developpee_promesse.md):~L560)
+
+Activée si `bien.servitudes[]` présent:
+- Servitudes actives (bénéficiaires)
+- Servitudes passives (charges)
+- Nature et description détaillée
+
+### 📋 Schémas Enrichis
+
+**variables_promesse_vente.json v4.0.0** - 3 nouvelles propriétés dans `bien`:
+
+```json
+{
+  "lotissement": {
+    "nom": "string",
+    "arrete": {"date": "string", "autorite": "string"},
+    "association_syndicale": {"nom": "string", "cotisation_annuelle": "number"}
+  },
+  "groupe_habitations": {
+    "nombre_lots": "integer",
+    "charges": {"quote_part": "number", "total": "number", "montant_annuel": "number"}
+  },
+  "servitudes": [
+    {"type": "active|passive", "nature": "string", "description": "string"}
+  ]
+}
+```
+
+**questions_promesse_vente.json v3.1.0** - 3 nouvelles sections (19 questions):
+
+| Section | Questions | Condition d'affichage |
+|---------|-----------|----------------------|
+| `6b_lotissement` | 9 questions | Si catégorie = hors copro |
+| `6c_groupe_habitations` | 8 questions | Si catégorie = hors copro |
+| `6d_servitudes` | 2 questions | Toujours (toutes catégories) |
+
+### ✅ Tests Phase 1.4 (v1.9.0)
+
+**21 nouveaux tests unitaires + 3 E2E** ([test_gestionnaire_promesses.py](tests/test_gestionnaire_promesses.py)):
+
+- **TestDetectionSousTypes** (6 tests): Détection lotissement, groupe, servitudes
+- **TestValidationSectionsConditionnelles** (6 tests): Validation des nouvelles structures
+- **TestE2ESectionsConditionnelles** (3 tests): Workflows complets par sous-type
+
+**Résultats**: 24 tests passed, 1 skipped (génération nécessite dependencies)
+
+### 📚 Documentation
+
+- **[docs/ETAT_LIEUX_V1.9.md](docs/ETAT_LIEUX_V1.9.md)** - État des lieux complet + 12 pistes d'amélioration
+- **[docs/PLAN_INTEGRATION_13_TRAMES.md](docs/PLAN_INTEGRATION_13_TRAMES.md)** - Plan d'intégration des 13 trames anonymisées
+
+### 🎯 Couverture Cas Spéciaux (v1.9.0)
+
+| Situation | Avant v1.9 | v1.9.0 |
+|-----------|-----------|--------|
+| Maison dans lotissement | ❌ | ✅ Sous-type lotissement |
+| Groupe d'habitations | ❌ | ✅ Sous-type groupe_habitations |
+| Servitudes actives/passives | ⚠️ Basique | ✅ Section dédiée |
+| Viager | ⚠️ Détection partielle | ✅ Sous-type viager |
+| Création copropriété | ⚠️ Détection partielle | ✅ Sous-type creation |
+
+---
+
+## Version 1.8.0 - Intégration Cadastre Gouvernemental (Janvier 2026)
+
+### 🆕 CadastreService — APIs gouvernementales
+
+Le pipeline enrichit automatiquement les données cadastrales via 2 APIs ouvertes :
+
+| API | Usage | Endpoint |
+|-----|-------|----------|
+| **API Adresse (BAN)** | Adresse → code_insee, coordinates | `api-adresse.data.gouv.fr/search/` |
+| **API Carto (IGN)** | code_insee + section + numero → parcelle GeoJSON | `apicarto.ign.fr/api/cadastre/parcelle` |
+
+**Chaîne de résolution cadastre** (priorité descendante) :
+1. Titre de propriété (upload notaire) → OCR → extraction cadastre
+2. Supabase → recherche par adresse/nom
+3. API Cadastre gouv.fr → geocoding adresse → lookup parcelle
+4. Questions Q&R au notaire (frontend ou CLI)
+
+### Composants
+
+1. **CadastreService** ([cadastre_service.py](execution/services/cadastre_service.py))
+   - `geocoder_adresse(adresse)` → code_insee, coordinates, ville
+   - `chercher_parcelle(code_insee, section, numero)` → parcelle + géométrie + surface
+   - `lister_sections(code_insee)` → toutes sections d'une commune
+   - `enrichir_cadastre(donnees)` → enrichissement automatique du dossier
+   - `surface_texte_vers_m2("00 ha 05 a 30 ca")` → 530
+   - Cache local (TTL 24h) pour éviter les appels redondants
+
+2. **Intégration pipeline** (automatique)
+   - Extraction titre (`extraire_titre.py`) → enrichissement cadastre après OCR
+   - Génération promesse (`gestionnaire_promesses.py`) → enrichissement avant assemblage
+   - 5 nouveaux patterns regex cadastre dans `patterns_avances.py`
+
+3. **API Endpoints** ([api_cadastre.py](execution/api/api_cadastre.py))
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/cadastre/geocoder` | POST | Adresse → code_insee + coordinates |
+| `/cadastre/parcelle` | GET | code_insee + section + numero → parcelle |
+| `/cadastre/sections` | GET | code_insee → liste sections |
+| `/cadastre/enrichir` | POST | Données dossier → données enrichies |
+| `/cadastre/surface` | GET | Conversion surface texte → m² |
+
+### CLI
+
+```bash
+python execution/services/cadastre_service.py geocoder "12 rue de la Paix, Paris"
+python execution/services/cadastre_service.py parcelle 69290 AH 0068
+python execution/services/cadastre_service.py sections 69290
+python execution/services/cadastre_service.py enrichir donnees.json -o enrichi.json
+python execution/services/cadastre_service.py surface "00 ha 05 a 30 ca"
+```
+
+### Tests : **219 tests, 0 failures** (25 tests cadastre ajoutés)
 
 ---
 
