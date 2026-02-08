@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-08T05:41:42.359809",
+    "generated_at": "2026-02-08T06:07:00.176596",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 69,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 216
+    "commits": 219
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "392cfd9",
+      "hash": "c4ca925",
       "message": "Merge branch 'augustin/dev'",
       "date": "2026-02-08"
     },
-    "total_commits": 216,
+    "total_commits": 219,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 58
+        "commits": 59
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 43
+        "commits": 45
       },
       {
         "name": "Payoss",
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "c4ca925",
+      "author": "Augustin",
+      "date": "2026-02-08",
+      "message": "Merge branch 'augustin/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ae979de",
+      "author": "Augustin",
+      "date": "2026-02-08",
+      "message": "retrait section objectifs revenus concrets",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "68fab68",
+      "author": "github-actions[bot]",
+      "date": "2026-02-08",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "392cfd9",
       "author": "Augustin",
       "date": "2026-02-08",
@@ -790,36 +820,6 @@
       "type_label": "Fix",
       "type_icon": "🐛",
       "type_color": "red"
-    },
-    {
-      "hash": "afc211b",
-      "author": "Augustin",
-      "date": "2026-02-04",
-      "message": "manuel Best Practice complet et lisible",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "32da2db",
-      "author": "Augustin",
-      "date": "2026-02-04",
-      "message": "ajout section Stratégie Business (VI)",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "8c5a4a7",
-      "author": "Augustin",
-      "date": "2026-02-04",
-      "message": "ajout manuel Best Practice Business + intégration dashboard",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-08 05:41"
+    "last_updated": "2026-02-08 06:07"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-08 05:41"
+    "last_updated": "2026-02-08 06:07"
   },
   "conformity_details": {
     "promesse": {
