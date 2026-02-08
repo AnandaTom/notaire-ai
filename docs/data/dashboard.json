@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-04T21:49:16.776657",
+    "generated_at": "2026-02-08T17:28:34.887024",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,35 +9,35 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 66,
+    "scripts_count": 72,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 209
+    "commits": 257
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "2f7f8ac",
-      "message": "docs(v1.9.0): Plan améliorations post-Phase 1",
-      "date": "2026-02-04"
+      "hash": "bf990e0",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "date": "2026-02-08"
     },
-    "total_commits": 209,
+    "total_commits": 257,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 127
+        "commits": 131
       },
       {
         "name": "github-actions[bot]",
-        "commits": 53
+        "commits": 61
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 39
+        "commits": 45
       },
       {
         "name": "Payoss",
-        "commits": 15
+        "commits": 17
       },
       {
         "name": "Automai",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-08"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1588,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-08"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-08"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,15 +88,15 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-04"
+      "last_modified": "2026-02-08"
     }
   ],
   "scripts": {
-    "total": 66,
-    "total_lines": 39112,
+    "total": 72,
+    "total_lines": 42232,
     "categories": {
       "generation": 6,
-      "utils": 52,
+      "utils": 58,
       "tests": 3,
       "export": 3,
       "validation": 2
@@ -119,13 +119,18 @@
       },
       {
         "name": "orchestrateur.py",
-        "lines": 1460,
+        "lines": 1461,
         "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "gestionnaire_promesses.py",
         "lines": 1456,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
+      },
+      {
+        "name": "chat_handler.py",
+        "lines": 1117,
+        "path": "execution/chat_handler.py"
       },
       {
         "name": "generer_dashboard_data.py",
@@ -139,18 +144,13 @@
       },
       {
         "name": "secure_client_manager.py",
-        "lines": 951,
+        "lines": 937,
         "path": "execution/security/secure_client_manager.py"
       },
       {
         "name": "gestionnaire_titres.py",
         "lines": 919,
         "path": "execution/gestionnaires/gestionnaire_titres.py"
-      },
-      {
-        "name": "comparer_documents.py",
-        "lines": 859,
-        "path": "execution/analyse/comparer_documents.py"
       }
     ]
   },
@@ -622,6 +622,196 @@
   ],
   "activity": [
     {
+      "hash": "bf990e0",
+      "author": "Tom",
+      "date": "2026-02-08",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "6d3e214",
+      "author": "github-actions[bot]",
+      "date": "2026-02-08",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "96e652f",
+      "author": "github-actions[bot]",
+      "date": "2026-02-08",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "c4ca925",
+      "author": "Augustin",
+      "date": "2026-02-08",
+      "message": "Merge branch 'augustin/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ae979de",
+      "author": "Augustin",
+      "date": "2026-02-08",
+      "message": "retrait section objectifs revenus concrets",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "68fab68",
+      "author": "github-actions[bot]",
+      "date": "2026-02-08",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "392cfd9",
+      "author": "Augustin",
+      "date": "2026-02-08",
+      "message": "Merge branch 'augustin/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "dee3517",
+      "author": "Augustin",
+      "date": "2026-02-08",
+      "message": "ajout analyse sources revenus + stratégie business",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "bc37d74",
+      "author": "Tom",
+      "date": "2026-02-07",
+      "message": "resolve merge conflicts tom/dev ← origin/master",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "eb41292",
+      "author": "github-actions[bot]",
+      "date": "2026-02-07",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "a5258db",
+      "author": "Augustin",
+      "date": "2026-02-07",
+      "message": "Merge branch 'master' into augustin/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "d284c69",
+      "author": "Tom",
+      "date": "2026-02-06",
+      "message": "Merge branch 'tom/dev' of https://github.com/AnandaTom/notaire-ai into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "c6fff94",
+      "author": "github-actions[bot]",
+      "date": "2026-02-06",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "0411adc",
+      "author": "github-actions[bot]",
+      "date": "2026-02-05",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "0aed352",
+      "author": "Payoss",
+      "date": "2026-02-05",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "9109002",
+      "author": "Payoss",
+      "date": "2026-02-05",
+      "message": "Améliorations chat, sécurité et services",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "6619c9e",
+      "author": "Tom",
+      "date": "2026-02-05",
+      "message": "Fin de journee - 05/02/2026  8:51:19,76",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "00b32c4",
+      "author": "github-actions[bot]",
+      "date": "2026-02-05",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "3959ae7",
+      "author": "github-actions[bot]",
+      "date": "2026-02-04",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "2f7f8ac",
       "author": "Tom",
       "date": "2026-02-04",
@@ -630,196 +820,6 @@
       "type_label": "Documentation",
       "type_icon": "📝",
       "type_color": "purple"
-    },
-    {
-      "hash": "5f400c3",
-      "author": "Tom",
-      "date": "2026-02-04",
-      "message": "Mise à jour directive creer_promesse_vente v3.0.0 → v3.1.0",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
-    },
-    {
-      "hash": "def4782",
-      "author": "Tom",
-      "date": "2026-02-04",
-      "message": "Phase 2.1 - Analyse complète trames viager K & L",
-      "type": "docs",
-      "type_label": "Documentation",
-      "type_icon": "📝",
-      "type_color": "purple"
-    },
-    {
-      "hash": "2468c38",
-      "author": "github-actions[bot]",
-      "date": "2026-02-04",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "d829a8e",
-      "author": "Tom",
-      "date": "2026-02-04",
-      "message": "Phase 1.4-1.5 - Tests + Documentation",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "ba4b84e",
-      "author": "Tom",
-      "date": "2026-02-04",
-      "message": "Phase 1.3 - Détection automatique sous-types (v1.9.0)",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "ce55ec1",
-      "author": "Tom",
-      "date": "2026-02-04",
-      "message": "Phase 1.1-1.2 - Sections conditionnelles + schémas enrichis (v1.9.0)",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "7c63265",
-      "author": "github-actions[bot]",
-      "date": "2026-02-04",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "0ffec14",
-      "author": "Tom",
-      "date": "2026-02-04",
-      "message": "Intégration 13 trames promesse + plan d'intégration optimisée (v1.9-2.0)",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "8aea5b0",
-      "author": "Tom",
-      "date": "2026-02-04",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "0e13aae",
-      "author": "github-actions[bot]",
-      "date": "2026-02-04",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "062cc5b",
-      "author": "github-actions[bot]",
-      "date": "2026-02-03",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "c197acd",
-      "author": "Tom",
-      "date": "2026-02-02",
-      "message": "Fin de journee - 02/02/2026 21:09:47,70",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "b1be922",
-      "author": "Augustin",
-      "date": "2026-02-02",
-      "message": "dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "9549e48",
-      "author": "Augustin",
-      "date": "2026-01-30",
-      "message": "audit complet questionnaire → email notaire + stockage Supabase",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "8d0db30",
-      "author": "github-actions[bot]",
-      "date": "2026-02-02",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "8d10ad8",
-      "author": "Tom",
-      "date": "2026-02-02",
-      "message": "Fin de journee - 02/02/2026 19:23:39,08",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "c89d37e",
-      "author": "github-actions[bot]",
-      "date": "2026-02-02",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "5d45452",
-      "author": "Augustin",
-      "date": "2026-02-02",
-      "message": "dashboard redesign + auth email/mdp + questionnaire état civil + index Notomai",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "a503929",
-      "author": "Tom",
-      "date": "2026-02-02",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1023,7 +1023,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-04"
+    "last_updated": "2026-02-08"
   },
   "overview": {
     "overall_score": 67,
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-04 21:49"
+    "last_updated": "2026-02-08 17:28"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-04 21:49"
+    "last_updated": "2026-02-08 17:28"
   },
   "conformity_details": {
     "promesse": {
