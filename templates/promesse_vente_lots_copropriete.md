@@ -155,6 +155,20 @@ Pour la compréhension de certains termes aux présentes, il est préalablement 
 **-** Les **"MEUBLES"** désigneront les meubles et objets mobiliers, s'il en existe.
 
 # Identification du bien
+
+{% if bien.adresse %}
+| Lieu de situation du bien vendu | |
+| :---- | :---- |
+| **Adresse** | {{ bien.adresse.numero }} {{ bien.adresse.voie }}, {{ bien.adresse.code_postal }} {{ bien.adresse.ville }} |
+| **Commune** | {{ bien.adresse.ville }} ({{ bien.adresse.departement }}) |
+{% if bien.adresse.code_insee %}
+| **Code INSEE** | {{ bien.adresse.code_insee }} |
+{% endif %}
+{% if bien.cadastre and bien.cadastre[0] %}
+| **Références cadastrales** | Section {{ bien.cadastre[0].section }} n° {{ bien.cadastre[0].numero }} |
+{% endif %}
+{% endif %}
+
 ## Désignation
 **Dans un ensemble immobilier soumis au régime de la copropriété situé à {{ bien.adresse.ville }} ({{ bien.adresse.departement }}) {{ bien.adresse.code_postal }} {{ bien.adresse.numero }} {{ bien.adresse.voie }}.**
 
@@ -165,8 +179,11 @@ Figurant ainsi au cadastre :
 | Section | N° | Lieudit | Surface |
 | :---- | :---- | :---- | :---- |
 {% for parcelle in bien.cadastre %}
-| {{ parcelle.section }} | {{ parcelle.numero }} | {{ parcelle.lieudit }} | {{ parcelle.surface }} |
+| {{ parcelle.section }} | {{ parcelle.numero }} | {{ parcelle.lieudit }} | {{ parcelle.surface }}{% if parcelle.surface_m2 %} ({{ parcelle.surface_m2 }} m²){% endif %} |
 {% endfor %}
+{% if bien.cadastre_total_surface %}
+| | | **Total** | **{{ bien.cadastre_total_surface }}** |
+{% endif %}
 
 Un extrait de plan cadastral est annexé.
 Un extrait de plan Géoportail avec vue aérienne est annexé.
@@ -1113,6 +1130,41 @@ La fiche synthétique **a été établie** le {{ copropriete.fiche_synthetique.d
 {% if copropriete.fonds_travaux and copropriete.fonds_travaux.existe %}
 ## Fonds de travaux
 **L'immeuble entre dans le champ d'application de l'obligation de créer un fonds de travaux.**
+{% endif %}
+
+{% if copropriete.garantie_superficie %}
+## Garantie de superficie
+
+La superficie de la partie privative du lot objet des présentes a été mesurée conformément aux dispositions de la loi n° 96-1107 du 18 décembre 1996 (loi Carrez).
+
+{% if copropriete.garantie_superficie.mesureur %}
+**Certificat de mesurage établi par {{ copropriete.garantie_superficie.mesureur }}{% if copropriete.garantie_superficie.date_mesurage %}, en date du {{ copropriete.garantie_superficie.date_mesurage }}{% endif %}.**
+{% endif %}
+
+{% if copropriete.garantie_superficie.superficie_mesuree %}
+**La superficie de la partie privative est de <<<VAR_START>>>{{ copropriete.garantie_superficie.superficie_mesuree }}<<<VAR_END>>> m².**
+{% endif %}
+
+Si la superficie réelle est inférieure de plus d'un vingtième à celle exprimée dans le présent acte, le **BÉNÉFICIAIRE** pourra, dans le délai d'un an à compter de la signature de l'acte authentique, demander une diminution du prix proportionnelle à la moindre mesure, conformément à l'article 46 de la loi du 10 juillet 1965.
+
+**Annexe n°{{ annexe_counter | default('XX') }} : Certificat de superficie**
+{% endif %}
+
+{% if copropriete.assurance %}
+## Assurance de la copropriété
+
+L'immeuble est assuré au titre de la responsabilité civile obligatoire de la copropriété.
+
+{% if copropriete.assurance.assureur %}
+**Assureur : <<<VAR_START>>>{{ copropriete.assurance.assureur }}<<<VAR_END>>>**
+{% endif %}
+{% if copropriete.assurance.numero_police %}
+**Police n° <<<VAR_START>>>{{ copropriete.assurance.numero_police }}<<<VAR_END>>>**
+{% endif %}
+
+Une attestation d'assurance en cours de validité est annexée.
+
+**Annexe n°{{ annexe_counter | default('XX') }} : Attestation d'assurance de la copropriété**
 {% endif %}
 
 ## Statut de la copropriété

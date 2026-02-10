@@ -154,6 +154,20 @@ Pour la compréhension de certains termes aux présentes, il est préalablement 
 **-** Les **"BIENS"** désigneront le terrain et les droits immobiliers objet de la présente promesse de vente, le **"TERRAIN"** désignera la parcelle objet de la vente.
 
 # Identification du bien
+
+{% if bien.adresse %}
+| Lieu de situation du bien vendu | |
+| :---- | :---- |
+| **Adresse** | {{ bien.adresse.voie }}, {{ bien.adresse.code_postal }} {{ bien.adresse.ville }}{% if bien.adresse.lieu_dit %}, lieu-dit "{{ bien.adresse.lieu_dit }}"{% endif %} |
+| **Commune** | {{ bien.adresse.ville }} ({{ bien.adresse.departement }}) |
+{% if bien.adresse.code_insee %}
+| **Code INSEE** | {{ bien.adresse.code_insee }} |
+{% endif %}
+{% if bien.cadastre and bien.cadastre[0] %}
+| **Références cadastrales** | Section {{ bien.cadastre[0].section }} n° {{ bien.cadastre[0].numero }} |
+{% endif %}
+{% endif %}
+
 ## Désignation
 **Un terrain à bâtir sis à {{ bien.adresse.ville }} ({{ bien.adresse.departement }}) {{ bien.adresse.code_postal }}, {{ bien.adresse.voie }}{% if bien.adresse.lieu_dit %}, lieu-dit "{{ bien.adresse.lieu_dit }}"{% endif %}.**
 
@@ -164,8 +178,11 @@ Figurant ainsi au cadastre :
 | Section | N° | Lieudit | Surface |
 | :---- | :---- | :---- | :---- |
 {% for parcelle in bien.cadastre %}
-| {{ parcelle.section }} | {{ parcelle.numero }} | {{ parcelle.lieudit }} | {{ parcelle.surface }} |
+| {{ parcelle.section }} | {{ parcelle.numero }} | {{ parcelle.lieudit }} | {{ parcelle.surface }}{% if parcelle.surface_m2 %} ({{ parcelle.surface_m2 }} m²){% endif %} |
 {% endfor %}
+{% if bien.cadastre_total_surface %}
+| | | **Total** | **{{ bien.cadastre_total_surface }}** |
+{% endif %}
 
 Un extrait de plan cadastral est annexé.
 Un extrait de plan Géoportail avec vue aérienne est annexé.

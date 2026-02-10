@@ -650,12 +650,14 @@ def create_chat_router():
         content: str
         suggestions: List[str] = []
         action: Optional[dict] = None
-        intention: str
-        confiance: float
+        intention: str = "agent"
+        confiance: float = 1.0
         conversation_id: Optional[str] = None
         section: Optional[str] = None
         fichier_url: Optional[str] = None
         contexte_mis_a_jour: Optional[dict] = None
+        tool_calls_made: int = 0
+        tools_used: List[str] = []
 
     @router.post("/", response_model=ChatResponse)
     async def chat(request: ChatRequest):
@@ -758,7 +760,6 @@ def create_chat_router():
             # Persister les messages dans Supabase (JSONB dans conversations.messages)
             if supabase and conversation_id:
                 try:
-                    from datetime import datetime
                     # Charger messages existants
                     conv = supabase.table("conversations").select(
                         "messages, message_count"
@@ -793,7 +794,7 @@ def create_chat_router():
                 except Exception:
                     pass  # Fallback silencieux
 
-            # Extraire fichier_url depuis action si présent
+            # Extraire fichier_url depuis action si present
             fichier_url = None
             if reponse.action and isinstance(reponse.action, dict):
                 fichier_url = reponse.action.get("fichier_url")
@@ -806,7 +807,6 @@ def create_chat_router():
             return ChatResponse(
                 content=reponse.content,
                 suggestions=reponse.suggestions,
-                action=reponse.action,
                 intention=reponse.intention_detectee,
                 confiance=reponse.confiance,
                 conversation_id=conversation_id,
