@@ -35,6 +35,85 @@ from datetime import datetime
 from copy import deepcopy
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, UndefinedError
+from functools import lru_cache
+
+
+# ==============================================================================
+# CACHE ENVIRONNEMENT JINJA2
+# ==============================================================================
+
+# Cache module-level pour éviter de recréer l'Environment à chaque instanciation
+_env_cache: Dict[str, Environment] = {}
+
+
+def _get_cached_environment(dossier_templates: str, zones_grisees: bool) -> Environment:
+    """
+    Retourne un Environment Jinja2 depuis le cache ou en crée un nouveau.
+
+    Le cache est indexé par (dossier_templates, zones_grisees).
+    Gain: ~1.2s par assemblage en évitant la recompilation des templates.
+    """
+    cache_key = f"{dossier_templates}:{zones_grisees}"
+    if cache_key not in _env_cache:
+        _env_cache[cache_key] = _creer_environnement(dossier_templates, zones_grisees)
+    return _env_cache[cache_key]
+
+
+def _creer_environnement(dossier_templates: str, zones_grisees: bool) -> Environment:
+    """Crée un nouvel Environment Jinja2 avec filtres et configuration."""
+    from pathlib import Path as _Path
+    dossier = _Path(dossier_templates)
+
+    finalize_func = _finalize_avec_marqueurs if zones_grisees else _finalize_standard
+
+    env = Environment(
+        loader=FileSystemLoader([
+            str(dossier),
+            str(dossier / 'sections'),
+            str(dossier.parent / 'clauses')
+        ]),
+        trim_blocks=True,
+        lstrip_blocks=True,
+        keep_trailing_newline=True,
+        finalize=finalize_func
+    )
+
+    # Filtres personnalisés
+    env.filters['nombre_en_lettres'] = nombre_en_lettres
+    env.filters['montant_en_lettres'] = montant_en_lettres
+    env.filters['format_nombre'] = format_nombre
+    env.filters['format_date'] = format_date
+    env.filters['date_en_lettres'] = date_en_lettres
+    env.filters['annee_en_lettres'] = annee_en_lettres
+    env.filters['numero_lot_en_lettres'] = numero_lot_en_lettres
+    env.filters['mois_en_lettres'] = mois_en_lettres
+    env.filters['jour_en_lettres'] = jour_en_lettres
+
+    return env
+
+
+def _finalize_avec_marqueurs(valeur):
+    """Encadre les valeurs avec marqueurs pour fond gris DOCX."""
+    if valeur is None:
+        return ''
+    str_valeur = str(valeur)
+    if not str_valeur.strip():
+        return str_valeur
+    if str_valeur.startswith('<<<') or str_valeur.startswith('#') or str_valeur.startswith('|'):
+        return str_valeur
+    return f"{MARQUEUR_VAR_START}{str_valeur}{MARQUEUR_VAR_END}"
+
+
+def _finalize_standard(valeur):
+    """Finalize standard (sans marqueurs)."""
+    if valeur is None:
+        return ''
+    return str(valeur)
+
+
+def invalider_cache_templates():
+    """Invalide le cache des environments Jinja2 (utile en dev/test)."""
+    _env_cache.clear()
 
 
 # ==============================================================================
@@ -318,76 +397,7 @@ class AssembleurActe:
         """
         self.dossier_templates = dossier_templates
         self.zones_grisees = zones_grisees
-        self.env = self._creer_environnement_jinja()
-
-    def _finalize_avec_marqueurs(self, valeur):
-        """
-        Fonction finalize pour Jinja2 qui encadre les valeurs avec les marqueurs de zone grisee.
-
-        Args:
-            valeur: Valeur rendue par Jinja2
-
-        Returns:
-            Valeur encadree avec marqueurs si zones_grisees est actif
-        """
-        if valeur is None:
-            return ''
-        str_valeur = str(valeur)
-        if not str_valeur.strip():
-            return str_valeur
-        # Ne pas encadrer les valeurs qui sont deja des marqueurs ou du Markdown structurel
-        if str_valeur.startswith('<<<') or str_valeur.startswith('#') or str_valeur.startswith('|'):
-            return str_valeur
-        return f"{MARQUEUR_VAR_START}{str_valeur}{MARQUEUR_VAR_END}"
-
-    def _finalize_standard(self, valeur):
-        """
-        Fonction finalize standard (sans marqueurs).
-
-        Args:
-            valeur: Valeur rendue par Jinja2
-
-        Returns:
-            Valeur en string
-        """
-        if valeur is None:
-            return ''
-        return str(valeur)
-
-    def _creer_environnement_jinja(self) -> Environment:
-        """
-        Crée l'environnement Jinja2 avec les filtres personnalisés.
-
-        Returns:
-            Environnement Jinja2 configuré
-        """
-        # Choisir la fonction finalize selon l'option zones_grisees
-        finalize_func = self._finalize_avec_marqueurs if self.zones_grisees else self._finalize_standard
-
-        env = Environment(
-            loader=FileSystemLoader([
-                str(self.dossier_templates),
-                str(self.dossier_templates / 'sections'),
-                str(self.dossier_templates.parent / 'clauses')
-            ]),
-            trim_blocks=True,
-            lstrip_blocks=True,
-            keep_trailing_newline=True,
-            finalize=finalize_func
-        )
-
-        # Ajouter les filtres personnalisés
-        env.filters['nombre_en_lettres'] = nombre_en_lettres
-        env.filters['montant_en_lettres'] = montant_en_lettres
-        env.filters['format_nombre'] = format_nombre
-        env.filters['format_date'] = format_date
-        env.filters['date_en_lettres'] = date_en_lettres
-        env.filters['annee_en_lettres'] = annee_en_lettres
-        env.filters['numero_lot_en_lettres'] = numero_lot_en_lettres
-        env.filters['mois_en_lettres'] = mois_en_lettres
-        env.filters['jour_en_lettres'] = jour_en_lettres
-
-        return env
+        self.env = _get_cached_environment(str(dossier_templates), zones_grisees)
 
     def enrichir_donnees(self, donnees: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -435,6 +445,23 @@ class AssembleurActe:
         if 'prix' in donnees_enrichies and 'montant' in donnees_enrichies['prix']:
             montant = donnees_enrichies['prix']['montant']
             donnees_enrichies['prix']['montant_lettres'] = montant_en_lettres(montant)
+
+        # Enrichissement viager (bouquet, rente, valeurs)
+        prix = donnees_enrichies.get('prix', {})
+        if prix.get('bouquet') and isinstance(prix['bouquet'], dict) and 'montant' in prix['bouquet']:
+            prix['bouquet']['montant_lettres'] = montant_en_lettres(prix['bouquet']['montant'])
+        if prix.get('rente_viagere') and isinstance(prix['rente_viagere'], dict):
+            rente = prix['rente_viagere']
+            if 'montant_mensuel' in rente:
+                rente['montant_mensuel_lettres'] = montant_en_lettres(rente['montant_mensuel'])
+        if prix.get('valeur_venale'):
+            prix['valeur_venale_lettres'] = montant_en_lettres(prix['valeur_venale'])
+        if prix.get('valeur_economique'):
+            prix['valeur_economique_lettres'] = montant_en_lettres(prix['valeur_economique'])
+        if prix.get('valeur_venale') and prix.get('valeur_economique'):
+            diff = prix['valeur_venale'] - prix['valeur_economique']
+            prix['difference'] = diff
+            prix['difference_lettres'] = montant_en_lettres(abs(diff))
 
         # Générer les dates en lettres
         if 'acte' in donnees_enrichies and 'date' in donnees_enrichies['acte']:
@@ -552,17 +579,38 @@ class AssembleurActe:
         try:
             acte = template.render(**donnees_enrichies)
         except UndefinedError as e:
-            # Extraire la variable manquante pour un message plus clair
             import re
             import traceback
-            match = re.search(r"'(\w+)' is undefined|has no attribute '(\w+)'", str(e))
+            err_str = str(e)
+            match = re.search(r"'(\w+)' is undefined|has no attribute '(\w+)'", err_str)
             if match:
                 var_name = match.group(1) or match.group(2)
-                suggestion = "{% if " + var_name + " %}"
-                raise ValueError(f"Variable manquante dans le template: '{var_name}' - {e}\n"
-                               f"Vérifier que cette variable existe dans les données ou ajouter {suggestion}")
+                guard = "{% if " + var_name + " %}"
+
+                # Contexte enrichi pour variables connues
+                contextes = {
+                    "syndic": "copropriete.syndic — absent si copropriété en création",
+                    "reglement": "copropriete.reglement — absent si copropriété en création",
+                    "immatriculation": "copropriete.immatriculation — peut être vide",
+                    "lotissement": "bien.lotissement — uniquement pour hors copropriété",
+                    "rente_viagere": "prix.rente_viagere — uniquement pour vente viager",
+                    "bouquet": "prix.bouquet — uniquement pour vente viager",
+                    "droit_usage_habitation": "bien.droit_usage_habitation — uniquement pour viager",
+                    "viager": "prix.viager — uniquement pour vente viager",
+                    "groupe_habitations": "bien.groupe_habitations — uniquement hors copropriété",
+                    "servitudes": "bien.servitudes — optionnel, toutes catégories",
+                    "dernier_exercice": "copropriete.dernier_exercice — optionnel",
+                    "travaux_votes": "copropriete.travaux_votes — optionnel",
+                }
+                ctx = contextes.get(var_name, "")
+                ctx_msg = f"\n  Contexte: {ctx}" if ctx else ""
+
+                raise ValueError(
+                    f"Variable manquante dans le template: '{var_name}'\n"
+                    f"  Erreur: {e}{ctx_msg}\n"
+                    f"  Solution: Ajouter {guard} dans le template ou fournir la variable dans les données"
+                )
             else:
-                # Afficher traceback complet pour déboguer
                 print("[DEBUG] Traceback complet:")
                 traceback.print_exc()
                 raise ValueError(f"Variable manquante dans le template: {e}")

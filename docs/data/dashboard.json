@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T14:06:53.299400",
+    "generated_at": "2026-02-11T14:39:52.650443",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 72,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 266
+    "commits": 270
   },
   "git": {
-    "branch": "master",
+    "branch": "tom/dev",
     "last_commit": {
-      "hash": "6190b84",
-      "message": "Merge payoss/dev: Améliorations frontend et configuration",
+      "hash": "feb0851",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "date": "2026-02-11"
     },
-    "total_commits": 266,
+    "total_commits": 270,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 133
+        "commits": 134
       },
       {
         "name": "github-actions[bot]",
-        "commits": 67
+        "commits": 68
       },
       {
         "name": "augustinfrance-aico",
@@ -65,7 +65,7 @@
       "bookmarks": 298,
       "sections": 165,
       "trames_source": 7,
-      "lines": 1588,
+      "lines": 1602,
       "last_modified": "2026-02-11"
     },
     {
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 72,
-    "total_lines": 42292,
+    "total_lines": 42446,
     "categories": {
       "generation": 6,
       "utils": 58,
@@ -118,14 +118,14 @@
         "path": "execution/core/valider_acte.py"
       },
       {
-        "name": "orchestrateur.py",
-        "lines": 1461,
-        "path": "execution/gestionnaires/orchestrateur.py"
+        "name": "gestionnaire_promesses.py",
+        "lines": 1548,
+        "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
-        "name": "gestionnaire_promesses.py",
-        "lines": 1456,
-        "path": "execution/gestionnaires/gestionnaire_promesses.py"
+        "name": "orchestrateur.py",
+        "lines": 1470,
+        "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "chat_handler.py",
@@ -156,7 +156,7 @@
   },
   "schemas": {
     "total": 17,
-    "total_variables": 205,
+    "total_variables": 206,
     "schemas": [
       {
         "name": "questions_notaire.json",
@@ -204,7 +204,7 @@
       },
       {
         "name": "variables_promesse_vente.json",
-        "count": 29
+        "count": 30
       },
       {
         "name": "promesse_catalogue_unifie.json",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "feb0851",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ea8797d",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "6190b84",
       "author": "Payoss",
       "date": "2026-02-11",
@@ -640,6 +660,26 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
+    },
+    {
+      "hash": "f45202a",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "a4fa3fb",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Fin de journee - 11/02/2026 13:37:47,94",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "afee646",
@@ -776,46 +816,6 @@
       "author": "Augustin",
       "date": "2026-02-08",
       "message": "Merge branch 'augustin/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "dee3517",
-      "author": "Augustin",
-      "date": "2026-02-08",
-      "message": "ajout analyse sources revenus + stratégie business",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "bc37d74",
-      "author": "Tom",
-      "date": "2026-02-07",
-      "message": "resolve merge conflicts tom/dev ← origin/master",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "eb41292",
-      "author": "github-actions[bot]",
-      "date": "2026-02-07",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "a5258db",
-      "author": "Augustin",
-      "date": "2026-02-07",
-      "message": "Merge branch 'master' into augustin/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 14:06"
+    "last_updated": "2026-02-11 14:39"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 14:06"
+    "last_updated": "2026-02-11 14:39"
   },
   "conformity_details": {
     "promesse": {

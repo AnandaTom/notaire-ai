@@ -1037,16 +1037,25 @@ class OrchestratorNotaire:
         return {"alertes": alertes, "valide": len(alertes) == 0}
 
     def _get_promesse_template(self, donnees: Dict[str, Any]) -> str:
-        """Sélectionne le template promesse selon la catégorie de bien."""
+        """Sélectionne le template promesse selon catégorie + type + sous-type (v2.0.0)."""
         if GESTIONNAIRE_PROMESSES_DISPONIBLE and CategorieBien is not None:
             try:
                 gestionnaire = GestionnairePromesses()
-                categorie = gestionnaire.detecter_categorie_bien(donnees)
+                detection = gestionnaire.detecter_type(donnees)
+                template_path = gestionnaire._selectionner_template(
+                    detection.type_promesse,
+                    detection.categorie_bien,
+                    sous_type=detection.sous_type
+                )
+                if template_path and template_path.exists():
+                    logger.info(f"Template détecté: {detection.categorie_bien.value}/{detection.sous_type or 'standard'} -> {template_path.name}")
+                    return template_path.name
+                # Fallback par catégorie si _selectionner_template retourne None
                 template = self.PROMESSE_TEMPLATES_PAR_CATEGORIE.get(
-                    categorie.value,
+                    detection.categorie_bien.value,
                     self.TEMPLATES[TypeActe.PROMESSE_VENTE]
                 )
-                logger.info(f"Catégorie bien détectée: {categorie.value} -> {template}")
+                logger.info(f"Catégorie bien détectée: {detection.categorie_bien.value} -> {template}")
                 return template
             except Exception as e:
                 logger.warning(f"Détection catégorie échouée, fallback copro: {e}")

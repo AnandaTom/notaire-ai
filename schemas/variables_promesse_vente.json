@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Variables Promesse Unilatérale de Vente",
   "description": "Schéma des variables pour la génération d'une promesse unilatérale de vente. Supporte 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir), 4 types de transactions, et 5 cas spéciaux (lotissement, groupe habitations, servitudes, viager, création copro).",
-  "version": "4.0.0",
-  "date_modification": "2026-02-04",
+  "version": "4.1.0",
+  "date_modification": "2026-02-10",
   "type": "object",
   "required": ["promettants", "beneficiaires", "prix", "delai_realisation"],
   "$comment": "Les champs 'bien' ou 'biens' sont requis selon le type. Voir promesse_catalogue_unifie.json pour détails.",
@@ -400,7 +400,42 @@
         "servitudes_declaration": {
           "type": "string",
           "description": "Déclaration générale sur les servitudes (remplace le texte par défaut)"
-        }
+        },
+        "droit_usage_habitation": {
+          "type": "object",
+          "description": "Droit d'usage et d'habitation réservé par le crédirentier (viager occupé)",
+          "properties": {
+            "reserve": { "type": "boolean", "default": false, "description": "Le crédirentier se réserve le DUH" },
+            "restrictions": {
+              "type": "object",
+              "properties": {
+                "hebergement_service_autorise": { "type": "boolean", "default": false, "description": "Autorisation d'héberger une personne à son service" }
+              }
+            },
+            "obligations_credirentier": {
+              "type": "array",
+              "description": "Obligations spécifiques du crédirentier (taxe habitation, assurance, réparations courantes)",
+              "items": { "type": "string" }
+            },
+            "obligations_debirentier": {
+              "type": "array",
+              "description": "Obligations spécifiques du débirentier (grosses réparations, maintien habitabilité)",
+              "items": { "type": "string" }
+            },
+            "abandon": {
+              "type": "object",
+              "description": "Possibilité d'abandon volontaire du DUH",
+              "properties": {
+                "possible": { "type": "boolean", "default": true },
+                "preavis_jours": { "type": "integer", "default": 60 },
+                "declenche_rente": { "type": "boolean", "default": false, "description": "L'abandon déclenche-t-il le versement de la rente ?" }
+              }
+            }
+          }
+        },
+        "nature": { "type": "string", "description": "Nature du bien (maison, appartement, terrain, etc.)" },
+        "description": { "type": "string", "description": "Description libre du bien" },
+        "superficie_habitable": { "type": "number", "description": "Superficie habitable en m² (hors copro)" }
       }
     },
 
@@ -526,6 +561,22 @@
             "controle_technique": { "type": "string" },
             "contrat_entretien": { "type": "string" }
           }
+        },
+        "en_creation": {
+          "type": "boolean",
+          "description": "La copropriété est en cours de constitution (pas encore de syndic, de règlement, ni d'immatriculation)",
+          "default": false
+        },
+        "futur_reglement": {
+          "type": "object",
+          "description": "Informations sur le futur règlement de copropriété (si en_creation)",
+          "properties": {
+            "notaire": { "type": "string", "description": "Notaire rédacteur du futur RC" },
+            "date_prevue": { "type": "string", "description": "Date prévue de constitution" },
+            "nombre_lots_prevu": { "type": "integer", "description": "Nombre de lots prévus" },
+            "charges_provisoires": { "type": "number", "description": "Charges provisoires annuelles estimées" },
+            "edd_provisoire": { "type": "boolean", "description": "État descriptif de division provisoire établi" }
+          }
         }
       }
     },
@@ -545,14 +596,82 @@
 
     "prix": {
       "type": "object",
-      "description": "Prix et conditions financières",
-      "required": ["montant"],
+      "description": "Prix et conditions financières. Pour viager: bouquet + rente remplacent montant comptant.",
       "properties": {
-        "montant": { "type": "number" },
+        "montant": { "type": "number", "description": "Prix comptant (vente classique) ou valeur économique (viager)" },
         "montant_lettres": { "type": "string" },
         "devise": { "type": "string", "default": "EUR" },
         "paiement_comptant": { "type": "boolean", "default": true },
-        "modalites_paiement": { "type": "string" }
+        "modalites_paiement": { "type": "string" },
+        "type_vente": {
+          "type": "string",
+          "enum": ["classique", "viager"],
+          "default": "classique",
+          "description": "Type de vente — viager active le template et les sections spécifiques"
+        },
+        "bouquet": {
+          "type": "object",
+          "description": "Capital versé comptant à la signature (viager uniquement)",
+          "properties": {
+            "montant": { "type": "number" },
+            "montant_lettres": { "type": "string" }
+          }
+        },
+        "rente_viagere": {
+          "type": "object",
+          "description": "Rente viagère versée périodiquement au crédirentier",
+          "properties": {
+            "montant_mensuel": { "type": "number" },
+            "montant_mensuel_lettres": { "type": "string" },
+            "periodicite": {
+              "type": "string",
+              "enum": ["mensuelle", "trimestrielle", "annuelle"],
+              "default": "mensuelle"
+            },
+            "jour_versement": { "type": "integer", "default": 5, "description": "Jour du mois pour le versement" },
+            "date_debut": { "type": "string", "format": "date", "description": "Date de début du service de la rente" },
+            "indexation": {
+              "type": "object",
+              "description": "Clause d'indexation de la rente",
+              "properties": {
+                "applicable": { "type": "boolean", "default": true },
+                "indice": { "type": "string", "default": "INSEE des prix à la consommation (IPC), base 2015, hors tabac" },
+                "frequence": { "type": "string", "default": "annuellement" }
+              }
+            },
+            "rachat": {
+              "type": "object",
+              "description": "Faculté de rachat de la rente par le débirentier",
+              "properties": {
+                "possible": { "type": "boolean", "default": false },
+                "conditions": { "type": "string", "description": "Conditions particulières de rachat" }
+              }
+            }
+          }
+        },
+        "valeur_venale": { "type": "number", "description": "Valeur vénale du bien en pleine propriété libre (viager)" },
+        "valeur_venale_lettres": { "type": "string" },
+        "valeur_economique": { "type": "number", "description": "Valeur économique du bien occupé (viager)" },
+        "valeur_economique_lettres": { "type": "string" },
+        "difference": { "type": "number", "description": "Différence valeur vénale - valeur économique = valeur DUH" },
+        "difference_lettres": { "type": "string" },
+        "clause_penale": {
+          "type": "object",
+          "description": "Clause pénale en cas de retard de paiement de la rente (viager)",
+          "properties": {
+            "taux_majoration": { "type": "number", "default": 3, "description": "Points de majoration au-dessus du taux légal" },
+            "automatique": { "type": "boolean", "default": true, "description": "Intérêts courent de plein droit sans mise en demeure" }
+          }
+        },
+        "ventilation": {
+          "type": "object",
+          "description": "Ventilation du prix (vente classique)",
+          "properties": {
+            "immobilier": { "type": "number" },
+            "meubles": { "type": "number" },
+            "autres": { "type": "number" }
+          }
+        }
       }
     },
 
@@ -941,6 +1060,36 @@
       }
     },
 
+    "garanties": {
+      "type": "object",
+      "description": "Garanties spécifiques viager (privilège vendeur, solidarité, transfert)",
+      "properties": {
+        "privilege": {
+          "type": "object",
+          "description": "Inscription de privilège du vendeur (viager)",
+          "properties": {
+            "inscrit": { "type": "boolean", "default": true },
+            "duree_initiale_annees": { "type": "integer", "default": 15 },
+            "renouvelable": { "type": "boolean", "default": true },
+            "rang": { "type": "string", "default": "premier rang" }
+          }
+        },
+        "solidarite_acquereurs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Solidarité des acquéreurs successifs pour le service de la rente"
+        },
+        "transfert_possible": {
+          "type": "object",
+          "description": "Faculté de transfert du privilège sur un autre bien",
+          "properties": {
+            "autorise": { "type": "boolean", "default": false },
+            "condition_valeur": { "type": "string", "default": "supérieure ou égale", "description": "Condition de valeur du nouveau bien" }
+          }
+        }
+      }
+    },
+
     "restrictions_usage": {
       "type": "array",
       "description": "Restrictions d'usage grevant le bien (servitudes spécifiques, restrictions conventionnelles)",
@@ -1006,6 +1155,29 @@
                 "prenoms": { "type": "string" }
               }
             }
+          }
+        },
+        "age": { "type": "integer", "description": "Âge du promettant (crucial pour viager — calcul rente)" },
+        "sante": {
+          "type": "object",
+          "description": "Informations de santé (viager — articles 1974-1975 Code civil)",
+          "properties": {
+            "certificat_medical": {
+              "type": "object",
+              "properties": {
+                "existe": { "type": "boolean", "default": false },
+                "date": { "type": "string", "format": "date" },
+                "medecin": { "type": "string" }
+              }
+            },
+            "declaration_sante": {
+              "type": "object",
+              "properties": {
+                "maladies_graves": { "type": "boolean", "default": false },
+                "hospitalisation_recente": { "type": "boolean", "default": false }
+              }
+            },
+            "avertissement_art_1974_1975": { "type": "boolean", "default": true, "description": "Les parties ont été informées des articles 1974/1975 Code civil" }
           }
         },
         "coordonnees": {

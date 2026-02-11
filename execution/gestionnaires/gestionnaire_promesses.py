@@ -83,13 +83,48 @@ class ResultatDetection:
 
 
 @dataclass
-class ResultatValidation:
-    """Résultat de la validation des données."""
+class ResultatValidationPromesse:
+    """Résultat de la validation des données de promesse.
+
+    Note: Distinct de valider_acte.ResultatValidation qui utilise des objets structurés
+    (niveau, code, message, chemin, suggestion). Ici les erreurs sont des strings simples.
+    Utiliser to_rapport() pour convertir vers le format structuré.
+    """
     valide: bool
     erreurs: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
     champs_manquants: List[str] = field(default_factory=list)
     suggestions: List[str] = field(default_factory=list)
+
+    def to_rapport(self) -> Dict[str, Any]:
+        """Convertit vers le format structuré compatible avec valider_acte.RapportValidation."""
+        erreurs_structurees = []
+        for err in self.erreurs:
+            erreurs_structurees.append({
+                "niveau": "ERREUR",
+                "code": "VALIDATION_PROMESSE",
+                "message": err,
+                "chemin": "",
+                "suggestion": ""
+            })
+        for warn in self.warnings:
+            erreurs_structurees.append({
+                "niveau": "AVERTISSEMENT",
+                "code": "VALIDATION_PROMESSE",
+                "message": warn,
+                "chemin": "",
+                "suggestion": ""
+            })
+        return {
+            "valide": self.valide,
+            "erreurs": erreurs_structurees,
+            "champs_manquants": self.champs_manquants,
+            "suggestions": self.suggestions
+        }
+
+
+# Alias backward compat
+ResultatValidation = ResultatValidationPromesse
 
 
 @dataclass
@@ -245,8 +280,9 @@ class GestionnairePromesses:
         Détecte les sous-types spécifiques au sein d'une catégorie de bien (v1.9.0).
 
         Sous-types supportés:
+        - Toutes catégories: "viager" (priorité absolue, détection multi-marqueurs)
         - Hors copro: "lotissement", "groupe_habitations", "avec_servitudes"
-        - Copro: "creation" (création de copropriété), "viager"
+        - Copro: "creation" (création de copropriété)
         - Terrain: "lotissement"
 
         Args:
@@ -257,6 +293,24 @@ class GestionnairePromesses:
             Sous-type détecté ou None
         """
         bien = donnees.get("bien", {})
+        prix = donnees.get("prix", {})
+
+        # Viager: priorité absolue, toutes catégories (maison, appartement, terrain)
+        viager_marqueurs = 0
+        if prix.get("type_vente") == "viager":
+            viager_marqueurs += 2  # marqueur explicite = double poids
+        if prix.get("rente_viagere"):
+            viager_marqueurs += 1
+        if prix.get("bouquet") and isinstance(prix.get("bouquet"), dict):
+            viager_marqueurs += 1
+        if bien.get("droit_usage_habitation", {}).get("reserve") is True:
+            viager_marqueurs += 1
+        modalites = str(prix.get("modalites_paiement", "")).lower()
+        if "viager" in modalites or "rente" in modalites:
+            viager_marqueurs += 1
+
+        if viager_marqueurs >= 2:
+            return "viager"
 
         # Sous-types hors copropriété
         if categorie == CategorieBien.HORS_COPROPRIETE:
@@ -285,21 +339,15 @@ class GestionnairePromesses:
         # Sous-types copropriété
         elif categorie == CategorieBien.COPROPRIETE:
             copro = donnees.get("copropriete", {})
-            prix = donnees.get("prix", {})
 
             # Création de copropriété
+            if copro.get("en_creation") is True:
+                return "creation"
             if bien.get("etat") == "creation" or copro.get("creation") is True:
                 return "creation"
-            if not copro.get("reglement") and not copro.get("syndic"):
-                # Pas de règlement ni syndic existant = création probable
+            # Inférence: pas de règlement NI syndic mais des lots = création probable
+            if not copro.get("reglement") and not copro.get("syndic") and bien.get("lots"):
                 return "creation"
-
-            # Viager
-            if prix.get("viager") or prix.get("rente_viagere"):
-                return "viager"
-            modalites = str(prix.get("modalites_paiement", "")).lower()
-            if "viager" in modalites or "rente" in modalites:
-                return "viager"
 
         # Sous-types terrain
         elif categorie == CategorieBien.TERRAIN_A_BATIR:
@@ -376,7 +424,7 @@ class GestionnairePromesses:
     def _evaluer_condition(self, condition: str, donnees: Dict) -> bool:
         """Évalue une condition Python sur les données."""
         try:
-            # Contexte d'évaluation sécurisé
+            # Contexte d'évaluation sécurisé — merge des données pour accès direct
             contexte = {
                 "donnees": donnees,
                 "len": len,
@@ -384,6 +432,9 @@ class GestionnairePromesses:
                 "False": False,
                 "None": None
             }
+            # Rendre les clés de premier niveau accessibles directement
+            # (ex: "len(promettants) >= 1" fonctionne sans "donnees.get(...)")
+            contexte.update(donnees)
             return eval(condition, {"__builtins__": {}}, contexte)
         except Exception:
             return False
@@ -461,7 +512,7 @@ class GestionnairePromesses:
     # VALIDATION
     # =========================================================================
 
-    def valider(self, donnees: Dict, type_promesse: Optional[TypePromesse] = None) -> ResultatValidation:
+    def valider(self, donnees: Dict, type_promesse: Optional[TypePromesse] = None) -> ResultatValidationPromesse:
         """
         Valide les données pour une promesse.
 
@@ -534,7 +585,40 @@ class GestionnairePromesses:
             if not donnees.get("diagnostics", {}).get("exhaustifs"):
                 suggestions.append("Activer les diagnostics exhaustifs pour promesse premium")
 
-        return ResultatValidation(
+        # Validation viager (sous-type, indépendant du type de transaction)
+        prix = donnees.get("prix", {})
+        if prix.get("type_vente") == "viager":
+            # Bouquet obligatoire
+            bouquet = prix.get("bouquet", {})
+            if not bouquet or not bouquet.get("montant"):
+                erreurs.append("Bouquet obligatoire pour une vente en viager")
+                champs_manquants.append("prix.bouquet.montant")
+
+            # Rente viagère obligatoire
+            rente = prix.get("rente_viagere", {})
+            if not rente or not rente.get("montant_mensuel"):
+                erreurs.append("Rente viagère obligatoire pour une vente en viager")
+                champs_manquants.append("prix.rente_viagere.montant_mensuel")
+
+            # Indexation fortement recommandée
+            if rente and not rente.get("indexation", {}).get("applicable", False):
+                warnings.append("Indexation de la rente non prévue — risque de dévaluation pour le crédirentier")
+                suggestions.append("Ajouter une clause d'indexation INSEE pour protéger le crédirentier")
+
+            # Certificat médical recommandé (article 1975 Code civil)
+            promettants = donnees.get("promettants", [])
+            if promettants:
+                sante = promettants[0].get("sante", {})
+                if not sante.get("certificat_medical", {}).get("existe", False):
+                    warnings.append("Pas de certificat médical — risque de nullité si décès dans les 20 jours (art. 1975 C. civ.)")
+                    suggestions.append("Produire un certificat médical pour sécuriser la vente viager")
+
+            # Âge du crédirentier recommandé
+            if promettants and not promettants[0].get("age"):
+                warnings.append("Âge du crédirentier non renseigné — nécessaire pour calcul fiscal de la rente")
+                suggestions.append("Renseigner l'âge du crédirentier (promettants[0].age)")
+
+        return ResultatValidationPromesse(
             valide=len(erreurs) == 0,
             erreurs=erreurs,
             warnings=warnings,
@@ -1006,15 +1090,18 @@ class GestionnairePromesses:
         errors = []
         warnings = []
 
-        # 1. Détecter le type (2 niveaux: catégorie + type transaction)
+        # 1. Détecter le type (3 niveaux: catégorie + type transaction + sous-type)
+        sous_type = None
         if type_force:
             type_promesse = type_force
             categorie = self.detecter_categorie_bien(donnees)
+            sous_type = self.detecter_sous_type(donnees, categorie)
             raison = "Type forcé par l'utilisateur"
         else:
             detection = self.detecter_type(donnees)
             type_promesse = detection.type_promesse
             categorie = detection.categorie_bien
+            sous_type = detection.sous_type
             raison = detection.raison
             warnings.extend(detection.warnings)
 
@@ -1050,8 +1137,8 @@ class GestionnairePromesses:
         # 3. Sélectionner les sections
         sections = self._get_sections_pour_type(type_promesse, donnees)
 
-        # 4. Sélectionner le template (catégorie + type)
-        template_path = self._selectionner_template(type_promesse, categorie)
+        # 4. Sélectionner le template (catégorie + type + sous-type viager)
+        template_path = self._selectionner_template(type_promesse, categorie, sous_type=sous_type)
         if not template_path:
             errors.append(f"Template non trouvé pour {categorie.value}/{type_promesse.value}")
             return ResultatGeneration(
@@ -1150,17 +1237,22 @@ class GestionnairePromesses:
     def _selectionner_template(
         self,
         type_promesse: TypePromesse,
-        categorie_bien: CategorieBien = CategorieBien.COPROPRIETE
+        categorie_bien: CategorieBien = CategorieBien.COPROPRIETE,
+        sous_type: Optional[str] = None
     ) -> Optional[Path]:
-        """Sélectionne le template approprié selon catégorie de bien + type transaction.
+        """Sélectionne le template approprié selon catégorie + type + sous-type.
 
-        Détection 2 niveaux:
+        Détection 3 niveaux:
         - Niveau 1 (catégorie): copropriété, hors copro, terrain → template de base
         - Niveau 2 (type): standard, premium, mobilier, multi-biens → variante
-
-        Note: Les templates hors-copro et terrain seront créés en P1.1.
-        En attendant, fallback sur le template copropriété principal.
+        - Niveau 3 (sous-type): viager → template séparé (prioritaire)
         """
+        # Viager: template séparé (priorité absolue — +25% contenu unique)
+        if sous_type == "viager":
+            viager_template = TEMPLATES_DIR / "promesse_viager.md"
+            if viager_template.exists():
+                return viager_template
+
         # Templates par catégorie de bien
         category_templates = {
             CategorieBien.COPROPRIETE: TEMPLATES_DIR / "promesse_vente_lots_copropriete.md",
