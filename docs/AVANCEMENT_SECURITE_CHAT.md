@@ -1,7 +1,7 @@
 # Avancement Sécurité & Chatbot - Notomai
 
-**Version** : 2.3.1
-**Dernière mise à jour** : 11 février 2026 (nuit)
+**Version** : 2.4.0
+**Dernière mise à jour** : 12 février 2026 (nuit)
 **Auteur** : Claude Opus 4.5
 
 ---
@@ -420,11 +420,60 @@ WHERE id = 'cee6508c-...';
 
 ---
 
+## Session du 12 février 2026 (nuit) - Architecture "Smart Response"
+
+### Suppression des Réponses Génériques
+
+| | |
+|---|---|
+| **Le problème** | Le chatbot répondait souvent "J'ai effectué plusieurs opérations. Que souhaitez-vous faire maintenant ?" — message générique et impersonnel quand `MAX_TOOL_ITERATIONS` (8) était atteint. |
+| **Cause racine** | Appel API Anthropic coûteux (~500-1000 tokens) pour générer une synthèse de fallback. Code identique dupliqué dans streaming et non-streaming. |
+| **Ce qu'on a fait** | Création d'une architecture "Smart Response" avec 3 nouvelles méthodes locales (SANS appel API) |
+| **Économie** | ~500-1000 tokens par conversation quand max_iterations atteint |
+| **Fichier modifié** | `execution/anthropic_agent.py` |
+| **Statut** | ✅ CORRIGÉ |
+
+### Nouvelles Méthodes (Zero-API)
+
+| Méthode | Rôle | Tokens économisés |
+|---------|------|-------------------|
+| `_build_smart_summary()` | Génère un résumé contextuel depuis `agent_state` | ~500-1000/fallback |
+| `_generate_suggestions()` | Suggestions dynamiques basées sur progression | 0 (UX) |
+| `_get_tool_status()` | Messages de statut contextuels par outil | 0 (UX) |
+
+### Exemple de Résumé Intelligent
+
+```python
+# AVANT (API call coûteux) :
+"J'ai effectué plusieurs opérations. Que souhaitez-vous faire maintenant ?"
+
+# APRÈS (local, gratuit, contextuel) :
+"J'ai enregistré 45% des informations :
+• Vendeur(s) : Dupont Jean
+• Bien : 12 rue de la Paix, Paris
+• Prix : 450 000 €
+
+Il me manque encore : acquéreur, conditions suspensives, date signature"
+```
+
+### Suggestions Dynamiques
+
+| Progression | Suggestions générées |
+|-------------|---------------------|
+| 0% (aucun type) | "Créer une promesse de vente", "Créer un acte de vente" |
+| 0% (type défini) | "Commencer par le vendeur" |
+| 1-50% | "Renseigner [champ manquant]", "Voir la progression" |
+| 51-99% | "Renseigner [champ]", "Voir la progression" |
+| 100% | "Générer le document", "Vérifier les données" |
+
+---
+
 ## Changelog Sécurité
 
 | Date | Version | Changements |
 |------|---------|-------------|
-| **11/02/2026 nuit** | **2.3.1** | Vérification secrets git (aucun exposé), checklist pré-prod 20 items |
+| **12/02/2026 nuit** | **2.4.0** | **Smart Response** : suppression réponses génériques, 3 méthodes zero-API, économie ~500-1000 tokens/fallback |
+| 11/02/2026 nuit | 2.3.1 | Vérification secrets git (aucun exposé), checklist pré-prod 20 items |
 | 11/02/2026 soir | 2.3.0 | UUID auto, health check, logging complet |
 | 11/02/2026 | 2.2.1 | URLs signées, fix documents vides |
 | 05/02/2026 | 2.2.0 | SSE streaming, suppression anonymisation |
@@ -434,4 +483,4 @@ WHERE id = 'cee6508c-...';
 ---
 
 *Ce document est mis à jour à chaque session de travail sur la sécurité.*
-*Dernière session : 11 février 2026 (nuit) — Score 82/100 — Checklist pré-prod 60%*
+*Dernière session : 12 février 2026 (nuit) — Score 82/100 — v2.4.0 Smart Response*

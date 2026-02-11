@@ -3,8 +3,8 @@
 > Documentation technique complète du chatbot intelligent pour la génération d'actes notariaux.
 > Ce document explique le fonctionnement en termes simples et techniques.
 
-**Version** : 2.3.0
-**Dernière mise à jour** : 11 février 2026
+**Version** : 2.4.0
+**Dernière mise à jour** : 12 février 2026
 **Auteur** : Claude Opus 4.5
 
 ---
@@ -311,7 +311,8 @@ return {"conversation_id": conversation_id, "content": "..."}
 
 | Version | Date | Changements |
 |---------|------|-------------|
-| **v2.3** | 11 fév 2026 | **UUID auto-généré**, health check Supabase, fix persistance complète |
+| **v2.4** | 12 fév 2026 | **Smart Response** : suppression réponses génériques, suggestions dynamiques |
+| v2.3 | 11 fév 2026 | UUID auto-généré, health check Supabase, fix persistance complète |
 | v2.2 | 5 fév 2026 | SSE streaming, keepalive pings, suppression anonymisation |
 | v2.1 | 5 fév 2026 | Frontend intégré, workspace `notomai`, persistance JSONB |
 | v2.0 | 5 fév 2026 | Agent Anthropic avec 8 outils, boucle agentic |
@@ -350,6 +351,62 @@ if supabase:  # Toujours exécuté
 
 ---
 
+## Architecture "Smart Response" (v2.4)
+
+### Principe
+
+Quand l'agent atteint `MAX_TOOL_ITERATIONS` (8 appels d'outils), au lieu d'appeler Claude pour générer une synthèse (coûteux : ~500-1000 tokens), on génère une réponse **localement** depuis `agent_state`.
+
+### 3 Nouvelles Méthodes (Zero-API)
+
+```python
+# 1. Résumé intelligent depuis agent_state
+def _build_smart_summary(self, agent_state: Dict) -> str:
+    """Génère un résumé contextuel SANS appel API."""
+    # Extrait : vendeurs, acquéreurs, bien, prix depuis agent_state
+    # Retourne un message personnalisé selon la progression
+
+# 2. Suggestions dynamiques
+def _generate_suggestions(self, agent_state: Dict) -> List[str]:
+    """Suggestions basées sur l'état réel."""
+    # 0% sans type → "Créer une promesse", "Créer un acte"
+    # 0% avec type → "Commencer par le vendeur"
+    # 1-99% → "Renseigner [champ]", "Voir progression"
+    # 100% → "Générer le document", "Vérifier les données"
+
+# 3. Messages de statut contextuels
+def _get_tool_status(self, tool_name: str, agent_state: Dict) -> str:
+    """Message de statut personnalisé par outil."""
+    # "detect_property_type" → "Analyse du type de bien..."
+    # "get_questions" → "Chargement des questions pour [section]..."
+```
+
+### Économie de Tokens
+
+| Élément | Avant v2.4 | Après v2.4 | Économie |
+|---------|------------|------------|----------|
+| Fallback max_iterations | ~500-1000 tokens | 0 tokens | 100% |
+| Réponse synthèse | Appel API | Génération locale | ~$0.01/conv |
+
+### Exemple Concret
+
+**Avant (générique) :**
+```
+J'ai effectué plusieurs opérations. Que souhaitez-vous faire maintenant ?
+```
+
+**Après (contextuel) :**
+```
+J'ai enregistré 45% des informations :
+• Vendeur(s) : Dupont Jean
+• Bien : 12 rue de la Paix, Paris
+• Prix : 450 000 €
+
+Il me manque encore : acquéreur, conditions suspensives, date signature
+```
+
+---
+
 ## Travail restant
 
 ### Priorité haute
@@ -366,4 +423,4 @@ if supabase:  # Toujours exécuté
 
 ---
 
-*Document mis à jour le 11 février 2026 — Architecture chatbot v2.3*
+*Document mis à jour le 12 février 2026 — Architecture chatbot v2.4 — Smart Response*
