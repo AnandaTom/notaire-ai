@@ -438,6 +438,25 @@ class ToolExecutor:
         from execution.gestionnaires.gestionnaire_promesses import TypePromesse
 
         donnees = agent_state.get("donnees_collectees", {})
+
+        # SAFEGUARD: Verifier que les donnees ne sont pas vides
+        if not donnees or len(donnees) == 0:
+            logger.warning(
+                "[GENERATE] ATTENTION: donnees_collectees est VIDE! "
+                "Avez-vous appele submit_answers avant generate_document?"
+            )
+            return {
+                "succes": False,
+                "erreurs": [
+                    "Aucune donnee n'a ete enregistree. Vous devez d'abord appeler "
+                    "submit_answers pour enregistrer les informations du notaire "
+                    "AVANT d'appeler generate_document."
+                ],
+                "warnings": [],
+                "fichier_docx": None,
+            }
+
+        logger.info(f"[GENERATE] Generating with {len(donnees)} top-level keys: {list(donnees.keys())}")
         type_force = None
         type_force_str = tool_input.get("type_force")
         if type_force_str:

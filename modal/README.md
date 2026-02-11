@@ -72,6 +72,7 @@ Créer dans Modal Dashboard (`modal.com/secrets`):
    - `SUPABASE_URL`
    - `SUPABASE_KEY`
    - `SUPABASE_SERVICE_KEY` (optionnel)
+   - `URL_SIGNING_KEY` - **CRITIQUE** Clé HMAC-SHA256 pour signer les URLs de téléchargement (64 chars hex, générer avec `python -c "import secrets; print(secrets.token_hex(32))"`)
 
 2. **notaire-secrets** (pour legacy):
    - `ANTHROPIC_API_KEY`

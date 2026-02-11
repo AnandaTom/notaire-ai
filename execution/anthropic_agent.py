@@ -101,11 +101,26 @@ Tu disposes de 8 outils:
 - Suggestions d'actions: SUGGESTIONS: option1 | option2 | option3
 - Document genere: FICHIER: /chemin/du/fichier.docx
 
+## REGLE CRITIQUE - Enregistrement des donnees
+AVANT de generer un document, tu DOIS TOUJOURS appeler submit_answers pour enregistrer \
+les informations fournies par le notaire. Sinon, le document sera VIDE.
+
+Quand le notaire fournit des informations (noms, adresses, prix, dates, etc.):
+1. Extraire TOUTES les donnees du message
+2. Appeler submit_answers avec un objet structure, par exemple:
+   - "promettants": [{"nom": "Martin", "prenoms": "Jean", "date_naissance": "15/03/1965", ...}]
+   - "beneficiaires": [{"nom": "Dupont", "prenoms": "Marie", ...}]
+   - "bien": {"adresse": {"numero": "15", "rue": "rue des Fleurs", "code_postal": "75008", ...}}
+   - "prix": {"montant": 450000, "lettres": "quatre cent cinquante mille euros"}
+   - etc.
+3. SEULEMENT APRES avoir appele submit_answers, tu peux appeler generate_document
+
 ## Regle importante - Generation forcee
 Si le notaire demande explicitement de generer le document (meme incomplet), \
 utilise generate_document avec force=true.
 Phrases declencheuses: "genere quand meme", "genere le document", "telecharger maintenant", \
 "force la generation", "je veux generer", "generer avec les infos actuelles".
+MAIS TOUJOURS appeler submit_answers AVANT generate_document avec les donnees deja collectees.
 Affiche un avertissement sur les champs manquants mais genere le fichier DOCX.
 Le notaire peut ensuite completer manuellement le document.
 """
@@ -188,9 +203,10 @@ class AnthropicAgent:
             self.supabase.table("conversations").update({
                 "agent_state": agent_state,
             }).eq("id", conversation_id).execute()
+            logger.info(f"[STATE] Saved successfully for conv={conversation_id[:8]}")
             return True
         except Exception as e:
-            logger.warning(f"[STATE] Error saving agent_state: {e}")
+            logger.error(f"[STATE] FAILED to save agent_state: {e}", exc_info=True)
             return False
 
     # =========================================================================
@@ -367,6 +383,18 @@ class AnthropicAgent:
         # Fallback fichier depuis agent_state
         if not fichier_url and agent_state.get("fichier_genere"):
             fichier_url = agent_state["fichier_genere"]
+
+        # Transformer chemin local en URL signée avec HMAC-SHA256
+        # Sécurité: URL expire après 1h, signature vérifiée côté serveur
+        if fichier_url and not fichier_url.startswith("/download/"):
+            from pathlib import Path
+            from execution.security.signed_urls import generate_signed_url
+            filename = Path(fichier_url).name
+            if filename:
+                # URL signée valide 1 heure (3600 secondes)
+                fichier_url = generate_signed_url(filename, expires_in=3600)
+            else:
+                fichier_url = None
 
         return AgentResponse(
             content=content,
