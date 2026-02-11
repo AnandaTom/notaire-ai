@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T15:42:07.674155",
+    "generated_at": "2026-02-11T15:51:26.387210",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,27 +9,27 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 72,
+    "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 272
+    "commits": 280
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "8ed3a51",
-      "message": "fix: Restaurer URL API correcte (notomai--notaire-ai)",
+      "hash": "46bf8b3",
+      "message": "Merge branch 'tom/dev' into master - Phase 3 Agent Intelligent",
       "date": "2026-02-11"
     },
-    "total_commits": 272,
+    "total_commits": 280,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 135
+        "commits": 137
       },
       {
         "name": "github-actions[bot]",
-        "commits": 70
+        "commits": 72
       },
       {
         "name": "augustinfrance-aico",
@@ -92,14 +92,14 @@
     }
   ],
   "scripts": {
-    "total": 72,
-    "total_lines": 42446,
+    "total": 74,
+    "total_lines": 43372,
     "categories": {
       "generation": 6,
-      "utils": 58,
+      "utils": 59,
       "tests": 3,
       "export": 3,
-      "validation": 2
+      "validation": 3
     },
     "scripts": [
       {
@@ -113,6 +113,11 @@
         "path": "execution/core/exporter_docx.py"
       },
       {
+        "name": "orchestrateur.py",
+        "lines": 1591,
+        "path": "execution/gestionnaires/orchestrateur.py"
+      },
+      {
         "name": "valider_acte.py",
         "lines": 1571,
         "path": "execution/core/valider_acte.py"
@@ -121,11 +126,6 @@
         "name": "gestionnaire_promesses.py",
         "lines": 1548,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
-      },
-      {
-        "name": "orchestrateur.py",
-        "lines": 1470,
-        "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "chat_handler.py",
@@ -242,6 +242,7 @@
       "gestion_flexible.md",
       "collecte_informations.md",
       "mise_a_jour_statuts_donation.md",
+      "agents_opus_46.md",
       "generation_promesses_avancee.md",
       "creer_donation_partage.md",
       "integration_titre_propriete.md",
@@ -265,7 +266,7 @@
       "etat_des_lieux.md"
     ],
     "total_legal": 5,
-    "total_directives": 26
+    "total_directives": 27
   },
   "tasks": {
     "todo": [
@@ -622,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "46bf8b3",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge branch 'tom/dev' into master - Phase 3 Agent Intelligent",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "466775b",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Phase 3 - Agent Intelligent + Self-Anneal + Nouveaux endpoints",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "db3fad0",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "8ed3a51",
       "author": "Payoss",
       "date": "2026-02-11",
@@ -662,10 +693,40 @@
       "type_color": "red"
     },
     {
+      "hash": "e0b87f4",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "34a7eba",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
       "hash": "bca9ad6",
       "author": "Automai",
       "date": "2026-02-11",
       "message": "Travail du 11/02/2026 (#20)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "feb0851",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -700,6 +761,26 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
+    },
+    {
+      "hash": "f45202a",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "a4fa3fb",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Fin de journee - 11/02/2026 13:37:47,94",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "afee646",
@@ -740,86 +821,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "2420cb9",
-      "author": "github-actions[bot]",
-      "date": "2026-02-10",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "55ce52f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-09",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "619587f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-08",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "bf990e0",
-      "author": "Tom",
-      "date": "2026-02-08",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "6d3e214",
-      "author": "github-actions[bot]",
-      "date": "2026-02-08",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "96e652f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-08",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "c4ca925",
-      "author": "Augustin",
-      "date": "2026-02-08",
-      "message": "Merge branch 'augustin/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ae979de",
-      "author": "Augustin",
-      "date": "2026-02-08",
-      "message": "retrait section objectifs revenus concrets",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
     }
   ],
   "recommendations": {
@@ -1247,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 15:42"
+    "last_updated": "2026-02-11 15:51"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 15:42"
+    "last_updated": "2026-02-11 15:51"
   },
   "conformity_details": {
     "promesse": {
