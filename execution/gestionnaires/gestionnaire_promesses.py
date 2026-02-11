@@ -29,6 +29,7 @@ Usage:
 """
 
 import json
+import logging
 import os
 import sys
 from pathlib import Path
@@ -37,6 +38,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 import copy
+
+# Configuration du logger
+logger = logging.getLogger(__name__)
 
 # Configuration encodage Windows
 if sys.platform == "win32":
@@ -406,8 +410,17 @@ class GestionnairePromesses:
                         sections_recommandees=self._get_sections_pour_type(type_promesse, donnees),
                         warnings=warnings
                     )
-            except Exception as e:
-                warnings.append(f"Erreur évaluation règle: {e}")
+            except ValueError as e:
+                # Type de promesse invalide dans la règle
+                warnings.append(f"Type de promesse invalide dans règle: {e}")
+                continue
+            except KeyError as e:
+                # Champ manquant dans la règle ou le catalogue
+                warnings.append(f"Configuration incomplète pour règle: {e}")
+                continue
+            except (TypeError, AttributeError) as e:
+                # Structure de données incorrecte
+                warnings.append(f"Structure de données incorrecte: {e}")
                 continue
 
         # Par défaut: standard
@@ -436,7 +449,13 @@ class GestionnairePromesses:
             # (ex: "len(promettants) >= 1" fonctionne sans "donnees.get(...)")
             contexte.update(donnees)
             return eval(condition, {"__builtins__": {}}, contexte)
-        except Exception:
+        except (SyntaxError, NameError) as e:
+            # Condition mal formatée ou variable inexistante
+            print(f"[WARNING] Condition invalide: {condition} - {e}")
+            return False
+        except (KeyError, AttributeError, TypeError) as e:
+            # Accès à des données inexistantes ou structure incorrecte
+            print(f"[WARNING] Données manquantes pour condition: {condition} - {e}")
             return False
 
     def _calculer_confiance(self, donnees: Dict, type_promesse: TypePromesse) -> float:
@@ -545,8 +564,9 @@ class GestionnairePromesses:
                 if not self._evaluer_condition(condition, donnees):
                     erreurs.append(message)
                     champs_manquants.append(champ)
-            except Exception:
-                erreurs.append(f"Erreur validation {champ}: {message}")
+            except (KeyError, TypeError) as e:
+                # Règle mal configurée dans le catalogue
+                erreurs.append(f"Configuration règle invalide pour {champ}: {e}")
                 champs_manquants.append(champ)
 
         # Règles conditionnelles
@@ -562,8 +582,9 @@ class GestionnairePromesses:
                         if not self._champ_existe(donnees, champ):
                             warnings.append(f"{regle.get('message')}: {champ}")
                             champs_manquants.append(champ)
-            except Exception:
-                pass
+            except (KeyError, TypeError) as e:
+                # Règle conditionnelle mal configurée (skip silencieusement pour règles optionnelles)
+                warnings.append(f"Règle conditionnelle ignorée (configuration invalide): {e}")
 
         # Validation spécifique au type
         if type_promesse == TypePromesse.AVEC_MOBILIER:
@@ -781,8 +802,17 @@ class GestionnairePromesses:
                 .single()\
                 .execute()
             return response.data
-        except Exception as e:
-            print(f"[ERROR] Chargement titre: {e}")
+        except AttributeError as e:
+            # Client Supabase mal configuré (pas de table())
+            print(f"[ERROR] Client Supabase invalide: {e}")
+            return None
+        except KeyError as e:
+            # Titre non trouvé ou réponse malformée
+            print(f"[ERROR] Titre non trouvé: {titre_id} - {e}")
+            return None
+        except ConnectionError as e:
+            # Problème réseau
+            print(f"[ERROR] Connexion Supabase échouée: {e}")
             return None
 
     def rechercher_titre_par_adresse(self, adresse: str) -> List[Dict]:
@@ -796,8 +826,17 @@ class GestionnairePromesses:
                 .ilike("bien->>adresse", f"%{adresse}%")\
                 .execute()
             return response.data or []
-        except Exception as e:
-            print(f"[ERROR] Recherche titre: {e}")
+        except AttributeError as e:
+            # Client Supabase mal configuré
+            print(f"[ERROR] Client Supabase invalide: {e}")
+            return []
+        except (TypeError, ValueError) as e:
+            # Paramètre de recherche invalide
+            print(f"[ERROR] Paramètre de recherche invalide: {adresse} - {e}")
+            return []
+        except ConnectionError as e:
+            # Problème réseau
+            print(f"[ERROR] Connexion Supabase échouée: {e}")
             return []
 
     def rechercher_titre_par_proprietaire(self, nom: str) -> List[Dict]:
@@ -821,8 +860,17 @@ class GestionnairePromesses:
                         break
 
             return resultats
-        except Exception as e:
-            print(f"[ERROR] Recherche propriétaire: {e}")
+        except AttributeError as e:
+            # Client Supabase mal configuré ou structure de données incorrecte
+            print(f"[ERROR] Client Supabase invalide ou données malformées: {e}")
+            return []
+        except (TypeError, KeyError) as e:
+            # Structure de données JSON incorrecte
+            print(f"[ERROR] Structure de données incorrecte pour propriétaires: {e}")
+            return []
+        except ConnectionError as e:
+            # Problème réseau
+            print(f"[ERROR] Connexion Supabase échouée: {e}")
             return []
 
     # =========================================================================
@@ -1138,9 +1186,17 @@ class GestionnairePromesses:
             for w in rapport_cad.get("warnings", []):
                 warnings.append(f"Cadastre: {w}")
         except ImportError:
+            # Module cadastre non disponible (optionnel)
             pass
-        except Exception as e:
-            warnings.append(f"Enrichissement cadastre echoue: {e}")
+        except KeyError as e:
+            # Données cadastrales incomplètes ou structure incorrecte
+            warnings.append(f"Données cadastrales invalides: {e}")
+        except (ConnectionError, TimeoutError) as e:
+            # API gouvernementale inaccessible
+            warnings.append(f"API Cadastre inaccessible: {e}")
+        except ValueError as e:
+            # Paramètres invalides pour l'API
+            warnings.append(f"Paramètres cadastre invalides: {e}")
 
         # 3. Sélectionner les sections
         sections = self._get_sections_pour_type(type_promesse, donnees)
@@ -1185,14 +1241,69 @@ class GestionnairePromesses:
             fichier_md = result_paths.get("acte") or output_dir / output_name / "acte.md"
 
         except ImportError:
-            # Fallback: génération simple (module non disponible)
+            # Fallback: génération simple si module non disponible
             fichier_md = self._generer_markdown_simple(
                 donnees, type_promesse, sections, output_dir
             )
-        except Exception as e:
+        except FileNotFoundError as e:
+            # Template non trouvé
+            logger.error(f"Template introuvable: {template_path} - {e}")
             if force:
-                # En mode forcé, utiliser le fallback simplifié
-                warnings.append(f"Template complet indisponible: {e}")
+                warnings.append(f"Template introuvable: {template_path.name}")
+                warnings.append("Utilisation du générateur simplifié")
+                fichier_md = self._generer_markdown_simple(
+                    donnees, type_promesse, sections, output_dir
+                )
+            else:
+                errors.append(f"Template introuvable: {template_path.name}")
+                return ResultatGeneration(
+                    succes=False,
+                    type_promesse=type_promesse,
+                    categorie_bien=categorie,
+                    erreurs=errors,
+                    warnings=warnings
+                )
+        except (KeyError, AttributeError) as e:
+            # Données manquantes ou mal structurées
+            logger.error(f"Données invalides pour assemblage: {e}")
+            if force:
+                warnings.append(f"Données invalides: {e}")
+                warnings.append("Utilisation du générateur simplifié")
+                fichier_md = self._generer_markdown_simple(
+                    donnees, type_promesse, sections, output_dir
+                )
+            else:
+                errors.append(f"Données invalides: {e}")
+                return ResultatGeneration(
+                    succes=False,
+                    type_promesse=type_promesse,
+                    categorie_bien=categorie,
+                    erreurs=errors,
+                    warnings=warnings
+                )
+        except (OSError, PermissionError) as e:
+            # Problème d'écriture du fichier
+            logger.error(f"Erreur écriture fichier: {e}")
+            if force:
+                warnings.append(f"Erreur écriture: {e}")
+                warnings.append("Utilisation du générateur simplifié")
+                fichier_md = self._generer_markdown_simple(
+                    donnees, type_promesse, sections, output_dir
+                )
+            else:
+                errors.append(f"Impossible d'écrire le fichier: {e}")
+                return ResultatGeneration(
+                    succes=False,
+                    type_promesse=type_promesse,
+                    categorie_bien=categorie,
+                    erreurs=errors,
+                    warnings=warnings
+                )
+        except Exception as e:
+            # Fallback général pour toute autre erreur
+            logger.error(f"Erreur assemblage: {e}")
+            if force:
+                warnings.append(f"Erreur assemblage: {e}")
                 warnings.append("Utilisation du générateur simplifié")
                 fichier_md = self._generer_markdown_simple(
                     donnees, type_promesse, sections, output_dir
@@ -1216,9 +1327,20 @@ class GestionnairePromesses:
             exporter_docx(fichier_md, fichier_docx)
 
         except ImportError:
+            # Module d'export non disponible (optionnel)
             warnings.append("Exporteur DOCX non disponible")
-        except Exception as e:
-            warnings.append(f"Erreur export DOCX: {e}")
+        except FileNotFoundError as e:
+            # Fichier markdown source non trouvé
+            logger.warning(f"Fichier markdown introuvable pour export: {e}")
+            warnings.append(f"Fichier source introuvable: {e}")
+        except (OSError, PermissionError) as e:
+            # Problème d'écriture du fichier DOCX
+            logger.warning(f"Erreur écriture DOCX: {e}")
+            warnings.append(f"Impossible d'écrire le DOCX: {e}")
+        except ValueError as e:
+            # Format markdown invalide
+            logger.warning(f"Format markdown invalide: {e}")
+            warnings.append(f"Format markdown invalide: {e}")
 
         # 8. Sauvegarder dans Supabase si configuré
         if self.supabase:
@@ -1226,8 +1348,18 @@ class GestionnairePromesses:
                 self._sauvegarder_promesse_supabase(
                     donnees, type_promesse, fichier_md, fichier_docx
                 )
-            except Exception as e:
-                warnings.append(f"Erreur sauvegarde Supabase: {e}")
+            except AttributeError as e:
+                # Client Supabase mal configuré
+                logger.warning(f"Client Supabase invalide: {e}")
+                warnings.append(f"Sauvegarde Supabase échouée (client invalide): {e}")
+            except (KeyError, TypeError) as e:
+                # Données invalides pour Supabase
+                logger.warning(f"Données invalides pour Supabase: {e}")
+                warnings.append(f"Données invalides pour sauvegarde: {e}")
+            except ConnectionError as e:
+                # Problème réseau
+                logger.warning(f"Connexion Supabase échouée: {e}")
+                warnings.append(f"Connexion Supabase échouée: {e}")
 
         duree = time.time() - start
 

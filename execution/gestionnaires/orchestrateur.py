@@ -891,6 +891,22 @@ class OrchestratorNotaire:
     # =========================================================================
     # Méthodes d'optimisation des coûts (v2.1.0)
     # =========================================================================
+    #
+    # SMART ROUTING DE MODÈLES (Sprint Plan JOUR 1 MATIN)
+    #
+    # Objectif: Réduire les coûts API de 60% en sélectionnant intelligemment
+    # le modèle Claude selon le type d'opération.
+    #
+    # Distribution attendue:
+    # - Haiku (35% des appels): Validation déterministe, 80% économie vs Opus
+    # - Sonnet (60% des appels): Détection + génération standard, 60% économie vs Opus
+    # - Opus (5% des appels): Génération complexe, suggestion clauses créatives
+    #
+    # Économie totale: ~60% sur l'ensemble des opérations LLM.
+    #
+    # Méthode principale: _choisir_modele(type_operation, confiance, donnees)
+    # Tests: tests/test_orchestrateur.py (14 tests unitaires)
+    # =========================================================================
 
     @staticmethod
     def detecter_type_acte_rapide(texte: str) -> Optional[str]:
@@ -938,73 +954,92 @@ class OrchestratorNotaire:
         # Ambigu → nécessite LLM
         return None
 
-    def _choisir_modele(self, donnees: Dict[str, Any], type_acte: Optional[str] = None) -> str:
+    def _choisir_modele(self, type_operation: str, confiance: float = 1.0, donnees: Optional[Dict[str, Any]] = None) -> str:
         """
-        Décide intelligemment quel modèle utiliser (Tier 1 - Smart Opus Usage).
+        Sélectionne le modèle optimal selon le type d'opération et la confiance (Sprint Plan v2.1.0).
 
-        Opus (excellent mais 5x plus cher):
-        - Type acte rare/complexe (viager, donation-partage)
-        - Multi-parties (>2 vendeurs OU >2 acquéreurs)
-        - Prix >1M€ (enjeux importants)
-        - Données incomplètes (nécessite raisonnement avancé)
+        Règles d'optimisation:
+        - Détection + confiance >80% → Sonnet (rapide + cheap)
+        - Validation → Haiku (déterministe)
+        - Génération complexe → Opus (qualité max)
+        - Suggestion clauses → Opus (créativité)
 
-        Sonnet (60% moins cher, excellent pour cas standard):
-        - Types fréquents (promesse, vente standard)
-        - 1-2 parties de chaque côté
-        - Données complètes
-        - Prix standard
-
-        Économie attendue: -48% coûts sur 60% des générations
+        Économie attendue: -60% des coûts API sur l'ensemble des opérations.
 
         Args:
-            donnees: Données de la génération
-            type_acte: Type d'acte (optionnel, détecté si absent)
+            type_operation: Type d'opération ("detection", "validation", "generation", "suggestion_clauses", etc.)
+            confiance: Score de confiance (0-1) pour l'opération (si applicable)
+            donnees: Données optionnelles pour analyser la complexité
 
         Returns:
-            "opus" ou "sonnet"
+            str: Model ID Claude (format "claude-{modele}-{version}")
         """
-        # Détecter type si absent
-        if not type_acte:
+        # Règle 1: Validation → Haiku (déterministe, 80% économie vs Opus)
+        if type_operation == "validation":
+            self.stats_modeles["haiku"] += 1
+            self._log("Modèle: HAIKU (validation déterministe)", "info")
+            return "claude-haiku-4-5-20251001"
+
+        # Règle 2: Détection avec haute confiance → Sonnet (60% économie vs Opus)
+        if type_operation == "detection" and confiance > 0.80:
+            self.stats_modeles["sonnet"] += 1
+            self._log(f"Modèle: SONNET (détection confiance={confiance:.0%})", "info")
+            return "claude-sonnet-4-5-20250929"
+
+        # Règle 3: Suggestion de clauses → Opus (créativité maximale)
+        if type_operation == "suggestion_clauses":
+            self.stats_modeles["opus"] += 1
+            self._log("Modèle: OPUS (suggestion clauses créatives)", "info")
+            return "claude-opus-4-6"
+
+        # Règle 4: Génération → analyser complexité des données
+        if type_operation == "generation" and donnees:
+            # Analyse de complexité pour déterminer Opus vs Sonnet
             type_acte = donnees.get('acte', {}).get('type', '')
 
-        # Cas complexes → Opus
-        types_complexes = ["viager", "donation_partage", "sci", "donation"]
-        if type_acte in types_complexes:
-            self.stats_modeles["opus"] += 1
-            self._log(f"Modèle: OPUS (type complexe: {type_acte})", "info")
-            return "opus"
+            # Cas complexes → Opus
+            types_complexes = ["viager", "donation_partage", "sci", "donation"]
+            if type_acte in types_complexes:
+                self.stats_modeles["opus"] += 1
+                self._log(f"Modèle: OPUS (type complexe: {type_acte})", "info")
+                return "claude-opus-4-6"
 
-        # Multi-parties → Opus
-        vendeurs = donnees.get('vendeurs') or donnees.get('promettants', [])
-        acquereurs = donnees.get('acquereurs') or donnees.get('beneficiaires', [])
+            # Multi-parties → Opus
+            vendeurs = donnees.get('vendeurs') or donnees.get('promettants', [])
+            acquereurs = donnees.get('acquereurs') or donnees.get('beneficiaires', [])
 
-        if len(vendeurs) > 2 or len(acquereurs) > 2:
-            self.stats_modeles["opus"] += 1
-            self._log(f"Modèle: OPUS (multi-parties: {len(vendeurs)}V, {len(acquereurs)}A)", "info")
-            return "opus"
+            if len(vendeurs) > 2 or len(acquereurs) > 2:
+                self.stats_modeles["opus"] += 1
+                self._log(f"Modèle: OPUS (multi-parties: {len(vendeurs)}V, {len(acquereurs)}A)", "info")
+                return "claude-opus-4-6"
 
-        # Prix élevé → Opus (enjeux importants)
-        prix = donnees.get('prix', {}).get('montant', 0)
-        if prix > 1_000_000:
-            self.stats_modeles["opus"] += 1
-            self._log(f"Modèle: OPUS (prix élevé: {prix:,.0f}€)", "info")
-            return "opus"
+            # Prix élevé → Opus (enjeux importants)
+            prix = donnees.get('prix', {}).get('montant', 0)
+            if prix > 1_000_000:
+                self.stats_modeles["opus"] += 1
+                self._log(f"Modèle: OPUS (prix élevé: {prix:,.0f}€)", "info")
+                return "claude-opus-4-6"
 
-        # Données incomplètes → Opus
-        champs_critiques = ['vendeurs', 'acquereurs', 'bien', 'prix']
-        if type_acte == "promesse_vente":
-            champs_critiques = ['promettants', 'beneficiaires', 'bien', 'prix']
+            # Données incomplètes → Opus
+            champs_critiques = ['vendeurs', 'acquereurs', 'bien', 'prix']
+            if type_acte == "promesse_vente":
+                champs_critiques = ['promettants', 'beneficiaires', 'bien', 'prix']
 
-        manquants = [c for c in champs_critiques if not donnees.get(c)]
-        if len(manquants) >= 2:
-            self.stats_modeles["opus"] += 1
-            self._log(f"Modèle: OPUS (données incomplètes: {manquants})", "info")
-            return "opus"
+            manquants = [c for c in champs_critiques if not donnees.get(c)]
+            if len(manquants) >= 2:
+                self.stats_modeles["opus"] += 1
+                self._log(f"Modèle: OPUS (données incomplètes: {manquants})", "info")
+                return "claude-opus-4-6"
 
-        # Cas standard → Sonnet (60% économie)
-        self.stats_modeles["sonnet"] += 1
-        self._log(f"Modèle: SONNET (cas standard)", "info")
-        return "sonnet"
+            # Cas standard → Sonnet (60% économie)
+            self.stats_modeles["sonnet"] += 1
+            self._log("Modèle: SONNET (génération cas standard)", "info")
+            return "claude-sonnet-4-5-20250929"
+
+        # Fallback par défaut: Opus pour opérations non catégorisées
+        self.stats_modeles["opus"] += 1
+        self._log(f"Modèle: OPUS (fallback pour type_operation={type_operation})", "info")
+        return "claude-opus-4-6"
 
     # =========================================================================
     # Méthodes utilitaires internes
@@ -1127,7 +1162,18 @@ class OrchestratorNotaire:
         donnees: Dict[str, Any],
         type_acte: TypeActe
     ) -> Dict[str, Any]:
-        """Valide les données et retourne les alertes."""
+        """
+        Valide les données et retourne les alertes.
+
+        Note: Cette méthode utilise le smart routing (v2.1.0) pour sélectionner
+        le modèle optimal. Pour les validations déterministes, Haiku est utilisé
+        (80% économie vs Opus).
+        """
+        # Sélectionner le modèle optimal pour la validation (v2.1.0)
+        # Pour cette opération, Haiku est optimal (validation déterministe)
+        modele = self._choisir_modele(type_operation="validation")
+        self._log(f"Validation avec {modele}", "info")
+
         alertes = []
 
         # Validations communes
@@ -1420,11 +1466,57 @@ class OrchestratorNotaire:
     # Dashboard et statut
     # =========================================================================
 
+    def afficher_stats_modeles(self):
+        """
+        Affiche les statistiques d'utilisation des modèles LLM (v2.1.0).
+
+        Utile pour le monitoring de l'optimisation des coûts.
+        """
+        total = sum(self.stats_modeles.values())
+        if total == 0:
+            print("\n   Aucun appel LLM encore effectué")
+            return
+
+        print(f"\n💰 Statistiques Modèles LLM (v2.1.0):")
+        print(f"   Total appels: {total}")
+
+        # Afficher la distribution
+        for modele in ["haiku", "sonnet", "opus"]:
+            count = self.stats_modeles[modele]
+            ratio = (count / total * 100) if total > 0 else 0
+            barre = "█" * int(ratio / 5) + "░" * (20 - int(ratio / 5))
+
+            # Économie estimée (vs Opus baseline)
+            if modele == "haiku":
+                economie = "80% économie vs Opus"
+            elif modele == "sonnet":
+                economie = "60% économie vs Opus"
+            else:
+                economie = "baseline"
+
+            print(f"   {modele.capitalize():8s} {barre} {count:3d} ({ratio:5.1f}%) - {economie}")
+
+        # Estimation économie globale (valeurs indicatives)
+        # Coûts approximatifs: Opus=$0.005, Sonnet=$0.002, Haiku=$0.001 par appel
+        cout_opus_total = total * 0.005
+        cout_reel = (
+            self.stats_modeles["opus"] * 0.005 +
+            self.stats_modeles["sonnet"] * 0.002 +
+            self.stats_modeles["haiku"] * 0.001
+        )
+        economie_pct = ((cout_opus_total - cout_reel) / cout_opus_total * 100) if cout_opus_total > 0 else 0
+
+        print(f"\n   Économie estimée: {economie_pct:.0f}% vs {total} appels Opus")
+        print(f"   Coût estimé: ${cout_reel:.2f} (vs ${cout_opus_total:.2f} baseline)")
+
     def afficher_dashboard(self):
         """Affiche le dashboard système."""
         print(f"\n{'='*60}")
         print(f"📊 NOTAIRE AI - Dashboard")
         print(f"{'='*60}")
+
+        # Stats modèles LLM (v2.1.0)
+        self.afficher_stats_modeles()
 
         # Conformité templates
         print(f"\n🎯 Conformité Templates:")

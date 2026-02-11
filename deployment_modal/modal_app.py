@@ -9,10 +9,10 @@ Ce fichier configure le déploiement sur Modal.com pour:
 - Jobs CRON (daily_learning_job, weekly_catalog_sync)
 
 Déploiement:
-    modal deploy modal/modal_app.py
+    modal deploy deployment_modal/modal_app.py
 
 Test local:
-    modal serve modal/modal_app.py
+    modal serve deployment_modal/modal_app.py
 
 Endpoints déployés:
     https://notaire-ai--fastapi-app.modal.run/agent/execute
@@ -367,8 +367,8 @@ def main():
     print("=" * 40)
     print()
     print("Commandes disponibles:")
-    print("  modal serve api/modal_app.py   # Test local")
-    print("  modal deploy api/modal_app.py  # Déploiement")
+    print("  modal serve deployment_modal/modal_app.py   # Test local")
+    print("  modal deploy deployment_modal/modal_app.py  # Déploiement")
     print()
     print("Une fois déployé, l'API sera accessible à:")
     print("  https://notaire-ai--fastapi-app.modal.run/")
