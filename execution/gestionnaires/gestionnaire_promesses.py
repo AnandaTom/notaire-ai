@@ -1071,7 +1071,8 @@ class GestionnairePromesses:
         self,
         donnees: Dict,
         type_force: Optional[TypePromesse] = None,
-        output_dir: Optional[Path] = None
+        output_dir: Optional[Path] = None,
+        force: bool = False
     ) -> ResultatGeneration:
         """
         Génère une promesse de vente.
@@ -1080,6 +1081,7 @@ class GestionnairePromesses:
             donnees: Données de la promesse
             type_force: Forcer un type spécifique
             output_dir: Dossier de sortie
+            force: Si True, génère même si données incomplètes (erreurs → warnings)
 
         Returns:
             ResultatGeneration avec fichiers générés
@@ -1108,13 +1110,19 @@ class GestionnairePromesses:
         # 2. Valider les données
         validation = self.valider(donnees, type_promesse)
         if not validation.valide:
-            return ResultatGeneration(
-                succes=False,
-                type_promesse=type_promesse,
-                categorie_bien=categorie,
-                erreurs=validation.erreurs,
-                warnings=validation.warnings
-            )
+            if not force:
+                # Mode normal: bloquer si invalide
+                return ResultatGeneration(
+                    succes=False,
+                    type_promesse=type_promesse,
+                    categorie_bien=categorie,
+                    erreurs=validation.erreurs,
+                    warnings=validation.warnings
+                )
+            else:
+                # Mode forcé: convertir erreurs en warnings et continuer
+                warnings.append("⚠️ GÉNÉRATION FORCÉE - Document incomplet:")
+                warnings.extend([f"  • {e}" for e in validation.erreurs])
         warnings.extend(validation.warnings)
 
         # 2b. Enrichir le cadastre via API gouvernementale
@@ -1156,6 +1164,9 @@ class GestionnairePromesses:
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # 6. Générer le markdown via assembler_acte.py
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_name = f"promesse_{type_promesse.value}_{timestamp}"
+
         try:
             from execution.core.assembler_acte import assembler_acte
 
@@ -1165,32 +1176,36 @@ class GestionnairePromesses:
             donnees_enrichies["_type_promesse"] = type_promesse.value
             donnees_enrichies["_categorie_bien"] = categorie.value
 
-            # Assembler
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_name = f"promesse_{type_promesse.value}_{timestamp}"
-
-            fichier_md = output_dir / f"{output_name}.md"
-
-            assembler_acte(
+            result_paths = assembler_acte(
                 template=template_path.name,
                 donnees=donnees_enrichies,
-                output_path=fichier_md
+                output_dir=str(output_dir),
+                acte_id=output_name
             )
+            fichier_md = result_paths.get("acte") or output_dir / output_name / "acte.md"
 
         except ImportError:
-            # Fallback: génération simple
+            # Fallback: génération simple (module non disponible)
             fichier_md = self._generer_markdown_simple(
                 donnees, type_promesse, sections, output_dir
             )
         except Exception as e:
-            errors.append(f"Erreur assemblage: {e}")
-            return ResultatGeneration(
-                succes=False,
-                type_promesse=type_promesse,
-                categorie_bien=categorie,
-                erreurs=errors,
-                warnings=warnings
-            )
+            if force:
+                # En mode forcé, utiliser le fallback simplifié
+                warnings.append(f"Template complet indisponible: {e}")
+                warnings.append("Utilisation du générateur simplifié")
+                fichier_md = self._generer_markdown_simple(
+                    donnees, type_promesse, sections, output_dir
+                )
+            else:
+                errors.append(f"Erreur assemblage: {e}")
+                return ResultatGeneration(
+                    succes=False,
+                    type_promesse=type_promesse,
+                    categorie_bien=categorie,
+                    erreurs=errors,
+                    warnings=warnings
+                )
 
         # 7. Exporter en DOCX
         fichier_docx = None

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Search, Filter, FolderOpen, ArrowLeft, RefreshCw } from 'lucide-react'
@@ -9,6 +9,24 @@ import DossierCard from '@/components/DossierCard'
 import type { Dossier } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
+
+// Récupérer l'etude_id du notaire connecté
+async function getUserEtudeId(): Promise<string | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+
+    const { data } = await supabase
+      .from('notaire_users')
+      .select('etude_id')
+      .eq('auth_user_id', user.id)
+      .single()
+
+    return data?.etude_id || null
+  } catch {
+    return null
+  }
+}
 
 const TYPE_OPTIONS = [
   { value: '', label: 'Tous les types' },
@@ -34,12 +52,21 @@ export default function DossiersPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [statutFilter, setStatutFilter] = useState('')
+  const [etudeId, setEtudeId] = useState<string | null>(null)
 
+  // Charger l'etude_id au montage
   useEffect(() => {
-    loadDossiers()
-  }, [typeFilter, statutFilter])
+    getUserEtudeId().then(setEtudeId)
+  }, [])
 
-  async function loadDossiers() {
+  // Charger les dossiers quand etudeId ou filtres changent
+  useEffect(() => {
+    if (etudeId) {
+      loadDossiers(etudeId)
+    }
+  }, [etudeId, typeFilter, statutFilter])
+
+  async function loadDossiers(currentEtudeId: string) {
     setIsLoading(true)
     setError(null)
 
@@ -48,6 +75,7 @@ export default function DossiersPage() {
       const params = new URLSearchParams()
       if (typeFilter) params.set('type_acte', typeFilter)
       if (statutFilter) params.set('statut', statutFilter)
+      params.set('etude_id', currentEtudeId)
       params.set('limit', '50')
 
       const response = await fetch(`${API_URL}/dossiers?${params}`, {
@@ -58,10 +86,11 @@ export default function DossiersPage() {
         const data = await response.json()
         setDossiers(data.dossiers || data || [])
       } else {
-        // Fallback vers Supabase direct
+        // Fallback vers Supabase direct avec filtre etude_id
         let query = supabase
           .from('dossiers')
           .select('*')
+          .eq('etude_id', currentEtudeId)
           .is('deleted_at', null)
           .order('created_at', { ascending: false })
           .limit(50)
@@ -207,7 +236,7 @@ export default function DossiersPage() {
 
           {/* Refresh */}
           <button
-            onClick={() => loadDossiers()}
+            onClick={() => etudeId && loadDossiers(etudeId)}
             className="p-2.5 hover:bg-sand rounded-xl transition-colors"
             title="Actualiser"
           >

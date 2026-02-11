@@ -100,6 +100,14 @@ Tu disposes de 8 outils:
 - Section en cours entre crochets: [Identification du vendeur]
 - Suggestions d'actions: SUGGESTIONS: option1 | option2 | option3
 - Document genere: FICHIER: /chemin/du/fichier.docx
+
+## Regle importante - Generation forcee
+Si le notaire demande explicitement de generer le document (meme incomplet), \
+utilise generate_document avec force=true.
+Phrases declencheuses: "genere quand meme", "genere le document", "telecharger maintenant", \
+"force la generation", "je veux generer", "generer avec les infos actuelles".
+Affiche un avertissement sur les champs manquants mais genere le fichier DOCX.
+Le notaire peut ensuite completer manuellement le document.
 """
 
 
