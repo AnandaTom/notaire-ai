@@ -379,7 +379,11 @@ def valider_quotites(quotites: List[Dict[str, Any]]) -> Tuple[bool, float, str]:
 # =============================================================================
 
 if __name__ == '__main__':
-    print("🧪 Tests validation déterministe\n")
+    import sys
+    if sys.platform == 'win32':
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
+    print("Tests validation deterministe\n")
 
     # Test 1: Détection type acte
     tests_detection = [

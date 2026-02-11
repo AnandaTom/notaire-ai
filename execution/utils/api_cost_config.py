@@ -328,7 +328,11 @@ def estimer_cout(
 # =============================================================================
 
 if __name__ == '__main__':
-    print("💰 Tests configuration coûts API\n")
+    import sys
+    if sys.platform == 'win32':
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
+    print("Tests configuration couts API\n")
 
     # Test 1: Max tokens
     print("1️⃣  Max tokens par agent:")
