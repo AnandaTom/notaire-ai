@@ -687,17 +687,19 @@ def create_chat_router():
             supabase = _get_supabase()
             if supabase and conversation_id:
                 try:
+                    # Utiliser .limit(1) au lieu de .maybe_single() pour éviter erreur 406
                     conv_resp = supabase.table("conversations").select("*").eq(
                         "id", conversation_id
-                    ).maybe_single().execute()
+                    ).limit(1).execute()
 
-                    if conv_resp.data:
+                    if conv_resp.data and len(conv_resp.data) > 0:
+                        conv_data = conv_resp.data[0]
                         # Charger le contexte persiste (colonne = "context")
-                        stored_ctx = conv_resp.data.get("context") or {}
+                        stored_ctx = conv_data.get("context") or {}
                         contexte = {**stored_ctx, **contexte}
 
                         # Charger les messages depuis conversations.messages JSONB
-                        stored_messages = conv_resp.data.get("messages") or []
+                        stored_messages = conv_data.get("messages") or []
                         if stored_messages:
                             historique = [
                                 {"role": m["role"], "content": m["content"]}
@@ -760,12 +762,13 @@ def create_chat_router():
             # Persister les messages dans Supabase (JSONB dans conversations.messages)
             if supabase and conversation_id:
                 try:
-                    # Charger messages existants
+                    # Charger messages existants (utiliser .limit(1) pour éviter 406)
                     conv = supabase.table("conversations").select(
                         "messages, message_count"
-                    ).eq("id", conversation_id).maybe_single().execute()
+                    ).eq("id", conversation_id).limit(1).execute()
 
-                    existing = (conv.data.get("messages") or []) if conv.data else []
+                    conv_data = conv.data[0] if conv.data and len(conv.data) > 0 else None
+                    existing = (conv_data.get("messages") or []) if conv_data else []
                     existing.append({
                         "role": "user",
                         "content": request.message,
@@ -847,14 +850,16 @@ def create_chat_router():
                 supabase = _get_supabase()
                 if supabase and conversation_id:
                     try:
+                        # Utiliser .limit(1) au lieu de .maybe_single() pour éviter 406
                         conv_resp = supabase.table("conversations").select("*").eq(
                             "id", conversation_id
-                        ).maybe_single().execute()
+                        ).limit(1).execute()
 
-                        if conv_resp and conv_resp.data:
-                            stored_ctx = conv_resp.data.get("context") or {}
+                        if conv_resp and conv_resp.data and len(conv_resp.data) > 0:
+                            conv_data = conv_resp.data[0]
+                            stored_ctx = conv_data.get("context") or {}
                             contexte = {**stored_ctx, **contexte}
-                            stored_messages = conv_resp.data.get("messages") or []
+                            stored_messages = conv_data.get("messages") or []
                             if stored_messages:
                                 historique = [
                                     {"role": m["role"], "content": m["content"]}
@@ -895,11 +900,13 @@ def create_chat_router():
                         # Persister dans Supabase avant de yielder done
                         if supabase and conversation_id:
                             try:
+                                # Utiliser .limit(1) pour éviter erreur 406
                                 conv = supabase.table("conversations").select(
                                     "messages, message_count"
-                                ).eq("id", conversation_id).maybe_single().execute()
+                                ).eq("id", conversation_id).limit(1).execute()
 
-                                existing = (conv.data.get("messages") or []) if conv and conv.data else []
+                                conv_data = conv.data[0] if conv and conv.data and len(conv.data) > 0 else None
+                                existing = (conv_data.get("messages") or []) if conv_data else []
                                 existing.append({
                                     "role": "user",
                                     "content": request.message,
@@ -1015,22 +1022,24 @@ def create_chat_router():
         if not supabase:
             raise HTTPException(status_code=503, detail="Supabase non disponible")
         try:
+            # Utiliser .limit(1) pour éviter erreur 406
             resp = supabase.table("conversations").select("*").eq(
                 "id", conversation_id
-            ).maybe_single().execute()
+            ).limit(1).execute()
 
-            if not resp or not resp.data:
+            if not resp or not resp.data or len(resp.data) == 0:
                 raise HTTPException(status_code=404, detail="Conversation non trouvee")
 
-            ctx = resp.data.get("context") or {}
+            conv_data = resp.data[0]
+            ctx = conv_data.get("context") or {}
             return {
-                "id": resp.data["id"],
-                "messages": resp.data.get("messages") or [],
+                "id": conv_data["id"],
+                "messages": conv_data.get("messages") or [],
                 "context": ctx,
                 "type_acte": ctx.get("type_acte_en_cours"),
-                "message_count": resp.data.get("message_count") or 0,
-                "created_at": resp.data.get("created_at"),
-                "updated_at": resp.data.get("updated_at"),
+                "message_count": conv_data.get("message_count") or 0,
+                "created_at": conv_data.get("created_at"),
+                "updated_at": conv_data.get("updated_at"),
             }
         except HTTPException:
             raise
@@ -1055,13 +1064,15 @@ def create_chat_router():
 
         try:
             # Charger le message assistant pour le champ agent_response (requis)
+            # Utiliser .limit(1) pour éviter erreur 406
             conv = supabase.table("conversations").select(
                 "messages"
-            ).eq("id", request.conversation_id).maybe_single().execute()
+            ).eq("id", request.conversation_id).limit(1).execute()
 
             agent_response = ""
-            if conv.data:
-                messages = conv.data.get("messages") or []
+            conv_data = conv.data[0] if conv.data and len(conv.data) > 0 else None
+            if conv_data:
+                messages = conv_data.get("messages") or []
                 if request.message_index < len(messages):
                     agent_response = messages[request.message_index].get("content", "")
 

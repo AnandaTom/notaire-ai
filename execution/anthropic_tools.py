@@ -239,6 +239,10 @@ class ToolExecutor:
             from execution.agent_autonome import CollecteurInteractif
             type_acte = agent_state.get("type_acte", "promesse_vente")
             prefill = agent_state.get("donnees_collectees")
+            logger.info(
+                f"[COLLECTEUR] Creating new instance: type={type_acte}, "
+                f"prefill has {len(prefill) if prefill else 0} keys"
+            )
             self._collecteur = CollecteurInteractif(
                 type_acte=type_acte,
                 prefill=prefill if prefill else None,
@@ -358,6 +362,16 @@ class ToolExecutor:
 
         # Sauvegarder les donnees mises a jour
         agent_state["donnees_collectees"] = collecteur.donnees
+
+        # Mettre à jour la progression
+        progress = collecteur.get_progress()
+        agent_state["progress_pct"] = progress.get("pourcentage", 0)
+
+        logger.info(
+            f"[SUBMIT] Answers submitted: {len(answers)} keys, "
+            f"donnees now has {len(collecteur.donnees)} top-level keys, "
+            f"progress={progress.get('pourcentage', 0)}%"
+        )
 
         return result
 
