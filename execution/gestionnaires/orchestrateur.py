@@ -904,8 +904,8 @@ class OrchestratorNotaire:
     #
     # Économie totale: ~60% sur l'ensemble des opérations LLM.
     #
-    # Méthode principale: _choisir_modele(type_operation, confiance, donnees)
-    # Tests: tests/test_orchestrateur.py (14 tests unitaires)
+    # Méthode principale: _choisir_modele(donnees, type_acte) -> str
+    # Tests: tests/test_tier1_optimizations.py (14 tests unitaires)
     # =========================================================================
 
     @staticmethod
@@ -954,92 +954,138 @@ class OrchestratorNotaire:
         # Ambigu → nécessite LLM
         return None
 
-    def _choisir_modele(self, type_operation: str, confiance: float = 1.0, donnees: Optional[Dict[str, Any]] = None) -> str:
+    def _choisir_modele(
+        self,
+        donnees: Optional[Dict[str, Any]] = None,
+        type_acte: Optional[str] = None,
+        type_operation: Optional[str] = None,
+        confiance: float = 1.0
+    ) -> str:
         """
-        Sélectionne le modèle optimal selon le type d'opération et la confiance (Sprint Plan v2.1.0).
+        Sélectionne le modèle optimal (API unifiée v2.1.0).
+
+        Supporte deux modes d'appel:
+        1. Mode génération: _choisir_modele(donnees, type_acte) → retourne nom simple
+        2. Mode opération: _choisir_modele(type_operation="validation", confiance=0.8) → retourne ID complet
 
         Règles d'optimisation:
-        - Détection + confiance >80% → Sonnet (rapide + cheap)
-        - Validation → Haiku (déterministe)
-        - Génération complexe → Opus (qualité max)
-        - Suggestion clauses → Opus (créativité)
-
-        Économie attendue: -60% des coûts API sur l'ensemble des opérations.
+        - Validation → Haiku (déterministe, 80% économie)
+        - Détection haute confiance → Sonnet (60% économie)
+        - Cas standard → Sonnet (60% économie)
+        - Viager/complexe/multi-parties/prix >1M → Opus (qualité max)
 
         Args:
-            type_operation: Type d'opération ("detection", "validation", "generation", "suggestion_clauses", etc.)
-            confiance: Score de confiance (0-1) pour l'opération (si applicable)
-            donnees: Données optionnelles pour analyser la complexité
+            donnees: Données du dossier (mode génération)
+            type_acte: Type d'acte (mode génération)
+            type_operation: Type d'opération ("validation", "detection", "suggestion_clauses", "generation")
+            confiance: Score de confiance 0-1 pour l'opération
 
         Returns:
-            str: Model ID Claude (format "claude-{modele}-{version}")
+            str: Nom simple ("sonnet", "opus", "haiku") OU ID complet ("claude-sonnet-4-5-20250929")
+                 selon le mode d'appel
         """
-        # Règle 1: Validation → Haiku (déterministe, 80% économie vs Opus)
-        if type_operation == "validation":
-            self.stats_modeles["haiku"] += 1
-            self._log("Modèle: HAIKU (validation déterministe)", "info")
-            return "claude-haiku-4-5-20251001"
+        # ===== MODE OPÉRATION (retourne ID complet) =====
+        if type_operation:
+            # Règle 1: Validation → Haiku
+            if type_operation == "validation":
+                self.stats_modeles["haiku"] += 1
+                self._log("Modèle: HAIKU (validation déterministe)", "info")
+                return "claude-haiku-4-5-20251001"
 
-        # Règle 2: Détection avec haute confiance → Sonnet (60% économie vs Opus)
-        if type_operation == "detection" and confiance > 0.80:
-            self.stats_modeles["sonnet"] += 1
-            self._log(f"Modèle: SONNET (détection confiance={confiance:.0%})", "info")
-            return "claude-sonnet-4-5-20250929"
+            # Règle 2: Détection haute confiance → Sonnet
+            if type_operation == "detection" and confiance > 0.80:
+                self.stats_modeles["sonnet"] += 1
+                self._log(f"Modèle: SONNET (détection confiance={confiance:.0%})", "info")
+                return "claude-sonnet-4-5-20250929"
 
-        # Règle 3: Suggestion de clauses → Opus (créativité maximale)
-        if type_operation == "suggestion_clauses":
+            # Règle 3: Suggestion clauses → Opus
+            if type_operation == "suggestion_clauses":
+                self.stats_modeles["opus"] += 1
+                self._log("Modèle: OPUS (suggestion clauses créatives)", "info")
+                return "claude-opus-4-6"
+
+            # Règle 4: Génération avec analyse de données
+            if type_operation == "generation" and donnees:
+                # Analyser complexité → retourner ID complet
+                return self._analyser_complexite_generation(donnees, mode_id=True)
+
+            # Fallback: Opus
             self.stats_modeles["opus"] += 1
-            self._log("Modèle: OPUS (suggestion clauses créatives)", "info")
+            self._log(f"Modèle: OPUS (fallback {type_operation})", "info")
             return "claude-opus-4-6"
 
-        # Règle 4: Génération → analyser complexité des données
-        if type_operation == "generation" and donnees:
-            # Analyse de complexité pour déterminer Opus vs Sonnet
+        # ===== MODE GÉNÉRATION (retourne nom simple) =====
+        if donnees and type_acte:
+            return self._analyser_complexite_generation(donnees, mode_id=False, type_acte=type_acte)
+
+        # Erreur: paramètres invalides
+        raise ValueError("_choisir_modele() nécessite soit (donnees, type_acte) soit (type_operation)")
+
+    def _analyser_complexite_generation(
+        self,
+        donnees: Dict[str, Any],
+        mode_id: bool = False,
+        type_acte: Optional[str] = None
+    ) -> str:
+        """
+        Analyse la complexité des données pour choisir Opus vs Sonnet.
+
+        Args:
+            donnees: Données du dossier
+            mode_id: Si True, retourne ID complet. Si False, retourne nom simple.
+            type_acte: Type d'acte (optionnel)
+
+        Returns:
+            str: "opus"/"sonnet"/"haiku" (mode_id=False) ou ID complet (mode_id=True)
+        """
+        # Détecter type acte
+        if not type_acte:
             type_acte = donnees.get('acte', {}).get('type', '')
 
-            # Cas complexes → Opus
-            types_complexes = ["viager", "donation_partage", "sci", "donation"]
-            if type_acte in types_complexes:
-                self.stats_modeles["opus"] += 1
-                self._log(f"Modèle: OPUS (type complexe: {type_acte})", "info")
-                return "claude-opus-4-6"
+        # Cas complexes → Opus
+        types_complexes = ["viager", "donation_partage", "sci", "donation"]
+        if type_acte in types_complexes or donnees.get('acte', {}).get('type') in types_complexes:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (type complexe: {type_acte})", "info")
+            return "claude-opus-4-6" if mode_id else "opus"
 
-            # Multi-parties → Opus
-            vendeurs = donnees.get('vendeurs') or donnees.get('promettants', [])
-            acquereurs = donnees.get('acquereurs') or donnees.get('beneficiaires', [])
+        # Viager détecté dans prix → Opus
+        if donnees.get('prix', {}).get('type_vente') == "viager":
+            self.stats_modeles["opus"] += 1
+            self._log("Modèle: OPUS (viager détecté dans prix)", "info")
+            return "claude-opus-4-6" if mode_id else "opus"
 
-            if len(vendeurs) > 2 or len(acquereurs) > 2:
-                self.stats_modeles["opus"] += 1
-                self._log(f"Modèle: OPUS (multi-parties: {len(vendeurs)}V, {len(acquereurs)}A)", "info")
-                return "claude-opus-4-6"
+        # Multi-parties → Opus
+        vendeurs = donnees.get('vendeurs') or donnees.get('promettants', [])
+        acquereurs = donnees.get('acquereurs') or donnees.get('beneficiaires', [])
 
-            # Prix élevé → Opus (enjeux importants)
-            prix = donnees.get('prix', {}).get('montant', 0)
-            if prix > 1_000_000:
-                self.stats_modeles["opus"] += 1
-                self._log(f"Modèle: OPUS (prix élevé: {prix:,.0f}€)", "info")
-                return "claude-opus-4-6"
+        if len(vendeurs) > 2 or len(acquereurs) > 2:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (multi-parties: {len(vendeurs)}V, {len(acquereurs)}A)", "info")
+            return "claude-opus-4-6" if mode_id else "opus"
 
-            # Données incomplètes → Opus
-            champs_critiques = ['vendeurs', 'acquereurs', 'bien', 'prix']
-            if type_acte == "promesse_vente":
-                champs_critiques = ['promettants', 'beneficiaires', 'bien', 'prix']
+        # Prix élevé → Opus
+        prix = donnees.get('prix', {}).get('montant', 0)
+        if prix > 1_000_000:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (prix élevé: {prix:,.0f}€)", "info")
+            return "claude-opus-4-6" if mode_id else "opus"
 
-            manquants = [c for c in champs_critiques if not donnees.get(c)]
-            if len(manquants) >= 2:
-                self.stats_modeles["opus"] += 1
-                self._log(f"Modèle: OPUS (données incomplètes: {manquants})", "info")
-                return "claude-opus-4-6"
+        # Données incomplètes → Opus
+        champs_critiques = ['vendeurs', 'acquereurs', 'bien', 'prix']
+        if type_acte == "promesse_vente" or (type_acte and "promesse" in type_acte):
+            champs_critiques = ['promettants', 'beneficiaires', 'bien', 'prix']
 
-            # Cas standard → Sonnet (60% économie)
-            self.stats_modeles["sonnet"] += 1
-            self._log("Modèle: SONNET (génération cas standard)", "info")
-            return "claude-sonnet-4-5-20250929"
+        manquants = [c for c in champs_critiques if not donnees.get(c)]
+        if len(manquants) >= 2:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (données incomplètes: {manquants})", "info")
+            return "claude-opus-4-6" if mode_id else "opus"
 
-        # Fallback par défaut: Opus pour opérations non catégorisées
-        self.stats_modeles["opus"] += 1
-        self._log(f"Modèle: OPUS (fallback pour type_operation={type_operation})", "info")
-        return "claude-opus-4-6"
+        # Cas standard → Sonnet
+        self.stats_modeles["sonnet"] += 1
+        self._log("Modèle: SONNET (génération cas standard)", "info")
+        return "claude-sonnet-4-5-20250929" if mode_id else "sonnet"
 
     # =========================================================================
     # Méthodes utilitaires internes
@@ -1165,15 +1211,9 @@ class OrchestratorNotaire:
         """
         Valide les données et retourne les alertes.
 
-        Note: Cette méthode utilise le smart routing (v2.1.0) pour sélectionner
-        le modèle optimal. Pour les validations déterministes, Haiku est utilisé
-        (80% économie vs Opus).
+        Cette validation est déterministe (règles métier Python) et ne nécessite
+        pas d'appel LLM.
         """
-        # Sélectionner le modèle optimal pour la validation (v2.1.0)
-        # Pour cette opération, Haiku est optimal (validation déterministe)
-        modele = self._choisir_modele(type_operation="validation")
-        self._log(f"Validation avec {modele}", "info")
-
         alertes = []
 
         # Validations communes
