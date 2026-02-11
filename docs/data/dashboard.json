@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T15:49:29.850437",
+    "generated_at": "2026-02-11T16:05:47.686897",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 274
+    "commits": 276
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "466775b",
-      "message": "feat: Phase 3 - Agent Intelligent + Self-Anneal + Nouveaux endpoints",
+      "hash": "859e453",
+      "message": "feat: Tier 1 API cost optimizations (-68% costs)",
       "date": "2026-02-11"
     },
-    "total_commits": 274,
+    "total_commits": 276,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 136
+        "commits": 138
       },
       {
         "name": "github-actions[bot]",
-        "commits": 71
+        "commits": 73
       },
       {
         "name": "augustinfrance-aico",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 74,
-    "total_lines": 43372,
+    "total_lines": 43380,
     "categories": {
       "generation": 6,
       "utils": 59,
@@ -623,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "859e453",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Tier 1 API cost optimizations (-68% costs)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "3dc1157",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "466775b",
       "author": "Tom",
       "date": "2026-02-11",
@@ -801,26 +821,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "6d3e214",
-      "author": "github-actions[bot]",
-      "date": "2026-02-08",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "96e652f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-08",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 15:49"
+    "last_updated": "2026-02-11 16:05"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 15:49"
+    "last_updated": "2026-02-11 16:05"
   },
   "conformity_details": {
     "promesse": {
