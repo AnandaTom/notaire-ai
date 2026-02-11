@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T16:06:56.907918",
+    "generated_at": "2026-02-11T16:28:49.547958",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 284
+    "commits": 292
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "6835d1a",
-      "message": "Merge branch 'tom/dev'",
+      "hash": "fa3dfbc",
+      "message": "Merge payoss/dev: Pages Mes Dossiers et Mes Clients",
       "date": "2026-02-11"
     },
-    "total_commits": 284,
+    "total_commits": 292,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 139
+        "commits": 141
       },
       {
         "name": "github-actions[bot]",
-        "commits": 74
+        "commits": 76
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 23
+        "commits": 26
       },
       {
         "name": "Automai",
@@ -623,6 +623,76 @@
   ],
   "activity": [
     {
+      "hash": "fa3dfbc",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge payoss/dev: Pages Mes Dossiers et Mes Clients",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "2620ac6",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Ajout pages Mes Dossiers et Mes Clients",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "d419201",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "e277767",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "wip: cost optimization work in progress",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "bd48540",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "security: Fix vulnerabilities - Update Next.js and dependencies",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "a0aacaa",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge master into payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "de5dd8e",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "6835d1a",
       "author": "Tom",
       "date": "2026-02-11",
@@ -703,6 +773,16 @@
       "type_color": "red"
     },
     {
+      "hash": "17672af",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Restaurer URL API correcte (notomai--notaire-ai)",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
       "hash": "2277097",
       "author": "github-actions[bot]",
       "date": "2026-02-11",
@@ -737,86 +817,6 @@
       "author": "github-actions[bot]",
       "date": "2026-02-11",
       "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "34a7eba",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "bca9ad6",
-      "author": "Automai",
-      "date": "2026-02-11",
-      "message": "Travail du 11/02/2026 (#20)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "feb0851",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ea8797d",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "6190b84",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Merge payoss/dev: Améliorations frontend et configuration",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "72ff915",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Améliorations frontend et configuration",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "f45202a",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "a4fa3fb",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Fin de journee - 11/02/2026 13:37:47,94",
       "type": "chore",
       "type_label": "Maintenance",
       "type_icon": "🔧",
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 16:06"
+    "last_updated": "2026-02-11 16:28"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 16:06"
+    "last_updated": "2026-02-11 16:28"
   },
   "conformity_details": {
     "promesse": {
