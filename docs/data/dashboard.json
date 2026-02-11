@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T14:42:16.045824",
+    "generated_at": "2026-02-11T15:49:29.850437",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,27 +9,27 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 72,
+    "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 272
+    "commits": 274
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "34a7eba",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "466775b",
+      "message": "feat: Phase 3 - Agent Intelligent + Self-Anneal + Nouveaux endpoints",
       "date": "2026-02-11"
     },
-    "total_commits": 272,
+    "total_commits": 274,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 135
+        "commits": 136
       },
       {
         "name": "github-actions[bot]",
-        "commits": 68
+        "commits": 71
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 19
+        "commits": 23
       },
       {
         "name": "Automai",
@@ -92,14 +92,14 @@
     }
   ],
   "scripts": {
-    "total": 72,
-    "total_lines": 42446,
+    "total": 74,
+    "total_lines": 43372,
     "categories": {
       "generation": 6,
-      "utils": 58,
+      "utils": 59,
       "tests": 3,
       "export": 3,
-      "validation": 2
+      "validation": 3
     },
     "scripts": [
       {
@@ -113,6 +113,11 @@
         "path": "execution/core/exporter_docx.py"
       },
       {
+        "name": "orchestrateur.py",
+        "lines": 1591,
+        "path": "execution/gestionnaires/orchestrateur.py"
+      },
+      {
         "name": "valider_acte.py",
         "lines": 1571,
         "path": "execution/core/valider_acte.py"
@@ -121,11 +126,6 @@
         "name": "gestionnaire_promesses.py",
         "lines": 1548,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
-      },
-      {
-        "name": "orchestrateur.py",
-        "lines": 1470,
-        "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "chat_handler.py",
@@ -242,6 +242,7 @@
       "gestion_flexible.md",
       "collecte_informations.md",
       "mise_a_jour_statuts_donation.md",
+      "agents_opus_46.md",
       "generation_promesses_avancee.md",
       "creer_donation_partage.md",
       "integration_titre_propriete.md",
@@ -265,7 +266,7 @@
       "etat_des_lieux.md"
     ],
     "total_legal": 5,
-    "total_directives": 26
+    "total_directives": 27
   },
   "tasks": {
     "todo": [
@@ -622,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "466775b",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Phase 3 - Agent Intelligent + Self-Anneal + Nouveaux endpoints",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "e0b87f4",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "34a7eba",
       "author": "Tom",
       "date": "2026-02-11",
@@ -800,26 +821,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "c4ca925",
-      "author": "Augustin",
-      "date": "2026-02-08",
-      "message": "Merge branch 'augustin/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ae979de",
-      "author": "Augustin",
-      "date": "2026-02-08",
-      "message": "retrait section objectifs revenus concrets",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
     }
   ],
   "recommendations": {
@@ -1247,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 14:42"
+    "last_updated": "2026-02-11 15:49"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 14:42"
+    "last_updated": "2026-02-11 15:49"
   },
   "conformity_details": {
     "promesse": {
