@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T19:33:50.215165",
+    "generated_at": "2026-02-11T21:10:54.684807",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 76,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 315
+    "commits": 319
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "203a5f2",
-      "message": "Sync tom/dev with master after v2.0.0 merge",
+      "hash": "3d75a77",
+      "message": "feat(sprint-1): Smart routing API unifiée + Bilan Jour 1 complet",
       "date": "2026-02-11"
     },
-    "total_commits": 315,
+    "total_commits": 319,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 151
+        "commits": 153
       },
       {
         "name": "github-actions[bot]",
-        "commits": 84
+        "commits": 85
       },
       {
         "name": "augustinfrance-aico",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 76,
-    "total_lines": 44234,
+    "total_lines": 44274,
     "categories": {
       "generation": 6,
       "utils": 61,
@@ -113,14 +113,14 @@
         "path": "execution/core/exporter_docx.py"
       },
       {
+        "name": "orchestrateur.py",
+        "lines": 1723,
+        "path": "execution/gestionnaires/orchestrateur.py"
+      },
+      {
         "name": "gestionnaire_promesses.py",
         "lines": 1695,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
-      },
-      {
-        "name": "orchestrateur.py",
-        "lines": 1683,
-        "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "valider_acte.py",
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "3d75a77",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Smart routing API unifiée + Bilan Jour 1 complet",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "09aa4a1",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "8592402",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "203a5f2",
       "author": "Tom",
       "date": "2026-02-11",
@@ -631,6 +661,16 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
+    },
+    {
+      "hash": "1c3196c",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "d592893",
@@ -777,46 +817,6 @@
       "author": "Payoss",
       "date": "2026-02-11",
       "message": "Merge payoss/dev: Affichage dynamique utilisateur",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ee3531d",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Affichage dynamique du nom utilisateur connecte",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "18826cd",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "eaabfad",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "security: Regenerate package-lock.json with Next.js 14.2.35",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "db166e2",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 19:33"
+    "last_updated": "2026-02-11 21:10"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 19:33"
+    "last_updated": "2026-02-11 21:10"
   },
   "conformity_details": {
     "promesse": {
