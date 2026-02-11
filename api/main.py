@@ -473,6 +473,14 @@ try:
 except Exception as e:
     print(f"⚠️ Chat router non disponible: {e}")
 
+# Router des agents Opus 4.6
+try:
+    from api.agents import router as agents_router
+    app.include_router(agents_router)
+    print("✅ Agents Opus 4.6 router chargé")
+except Exception as e:
+    print(f"⚠️ Agents router non disponible: {e}")
+
 
 # =============================================================================
 # Endpoints Agent
