@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T16:28:49.547958",
+    "generated_at": "2026-02-11T16:30:07.753959",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 292
+    "commits": 296
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "fa3dfbc",
-      "message": "Merge payoss/dev: Pages Mes Dossiers et Mes Clients",
+      "hash": "eaabfad",
+      "message": "security: Regenerate package-lock.json with Next.js 14.2.35",
       "date": "2026-02-11"
     },
-    "total_commits": 292,
+    "total_commits": 296,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 141
+        "commits": 144
       },
       {
         "name": "github-actions[bot]",
-        "commits": 76
+        "commits": 77
       },
       {
         "name": "augustinfrance-aico",
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "eaabfad",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "security: Regenerate package-lock.json with Next.js 14.2.35",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "db166e2",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "90d8ebc",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "fa3dfbc",
       "author": "Payoss",
       "date": "2026-02-11",
@@ -643,6 +673,16 @@
       "type_color": "green"
     },
     {
+      "hash": "83b1d56",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Tier 1 optimization implementation complete (-68% costs)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
       "hash": "d419201",
       "author": "github-actions[bot]",
       "date": "2026-02-11",
@@ -653,20 +693,20 @@
       "type_color": "blue"
     },
     {
-      "hash": "e277767",
+      "hash": "bd48540",
       "author": "Tom",
       "date": "2026-02-11",
-      "message": "wip: cost optimization work in progress",
+      "message": "security: Fix vulnerabilities - Update Next.js and dependencies",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
     },
     {
-      "hash": "bd48540",
+      "hash": "e277767",
       "author": "Tom",
       "date": "2026-02-11",
-      "message": "security: Fix vulnerabilities - Update Next.js and dependencies",
+      "message": "wip: cost optimization work in progress",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -781,46 +821,6 @@
       "type_label": "Fix",
       "type_icon": "🐛",
       "type_color": "red"
-    },
-    {
-      "hash": "2277097",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "598792b",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Merge payoss/dev: fix CORS et URL API",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "931b7db",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Correction CORS et URL API pour notomai.fr",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "e0b87f4",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 16:28"
+    "last_updated": "2026-02-11 16:30"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 16:28"
+    "last_updated": "2026-02-11 16:30"
   },
   "conformity_details": {
     "promesse": {
