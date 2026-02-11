@@ -135,7 +135,9 @@ TOOLS = [
         "description": (
             "Genere le document final (promesse de vente ou acte de vente) au format DOCX. "
             "Verifier d'abord avec get_collection_progress que la collecte est suffisante, "
-            "puis valider avec validate_deed_data. Retourne le chemin du fichier."
+            "puis valider avec validate_deed_data. Retourne le chemin du fichier. "
+            "Si le notaire demande explicitement de generer meme avec des donnees incompletes, "
+            "utiliser force=true pour generer un brouillon avec les champs manquants vides."
         ),
         "input_schema": {
             "type": "object",
@@ -144,6 +146,10 @@ TOOLS = [
                     "type": "string",
                     "enum": ["standard", "premium", "avec_mobilier", "multi_biens"],
                     "description": "Forcer un type de promesse (optionnel, auto-detecte sinon)",
+                },
+                "force": {
+                    "type": "boolean",
+                    "description": "Si true, genere le document meme si donnees incompletes (brouillon)",
                 },
             },
             "required": [],
@@ -426,8 +432,11 @@ class ToolExecutor:
             except ValueError:
                 pass
 
+        # Paramètre force pour génération partielle (brouillon)
+        force = tool_input.get("force", False)
+
         gestionnaire = self._get_gestionnaire()
-        resultat = gestionnaire.generer(donnees, type_force=type_force)
+        resultat = gestionnaire.generer(donnees, type_force=type_force, force=force)
 
         if resultat.succes and resultat.fichier_docx:
             agent_state["fichier_genere"] = resultat.fichier_docx

@@ -7,6 +7,24 @@ import { supabase } from '@/lib/supabase'
 import ClientCard from '@/components/ClientCard'
 import type { Client } from '@/types'
 
+// Récupérer l'etude_id du notaire connecté
+async function getUserEtudeId(): Promise<string | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+
+    const { data } = await supabase
+      .from('notaire_users')
+      .select('etude_id')
+      .eq('auth_user_id', user.id)
+      .single()
+
+    return data?.etude_id || null
+  } catch {
+    return null
+  }
+}
+
 const TYPE_OPTIONS = [
   { value: '', label: 'Tous les types' },
   { value: 'physique', label: 'Personnes physiques' },
@@ -20,12 +38,21 @@ export default function ClientsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [etudeId, setEtudeId] = useState<string | null>(null)
 
+  // Charger l'etude_id au montage
   useEffect(() => {
-    loadClients()
-  }, [typeFilter])
+    getUserEtudeId().then(setEtudeId)
+  }, [])
 
-  async function loadClients() {
+  // Charger les clients quand etudeId ou filtre change
+  useEffect(() => {
+    if (etudeId) {
+      loadClients(etudeId)
+    }
+  }, [etudeId, typeFilter])
+
+  async function loadClients(currentEtudeId: string) {
     setIsLoading(true)
     setError(null)
 
@@ -33,6 +60,7 @@ export default function ClientsPage() {
       let query = supabase
         .from('clients')
         .select('*')
+        .eq('etude_id', currentEtudeId)
         .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(50)
@@ -197,7 +225,7 @@ export default function ClientsPage() {
 
           {/* Refresh */}
           <button
-            onClick={() => loadClients()}
+            onClick={() => etudeId && loadClients(etudeId)}
             className="p-2.5 hover:bg-sand rounded-xl transition-colors"
             title="Actualiser"
           >
