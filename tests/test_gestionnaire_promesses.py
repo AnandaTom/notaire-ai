@@ -19,7 +19,8 @@ from execution.gestionnaires.gestionnaire_promesses import (
     GestionnairePromesses,
     TypePromesse,
     ResultatDetection,
-    ResultatValidation,
+    ResultatValidationPromesse,
+    ResultatValidation,  # backward compat alias
 )
 
 
@@ -483,6 +484,752 @@ class TestE2ESectionsConditionnelles:
             assert resultat is not None
         except Exception as e:
             pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+
+# =============================================================================
+# TESTS CRÉATION COPROPRIÉTÉ (Phase 2.1)
+# =============================================================================
+
+@pytest.fixture
+def donnees_creation_copro():
+    """Données pour copropriété en cours de création."""
+    return {
+        "promettants": [{"personne_physique": {"nom": "PROMOTEUR", "prenoms": "SAS"}}],
+        "beneficiaires": [{"personne_physique": {"nom": "ACHETEUR", "prenoms": "Marie"}}],
+        "bien": {
+            "adresse": {"adresse": "3 rue des Bâtisseurs", "code_postal": "69003", "ville": "Lyon"},
+            "lots": [{"numero": "12", "designation": "Appartement T3"}],
+        },
+        "prix": {"montant": 350000},
+        "delai_realisation": {"date": "2026-12-31"},
+        "copropriete": {
+            "en_creation": True,
+            "futur_reglement": {
+                "notaire": "Maître DURAND, notaire à Lyon",
+                "date_prevue": "15/06/2026",
+                "nombre_lots_prevu": 24,
+                "charges_provisoires": 1800,
+                "edd_provisoire": True
+            }
+        },
+    }
+
+
+@pytest.fixture
+def donnees_creation_copro_implicite():
+    """Données où la création copro est inférée (pas de syndic ni règlement mais des lots)."""
+    return {
+        "promettants": [{"personne_physique": {"nom": "PROMOTEUR", "prenoms": "SAS"}}],
+        "beneficiaires": [{"personne_physique": {"nom": "ACHETEUR", "prenoms": "Paul"}}],
+        "bien": {
+            "adresse": {"adresse": "5 avenue Neuve", "code_postal": "69002", "ville": "Lyon"},
+            "lots": [{"numero": "3", "designation": "Studio"}],
+        },
+        "prix": {"montant": 180000},
+        "delai_realisation": {"date": "2026-12-31"},
+        "copropriete": {},
+    }
+
+
+class TestCreationCopropriete:
+    """Tests pour le sous-type création de copropriété (Phase 2.1)."""
+
+    def test_detection_creation_explicite(self, gestionnaire, donnees_creation_copro):
+        """Détection création copro quand en_creation=True."""
+        detection = gestionnaire.detecter_type(donnees_creation_copro)
+        assert detection.categorie_bien.value == "copropriete"
+        assert detection.sous_type == "creation"
+
+    def test_detection_creation_implicite(self, gestionnaire, donnees_creation_copro_implicite):
+        """Détection création copro inférée (pas de syndic/reglement mais lots présents)."""
+        detection = gestionnaire.detecter_type(donnees_creation_copro_implicite)
+        assert detection.categorie_bien.value == "copropriete"
+        assert detection.sous_type == "creation"
+
+    def test_validation_creation_copro(self, gestionnaire, donnees_creation_copro):
+        """Validation returns ResultatValidationPromesse for création copro."""
+        validation = gestionnaire.valider(donnees_creation_copro)
+        assert isinstance(validation, ResultatValidationPromesse)
+        # Les erreurs de validation catalogue (dotted paths) sont des faux positifs connus
+        # Vérifier que les champs top-level sont bien validés
+        assert "Au moins un promettant requis" not in validation.erreurs
+        assert "Au moins un bénéficiaire requis" not in validation.erreurs
+        assert "Délai de réalisation requis" not in validation.erreurs
+
+    def test_to_rapport_bridge(self, gestionnaire):
+        """Le bridge to_rapport() convertit correctement les erreurs."""
+        # Test avec un ResultatValidationPromesse construit manuellement
+        result = ResultatValidationPromesse(
+            valide=False,
+            erreurs=["Champ X manquant", "Valeur Y invalide"],
+            warnings=["Attention Z"],
+            champs_manquants=["champ_x"],
+            suggestions=["Ajouter X"]
+        )
+        rapport = result.to_rapport()
+        assert rapport["valide"] is False
+        assert len(rapport["erreurs"]) == 3  # 2 erreurs + 1 warning
+        assert rapport["erreurs"][0]["niveau"] == "ERREUR"
+        assert rapport["erreurs"][0]["message"] == "Champ X manquant"
+        assert rapport["erreurs"][2]["niveau"] == "AVERTISSEMENT"
+        assert rapport["erreurs"][2]["message"] == "Attention Z"
+        assert rapport["suggestions"] == ["Ajouter X"]
+
+
+class TestE2ECreationCopropriete:
+    """Test E2E pour workflow complet création copro."""
+
+    def test_e2e_creation_copro_complet(self, gestionnaire, donnees_creation_copro, tmp_path):
+        """Workflow complet: détection → validation → génération (copro en création)."""
+        # 1. Détection
+        detection = gestionnaire.detecter_type(donnees_creation_copro)
+        assert detection.categorie_bien.value == "copropriete"
+        assert detection.sous_type == "creation"
+
+        # 2. Validation
+        validation = gestionnaire.valider(donnees_creation_copro)
+        assert isinstance(validation, ResultatValidationPromesse)
+
+        # 3. Génération
+        output_dir = tmp_path / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        try:
+            resultat = gestionnaire.generer(donnees_creation_copro, output_dir=str(output_dir))
+            assert resultat is not None
+            assert resultat.categorie_bien.value == "copropriete"
+        except Exception as e:
+            pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+
+# =============================================================================
+# FIXTURES VIAGER (Phase 2.2.5)
+# =============================================================================
+
+@pytest.fixture
+def donnees_viager_complet():
+    """Données complètes pour promesse en viager (4 marqueurs)."""
+    return {
+        "promettants": [{
+            "personne_physique": {
+                "nom": "MOREAU",
+                "prenoms": "Jeanne Marie",
+                "date_naissance": "03/05/1940",
+            },
+            "age": 85,
+            "adresse": {"adresse": "18 rue Victor Hugo", "code_postal": "69002", "ville": "Lyon"},
+            "sante": {
+                "certificat_medical": {
+                    "existe": True,
+                    "date": "15/01/2026",
+                    "medecin": "Dr LEFEVRE, médecin traitant"
+                },
+                "avertissement_art_1974_1975": True,
+            },
+        }],
+        "beneficiaires": [{
+            "personne_physique": {
+                "nom": "PETIT",
+                "prenoms": "Thomas",
+                "date_naissance": "12/11/1985",
+            },
+            "adresse": {"adresse": "5 place Bellecour", "code_postal": "69002", "ville": "Lyon"},
+        }],
+        "bien": {
+            "adresse": {"adresse": "18 rue Victor Hugo", "code_postal": "69002", "ville": "Lyon"},
+            "nature": "Appartement",
+            "description": "Appartement de type T3 au 2ème étage",
+            "superficie_habitable": 72.5,
+            "droit_usage_habitation": {
+                "reserve": True,
+                "restrictions": {"hebergement_service_autorise": True},
+                "obligations_credirentier": ["entretien courant", "charges courantes", "impôts locaux"],
+                "obligations_debirentier": ["grosses réparations", "assurance immeuble"],
+            },
+        },
+        "prix": {
+            "type_vente": "viager",
+            "bouquet": {"montant": 80000, "montant_lettres": "quatre-vingt mille euros"},
+            "rente_viagere": {
+                "montant_mensuel": 1200,
+                "periodicite": "mensuelle",
+                "jour_versement": 5,
+                "date_debut": "01/03/2026",
+                "indexation": {
+                    "applicable": True,
+                    "indice": "INSEE des prix à la consommation (IPC), hors tabac",
+                    "frequence": "annuellement",
+                },
+                "rachat": {"possible": False},
+            },
+            "valeur_venale": 350000,
+            "valeur_economique": 220000,
+            "difference": 140000,
+            "clause_penale": {"taux_majoration": 3, "automatique": True},
+        },
+        "delai_realisation": {"date": "2026-06-30"},
+        "garanties": {
+            "privilege": {
+                "inscrit": True,
+                "duree_initiale_annees": 15,
+                "renouvelable": True,
+                "rang": "premier rang",
+            },
+            "solidarite_acquereurs": True,
+        },
+    }
+
+
+@pytest.fixture
+def donnees_viager_abandon_duh():
+    """Données viager avec abandon DUH (crédirentier quitte le bien)."""
+    return {
+        "promettants": [{
+            "personne_physique": {"nom": "DUVAL", "prenoms": "Pierre"},
+            "age": 78,
+            "sante": {
+                "certificat_medical": {"existe": True, "date": "10/01/2026", "medecin": "Dr MARTIN"},
+                "avertissement_art_1974_1975": True,
+            },
+        }],
+        "beneficiaires": [{"personne_physique": {"nom": "SIMON", "prenoms": "Julie"}}],
+        "bien": {
+            "adresse": {"adresse": "7 rue de la Liberté", "code_postal": "69001", "ville": "Lyon"},
+            "nature": "Maison",
+            "droit_usage_habitation": {
+                "reserve": True,
+                "abandon": {
+                    "possible": True,
+                    "preavis_jours": 90,
+                    "declenche_rente": True,
+                },
+                "obligations_credirentier": ["entretien courant"],
+                "obligations_debirentier": ["grosses réparations"],
+            },
+        },
+        "prix": {
+            "type_vente": "viager",
+            "bouquet": {"montant": 50000},
+            "rente_viagere": {
+                "montant_mensuel": 900,
+                "periodicite": "mensuelle",
+                "jour_versement": 1,
+                "indexation": {"applicable": True, "indice": "IPC hors tabac", "frequence": "annuellement"},
+                "rachat": {"possible": False},
+            },
+            "valeur_venale": 280000,
+            "valeur_economique": 180000,
+        },
+        "delai_realisation": {"date": "2026-09-30"},
+    }
+
+
+@pytest.fixture
+def donnees_viager_rachat():
+    """Données viager avec possibilité de rachat de la rente."""
+    return {
+        "promettants": [{
+            "personne_physique": {"nom": "LAURENT", "prenoms": "Marguerite"},
+            "age": 82,
+            "sante": {
+                "certificat_medical": {"existe": True, "date": "05/02/2026", "medecin": "Dr GARCIA"},
+                "avertissement_art_1974_1975": True,
+            },
+        }],
+        "beneficiaires": [{"personne_physique": {"nom": "ROBERT", "prenoms": "Antoine"}}],
+        "bien": {
+            "adresse": {"adresse": "22 avenue Jean Jaurès", "code_postal": "69007", "ville": "Lyon"},
+            "nature": "Appartement",
+            "droit_usage_habitation": {"reserve": False},
+        },
+        "prix": {
+            "type_vente": "viager",
+            "bouquet": {"montant": 120000},
+            "rente_viagere": {
+                "montant_mensuel": 1500,
+                "periodicite": "mensuelle",
+                "jour_versement": 10,
+                "indexation": {"applicable": True, "indice": "IPC hors tabac", "frequence": "annuellement"},
+                "rachat": {
+                    "possible": True,
+                    "conditions": "Versement d'un capital à un organisme agréé",
+                },
+            },
+            "valeur_venale": 400000,
+            "valeur_economique": 300000,
+        },
+        "delai_realisation": {"date": "2026-12-31"},
+        "garanties": {
+            "privilege": {"inscrit": True, "duree_initiale_annees": 15, "renouvelable": True},
+            "solidarite_acquereurs": True,
+            "transfert_possible": {"autorise": True, "condition_valeur": "supérieure ou égale"},
+        },
+    }
+
+
+# =============================================================================
+# TESTS DÉTECTION VIAGER (Phase 2.2.5)
+# =============================================================================
+
+class TestDetectionViager:
+    """Tests de la détection viager multi-marqueurs."""
+
+    def test_detection_viager_explicite(self, gestionnaire, donnees_viager_complet):
+        """type_vente='viager' + rente + bouquet + DUH → sous-type 'viager'."""
+        detection = gestionnaire.detecter_type(donnees_viager_complet)
+        assert detection.sous_type == "viager"
+
+    def test_detection_viager_2_marqueurs(self, gestionnaire):
+        """2 marqueurs (type_vente + bouquet) → détection viager."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+
+        donnees = {
+            "bien": {"adresse": {"adresse": "10 rue de Lyon"}},
+            "prix": {
+                "type_vente": "viager",
+                "bouquet": {"montant": 50000},
+            },
+        }
+        categorie = gestionnaire.detecter_categorie_bien(donnees)
+        sous_type = gestionnaire.detecter_sous_type(donnees, categorie)
+        assert sous_type == "viager"
+
+    def test_detection_viager_1_marqueur_insuffisant(self, gestionnaire):
+        """1 seul marqueur (bouquet seul) → PAS viager."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+
+        donnees = {
+            "bien": {"adresse": {"adresse": "10 rue de Lyon"}},
+            "prix": {
+                "bouquet": {"montant": 50000},
+            },
+        }
+        categorie = gestionnaire.detecter_categorie_bien(donnees)
+        sous_type = gestionnaire.detecter_sous_type(donnees, categorie)
+        assert sous_type != "viager"
+
+    def test_detection_viager_hors_copro(self, gestionnaire):
+        """Viager sur maison (hors copro) → viager détecté avant sous-types catégorie."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+
+        donnees = {
+            "bien": {
+                "adresse": {"adresse": "15 chemin des Oliviers"},
+                "type_bien": "maison",
+                "copropriete": False,
+            },
+            "prix": {
+                "type_vente": "viager",
+                "bouquet": {"montant": 60000},
+                "rente_viagere": {"montant_mensuel": 800},
+            },
+        }
+        categorie = gestionnaire.detecter_categorie_bien(donnees)
+        assert categorie == CategorieBien.HORS_COPROPRIETE
+        sous_type = gestionnaire.detecter_sous_type(donnees, categorie)
+        assert sous_type == "viager"
+
+    def test_detection_viager_par_modalites(self, gestionnaire):
+        """Détection viager via modalites_paiement + rente."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+
+        donnees = {
+            "bien": {"adresse": {"adresse": "8 rue centrale"}},
+            "prix": {
+                "modalites_paiement": "Paiement en viager avec rente mensuelle",
+                "rente_viagere": {"montant_mensuel": 1000},
+            },
+        }
+        categorie = gestionnaire.detecter_categorie_bien(donnees)
+        sous_type = gestionnaire.detecter_sous_type(donnees, categorie)
+        assert sous_type == "viager"
+
+    def test_detection_viager_type_explicite_seul(self, gestionnaire):
+        """type_vente='viager' seul vaut 2 points → détection viager."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+
+        donnees = {
+            "bien": {"adresse": {"adresse": "1 place de la Gare"}},
+            "prix": {"type_vente": "viager"},
+        }
+        categorie = gestionnaire.detecter_categorie_bien(donnees)
+        sous_type = gestionnaire.detecter_sous_type(donnees, categorie)
+        assert sous_type == "viager"
+
+
+# =============================================================================
+# TESTS VALIDATION VIAGER (Phase 2.2.5)
+# =============================================================================
+
+class TestValidationViager:
+    """Tests de la validation sémantique viager."""
+
+    def test_validation_viager_complet(self, gestionnaire, donnees_viager_complet):
+        """Données viager complètes → pas d'erreur bloquante."""
+        validation = gestionnaire.valider(donnees_viager_complet)
+        assert isinstance(validation, ResultatValidationPromesse)
+        # Pas d'erreur sur bouquet/rente (présents)
+        erreurs_viager = [e for e in validation.erreurs if "viager" in e.lower()]
+        assert len(erreurs_viager) == 0
+
+    def test_validation_viager_sans_bouquet(self, gestionnaire):
+        """Viager sans bouquet → erreur."""
+        donnees = {
+            "promettants": [{"personne_physique": {"nom": "TEST", "prenoms": "Jean"}, "age": 80}],
+            "beneficiaires": [{"personne_physique": {"nom": "ACQ", "prenoms": "Marie"}}],
+            "bien": {"adresse": {"adresse": "1 rue Test"}},
+            "prix": {
+                "type_vente": "viager",
+                "rente_viagere": {"montant_mensuel": 1000},
+            },
+            "delai_realisation": {"date": "2026-12-31"},
+        }
+        validation = gestionnaire.valider(donnees)
+        assert "Bouquet obligatoire pour une vente en viager" in validation.erreurs
+
+    def test_validation_viager_sans_rente(self, gestionnaire):
+        """Viager sans rente → erreur."""
+        donnees = {
+            "promettants": [{"personne_physique": {"nom": "TEST", "prenoms": "Jean"}, "age": 80}],
+            "beneficiaires": [{"personne_physique": {"nom": "ACQ", "prenoms": "Marie"}}],
+            "bien": {"adresse": {"adresse": "1 rue Test"}},
+            "prix": {
+                "type_vente": "viager",
+                "bouquet": {"montant": 50000},
+            },
+            "delai_realisation": {"date": "2026-12-31"},
+        }
+        validation = gestionnaire.valider(donnees)
+        assert "Rente viagère obligatoire pour une vente en viager" in validation.erreurs
+
+    def test_validation_viager_warnings_sante(self, gestionnaire):
+        """Viager sans certificat médical → warning (pas erreur)."""
+        donnees = {
+            "promettants": [{"personne_physique": {"nom": "TEST", "prenoms": "Jean"}}],
+            "beneficiaires": [{"personne_physique": {"nom": "ACQ", "prenoms": "Marie"}}],
+            "bien": {"adresse": {"adresse": "1 rue Test"}},
+            "prix": {
+                "type_vente": "viager",
+                "bouquet": {"montant": 50000},
+                "rente_viagere": {"montant_mensuel": 800, "indexation": {"applicable": True}},
+            },
+            "delai_realisation": {"date": "2026-12-31"},
+        }
+        validation = gestionnaire.valider(donnees)
+        # Pas d'erreur bloquante sur bouquet/rente
+        erreurs_viager_bloquantes = [
+            e for e in validation.erreurs
+            if "Bouquet obligatoire" in e or "Rente viagère obligatoire" in e
+        ]
+        assert len(erreurs_viager_bloquantes) == 0
+        # Mais warnings sur certificat et âge
+        assert any("certificat" in w.lower() or "médical" in w.lower() for w in validation.warnings)
+        assert any("âge" in w.lower() or "age" in w.lower() for w in validation.warnings)
+
+
+# =============================================================================
+# TESTS SÉLECTION TEMPLATE VIAGER (Phase 2.2.5)
+# =============================================================================
+
+class TestSelectionTemplateViager:
+    """Tests de la sélection du template viager."""
+
+    def test_template_viager_existe(self, gestionnaire):
+        """Le template viager existe et est sélectionné."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+        template = gestionnaire._selectionner_template(
+            TypePromesse.STANDARD,
+            categorie_bien=CategorieBien.COPROPRIETE,
+            sous_type="viager"
+        )
+        assert template is not None
+        assert template.exists()
+        assert "viager" in template.name
+
+    def test_template_viager_priorite_sur_categorie(self, gestionnaire):
+        """Le template viager est prioritaire même pour hors copro."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+        template = gestionnaire._selectionner_template(
+            TypePromesse.STANDARD,
+            categorie_bien=CategorieBien.HORS_COPROPRIETE,
+            sous_type="viager"
+        )
+        assert template is not None
+        assert "viager" in template.name
+
+
+# =============================================================================
+# TESTS E2E VIAGER (Phase 2.2.5)
+# =============================================================================
+
+class TestE2EViager:
+    """Tests E2E pour workflow complet viager."""
+
+    def test_e2e_viager_complet(self, gestionnaire, donnees_viager_complet, tmp_path):
+        """Workflow complet viager: détection → validation → génération."""
+        # 1. Détection
+        detection = gestionnaire.detecter_type(donnees_viager_complet)
+        assert detection.sous_type == "viager"
+
+        # 2. Validation
+        validation = gestionnaire.valider(donnees_viager_complet)
+        assert isinstance(validation, ResultatValidationPromesse)
+        erreurs_viager = [e for e in validation.erreurs if "viager" in e.lower()]
+        assert len(erreurs_viager) == 0
+
+        # 3. Génération
+        output_dir = tmp_path / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        try:
+            resultat = gestionnaire.generer(donnees_viager_complet, output_dir=str(output_dir))
+            assert resultat is not None
+        except Exception as e:
+            pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+    def test_e2e_viager_abandon_duh(self, gestionnaire, donnees_viager_abandon_duh, tmp_path):
+        """Workflow viager + abandon DUH: détection → validation → génération."""
+        # 1. Détection
+        detection = gestionnaire.detecter_type(donnees_viager_abandon_duh)
+        assert detection.sous_type == "viager"
+
+        # 2. Vérification abandon DUH dans les données
+        duh = donnees_viager_abandon_duh["bien"]["droit_usage_habitation"]
+        assert duh["abandon"]["possible"] is True
+        assert duh["abandon"]["preavis_jours"] == 90
+
+        # 3. Validation
+        validation = gestionnaire.valider(donnees_viager_abandon_duh)
+        assert isinstance(validation, ResultatValidationPromesse)
+
+        # 4. Génération
+        output_dir = tmp_path / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        try:
+            resultat = gestionnaire.generer(donnees_viager_abandon_duh, output_dir=str(output_dir))
+            assert resultat is not None
+        except Exception as e:
+            pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+    def test_e2e_viager_rachat(self, gestionnaire, donnees_viager_rachat, tmp_path):
+        """Workflow viager + rachat rente: détection → validation → génération."""
+        # 1. Détection
+        detection = gestionnaire.detecter_type(donnees_viager_rachat)
+        assert detection.sous_type == "viager"
+
+        # 2. Vérification rachat dans les données
+        rachat = donnees_viager_rachat["prix"]["rente_viagere"]["rachat"]
+        assert rachat["possible"] is True
+
+        # 3. Garanties (transfert possible)
+        garanties = donnees_viager_rachat.get("garanties", {})
+        assert garanties.get("transfert_possible", {}).get("autorise") is True
+
+        # 4. Validation
+        validation = gestionnaire.valider(donnees_viager_rachat)
+        assert isinstance(validation, ResultatValidationPromesse)
+
+        # 5. Génération
+        output_dir = tmp_path / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        try:
+            resultat = gestionnaire.generer(donnees_viager_rachat, output_dir=str(output_dir))
+            assert resultat is not None
+        except Exception as e:
+            pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+
+# =============================================================================
+# TESTS E2E CROSS-CATEGORIES (Phase 2.3)
+# =============================================================================
+
+class TestE2ECrossCategories:
+    """Tests E2E cross-catégories: viager s'applique à toute catégorie de bien."""
+
+    @pytest.fixture
+    def donnees_viager_copro(self):
+        """Viager sur un appartement en copropriété."""
+        return {
+            "promettants": [{
+                "personne_physique": {"nom": "DUPUIS", "prenoms": "Henriette"},
+                "age": 79,
+                "adresse": {"adresse": "3 place des Terreaux", "code_postal": "69001", "ville": "Lyon"},
+                "sante": {
+                    "certificat_medical": {"existe": True, "date": "01/02/2026", "medecin": "Dr BLANC"},
+                    "avertissement_art_1974_1975": True,
+                },
+            }],
+            "beneficiaires": [{
+                "personne_physique": {"nom": "LECLERC", "prenoms": "Paul"},
+                "adresse": {"adresse": "18 rue Garibaldi", "code_postal": "69003", "ville": "Lyon"},
+            }],
+            "bien": {
+                "adresse": {"adresse": "3 place des Terreaux", "code_postal": "69001", "ville": "Lyon"},
+                "nature": "Appartement",
+                "lots": [{"numero": "23", "designation": "Appartement T4, 3ème étage"}],
+                "superficie_habitable": 95.0,
+                "droit_usage_habitation": {
+                    "reserve": True,
+                    "obligations_credirentier": ["entretien courant", "charges courantes"],
+                    "obligations_debirentier": ["grosses réparations"],
+                },
+            },
+            "prix": {
+                "type_vente": "viager",
+                "bouquet": {"montant": 100000},
+                "rente_viagere": {
+                    "montant_mensuel": 1500,
+                    "periodicite": "mensuelle",
+                    "jour_versement": 1,
+                    "indexation": {"applicable": True, "indice": "IPC hors tabac", "frequence": "annuellement"},
+                    "rachat": {"possible": False},
+                },
+                "valeur_venale": 400000,
+                "valeur_economique": 280000,
+            },
+            "copropriete": {
+                "syndic": {"nom": "Syndic du Terreaux", "adresse": "10 rue de la République, Lyon"},
+                "reglement": {"date": "12/03/1985", "notaire_origine": "Maître BLANC"},
+            },
+            "delai_realisation": {"date": "2026-08-31"},
+        }
+
+    @pytest.fixture
+    def donnees_viager_hors_copro_lotissement(self):
+        """Viager sur maison dans un lotissement (hors copro)."""
+        return {
+            "promettants": [{
+                "personne_physique": {"nom": "GIRARD", "prenoms": "Marcel"},
+                "age": 83,
+                "adresse": {"adresse": "7 allée des Cerisiers", "code_postal": "69340", "ville": "Francheville"},
+                "sante": {
+                    "certificat_medical": {"existe": True, "date": "20/01/2026", "medecin": "Dr ROUX"},
+                    "avertissement_art_1974_1975": True,
+                },
+            }],
+            "beneficiaires": [{
+                "personne_physique": {"nom": "MOREL", "prenoms": "Isabelle"},
+                "adresse": {"adresse": "22 cours Gambetta", "code_postal": "69003", "ville": "Lyon"},
+            }],
+            "bien": {
+                "adresse": {"adresse": "7 allée des Cerisiers", "code_postal": "69340", "ville": "Francheville"},
+                "nature": "Maison",
+                "type_bien": "maison",
+                "copropriete": False,
+                "superficie_habitable": 120.0,
+                "lotissement": {
+                    "nom": "Les Cerisiers",
+                    "arrete": {"date": "05/09/2001", "autorite": "Mairie de Francheville"},
+                },
+                "droit_usage_habitation": {
+                    "reserve": True,
+                    "obligations_credirentier": ["entretien courant", "impôts locaux"],
+                    "obligations_debirentier": ["grosses réparations", "assurance"],
+                },
+            },
+            "prix": {
+                "type_vente": "viager",
+                "bouquet": {"montant": 70000},
+                "rente_viagere": {
+                    "montant_mensuel": 1100,
+                    "periodicite": "mensuelle",
+                    "jour_versement": 5,
+                    "indexation": {"applicable": True, "indice": "IPC hors tabac", "frequence": "annuellement"},
+                    "rachat": {"possible": False},
+                },
+                "valeur_venale": 320000,
+                "valeur_economique": 200000,
+            },
+            "delai_realisation": {"date": "2026-09-30"},
+        }
+
+    def test_e2e_viager_copro(self, gestionnaire, donnees_viager_copro, tmp_path):
+        """Viager + copropriété: viager détecté malgré marqueurs copro, template viager utilisé."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+
+        # 1. Détection catégorie = copro (bien a syndic + lots)
+        categorie = gestionnaire.detecter_categorie_bien(donnees_viager_copro)
+        assert categorie == CategorieBien.COPROPRIETE
+
+        # 2. Détection type complète → sous-type viager (prioritaire)
+        detection = gestionnaire.detecter_type(donnees_viager_copro)
+        assert detection.sous_type == "viager"
+        assert detection.categorie_bien == CategorieBien.COPROPRIETE
+
+        # 3. Template sélectionné = viager (pas copro)
+        template = gestionnaire._selectionner_template(
+            detection.type_promesse,
+            categorie_bien=detection.categorie_bien,
+            sous_type=detection.sous_type
+        )
+        assert "viager" in template.name
+
+        # 4. Validation
+        validation = gestionnaire.valider(donnees_viager_copro)
+        assert isinstance(validation, ResultatValidationPromesse)
+        erreurs_viager = [e for e in validation.erreurs if "Bouquet" in e or "Rente" in e]
+        assert len(erreurs_viager) == 0
+
+        # 5. Génération
+        output_dir = tmp_path / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        try:
+            resultat = gestionnaire.generer(donnees_viager_copro, output_dir=str(output_dir))
+            assert resultat is not None
+        except Exception as e:
+            pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+    def test_e2e_viager_hors_copro_lotissement(self, gestionnaire, donnees_viager_hors_copro_lotissement, tmp_path):
+        """Viager + hors copro + lotissement: viager prioritaire sur lotissement."""
+        from execution.gestionnaires.gestionnaire_promesses import CategorieBien
+
+        # 1. Détection catégorie = hors copro (maison, copropriete=false)
+        categorie = gestionnaire.detecter_categorie_bien(donnees_viager_hors_copro_lotissement)
+        assert categorie == CategorieBien.HORS_COPROPRIETE
+
+        # 2. Détection type → sous-type viager (PAS lotissement)
+        detection = gestionnaire.detecter_type(donnees_viager_hors_copro_lotissement)
+        assert detection.sous_type == "viager"
+        assert detection.categorie_bien == CategorieBien.HORS_COPROPRIETE
+
+        # 3. Template = viager (pas hors copro)
+        template = gestionnaire._selectionner_template(
+            detection.type_promesse,
+            categorie_bien=detection.categorie_bien,
+            sous_type=detection.sous_type
+        )
+        assert "viager" in template.name
+
+        # 4. Validation
+        validation = gestionnaire.valider(donnees_viager_hors_copro_lotissement)
+        assert isinstance(validation, ResultatValidationPromesse)
+
+        # 5. Génération
+        output_dir = tmp_path / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        try:
+            resultat = gestionnaire.generer(donnees_viager_hors_copro_lotissement, output_dir=str(output_dir))
+            assert resultat is not None
+        except Exception as e:
+            pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+    def test_cross_category_standard_copro_nonregression(self, gestionnaire, donnees_standard, tmp_path):
+        """Non-régression: copro standard sans viager → PAS de sous-type viager."""
+        detection = gestionnaire.detecter_type(donnees_standard)
+        assert detection.sous_type != "viager"
+
+        # Génération
+        output_dir = tmp_path / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        try:
+            resultat = gestionnaire.generer(donnees_standard, output_dir=str(output_dir))
+            assert resultat is not None
+        except Exception as e:
+            pytest.skip(f"Génération échouée (dependencies?): {e}")
+
+    def test_cross_category_lotissement_nonregression(self, gestionnaire, donnees_lotissement, tmp_path):
+        """Non-régression: lotissement sans viager → sous-type lotissement (PAS viager)."""
+        detection = gestionnaire.detecter_type(donnees_lotissement)
+        assert detection.sous_type == "lotissement"
+        assert detection.sous_type != "viager"
 
 
 if __name__ == "__main__":

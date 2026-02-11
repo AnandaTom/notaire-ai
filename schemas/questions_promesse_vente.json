@@ -1,8 +1,8 @@
 {
   "titre": "Questions pour Promesse Unilatérale de Vente",
   "description": "Questions structurées pour collecter les informations nécessaires à la rédaction d'une promesse unilatérale de vente — 3 catégories de biens (copropriété, hors copropriété, terrain à bâtir) + 5 cas spéciaux (lotissement, groupe habitations, servitudes, viager, création copro)",
-  "version": "3.1.0",
-  "date_modification": "2026-02-04",
+  "version": "3.2.0",
+  "date_modification": "2026-02-10",
   "note_multi_templates": "Ce questionnaire supporte 3 catégories de biens, 4 types de transactions, et 5 cas spéciaux. Les sections sont filtrées par condition_categorie et condition_personnalisee.",
   "sections": {
     "0_detection_type": {
@@ -816,6 +816,61 @@
       ]
     },
 
+    "8f_creation_copropriete": {
+      "condition_categorie": "copropriete",
+      "condition": "copropriete.en_creation == true",
+      "titre": "Création de copropriété",
+      "questions": [
+        {
+          "id": "copro_en_creation",
+          "question": "La copropriété est-elle en cours de constitution (pas encore de syndic ni de règlement) ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "copropriete.en_creation"
+        },
+        {
+          "id": "futur_reglement_notaire",
+          "question": "Quel notaire rédigera le règlement de copropriété ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "copropriete.futur_reglement.notaire",
+          "condition_affichage": "copropriete.en_creation == true"
+        },
+        {
+          "id": "futur_reglement_date",
+          "question": "Quelle est la date prévue de constitution de la copropriété ?",
+          "type": "date",
+          "obligatoire": false,
+          "variable": "copropriete.futur_reglement.date_prevue",
+          "condition_affichage": "copropriete.en_creation == true"
+        },
+        {
+          "id": "futur_nombre_lots",
+          "question": "Combien de lots sont prévus dans la future copropriété ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "copropriete.futur_reglement.nombre_lots_prevu",
+          "condition_affichage": "copropriete.en_creation == true"
+        },
+        {
+          "id": "futur_charges_provisoires",
+          "question": "Quel est le montant annuel estimé des charges provisoires ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "copropriete.futur_reglement.charges_provisoires",
+          "condition_affichage": "copropriete.en_creation == true"
+        },
+        {
+          "id": "futur_edd_provisoire",
+          "question": "Un état descriptif de division provisoire a-t-il été établi ?",
+          "type": "booleen",
+          "obligatoire": false,
+          "variable": "copropriete.futur_reglement.edd_provisoire",
+          "condition_affichage": "copropriete.en_creation == true"
+        }
+      ]
+    },
+
     "8d_restrictions": {
       "titre": "Restrictions d'usage",
       "condition": "toujours",
@@ -1547,6 +1602,176 @@
           "defaut": true,
           "variable": "substitution.autorisee",
           "note": "Permet au bénéficiaire de se faire substituer par un tiers"
+        }
+      ]
+    },
+
+    "15_viager": {
+      "titre": "Vente en viager",
+      "condition": "prix.type_vente == 'viager'",
+      "note": "Questions spécifiques à la vente en viager (bouquet, rente, DUH, garanties, santé)",
+      "questions": [
+        {
+          "id": "viager_type_vente",
+          "question": "S'agit-il d'une vente en viager ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "prix.type_vente",
+          "note": "Si oui, la valeur sera 'viager'; sinon 'classique'"
+        },
+        {
+          "id": "viager_valeur_venale",
+          "question": "Quelle est la valeur vénale du bien en pleine propriété libre (en EUR) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "prix.valeur_venale",
+          "condition_affichage": "prix.type_vente == 'viager'"
+        },
+        {
+          "id": "viager_valeur_economique",
+          "question": "Quelle est la valeur économique du bien occupé (en EUR) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "prix.valeur_economique",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "note": "Valeur tenant compte de l'occupation par le crédirentier (DUH réservé)"
+        },
+        {
+          "id": "viager_bouquet",
+          "question": "Quel est le montant du bouquet (capital versé comptant, en EUR) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "prix.bouquet.montant",
+          "condition_affichage": "prix.type_vente == 'viager'"
+        },
+        {
+          "id": "viager_rente_montant",
+          "question": "Quel est le montant mensuel de la rente viagère (en EUR) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "prix.rente_viagere.montant_mensuel",
+          "condition_affichage": "prix.type_vente == 'viager'"
+        },
+        {
+          "id": "viager_rente_periodicite",
+          "question": "Quelle est la périodicité de versement de la rente ?",
+          "type": "choix",
+          "options": ["mensuelle", "trimestrielle", "annuelle"],
+          "obligatoire": true,
+          "variable": "prix.rente_viagere.periodicite",
+          "condition_affichage": "prix.type_vente == 'viager'"
+        },
+        {
+          "id": "viager_rente_jour",
+          "question": "Quel jour du mois la rente doit-elle être versée ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "prix.rente_viagere.jour_versement",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "defaut": 5
+        },
+        {
+          "id": "viager_indexation",
+          "question": "La rente doit-elle être indexée sur l'indice INSEE des prix à la consommation ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "prix.rente_viagere.indexation.applicable",
+          "condition_affichage": "prix.type_vente == 'viager'"
+        },
+        {
+          "id": "viager_rachat",
+          "question": "Le débirentier aura-t-il la faculté de racheter la rente ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "prix.rente_viagere.rachat.possible",
+          "condition_affichage": "prix.type_vente == 'viager'"
+        },
+        {
+          "id": "viager_duh_reserve",
+          "question": "Le crédirentier se réserve-t-il un droit d'usage et d'habitation (DUH) ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "bien.droit_usage_habitation.reserve",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "note": "Viager occupé si oui, viager libre si non"
+        },
+        {
+          "id": "viager_duh_abandon",
+          "question": "Le crédirentier pourra-t-il abandonner volontairement le DUH ?",
+          "type": "booleen",
+          "obligatoire": false,
+          "variable": "bien.droit_usage_habitation.abandon.possible",
+          "condition_affichage": "bien.droit_usage_habitation.reserve == true"
+        },
+        {
+          "id": "viager_duh_abandon_preavis",
+          "question": "Quel est le préavis d'abandon du DUH (en jours) ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "bien.droit_usage_habitation.abandon.preavis_jours",
+          "condition_affichage": "bien.droit_usage_habitation.abandon.possible == true",
+          "defaut": 60
+        },
+        {
+          "id": "viager_certificat_medical",
+          "question": "Le crédirentier produit-il un certificat médical ?",
+          "type": "booleen",
+          "obligatoire": false,
+          "variable": "promettants[0].sante.certificat_medical.existe",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "note": "Fortement recommandé (article 1975 Code civil)"
+        },
+        {
+          "id": "viager_certificat_date",
+          "question": "Date du certificat médical ?",
+          "type": "date",
+          "obligatoire": false,
+          "variable": "promettants[0].sante.certificat_medical.date",
+          "condition_affichage": "promettants[0].sante.certificat_medical.existe == true"
+        },
+        {
+          "id": "viager_certificat_medecin",
+          "question": "Nom du médecin ayant établi le certificat ?",
+          "type": "texte",
+          "obligatoire": false,
+          "variable": "promettants[0].sante.certificat_medical.medecin",
+          "condition_affichage": "promettants[0].sante.certificat_medical.existe == true"
+        },
+        {
+          "id": "viager_privilege",
+          "question": "Un privilège de vendeur doit-il être inscrit ?",
+          "type": "booleen",
+          "obligatoire": true,
+          "variable": "garanties.privilege.inscrit",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "defaut": true
+        },
+        {
+          "id": "viager_clause_penale_taux",
+          "question": "Taux de majoration pour la clause pénale en cas de retard (points au-dessus du taux légal) ?",
+          "type": "nombre",
+          "obligatoire": false,
+          "variable": "prix.clause_penale.taux_majoration",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "defaut": 3
+        },
+        {
+          "id": "viager_solidarite_acquereurs",
+          "question": "En cas de revente, les acquéreurs successifs seront-ils solidaires du service de la rente ?",
+          "type": "booleen",
+          "obligatoire": false,
+          "variable": "garanties.solidarite_acquereurs",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "defaut": true
+        },
+        {
+          "id": "viager_age_credirentier",
+          "question": "Âge du crédirentier (promettant) ?",
+          "type": "nombre",
+          "obligatoire": true,
+          "variable": "promettants[0].age",
+          "condition_affichage": "prix.type_vente == 'viager'",
+          "note": "Utilisé pour le calcul de la fraction imposable de la rente"
         }
       ]
     },

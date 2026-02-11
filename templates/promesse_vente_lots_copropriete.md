@@ -248,11 +248,15 @@ Ces dispositions ne sont pas applicables aux caves, garages, emplacements de sta
 **Annexe n°3 : Diagnostic carrez**
 
 ## État descriptif de division – Règlement de copropriété
+{% if copropriete.reglement %}
 L'ensemble immobilier sus-désigné a fait l'objet d'un état descriptif de division et règlement de copropriété établi aux termes d'un acte reçu par {{ copropriete.reglement.notaire_origine }} le {{ copropriete.reglement.date_origine }} publié au service de la publicité foncière de {{ copropriete.reglement.publication }}.
 
 {% for modificatif in copropriete.reglement.modificatifs %}
 L'état descriptif de division - règlement de copropriété a été modifié aux termes d'un acte reçu par {{ modificatif.notaire }} le {{ modificatif.date }}, publié au service de la publicité foncière de {{ modificatif.publication }}.
 {% endfor %}
+{% elif copropriete.en_creation %}
+La copropriété est en cours de constitution. L'état descriptif de division et le règlement de copropriété seront établis{% if copropriete.futur_reglement and copropriete.futur_reglement.notaire %} par {{ copropriete.futur_reglement.notaire }}{% endif %}{% if copropriete.futur_reglement and copropriete.futur_reglement.date_prevue %} à la date prévue du {{ copropriete.futur_reglement.date_prevue }}{% endif %}.
+{% endif %}
 
 <!-- SECTION: meubles | CONDITIONNEL: meubles.inclus -->
 {% if meubles and meubles.inclus %}
@@ -1099,10 +1103,15 @@ Le **PROMETTANT** déclare qu'à sa connaissance, le bien n'a fait l'objet d'auc
 Le **BENEFICIAIRE** reconnaît avoir été parfaitement informé de l'ensemble des risques environnementaux et des sinistres éventuellement survenus sur le bien.
 
 # Règlementations spécifiques à la copropriété
+{% if copropriete.immatriculation %}
 ## Immatriculation du syndicat des copropriétaires
 Le syndicat des copropriétaires est immatriculé sous le numéro **{{ copropriete.immatriculation }}**.
 
 **Annexe n°14 : Attestation de mise à jour annuelle**
+{% elif copropriete.en_creation %}
+## Immatriculation du syndicat des copropriétaires
+Le syndicat des copropriétaires sera immatriculé lors de la constitution de la copropriété.
+{% endif %}
 
 ## Carnet d'entretien de l'ensemble immobilier
 Un carnet d'entretien de l'ensemble immobilier doit être tenu par le syndic.
@@ -1168,8 +1177,13 @@ Une attestation d'assurance en cours de validité est annexée.
 {% endif %}
 
 ## Statut de la copropriété
+{% if copropriete.syndic %}
 ### Syndic de copropriété
 Le syndic est **{{ copropriete.syndic.nom }} – {{ copropriete.syndic.adresse }} – {{ copropriete.syndic.code_postal }} {{ copropriete.syndic.ville }}**
+{% elif copropriete.en_creation %}
+### Syndic de copropriété
+Le syndic sera désigné lors de la première assemblée générale des copropriétaires, qui se tiendra à la constitution de la copropriété.
+{% endif %}
 
 ### Respect du règlement de copropriété
 Le **BENEFICIAIRE** devra respecter les stipulations du règlement de copropriété, de ses modificatifs éventuels visés ci-dessus, ainsi que les dispositions des lois et décrets postérieurs régissant la copropriété.
