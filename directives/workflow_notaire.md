@@ -50,15 +50,16 @@ Avant toute génération d'acte, **TOUJOURS** vérifier:
 | `modificatif_edd.md` | **91.7%** | ✅ PROD | Utiliser directement |
 | `vente_lots_copropriete.md` | **80.2%** | ✅ PROD | 37 sections, données enrichies requises |
 
-#### 🆕 Promesses de Vente (Système Multi-Templates v1.4.0)
+#### 🆕 Promesses de Vente (Système Multi-Templates v2.0.0)
 
 | Type | Template | Conformité | Statut | Cas d'usage |
 |------|----------|-----------|--------|-------------|
 | **Promesse copropriété** | `promesse_vente_lots_copropriete.md` | **88.9%** | ✅ PROD | Appartement, lots de copro |
 | **Promesse hors copropriété** | `promesse_hors_copropriete.md` | NEW | ✅ PROD | Maison, villa, local |
 | **Promesse terrain à bâtir** | `promesse_terrain_a_batir.md` | NEW | ✅ PROD | Terrain, lotissement |
+| **Promesse viager** | `promesse_viager.md` | NEW | ✅ PROD | Viager occupé/libre, rente viagère |
 
-**Détection automatique**: Le système choisit le bon template selon la nature du bien (copropriété / hors copropriété / terrain).
+**Détection automatique 3 niveaux**: catégorie (copro/hors-copro/terrain) → type (standard/premium/mobilier) → sous-type (viager/création/lotissement). Viager est prioritaire sur toutes les catégories.
 
 ### ⚡ Performance Pipeline (v1.4.0)
 
@@ -546,14 +547,14 @@ python execution/extraire_bookmarks_contenu.py \
 
 ### Métriques de Succès
 
-| Métrique | Objectif | Actuel (v1.6.0) |
+| Métrique | Objectif | Actuel (v2.0.0) |
 |----------|----------|-----------------|
-| Templates PROD (≥80%) | 8/8 | **7/8** ✅ |
+| Templates PROD (≥80%) | 8/8 | **8/8** ✅ |
 | Conformité moyenne | ≥85% | **86.2%** ✅ |
 | Temps génération | <1 min | ~8s |
 | Taux erreur | <5% | ~1.5% |
 | Promesses avec détection auto | 100% | **100%** ✅ |
-| Tests automatisés | 100% pass | **219/219** ✅ |
+| Tests automatisés | 100% pass | **253/253** ✅ |
 | Pipeline E2E promesse→DOCX | OK | **92.8 Ko** ✅ |
 | Pipeline E2E vente→DOCX | OK | **72 Ko** ✅ |
 | Collecte Q&R pré-remplissage | ≥60% | **64%** ✅ |
@@ -566,6 +567,7 @@ python execution/extraire_bookmarks_contenu.py \
 | Promesse Copropriété | 1 | 88.9% | ✅ PROD |
 | Promesse Hors Copropriété | 1 | NEW | ✅ PROD |
 | Promesse Terrain à Bâtir | 1 | NEW | ✅ PROD |
+| **Promesse Viager** | 1 | NEW | ✅ PROD |
 | Règlement Copro | 1 | 85.5% | ✅ PROD |
 | Modificatif EDD | 1 | 91.7% | ✅ PROD |
 

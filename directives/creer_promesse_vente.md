@@ -1,6 +1,6 @@
 # Directive : Création d'une Promesse Unilatérale de Vente
 
-**Version**: 3.1.0 | **Date**: 2026-02-04
+**Version**: 3.2.0 | **Date**: 2026-02-10
 
 ---
 
@@ -31,17 +31,17 @@ Le système utilise une détection à **3 niveaux** pour adapter le template et 
 | **Avec mobilier** | Liste mobilier, ventilation prix |
 | **Multi-biens** | Multi-désignation, multi-cadastre |
 
-### Niveau 3 : Sous-types spécifiques (v1.9.0) ✨
+### Niveau 3 : Sous-types spécifiques (v2.0.0) ✨
 
 Sections activées selon le contexte du bien:
 
 | Catégorie | Sous-type | Marqueur | Section activée |
 |-----------|-----------|----------|-----------------|
+| **Toutes** | `viager` | Multi-marqueurs (>=2 parmi 6) | **Template dédié** `promesse_viager.md` + 4 sections |
 | **Hors copro** | `lotissement` | `bien.lotissement` | DISPOSITIONS RELATIVES AU LOTISSEMENT |
 | **Hors copro** | `groupe_habitations` | `bien.groupe_habitations` | GROUPE D'HABITATIONS |
 | **Hors copro / Toutes** | `avec_servitudes` | `bien.servitudes[]` | SERVITUDES (actives/passives) |
 | **Copro** | `creation` | Pas de `syndic`/`reglement` | Sections création copropriété |
-| **Copro** | `viager` | `prix.viager` ou `prix.rente_viagere` | Clauses viager (bouquet + rente) |
 
 **Exemple lotissement**:
 ```json
@@ -108,15 +108,20 @@ Le champ `sous_type` est utilisé pour activer les sections conditionnelles spé
 | 3 | `bien.servitudes[]` non vide | `avec_servitudes` | 90% |
 | 4 | Aucun marqueur | `None` | - |
 
+**Pour TOUTES CATÉGORIES (priorité absolue)**:
+
+| Priorité | Condition | Sous-type | Confiance |
+|----------|-----------|-----------|-----------|
+| 0 | Multi-marqueurs viager >= 2 (type_vente=2pts, rente=1pt, bouquet=1pt, DUH=1pt, modalités=1pt) | `viager` | 95% |
+
 **Pour COPROPRIETE**:
 
 | Priorité | Condition | Sous-type | Confiance |
 |----------|-----------|-----------|-----------|
-| 1 | `prix.viager` ou `prix.rente_viagere` | `viager` | 95% |
-| 2 | Pas de `syndic` ni `reglement` | `creation` | 85% |
-| 3 | Aucun marqueur | `None` | - |
+| 1 | Pas de `syndic` ni `reglement` | `creation` | 85% |
+| 2 | Aucun marqueur | `None` | - |
 
-**Cas de priorité combinée**: Si lotissement + servitudes → `lotissement` (priorité haute)
+**Cas de priorité combinée**: Si lotissement + servitudes → `lotissement` (priorité haute). Si viager + lotissement → `viager` (priorité absolue).
 
 ---
 
@@ -572,3 +577,5 @@ resultat = gestionnaire.generer(donnees)
 | 2025-01-19 | 1.0 | Création initiale |
 | 2026-01-28 | 2.0 | Système multi-templates (4 types), détection auto, Supabase |
 | 2026-01-30 | 3.0 | Architecture 2 niveaux (3 catégories + 4 types), templates hors-copro et terrain |
+| 2026-02-04 | 3.1 | Sections conditionnelles (lotissement, groupe, servitudes), sous-types copro (création, viager) |
+| 2026-02-10 | 3.2 | Template viager dédié, détection multi-marqueurs cross-catégorie, schéma v4.1.0, 19 questions viager |

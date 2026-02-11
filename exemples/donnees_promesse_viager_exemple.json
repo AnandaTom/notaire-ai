@@ -1,0 +1,265 @@
+{
+  "acte": {
+    "numero_repertoire": "100789202",
+    "reference_interne": "CDI/VGR/",
+    "date": {
+      "jour": 10,
+      "mois": 2,
+      "annee": 2026
+    },
+    "notaire": {
+      "civilite": "Maître",
+      "nom": "DIAZ",
+      "prenom": "Charlotte",
+      "societe": "SAS DES CEDRES",
+      "ville": "TASSIN-LA-DEMI-LUNE",
+      "departement": "Rhône",
+      "code_postal": "69160",
+      "adresse": "93 avenue du 11 Novembre 1918",
+      "crpcen": "69182"
+    },
+    "notaire_beneficiaire": {
+      "civilite": "Maître",
+      "nom": "LAMBERT",
+      "prenom": "Nicolas",
+      "ville": "LYON"
+    }
+  },
+  "promettants": [
+    {
+      "civilite": "Madame",
+      "nom": "MOREAU",
+      "prenoms": "Jeanne Marie",
+      "profession": "Retraitée",
+      "adresse": "18 rue Victor Hugo",
+      "code_postal": "69002",
+      "ville": "LYON",
+      "date_naissance": "1940-05-03",
+      "lieu_naissance": "VILLEFRANCHE-SUR-SAÔNE",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "age": 85,
+      "situation_matrimoniale": {
+        "statut": "veuf"
+      },
+      "coordonnees": {
+        "telephone": "04 78 12 34 56",
+        "courriel": "jeanne.moreau@email.fr"
+      },
+      "sante": {
+        "certificat_medical": {
+          "existe": true,
+          "date": "2026-01-15",
+          "medecin": "Dr LEFEVRE, médecin traitant"
+        },
+        "declaration_sante": {
+          "maladies_graves": false,
+          "hospitalisation_recente": false
+        },
+        "avertissement_art_1974_1975": true
+      }
+    }
+  ],
+  "beneficiaires": [
+    {
+      "civilite": "Monsieur",
+      "nom": "PETIT",
+      "prenoms": "Thomas Luc",
+      "profession": "Ingénieur informatique",
+      "adresse": "5 place Bellecour",
+      "code_postal": "69002",
+      "ville": "LYON",
+      "date_naissance": "1985-11-12",
+      "lieu_naissance": "GRENOBLE",
+      "nationalite": "française",
+      "resident_fiscal": true,
+      "situation_matrimoniale": {
+        "statut": "celibataire"
+      },
+      "coordonnees": {
+        "telephone": "06 78 90 12 34",
+        "courriel": "thomas.petit@email.fr"
+      }
+    }
+  ],
+  "quotites_beneficiaires": [
+    {
+      "personne_index": 0,
+      "quotite": "la totalité",
+      "type_propriete": "nue_propriete"
+    }
+  ],
+  "bien": {
+    "adresse": {
+      "numero": "18",
+      "voie": "rue Victor Hugo",
+      "code_postal": "69002",
+      "ville": "LYON",
+      "departement": "Rhône",
+      "code_insee": "69123"
+    },
+    "nature": "Appartement de type T3",
+    "description": "Un appartement de type T3, situé au deuxième étage d'un immeuble en pierre de taille du XIXe siècle, comprenant : une entrée, un séjour double avec cheminée, deux chambres, une cuisine équipée, une salle de bains et un WC séparé, une cave au sous-sol.",
+    "superficie_habitable": 72.5,
+    "usage_actuel": "habitation",
+    "cadastre": [
+      {
+        "section": "AH",
+        "numero": "0068",
+        "lieudit": "Victor Hugo",
+        "surface": "00 ha 00 a 72 ca",
+        "surface_m2": 72
+      }
+    ],
+    "droit_usage_habitation": {
+      "reserve": true,
+      "restrictions": {
+        "hebergement_service_autorise": true
+      },
+      "obligations_credirentier": [
+        "entretien courant et réparations locatives",
+        "charges courantes de copropriété",
+        "impôts locaux (taxe foncière et taxe d'habitation)"
+      ],
+      "obligations_debirentier": [
+        "grosses réparations (article 606 du Code civil)",
+        "assurance immeuble (propriétaire non occupant)"
+      ],
+      "abandon": {
+        "possible": true,
+        "preavis_jours": 90,
+        "majoration_rente": {
+          "applicable": true,
+          "pourcentage": 20,
+          "motif": "compensation de la perte du droit d'usage et d'habitation"
+        }
+      }
+    },
+    "equipements": {
+      "detecteur_fumee": true,
+      "cheminee_foyer_ouvert": true,
+      "cheminee_foyer_ferme": false,
+      "chaudiere_individuelle": true,
+      "pompe_chaleur": false,
+      "climatisation": false,
+      "fibre": true
+    },
+    "chauffage": {
+      "type": "Chauffage",
+      "collectif": false,
+      "energie": "gaz de ville",
+      "entretien": "le promettant"
+    }
+  },
+  "prix": {
+    "type_vente": "viager",
+    "bouquet": {
+      "montant": 80000,
+      "montant_lettres": "quatre-vingt mille euros"
+    },
+    "rente_viagere": {
+      "montant_mensuel": 1200,
+      "periodicite": "mensuelle",
+      "jour_versement": 5,
+      "date_debut": "2026-03-01",
+      "indexation": {
+        "applicable": true,
+        "indice": "INSEE des prix à la consommation (IPC), hors tabac",
+        "frequence": "annuellement"
+      },
+      "rachat": {
+        "possible": false
+      }
+    },
+    "valeur_venale": 350000,
+    "valeur_economique": 220000,
+    "difference": 130000,
+    "devise": "EUR",
+    "clause_penale": {
+      "taux_majoration": 3,
+      "automatique": true
+    }
+  },
+  "origine_propriete": [
+    {
+      "lots_concernes": ["18"],
+      "modalite_detention": "en pleine propriété",
+      "origine_immediate": {
+        "type": "Acquisition",
+        "type_libelle": "d'une acquisition",
+        "notaire": "Maître Jean-Pierre GARCIA",
+        "ville_notaire": "LYON",
+        "date": "1985-06-15",
+        "prix": true,
+        "modalite_paiement": "comptant",
+        "publication": {
+          "service": "LYON 3ème bureau",
+          "date": "1985-07-20",
+          "volume": "1985P",
+          "numero": "4521"
+        }
+      }
+    }
+  ],
+  "delais": {
+    "expiration_promesse": {
+      "date": "2026-06-30",
+      "heure": "16h00"
+    }
+  },
+  "delai_realisation": {
+    "date": "2026-06-30"
+  },
+  "garanties": {
+    "privilege": {
+      "inscrit": true,
+      "duree_initiale_annees": 15,
+      "renouvelable": true,
+      "rang": "premier rang"
+    },
+    "solidarite_acquereurs": true,
+    "clause_resolutoire": {
+      "applicable": true,
+      "defaut_paiement_rente": true,
+      "nombre_mois_impayes": 3
+    }
+  },
+  "diagnostics": {
+    "dpe": {
+      "existe": true,
+      "classe_energie": "D",
+      "classe_ges": "C",
+      "date_realisation": "2025-12-01",
+      "diagnostiqueur": "SARL DIAG IMMO"
+    },
+    "erp": {
+      "existe": true,
+      "date_realisation": "2026-01-05"
+    },
+    "plomb": {
+      "requis": true,
+      "existe": true,
+      "date_realisation": "2025-12-01"
+    },
+    "amiante_parties_privatives": {
+      "requis": false,
+      "existe": false
+    },
+    "electricite": {
+      "requis": true,
+      "existe": true,
+      "date_realisation": "2025-11-20"
+    },
+    "gaz": {
+      "requis": true,
+      "existe": true,
+      "date_realisation": "2025-11-20"
+    }
+  },
+  "fiscalite": {
+    "plus_value": {
+      "exoneration": true,
+      "motif": "résidence principale"
+    }
+  }
+}

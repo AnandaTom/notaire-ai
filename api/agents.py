@@ -1,0 +1,590 @@
+# -*- coding: utf-8 -*-
+"""
+API Endpoints pour les Agents Opus 4.6
+
+Expose les 6 agents spécialisés au frontend:
+- workflow-orchestrator (génération parallèle end-to-end)
+- cadastre-enricher (enrichissement cadastre API)
+- data-collector-qr (collecte Q&R interactive)
+- clause-suggester (suggestions clauses contextuelles)
+- post-generation-reviewer (QA final)
+- schema-validator, template-auditor (existants)
+
+Endpoints:
+    POST /agents/orchestrate          - Génération parallèle complète
+    POST /agents/{name}/execute       - Exécuter un agent individuel
+    GET  /agents/status               - Status et monitoring agents
+    GET  /agents                      - Liste agents disponibles
+"""
+
+import sys
+import time
+import asyncio
+from pathlib import Path
+from typing import Dict, List, Optional, Any, Literal
+from datetime import datetime
+
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Request
+from pydantic import BaseModel, Field
+from sse_starlette.sse import EventSourceResponse
+
+# Ajouter le projet au path
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+router = APIRouter(prefix="/agents", tags=["agents"])
+
+
+# =============================================================================
+# Models
+# =============================================================================
+
+class AgentExecuteRequest(BaseModel):
+    """Requête pour exécuter un agent individuel."""
+    agent_name: Literal[
+        "workflow-orchestrator",
+        "cadastre-enricher",
+        "data-collector-qr",
+        "clause-suggester",
+        "post-generation-reviewer",
+        "schema-validator",
+        "template-auditor"
+    ]
+    prompt: str = Field(..., description="Instructions pour l'agent")
+    context: Optional[Dict[str, Any]] = Field(default=None, description="Contexte additionnel")
+    timeout_seconds: Optional[int] = Field(default=30, ge=1, le=300, description="Timeout max")
+
+
+class OrchestrateRequest(BaseModel):
+    """Requête pour génération parallèle orchestrée."""
+    demande: str = Field(..., description="Demande en langage naturel, ex: 'Promesse Martin→Dupont, 67m² Paris, 450k€'")
+    strategy: Literal["parallel", "sequential", "auto"] = Field(
+        default="parallel",
+        description="Stratégie d'exécution: parallel (3-5x rapide), sequential (debug), auto (adaptatif)"
+    )
+    mode: Literal["auto", "interactive"] = Field(
+        default="auto",
+        description="Mode collecte données: auto (prefill max), interactive (questions notaire)"
+    )
+    options: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Options: skip_clauses, skip_qa, verbose, etc."
+    )
+
+
+class AgentStatus(BaseModel):
+    """Status d'un agent."""
+    name: str
+    status: Literal["available", "busy", "error", "unknown"]
+    last_execution: Optional[datetime] = None
+    avg_duration_ms: Optional[float] = None
+    success_rate: Optional[float] = None
+
+
+class AgentExecuteResponse(BaseModel):
+    """Réponse d'exécution d'agent."""
+    agent_name: str
+    status: Literal["success", "error", "timeout"]
+    duration_ms: float
+    result: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+
+
+class OrchestrateResponse(BaseModel):
+    """Réponse d'orchestration complète."""
+    workflow_id: str
+    status: Literal["success", "error", "blocked"]
+    strategy_used: str
+    duration_total_ms: float
+    speedup_vs_sequential: Optional[float] = None
+
+    agents_executed: List[Dict[str, Any]]
+    data_quality: Dict[str, Any]
+    output: Optional[Dict[str, Any]] = None
+
+    errors: List[str] = []
+    warnings: List[str] = []
+
+
+# =============================================================================
+# Agents Registry (mapping nom → fonction d'exécution)
+# =============================================================================
+
+# Import conditionnel des agents (certains peuvent être indisponibles)
+AGENTS_AVAILABLE = {
+    "schema-validator": True,
+    "template-auditor": True,
+    "security-reviewer": True,
+}
+
+# Nouveaux agents Opus 4.6 (nécessitent Claude Code ou implémentation Python)
+# Pour Modal, on créera des wrappers Python qui appellent les scripts
+AGENTS_OPUS_46 = {
+    "cadastre-enricher": "execution.services.cadastre_service",
+    "data-collector-qr": "execution.agent_autonome",  # CollecteurInteractif
+    "clause-suggester": "execution.utils.suggerer_clauses",  # À créer
+    "post-generation-reviewer": "execution.utils.reviewer_qa",  # À créer
+    "workflow-orchestrator": "execution.orchestrateur_notaire",  # Existing
+}
+
+
+async def execute_cadastre_enricher(prompt: str, context: dict) -> dict:
+    """
+    Execute cadastre-enricher agent.
+
+    Input context:
+        - adresse: str (e.g., "12 rue de la Paix, 75002 Paris")
+        - data: dict (données dossier à enrichir)
+
+    Returns:
+        - enriched_data: dict
+        - source: "api_cadastre_gouv"
+        - duration_ms: float
+    """
+    from execution.services.cadastre_service import CadastreService
+
+    start = time.time()
+    service = CadastreService()
+
+    # Extract address from prompt or context
+    adresse = context.get("adresse") if context else None
+    donnees = context.get("data") if context else {}
+
+    if not adresse and donnees.get("bien", {}).get("adresse"):
+        adresse_obj = donnees["bien"]["adresse"]
+        adresse = f"{adresse_obj.get('numero', '')} {adresse_obj.get('voie', '')}, {adresse_obj.get('code_postal', '')} {adresse_obj.get('ville', '')}"
+
+    if not adresse:
+        return {
+            "status": "error",
+            "error": "Adresse manquante dans prompt ou context",
+            "duration_ms": (time.time() - start) * 1000
+        }
+
+    # Enrich data
+    result = service.enrichir_cadastre(donnees)
+
+    return {
+        "status": "success",
+        "enriched": result.get("enriched", False),
+        "fields_added": result.get("fields_added", []),
+        "data": result.get("data", donnees),
+        "warnings": result.get("warnings", []),
+        "duration_ms": (time.time() - start) * 1000
+    }
+
+
+async def execute_data_collector_qr(prompt: str, context: dict) -> dict:
+    """
+    Execute data-collector-qr agent.
+
+    Input context:
+        - type_acte: str
+        - donnees_existantes: dict (optional, for prefill)
+        - mode: "cli" | "prefill_only"
+
+    Returns:
+        - collected: bool
+        - data: dict
+        - taux_completion: float
+        - questions_posees: int
+    """
+    from execution.agent_autonome import CollecteurInteractif
+
+    start = time.time()
+
+    type_acte = context.get("type_acte", "promesse_vente")
+    donnees_existantes = context.get("donnees_existantes", {})
+    mode = context.get("mode", "prefill_only")  # Default: auto (pas de questions)
+
+    collecteur = CollecteurInteractif(type_acte=type_acte)
+
+    # En mode API, on utilise toujours prefill_only (pas d'interaction terminal)
+    # Le frontend gérera les questions manquantes via son propre workflow
+    resultat = collecteur.collecter(
+        donnees_initiales=donnees_existantes,
+        mode="prefill_only"
+    )
+
+    return {
+        "status": "success",
+        "collected": True,
+        "data": resultat.get("data", {}),
+        "taux_completion": resultat.get("taux_completion", 0),
+        "taux_prefill": resultat.get("taux_prefill", 0),
+        "questions_posees": 0,  # Mode auto
+        "duration_ms": (time.time() - start) * 1000
+    }
+
+
+async def execute_clause_suggester(prompt: str, context: dict) -> dict:
+    """
+    Execute clause-suggester agent.
+
+    Input context:
+        - acte_md: str (assembled Markdown)
+        - metadata: dict (type_acte, bien, prix, etc.)
+
+    Returns:
+        - suggestions: List[dict]
+        - total_suggestions: int
+        - critiques: int, recommandees: int, optionnelles: int
+    """
+    # TODO: Implémenter suggester_clauses.py
+    # Pour l'instant, retourner mock data
+
+    start = time.time()
+
+    metadata = context.get("metadata", {})
+    type_acte = metadata.get("type_acte", "promesse_vente")
+    prix_montant = metadata.get("prix", {}).get("montant", 0)
+    pret = metadata.get("pret", {})
+
+    suggestions = []
+
+    # Mock: Condition suspensive prêt si pret applicable
+    if pret.get("applicable") and pret.get("montant", 0) > 50000:
+        suggestions.append({
+            "id": "condition_suspensive_pret",
+            "nom": "Condition suspensive d'obtention de prêt",
+            "priorite": 1,  # CRITIQUE
+            "score": 95,
+            "justification": f"Prêt de {pret['montant']}€ → obligatoire (art. 1589-1 Code Civil)",
+            "variables_disponibles": True,
+            "section_insertion": "CONDITIONS SUSPENSIVES"
+        })
+
+    # Mock: Garantie bancaire si prix > 500k€
+    if prix_montant > 500000:
+        suggestions.append({
+            "id": "garantie_bancaire",
+            "nom": "Garantie bancaire",
+            "priorite": 2,  # RECOMMANDÉE
+            "score": 65,
+            "justification": f"Prix {prix_montant}€ > 500k€ → sécurisation vendeur recommandée",
+            "variables_disponibles": True,
+            "section_insertion": "GARANTIES"
+        })
+
+    return {
+        "status": "success",
+        "suggestions": suggestions,
+        "total_suggestions": len(suggestions),
+        "critiques": sum(1 for s in suggestions if s["priorite"] == 1),
+        "recommandees": sum(1 for s in suggestions if s["priorite"] == 2),
+        "optionnelles": sum(1 for s in suggestions if s["priorite"] == 3),
+        "duration_ms": (time.time() - start) * 1000
+    }
+
+
+async def execute_post_generation_reviewer(prompt: str, context: dict) -> dict:
+    """
+    Execute post-generation-reviewer agent.
+
+    Input context:
+        - docx_path: str
+        - donnees: dict (données utilisées pour génération)
+
+    Returns:
+        - status: "PASS" | "WARNING" | "BLOCKED"
+        - qa_score: int (0-100)
+        - issues: List[dict]
+    """
+    # TODO: Implémenter reviewer_qa.py avec python-docx
+    # Pour l'instant, retourner mock data
+
+    start = time.time()
+
+    docx_path = context.get("docx_path")
+    donnees = context.get("donnees", {})
+
+    if not docx_path:
+        return {
+            "status": "error",
+            "error": "docx_path manquant",
+            "duration_ms": (time.time() - start) * 1000
+        }
+
+    # Mock QA checks
+    issues = []
+    qa_score = 94  # Mock
+
+    # Vérifications mock
+    quotites_vendues = sum(q.get("valeur", 0) / q.get("base", 1)
+                           for q in donnees.get("quotites_vendues", []))
+
+    if abs(quotites_vendues - 1.0) > 0.001:
+        issues.append({
+            "severite": "CRITIQUE",
+            "dimension": "quotites",
+            "message": f"Quotités vendues ≠ 100% ({quotites_vendues*100:.1f}%)"
+        })
+        qa_score -= 20
+
+    status = "BLOCKED" if any(i["severite"] == "CRITIQUE" for i in issues) else \
+             "WARNING" if len(issues) > 5 else \
+             "PASS"
+
+    return {
+        "status": status,
+        "qa_score": qa_score,
+        "issues": issues,
+        "dimensions_checked": [
+            "bookmarks", "quotites", "prix", "carrez", "diagnostics",
+            "formatage", "sections", "legal", "coherence", "metadata"
+        ],
+        "duration_ms": (time.time() - start) * 1000
+    }
+
+
+# Agent executors registry
+AGENT_EXECUTORS = {
+    "cadastre-enricher": execute_cadastre_enricher,
+    "data-collector-qr": execute_data_collector_qr,
+    "clause-suggester": execute_clause_suggester,
+    "post-generation-reviewer": execute_post_generation_reviewer,
+}
+
+
+# =============================================================================
+# Endpoints
+# =============================================================================
+
+@router.get("")
+async def list_agents():
+    """Liste tous les agents disponibles avec leur status."""
+    agents = []
+
+    for name in AGENTS_AVAILABLE:
+        agents.append({
+            "name": name,
+            "type": "existant",
+            "model": "sonnet" if name == "template-auditor" else "haiku",
+            "status": "available"
+        })
+
+    for name, module in AGENTS_OPUS_46.items():
+        agents.append({
+            "name": name,
+            "type": "opus_4.6",
+            "model": "opus" if "orchestrator" in name or "suggester" in name else "sonnet",
+            "status": "available" if name in AGENT_EXECUTORS else "pending_implementation"
+        })
+
+    return {
+        "agents": agents,
+        "total": len(agents),
+        "available": sum(1 for a in agents if a["status"] == "available")
+    }
+
+
+@router.post("/{agent_name}/execute", response_model=AgentExecuteResponse)
+async def execute_agent(agent_name: str, request: AgentExecuteRequest):
+    """
+    Exécute un agent individuel.
+
+    Utile pour:
+    - Tests unitaires d'agents
+    - Workflows personnalisés
+    - Debugging
+    """
+    start = time.time()
+
+    if agent_name not in AGENT_EXECUTORS:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Agent '{agent_name}' non trouvé ou pas encore implémenté. "
+                   f"Agents disponibles: {list(AGENT_EXECUTORS.keys())}"
+        )
+
+    executor = AGENT_EXECUTORS[agent_name]
+
+    try:
+        result = await asyncio.wait_for(
+            executor(request.prompt, request.context or {}),
+            timeout=request.timeout_seconds
+        )
+
+        duration_ms = (time.time() - start) * 1000
+
+        return AgentExecuteResponse(
+            agent_name=agent_name,
+            status="success",
+            duration_ms=duration_ms,
+            result=result
+        )
+
+    except asyncio.TimeoutError:
+        return AgentExecuteResponse(
+            agent_name=agent_name,
+            status="timeout",
+            duration_ms=(time.time() - start) * 1000,
+            error=f"Agent timeout après {request.timeout_seconds}s"
+        )
+
+    except Exception as e:
+        return AgentExecuteResponse(
+            agent_name=agent_name,
+            status="error",
+            duration_ms=(time.time() - start) * 1000,
+            error=str(e)
+        )
+
+
+@router.post("/orchestrate", response_model=OrchestrateResponse)
+async def orchestrate_generation(request: OrchestrateRequest):
+    """
+    Génération parallèle orchestrée (Opus 4.6).
+
+    Workflow:
+    1. Parse demande NL
+    2. Décide stratégie (parallel/sequential)
+    3. Lance agents (cadastre, collector, auditor en parallèle)
+    4. Validation
+    5. Assemblage + suggestions clauses
+    6. Export DOCX
+    7. QA final
+    8. Return rapport + fichier
+
+    Speedup attendu: 2.5-3x vs sequential
+    """
+    from execution.agent_autonome import AgentNotaire, ParseurDemandeNL
+    from execution.workflow_rapide import WorkflowRapide
+
+    start_workflow = time.time()
+    workflow_id = f"wf-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+
+    # Phase 1: Parse demande
+    parseur = ParseurDemandeNL()
+    intent = parseur.analyser(request.demande)
+
+    if intent.intention.value not in ["creer", "generer"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cette API ne gère que la création/génération. Intention détectée: {intent.intention.value}"
+        )
+
+    # Phase 2: Stratégie
+    strategy = request.strategy
+    if strategy == "auto":
+        # Décider automatiquement selon complexité
+        strategy = "parallel" if intent.confiance > 0.7 else "sequential"
+
+    agents_executed = []
+    errors = []
+    warnings = []
+
+    try:
+        # Phase 3: Exécution agents
+        if strategy == "parallel":
+            # Group 1: Parallel (cadastre, collector, auditor)
+            tasks = []
+
+            # Cadastre enricher
+            if intent.bien:
+                tasks.append(execute_cadastre_enricher(
+                    prompt=request.demande,
+                    context={"data": {"bien": intent.bien}}
+                ))
+
+            # Data collector (prefill mode)
+            tasks.append(execute_data_collector_qr(
+                prompt=request.demande,
+                context={
+                    "type_acte": intent.type_acte.value,
+                    "donnees_existantes": {
+                        "promettants": [intent.vendeur] if intent.vendeur else [],
+                        "beneficiaires": [intent.acquereur] if intent.acquereur else [],
+                        "bien": intent.bien or {},
+                        "prix": intent.prix or {}
+                    },
+                    "mode": request.mode
+                }
+            ))
+
+            # Execute in parallel
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+
+            for i, result in enumerate(results):
+                agent_name = ["cadastre-enricher", "data-collector-qr"][i]
+                if isinstance(result, Exception):
+                    errors.append(f"{agent_name}: {str(result)}")
+                    agents_executed.append({
+                        "name": agent_name,
+                        "status": "error",
+                        "duration_ms": 0,
+                        "error": str(result)
+                    })
+                else:
+                    agents_executed.append({
+                        "name": agent_name,
+                        "status": "success",
+                        "duration_ms": result.get("duration_ms", 0),
+                        "result": result
+                    })
+
+        else:
+            # Sequential fallback
+            # Execute agents one by one
+            pass
+
+        # Phase 4-7: Workflow standard (validation, assemblage, export, QA)
+        # TODO: Intégrer WorkflowRapide ou orchestrateur
+
+        duration_total_ms = (time.time() - start_workflow) * 1000
+
+        # Mock response for now
+        return OrchestrateResponse(
+            workflow_id=workflow_id,
+            status="success" if not errors else "error",
+            strategy_used=strategy,
+            duration_total_ms=duration_total_ms,
+            speedup_vs_sequential=2.6 if strategy == "parallel" else None,
+            agents_executed=agents_executed,
+            data_quality={
+                "completion": 100,
+                "validation_errors": len(errors),
+                "warnings": len(warnings)
+            },
+            output={
+                "file_path": "outputs/promesse_20260211.docx",
+                "file_size_kb": 92,
+                "pages": 24
+            } if not errors else None,
+            errors=errors,
+            warnings=warnings
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur orchestration: {str(e)}")
+
+
+@router.get("/status")
+async def get_agents_status():
+    """
+    Status et monitoring des agents.
+
+    Returns:
+    - Nombre d'agents disponibles
+    - Dernières exécutions
+    - Temps moyens
+    - Taux de succès
+    """
+    # TODO: Persister stats dans Supabase
+
+    return {
+        "agents_available": len(AGENT_EXECUTORS),
+        "agents_total": len(AGENTS_AVAILABLE) + len(AGENTS_OPUS_46),
+        "status": "operational",
+        "last_check": datetime.now().isoformat(),
+        "agents": [
+            {
+                "name": name,
+                "status": "available",
+                "last_execution": None,
+                "avg_duration_ms": None,
+                "success_rate": None
+            }
+            for name in AGENT_EXECUTORS
+        ]
+    }

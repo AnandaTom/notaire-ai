@@ -106,10 +106,15 @@ def _detecter_template_promesse(donnees_path):
             donnees = json.load(f)
 
         detection = gestionnaire.detecter_type(donnees)
-        template_path = gestionnaire._selectionner_template(detection.type_promesse)
+        template_path = gestionnaire._selectionner_template(
+            detection.type_promesse,
+            detection.categorie_bien,
+            sous_type=detection.sous_type
+        )
 
         if template_path and template_path.exists():
-            print(f"  🔍 Type détecté: {detection.type_promesse.value} (confiance: {detection.confiance:.0%})")
+            sous_info = f" / sous-type: {detection.sous_type}" if detection.sous_type else ""
+            print(f"  🔍 Type détecté: {detection.type_promesse.value} ({detection.categorie_bien.value}{sous_info}, confiance: {detection.confiance:.0%})")
             print(f"  💡 Raison: {detection.raison}")
             return template_path.name
     except Exception as e:

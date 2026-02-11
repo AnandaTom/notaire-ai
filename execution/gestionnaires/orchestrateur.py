@@ -174,6 +174,9 @@ class OrchestratorNotaire:
         self.erreurs: List[str] = []
         self._fichiers_temp: List[Path] = []  # Pour le cleanup/rollback
 
+        # Statistiques optimisation coûts (v2.1.0)
+        self.stats_modeles = {"opus": 0, "sonnet": 0, "haiku": 0}
+
         # Initialiser le client Supabase (avec fallback offline)
         self._historique: Optional[HistoriqueActes] = None
         if HistoriqueActes is not None:
@@ -886,6 +889,124 @@ class OrchestratorNotaire:
         return self._finaliser_workflow(workflow_id, type_acte, debut, fichiers, score)
 
     # =========================================================================
+    # Méthodes d'optimisation des coûts (v2.1.0)
+    # =========================================================================
+
+    @staticmethod
+    def detecter_type_acte_rapide(texte: str) -> Optional[str]:
+        """
+        Détection rapide du type d'acte par regex (0 coût LLM).
+
+        Retourne None si ambigu → nécessite fallback LLM.
+
+        Économie: -$0.016/génération sur 80% des cas
+
+        Args:
+            texte: Texte de la demande
+
+        Returns:
+            Type d'acte détecté ou None si ambigu
+        """
+        import re
+
+        texte_lower = texte.lower()
+
+        # Patterns clairs (priorité descendante)
+        if re.search(r'\bviager\b', texte_lower):
+            return "viager"
+
+        if re.search(r'\bpromesse\b', texte_lower):
+            # Sous-types promesse
+            if re.search(r'\bterrain\b', texte_lower):
+                return "promesse_terrain"
+            if re.search(r'\bhors.*copro|maison\b', texte_lower):
+                return "promesse_hors_copropriete"
+            return "promesse_vente"
+
+        if re.search(r'\bvente\b.*\bacte\b|\bacte\b.*\bvente\b', texte_lower):
+            return "vente"
+
+        if re.search(r'\bdonation\b', texte_lower):
+            return "donation_partage"
+
+        if re.search(r'\bedd\b|règlement.*copro', texte_lower):
+            return "reglement_copropriete"
+
+        if re.search(r'\bmodificatif\b', texte_lower):
+            return "modificatif_edd"
+
+        # Ambigu → nécessite LLM
+        return None
+
+    def _choisir_modele(self, donnees: Dict[str, Any], type_acte: Optional[str] = None) -> str:
+        """
+        Décide intelligemment quel modèle utiliser (Tier 1 - Smart Opus Usage).
+
+        Opus (excellent mais 5x plus cher):
+        - Type acte rare/complexe (viager, donation-partage)
+        - Multi-parties (>2 vendeurs OU >2 acquéreurs)
+        - Prix >1M€ (enjeux importants)
+        - Données incomplètes (nécessite raisonnement avancé)
+
+        Sonnet (60% moins cher, excellent pour cas standard):
+        - Types fréquents (promesse, vente standard)
+        - 1-2 parties de chaque côté
+        - Données complètes
+        - Prix standard
+
+        Économie attendue: -48% coûts sur 60% des générations
+
+        Args:
+            donnees: Données de la génération
+            type_acte: Type d'acte (optionnel, détecté si absent)
+
+        Returns:
+            "opus" ou "sonnet"
+        """
+        # Détecter type si absent
+        if not type_acte:
+            type_acte = donnees.get('acte', {}).get('type', '')
+
+        # Cas complexes → Opus
+        types_complexes = ["viager", "donation_partage", "sci", "donation"]
+        if type_acte in types_complexes:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (type complexe: {type_acte})", "info")
+            return "opus"
+
+        # Multi-parties → Opus
+        vendeurs = donnees.get('vendeurs') or donnees.get('promettants', [])
+        acquereurs = donnees.get('acquereurs') or donnees.get('beneficiaires', [])
+
+        if len(vendeurs) > 2 or len(acquereurs) > 2:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (multi-parties: {len(vendeurs)}V, {len(acquereurs)}A)", "info")
+            return "opus"
+
+        # Prix élevé → Opus (enjeux importants)
+        prix = donnees.get('prix', {}).get('montant', 0)
+        if prix > 1_000_000:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (prix élevé: {prix:,.0f}€)", "info")
+            return "opus"
+
+        # Données incomplètes → Opus
+        champs_critiques = ['vendeurs', 'acquereurs', 'bien', 'prix']
+        if type_acte == "promesse_vente":
+            champs_critiques = ['promettants', 'beneficiaires', 'bien', 'prix']
+
+        manquants = [c for c in champs_critiques if not donnees.get(c)]
+        if len(manquants) >= 2:
+            self.stats_modeles["opus"] += 1
+            self._log(f"Modèle: OPUS (données incomplètes: {manquants})", "info")
+            return "opus"
+
+        # Cas standard → Sonnet (60% économie)
+        self.stats_modeles["sonnet"] += 1
+        self._log(f"Modèle: SONNET (cas standard)", "info")
+        return "sonnet"
+
+    # =========================================================================
     # Méthodes utilitaires internes
     # =========================================================================
 
@@ -1037,16 +1158,25 @@ class OrchestratorNotaire:
         return {"alertes": alertes, "valide": len(alertes) == 0}
 
     def _get_promesse_template(self, donnees: Dict[str, Any]) -> str:
-        """Sélectionne le template promesse selon la catégorie de bien."""
+        """Sélectionne le template promesse selon catégorie + type + sous-type (v2.0.0)."""
         if GESTIONNAIRE_PROMESSES_DISPONIBLE and CategorieBien is not None:
             try:
                 gestionnaire = GestionnairePromesses()
-                categorie = gestionnaire.detecter_categorie_bien(donnees)
+                detection = gestionnaire.detecter_type(donnees)
+                template_path = gestionnaire._selectionner_template(
+                    detection.type_promesse,
+                    detection.categorie_bien,
+                    sous_type=detection.sous_type
+                )
+                if template_path and template_path.exists():
+                    logger.info(f"Template détecté: {detection.categorie_bien.value}/{detection.sous_type or 'standard'} -> {template_path.name}")
+                    return template_path.name
+                # Fallback par catégorie si _selectionner_template retourne None
                 template = self.PROMESSE_TEMPLATES_PAR_CATEGORIE.get(
-                    categorie.value,
+                    detection.categorie_bien.value,
                     self.TEMPLATES[TypeActe.PROMESSE_VENTE]
                 )
-                logger.info(f"Catégorie bien détectée: {categorie.value} -> {template}")
+                logger.info(f"Catégorie bien détectée: {detection.categorie_bien.value} -> {template}")
                 return template
             except Exception as e:
                 logger.warning(f"Détection catégorie échouée, fallback copro: {e}")

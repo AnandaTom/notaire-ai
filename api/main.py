@@ -475,6 +475,14 @@ try:
 except Exception as e:
     print(f"⚠️ Chat router non disponible: {e}")
 
+# Router des agents Opus 4.6
+try:
+    from api.agents import router as agents_router
+    app.include_router(agents_router)
+    print("✅ Agents Opus 4.6 router chargé")
+except Exception as e:
+    print(f"⚠️ Agents router non disponible: {e}")
+
 
 # =============================================================================
 # Endpoints Agent
@@ -1335,7 +1343,7 @@ async def generer_promesse(
     - **type_force**: Forcer un type (standard, premium, avec_mobilier, multi_biens)
     - **profil**: Utiliser un profil prédéfini
 
-    Détecte automatiquement le type si non spécifié.
+    Détecte automatiquement le type et sous-type (viager, creation, etc.) si non spécifié.
     """
     try:
         from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses, TypePromesse
@@ -1356,6 +1364,8 @@ async def generer_promesse(
         return {
             "succes": resultat.succes,
             "type_promesse": resultat.type_promesse.value,
+            "categorie_bien": resultat.categorie_bien.value if hasattr(resultat, 'categorie_bien') else None,
+            "sous_type": resultat.metadata.get("sous_type") if resultat.metadata else None,
             "fichier_md": resultat.fichier_md,
             "fichier_docx": resultat.fichier_docx,
             "sections_incluses": resultat.sections_incluses,
@@ -1376,10 +1386,12 @@ async def detecter_type_promesse(
     auth: AuthContext = Depends(verify_api_key)
 ):
     """
-    Détecte automatiquement le type de promesse approprié.
+    Détecte automatiquement le type de promesse approprié (3 niveaux v2.0.0).
 
     Analyse les données et retourne:
     - Le type recommandé (standard, premium, avec_mobilier, multi_biens)
+    - La catégorie de bien (copropriete, hors_copropriete, terrain_a_batir)
+    - Le sous-type conditionnel (viager, creation, lotissement, etc.)
     - La raison de la détection
     - Le score de confiance
     - Les sections recommandées
@@ -1392,6 +1404,8 @@ async def detecter_type_promesse(
 
         return {
             "type_promesse": resultat.type_promesse.value,
+            "categorie_bien": resultat.categorie_bien.value,
+            "sous_type": resultat.sous_type,
             "raison": resultat.raison,
             "confiance": resultat.confiance,
             "sections_recommandees": resultat.sections_recommandees,
@@ -1549,14 +1563,17 @@ def _get_or_create_collecteur(
 async def get_questions(
     categorie: str = "copropriete",
     section: Optional[str] = None,
+    sous_type: Optional[str] = None,
     dossier_id: Optional[str] = None,
     auth: AuthContext = Depends(verify_api_key),
 ):
     """
-    Retourne les questions de promesse filtrées par catégorie et section.
+    Retourne les questions de promesse filtrées par catégorie, section et sous-type.
 
     - **categorie**: copropriete, hors_copropriete, terrain_a_batir
-    - **section**: Clé de section optionnelle (ex: 2_promettant)
+    - **section**: Clé de section optionnelle (ex: 2_promettant, 15_viager)
+    - **sous_type**: Sous-type conditionnel (viager, creation, lotissement, etc.)
+      Si sous_type=viager, inclut automatiquement la section 15_viager
     - **dossier_id**: ID de session existante pour récupérer les valeurs déjà saisies
     """
     if not COLLECTEUR_DISPONIBLE:
@@ -1576,16 +1593,23 @@ async def get_questions(
             return {
                 "section": section,
                 "categorie": categorie,
+                "sous_type": sous_type,
                 "questions": questions,
                 "count": len(questions),
             }
         else:
             # Liste des sections avec statut
             sections = collecteur.get_sections_list()
+
+            # Si sous_type=viager, signaler que section 15_viager est active
+            viager_active = sous_type == "viager"
+
             return {
                 "categorie": categorie,
+                "sous_type": sous_type,
                 "sections": sections,
                 "count": len(sections),
+                "viager_questions_active": viager_active,
             }
 
     except ValueError as e:
@@ -1768,6 +1792,7 @@ _workflow_states: Dict[str, Dict[str, Any]] = {}
 class WorkflowStartRequest(BaseModel):
     """Démarrage d'un workflow de promesse."""
     categorie_bien: str = Field("copropriete", description="copropriete, hors_copropriete, terrain_a_batir")
+    sous_type: Optional[str] = Field(None, description="Sous-type: viager, creation, lotissement, etc.")
     titre_id: Optional[str] = Field(None, description="ID du titre source (pré-remplissage)")
     prefill: Optional[Dict[str, Any]] = Field(None, description="Données de pré-remplissage")
 
@@ -1832,6 +1857,7 @@ async def workflow_start(
         _workflow_states[workflow_id] = {
             'etude_id': auth.etude_id,
             'categorie_bien': request.categorie_bien,
+            'sous_type': request.sous_type,
             'titre_id': request.titre_id,
             'status': 'collecting',
             'current_section_idx': 0,
@@ -1846,11 +1872,13 @@ async def workflow_start(
         return {
             "workflow_id": workflow_id,
             "categorie_bien": request.categorie_bien,
+            "sous_type": request.sous_type,
             "status": "collecting",
             "sections": sections,
             "current_section": first_section,
             "questions": first_questions,
             "progress": progress,
+            "viager_questions_active": request.sous_type == "viager",
         }
 
     except Exception as e:
@@ -1966,18 +1994,19 @@ async def workflow_generate(
         gestionnaire = GestionnairePromesses()
 
         validation = gestionnaire.valider(donnees)
-        if validation.get('erreurs'):
+        # validation is ResultatValidationPromesse dataclass, not dict
+        if not validation.valide:
             wf_state['status'] = 'validation_failed'
             _workflow_states[workflow_id] = wf_state
             return {
                 "workflow_id": workflow_id,
                 "status": "validation_failed",
-                "erreurs": validation['erreurs'],
-                "warnings": validation.get('warnings', []),
+                "erreurs": validation.erreurs,
+                "warnings": validation.warnings,
             }
 
-        # --- Étape 2: Détection catégorie ---
-        categorie = gestionnaire.detecter_categorie_bien(donnees)
+        # --- Étape 2: Détection 3 niveaux (catégorie + type + sous-type) ---
+        detection = gestionnaire.detecter_type(donnees)
 
         # --- Étape 3: Génération ---
         resultat = gestionnaire.generer(donnees)
@@ -1998,7 +2027,8 @@ async def workflow_generate(
         response = {
             "workflow_id": workflow_id,
             "status": wf_state['status'],
-            "categorie_bien": categorie.value if hasattr(categorie, 'value') else str(categorie),
+            "categorie_bien": detection.categorie_bien.value,
+            "sous_type": detection.sous_type,
             "type_promesse": resultat.type_promesse.value if hasattr(resultat, 'type_promesse') else None,
             "fichier_docx": resultat.fichier_docx,
             "erreurs": resultat.erreurs if hasattr(resultat, 'erreurs') else [],
@@ -2065,22 +2095,24 @@ async def workflow_generate_stream(
             gestionnaire = GestionnairePromesses()
             validation = gestionnaire.valider(donnees)
 
-            if validation.get('erreurs'):
+            # validation is ResultatValidationPromesse dataclass, not dict
+            if not validation.valide:
                 yield {"event": "error", "data": json.dumps(
-                    {"message": "Validation échouée", "erreurs": validation['erreurs']}
+                    {"message": "Validation échouée", "erreurs": validation.erreurs}
                 )}
                 return
 
-            # Étape 2: Détection
+            # Étape 2: Détection 3 niveaux
             yield {"event": "step", "data": json.dumps(
-                {"step": "detection", "message": "Détection de la catégorie de bien..."}
+                {"step": "detection", "message": "Détection catégorie + sous-type..."}
             )}
             await asyncio.sleep(0.1)
-            categorie = gestionnaire.detecter_categorie_bien(donnees)
+            detection = gestionnaire.detecter_type(donnees)
+            sous_info = f" ({detection.sous_type})" if detection.sous_type else ""
 
             # Étape 3: Assemblage
             yield {"event": "step", "data": json.dumps(
-                {"step": "assembly", "message": f"Assemblage template {categorie.value}..."}
+                {"step": "assembly", "message": f"Assemblage template {detection.categorie_bien.value}{sous_info}..."}
             )}
             await asyncio.sleep(0.1)
 
@@ -2101,6 +2133,7 @@ async def workflow_generate_stream(
                     "message": "Document prêt",
                     "fichier_url": f"/files/{filename}" if filename else None,
                     "type_promesse": resultat.type_promesse.value if hasattr(resultat, 'type_promesse') else None,
+                    "sous_type": detection.sous_type,
                 })}
             else:
                 yield {"event": "error", "data": json.dumps({
