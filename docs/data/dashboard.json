@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T17:39:09.794102",
+    "generated_at": "2026-02-11T17:54:22.467640",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 304
+    "commits": 306
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "b22e538",
-      "message": "Merge branch 'payoss/dev' - Amélioration isolation multi-tenant et pages dossiers/clients",
+      "hash": "9a468b4",
+      "message": "feat: Améliorations agent Anthropic et chat handler",
       "date": "2026-02-11"
     },
-    "total_commits": 304,
+    "total_commits": 306,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 80
+        "commits": 81
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 30
+        "commits": 31
       },
       {
         "name": "Automai",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 74,
-    "total_lines": 43417,
+    "total_lines": 43457,
     "categories": {
       "generation": 6,
       "utils": 59,
@@ -129,7 +129,7 @@
       },
       {
         "name": "chat_handler.py",
-        "lines": 1117,
+        "lines": 1128,
         "path": "execution/chat_handler.py"
       },
       {
@@ -623,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "9a468b4",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Améliorations agent Anthropic et chat handler",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "b245cd1",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "b22e538",
       "author": "Payoss",
       "date": "2026-02-11",
@@ -797,26 +817,6 @@
       "author": "Payoss",
       "date": "2026-02-11",
       "message": "Merge master into payoss/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "de5dd8e",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "6835d1a",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge branch 'tom/dev'",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 17:39"
+    "last_updated": "2026-02-11 17:54"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 17:39"
+    "last_updated": "2026-02-11 17:54"
   },
   "conformity_details": {
     "promesse": {
