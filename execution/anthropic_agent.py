@@ -171,6 +171,62 @@ class AnthropicAgent:
             logger.warning(f"Impossible de sauvegarder agent_state: {e}")
 
     # =========================================================================
+    # Chargement des directives
+    # =========================================================================
+
+    def _load_directive_summary(self, type_acte: str) -> str:
+        """Charge un resume de la directive pour le type d'acte.
+
+        Les directives sont des fichiers Markdown qui decrivent les workflows
+        a suivre pour chaque type d'acte (promesse, vente, reglement, etc.).
+        On extrait les ~3000 premiers caracteres pour enrichir le contexte.
+        """
+        from pathlib import Path
+
+        # Mapping type_acte → fichier directive
+        DIRECTIVE_MAPPING = {
+            "promesse_vente": "creer_promesse_vente.md",
+            "promesse": "creer_promesse_vente.md",
+            "vente": "creer_acte.md",
+            "reglement_copropriete": "creer_reglement_copropriete.md",
+            "reglement": "creer_reglement_copropriete.md",
+            "modificatif_edd": "creer_modificatif_edd.md",
+            "modificatif": "creer_modificatif_edd.md",
+            "donation_partage": "creer_donation_partage.md",
+            "donation": "creer_donation_partage.md",
+        }
+
+        filename = DIRECTIVE_MAPPING.get(type_acte)
+        if not filename:
+            return ""
+
+        # Chemins possibles (Modal vs local)
+        paths = [
+            Path("/root/project/directives") / filename,  # Modal
+            Path(__file__).parent.parent / "directives" / filename,  # Local
+        ]
+
+        for path in paths:
+            try:
+                if path.exists():
+                    content = path.read_text(encoding="utf-8")
+                    # Chercher la section "Flux de Travail" pour contexte utile
+                    if "## Flux de Travail" in content:
+                        start = content.find("## Flux de Travail")
+                        summary = content[start:start + 3000]
+                    elif "## Workflow" in content:
+                        start = content.find("## Workflow")
+                        summary = content[start:start + 3000]
+                    else:
+                        # Prendre le debut du fichier
+                        summary = content[:3000]
+                    return f"\n\n## Directive: {filename}\n{summary}\n[...]"
+            except Exception as e:
+                logger.warning(f"Erreur lecture directive {filename}: {e}")
+
+        return ""
+
+    # =========================================================================
     # Construction du prompt et des messages
     # =========================================================================
 
@@ -211,6 +267,10 @@ class AnthropicAgent:
             dynamic_parts.append("\n## Contexte de la session en cours")
             if agent_state.get("type_acte"):
                 dynamic_parts.append(f"- Type d'acte: {agent_state['type_acte']}")
+                # Charger la directive pertinente pour ce type d'acte
+                directive = self._load_directive_summary(agent_state['type_acte'])
+                if directive:
+                    dynamic_parts.append(directive)
             if agent_state.get("categorie_bien"):
                 dynamic_parts.append(f"- Categorie de bien: {agent_state['categorie_bien']}")
             if agent_state.get("progress_pct") is not None:

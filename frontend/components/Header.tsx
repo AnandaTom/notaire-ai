@@ -1,12 +1,21 @@
 'use client'
 
-import { FileText, Download } from 'lucide-react'
+import { FileText, Download, LogOut } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
 
 interface HeaderProps {
   progressPct: number | null
 }
 
 export default function Header({ progressPct }: HeaderProps) {
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
   return (
     <header className="px-7 py-5 flex flex-col gap-3 border-b border-champagne bg-ivory">
       <div className="flex items-center justify-between">
@@ -28,6 +37,13 @@ export default function Header({ progressPct }: HeaderProps) {
           <button className="flex items-center gap-2 px-4 py-2.5 bg-gold border border-gold rounded-xl text-[0.8rem] text-white hover:bg-gold-dark transition-all">
             <Download className="w-4 h-4" />
             Exporter
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2.5 bg-cream border border-champagne rounded-xl text-[0.8rem] text-graphite hover:border-red-400 hover:bg-red-50 hover:text-red-600 transition-all"
+          >
+            <LogOut className="w-4 h-4" />
+            Déconnexion
           </button>
         </div>
       </div>

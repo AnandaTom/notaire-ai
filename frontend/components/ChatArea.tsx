@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { Scale, Paperclip, Mic, Send, FileText, FilePlus, Edit, Download, ClipboardCheck, ThumbsUp, ThumbsDown } from 'lucide-react'
-import type { Message } from '@/app/page'
+import type { Message } from '@/types'
 import ReactMarkdown from 'react-markdown'
 import ParagraphReview from './ParagraphReview'
 

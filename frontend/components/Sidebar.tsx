@@ -1,7 +1,7 @@
 'use client'
 
 import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen } from 'lucide-react'
-import type { ConversationSummary } from '@/app/page'
+import type { ConversationSummary } from '@/types'
 
 interface SidebarProps {
   conversations: ConversationSummary[]
