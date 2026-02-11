@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T17:15:12.393942",
+    "generated_at": "2026-02-11T17:39:09.794102",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 301
+    "commits": 304
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "f4bf6cc",
-      "message": "feat: Add jsonschema dependency for Tier 1 optimizations in Modal",
+      "hash": "b22e538",
+      "message": "Merge branch 'payoss/dev' - Amélioration isolation multi-tenant et pages dossiers/clients",
       "date": "2026-02-11"
     },
-    "total_commits": 301,
+    "total_commits": 304,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 79
+        "commits": 80
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 28
+        "commits": 30
       },
       {
         "name": "Automai",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 74,
-    "total_lines": 43380,
+    "total_lines": 43417,
     "categories": {
       "generation": 6,
       "utils": 59,
@@ -124,7 +124,7 @@
       },
       {
         "name": "gestionnaire_promesses.py",
-        "lines": 1548,
+        "lines": 1563,
         "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "b22e538",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge branch 'payoss/dev' - Amélioration isolation multi-tenant et pages dossier...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "f57a8c6",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Amélioration isolation multi-tenant et pages dossiers/clients",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "00e2057",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "f4bf6cc",
       "author": "Tom",
       "date": "2026-02-11",
@@ -787,36 +817,6 @@
       "author": "Tom",
       "date": "2026-02-11",
       "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "859e453",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Tier 1 API cost optimizations (-68% costs)",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "3895760",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "46bf8b3",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge branch 'tom/dev' into master - Phase 3 Agent Intelligent",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 17:15"
+    "last_updated": "2026-02-11 17:39"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 17:15"
+    "last_updated": "2026-02-11 17:39"
   },
   "conformity_details": {
     "promesse": {
