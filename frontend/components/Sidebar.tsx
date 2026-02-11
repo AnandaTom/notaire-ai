@@ -1,6 +1,8 @@
 'use client'
 
-import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen, Users } from 'lucide-react'
 import type { ConversationSummary } from '@/types'
 
 interface SidebarProps {
@@ -107,14 +109,22 @@ export default function Sidebar({
           </div>
         )}
 
+        {/* Mon Espace */}
+        <div className="mb-4">
+          <p className="text-[0.65rem] text-white/35 uppercase tracking-widest px-2 mb-2.5">
+            Mon Espace
+          </p>
+          <NavLink href="/app/dossiers" icon={FolderOpen} label="Mes Dossiers" />
+          <NavLink href="/app/clients" icon={Users} label="Mes Clients" />
+        </div>
+
         {/* References */}
         <div className="mb-4">
           <p className="text-[0.65rem] text-white/35 uppercase tracking-widest px-2 mb-2.5">
-            Références
+            References
           </p>
           <NavItem icon={HelpCircle} label="Code civil" />
-          <NavItem icon={FolderOpen} label="Clauses types" />
-          <NavItem icon={Book} label="Modèles" />
+          <NavItem icon={Book} label="Modeles" />
         </div>
       </div>
 
@@ -144,5 +154,32 @@ function NavItem({
       <Icon className="w-[18px] h-[18px] opacity-70" />
       <span className="text-[0.85rem]">{label}</span>
     </div>
+  )
+}
+
+function NavLink({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+}) {
+  const pathname = usePathname()
+  const isActive = pathname === href
+
+  return (
+    <Link
+      href={href}
+      className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all mb-1 ${
+        isActive
+          ? 'bg-gold/15 text-gold-light'
+          : 'text-white/70 hover:bg-white/10 hover:text-white'
+      }`}
+    >
+      <Icon className="w-[18px] h-[18px] opacity-70" />
+      <span className="text-[0.85rem]">{label}</span>
+    </Link>
   )
 }
