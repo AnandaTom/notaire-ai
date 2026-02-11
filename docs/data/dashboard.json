@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T17:54:22.467640",
+    "generated_at": "2026-02-11T19:33:50.215165",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,27 +9,27 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 74,
+    "scripts_count": 76,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 306
+    "commits": 315
   },
   "git": {
-    "branch": "master",
+    "branch": "tom/dev",
     "last_commit": {
-      "hash": "9a468b4",
-      "message": "feat: Améliorations agent Anthropic et chat handler",
+      "hash": "203a5f2",
+      "message": "Sync tom/dev with master after v2.0.0 merge",
       "date": "2026-02-11"
     },
-    "total_commits": 306,
+    "total_commits": 315,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 145
+        "commits": 151
       },
       {
         "name": "github-actions[bot]",
-        "commits": 81
+        "commits": 84
       },
       {
         "name": "augustinfrance-aico",
@@ -92,11 +92,11 @@
     }
   ],
   "scripts": {
-    "total": 74,
-    "total_lines": 43457,
+    "total": 76,
+    "total_lines": 44234,
     "categories": {
       "generation": 6,
-      "utils": 59,
+      "utils": 61,
       "tests": 3,
       "export": 3,
       "validation": 3
@@ -113,19 +113,19 @@
         "path": "execution/core/exporter_docx.py"
       },
       {
+        "name": "gestionnaire_promesses.py",
+        "lines": 1695,
+        "path": "execution/gestionnaires/gestionnaire_promesses.py"
+      },
+      {
         "name": "orchestrateur.py",
-        "lines": 1591,
+        "lines": 1683,
         "path": "execution/gestionnaires/orchestrateur.py"
       },
       {
         "name": "valider_acte.py",
         "lines": 1571,
         "path": "execution/core/valider_acte.py"
-      },
-      {
-        "name": "gestionnaire_promesses.py",
-        "lines": 1563,
-        "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
         "name": "chat_handler.py",
@@ -623,6 +623,86 @@
   ],
   "activity": [
     {
+      "hash": "203a5f2",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Sync tom/dev with master after v2.0.0 merge",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "d592893",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge branch tom/dev into master - Release v2.0.0 + Audit Fevrier 2026",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "286acc5",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge branch 'tom/dev' of https://github.com/AnandaTom/notaire-ai into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "cef7913",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Frontend viager components + audit general fevrier 2026",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "e489e39",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "ea2f922",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Fin de journee - 11/02/2026 19:52:40,10",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "0c0a496",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Rename modal/ to deployment_modal/ to avoid package conflict",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "63df600",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "9a468b4",
       "author": "Payoss",
       "date": "2026-02-11",
@@ -737,86 +817,6 @@
       "author": "Tom",
       "date": "2026-02-11",
       "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "90d8ebc",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "fa3dfbc",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Merge payoss/dev: Pages Mes Dossiers et Mes Clients",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "2620ac6",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Ajout pages Mes Dossiers et Mes Clients",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "83b1d56",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Tier 1 optimization implementation complete (-68% costs)",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "d419201",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "bd48540",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "security: Fix vulnerabilities - Update Next.js and dependencies",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "e277767",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "wip: cost optimization work in progress",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "a0aacaa",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Merge master into payoss/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 17:54"
+    "last_updated": "2026-02-11 19:33"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 17:54"
+    "last_updated": "2026-02-11 19:33"
   },
   "conformity_details": {
     "promesse": {
