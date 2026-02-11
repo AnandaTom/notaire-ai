@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T16:26:17.340874",
+    "generated_at": "2026-02-11T16:28:49.547958",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 287
+    "commits": 292
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "e277767",
-      "message": "wip: cost optimization work in progress",
+      "hash": "fa3dfbc",
+      "message": "Merge payoss/dev: Pages Mes Dossiers et Mes Clients",
       "date": "2026-02-11"
     },
-    "total_commits": 287,
+    "total_commits": 292,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 75
+        "commits": 76
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 23
+        "commits": 26
       },
       {
         "name": "Automai",
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "fa3dfbc",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge payoss/dev: Pages Mes Dossiers et Mes Clients",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "2620ac6",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Ajout pages Mes Dossiers et Mes Clients",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "d419201",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "e277767",
       "author": "Tom",
       "date": "2026-02-11",
@@ -637,6 +667,16 @@
       "author": "Tom",
       "date": "2026-02-11",
       "message": "security: Fix vulnerabilities - Update Next.js and dependencies",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "a0aacaa",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge master into payoss/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -733,6 +773,16 @@
       "type_color": "red"
     },
     {
+      "hash": "17672af",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Restaurer URL API correcte (notomai--notaire-ai)",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
       "hash": "2277097",
       "author": "github-actions[bot]",
       "date": "2026-02-11",
@@ -771,56 +821,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "34a7eba",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "bca9ad6",
-      "author": "Automai",
-      "date": "2026-02-11",
-      "message": "Travail du 11/02/2026 (#20)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "feb0851",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ea8797d",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "6190b84",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Merge payoss/dev: Améliorations frontend et configuration",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 16:26"
+    "last_updated": "2026-02-11 16:28"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 16:26"
+    "last_updated": "2026-02-11 16:28"
   },
   "conformity_details": {
     "promesse": {
