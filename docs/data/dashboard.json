@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T07:00:20.579477",
+    "generated_at": "2026-02-11T14:06:53.299400",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 72,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 263
+    "commits": 266
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "a5f924f",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-02-10"
+      "hash": "6190b84",
+      "message": "Merge payoss/dev: Améliorations frontend et configuration",
+      "date": "2026-02-11"
     },
-    "total_commits": 263,
+    "total_commits": 266,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 132
+        "commits": 133
       },
       {
         "name": "github-actions[bot]",
-        "commits": 65
+        "commits": 67
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 17
+        "commits": 19
       },
       {
         "name": "Automai",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 72,
-    "total_lines": 42232,
+    "total_lines": 42292,
     "categories": {
       "generation": 6,
       "utils": 58,
@@ -622,6 +622,36 @@
   ],
   "activity": [
     {
+      "hash": "6190b84",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge payoss/dev: Améliorations frontend et configuration",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "72ff915",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Améliorations frontend et configuration",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "afee646",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "a5f924f",
       "author": "github-actions[bot]",
       "date": "2026-02-10",
@@ -790,36 +820,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "d284c69",
-      "author": "Tom",
-      "date": "2026-02-06",
-      "message": "Merge branch 'tom/dev' of https://github.com/AnandaTom/notaire-ai into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "c6fff94",
-      "author": "github-actions[bot]",
-      "date": "2026-02-06",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "0411adc",
-      "author": "github-actions[bot]",
-      "date": "2026-02-05",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 07:00"
+    "last_updated": "2026-02-11 14:06"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 07:00"
+    "last_updated": "2026-02-11 14:06"
   },
   "conformity_details": {
     "promesse": {
