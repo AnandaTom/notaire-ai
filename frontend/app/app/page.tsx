@@ -7,7 +7,7 @@ import Header from '@/components/Header'
 import ParagraphReview from '@/components/ParagraphReview'
 import type { Message, ConversationSummary, DocumentSection } from '@/types'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ''
 
 function getOrCreateUserId(): string {

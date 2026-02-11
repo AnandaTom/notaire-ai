@@ -6,7 +6,7 @@ import type { Message } from '@/types'
 import ReactMarkdown from 'react-markdown'
 import ParagraphReview from './ParagraphReview'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
 
 interface ChatAreaProps {
   messages: Message[]
