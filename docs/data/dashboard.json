@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T22:39:27.671600",
+    "generated_at": "2026-02-11T23:06:16.919372",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 317
+    "commits": 319
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "746d916",
-      "message": "Merge payoss/dev - Améliorations sécurité, chat et services",
-      "date": "2026-02-11"
+      "hash": "1880e27",
+      "message": "docs: Mise à jour documentation et anthropic agent",
+      "date": "2026-02-12"
     },
-    "total_commits": 317,
+    "total_commits": 319,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 86
+        "commits": 87
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 33
+        "commits": 34
       },
       {
         "name": "Automai",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 44540,
+    "total_lines": 44677,
     "categories": {
       "generation": 6,
       "utils": 62,
@@ -623,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "1880e27",
+      "author": "Payoss",
+      "date": "2026-02-12",
+      "message": "Mise à jour documentation et anthropic agent",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "704f9a9",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "746d916",
       "author": "Payoss",
       "date": "2026-02-11",
@@ -801,26 +821,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "ee3531d",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Affichage dynamique du nom utilisateur connecte",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "18826cd",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 22:39"
+    "last_updated": "2026-02-11 23:06"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 22:39"
+    "last_updated": "2026-02-11 23:06"
   },
   "conformity_details": {
     "promesse": {
