@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T16:30:07.753959",
+    "generated_at": "2026-02-11T16:44:22.309779",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 296
+    "commits": 299
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "eaabfad",
-      "message": "security: Regenerate package-lock.json with Next.js 14.2.35",
+      "hash": "f0a496f",
+      "message": "Merge payoss/dev: Affichage dynamique utilisateur",
       "date": "2026-02-11"
     },
-    "total_commits": 296,
+    "total_commits": 299,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 77
+        "commits": 78
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 26
+        "commits": 28
       },
       {
         "name": "Automai",
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "f0a496f",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge payoss/dev: Affichage dynamique utilisateur",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ee3531d",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Affichage dynamique du nom utilisateur connecte",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "18826cd",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "eaabfad",
       "author": "Tom",
       "date": "2026-02-11",
@@ -791,36 +821,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "db3fad0",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "8ed3a51",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Restaurer URL API correcte (notomai--notaire-ai)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "17672af",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Restaurer URL API correcte (notomai--notaire-ai)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 16:30"
+    "last_updated": "2026-02-11 16:44"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 16:30"
+    "last_updated": "2026-02-11 16:44"
   },
   "conformity_details": {
     "promesse": {
