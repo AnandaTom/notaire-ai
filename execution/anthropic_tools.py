@@ -135,7 +135,9 @@ TOOLS = [
         "description": (
             "Genere le document final (promesse de vente ou acte de vente) au format DOCX. "
             "Verifier d'abord avec get_collection_progress que la collecte est suffisante, "
-            "puis valider avec validate_deed_data. Retourne le chemin du fichier."
+            "puis valider avec validate_deed_data. Retourne le chemin du fichier. "
+            "Si le notaire demande explicitement de generer meme avec des donnees incompletes, "
+            "utiliser force=true pour generer un brouillon avec les champs manquants vides."
         ),
         "input_schema": {
             "type": "object",
@@ -144,6 +146,10 @@ TOOLS = [
                     "type": "string",
                     "enum": ["standard", "premium", "avec_mobilier", "multi_biens"],
                     "description": "Forcer un type de promesse (optionnel, auto-detecte sinon)",
+                },
+                "force": {
+                    "type": "boolean",
+                    "description": "Si true, genere le document meme si donnees incompletes (brouillon)",
                 },
             },
             "required": [],
@@ -233,6 +239,10 @@ class ToolExecutor:
             from execution.agent_autonome import CollecteurInteractif
             type_acte = agent_state.get("type_acte", "promesse_vente")
             prefill = agent_state.get("donnees_collectees")
+            logger.info(
+                f"[COLLECTEUR] Creating new instance: type={type_acte}, "
+                f"prefill has {len(prefill) if prefill else 0} keys"
+            )
             self._collecteur = CollecteurInteractif(
                 type_acte=type_acte,
                 prefill=prefill if prefill else None,
@@ -353,6 +363,16 @@ class ToolExecutor:
         # Sauvegarder les donnees mises a jour
         agent_state["donnees_collectees"] = collecteur.donnees
 
+        # Mettre à jour la progression
+        progress = collecteur.get_progress()
+        agent_state["progress_pct"] = progress.get("pourcentage", 0)
+
+        logger.info(
+            f"[SUBMIT] Answers submitted: {len(answers)} keys, "
+            f"donnees now has {len(collecteur.donnees)} top-level keys, "
+            f"progress={progress.get('pourcentage', 0)}%"
+        )
+
         return result
 
     def _exec_get_collection_progress(
@@ -426,8 +446,11 @@ class ToolExecutor:
             except ValueError:
                 pass
 
+        # Paramètre force pour génération partielle (brouillon)
+        force = tool_input.get("force", False)
+
         gestionnaire = self._get_gestionnaire()
-        resultat = gestionnaire.generer(donnees, type_force=type_force)
+        resultat = gestionnaire.generer(donnees, type_force=type_force, force=force)
 
         if resultat.succes and resultat.fichier_docx:
             agent_state["fichier_genere"] = resultat.fichier_docx

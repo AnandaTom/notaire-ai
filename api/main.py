@@ -446,6 +446,8 @@ app = FastAPI(
 
 # CORS pour le front-end - domaines autorisés uniquement
 ALLOWED_ORIGINS = [
+    "https://notomai.fr",
+    "https://www.notomai.fr",
     "https://anandatom.github.io",
     "https://notaire-ai--fastapi-app.modal.run",
     "https://notomai--notaire-ai-fastapi-app.modal.run",

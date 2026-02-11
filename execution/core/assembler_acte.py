@@ -700,11 +700,16 @@ def assembler_acte(template: str, donnees: Dict[str, Any], output_dir: str,
 
     # Créer l'assembleur et générer
     assembleur = AssembleurActe(dossier_templates, zones_grisees=zones_grisees)
-    return assembleur.generer_acte(
-        nom_template=nom_template,
+
+    # Assembler le contenu
+    contenu = assembleur.assembler(nom_template, donnees)
+
+    # Sauvegarder dans le dossier de sortie
+    return assembleur.sauvegarder(
+        acte=contenu,
         donnees=donnees,
-        output_dir=Path(output_dir),
-        acte_id=acte_id
+        dossier_sortie=Path(output_dir),
+        id_acte=acte_id
     )
 
 

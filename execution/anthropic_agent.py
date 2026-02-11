@@ -100,6 +100,14 @@ Tu disposes de 8 outils:
 - Section en cours entre crochets: [Identification du vendeur]
 - Suggestions d'actions: SUGGESTIONS: option1 | option2 | option3
 - Document genere: FICHIER: /chemin/du/fichier.docx
+
+## Regle importante - Generation forcee
+Si le notaire demande explicitement de generer le document (meme incomplet), \
+utilise generate_document avec force=true.
+Phrases declencheuses: "genere quand meme", "genere le document", "telecharger maintenant", \
+"force la generation", "je veux generer", "generer avec les infos actuelles".
+Affiche un avertissement sur les champs manquants mais genere le fichier DOCX.
+Le notaire peut ensuite completer manuellement le document.
 """
 
 
@@ -148,27 +156,42 @@ class AnthropicAgent:
     def _load_agent_state(self, conversation_id: str) -> Dict[str, Any]:
         """Charge l'agent_state depuis Supabase conversations.agent_state."""
         if not self.supabase or not conversation_id:
+            logger.debug(f"Cannot load state: supabase={bool(self.supabase)}, conv_id={conversation_id}")
             return {}
         try:
+            # Utiliser .limit(1) au lieu de .maybe_single() pour éviter erreur 406
             resp = self.supabase.table("conversations").select(
                 "agent_state"
-            ).eq("id", conversation_id).maybe_single().execute()
-            if resp.data:
-                return resp.data.get("agent_state") or {}
+            ).eq("id", conversation_id).limit(1).execute()
+
+            if resp.data and len(resp.data) > 0:
+                state = resp.data[0].get("agent_state") or {}
+                donnees = state.get("donnees_collectees", {})
+                logger.info(f"[STATE] Loaded agent_state: {len(donnees)} keys in donnees_collectees for conv={conversation_id[:8]}")
+                return state
+            else:
+                logger.info(f"[STATE] No existing state for conv={conversation_id[:8]}")
         except Exception as e:
             logger.warning(f"Impossible de charger agent_state: {e}")
         return {}
 
-    def _save_agent_state(self, conversation_id: str, agent_state: Dict):
+    def _save_agent_state(self, conversation_id: str, agent_state: Dict) -> bool:
         """Sauvegarde l'agent_state dans Supabase."""
         if not self.supabase or not conversation_id:
-            return
+            logger.warning(f"[STATE] Cannot save: supabase={bool(self.supabase)}, conv_id={conversation_id}")
+            return False
         try:
+            donnees = agent_state.get("donnees_collectees", {})
+            progress = agent_state.get("progress_pct", 0)
+            logger.info(f"[STATE] Saving agent_state: {len(donnees)} keys, progress={progress}% for conv={conversation_id[:8]}")
+
             self.supabase.table("conversations").update({
                 "agent_state": agent_state,
             }).eq("id", conversation_id).execute()
+            return True
         except Exception as e:
-            logger.warning(f"Impossible de sauvegarder agent_state: {e}")
+            logger.warning(f"[STATE] Error saving agent_state: {e}")
+            return False
 
     # =========================================================================
     # Chargement des directives
