@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T15:39:03.305356",
+    "generated_at": "2026-02-11T15:42:07.674155",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 72,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 270
+    "commits": 272
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "598792b",
-      "message": "Merge payoss/dev: fix CORS et URL API",
+      "hash": "8ed3a51",
+      "message": "fix: Restaurer URL API correcte (notomai--notaire-ai)",
       "date": "2026-02-11"
     },
-    "total_commits": 270,
+    "total_commits": 272,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 69
+        "commits": 70
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 21
+        "commits": 23
       },
       {
         "name": "Automai",
@@ -622,6 +622,26 @@
   ],
   "activity": [
     {
+      "hash": "8ed3a51",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Restaurer URL API correcte (notomai--notaire-ai)",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "2277097",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "598792b",
       "author": "Payoss",
       "date": "2026-02-11",
@@ -800,26 +820,6 @@
       "type_label": "Fix",
       "type_icon": "🐛",
       "type_color": "red"
-    },
-    {
-      "hash": "68fab68",
-      "author": "github-actions[bot]",
-      "date": "2026-02-08",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "392cfd9",
-      "author": "Augustin",
-      "date": "2026-02-08",
-      "message": "Merge branch 'augustin/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1247,7 +1247,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 15:39"
+    "last_updated": "2026-02-11 15:42"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1399,7 +1399,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 15:39"
+    "last_updated": "2026-02-11 15:42"
   },
   "conformity_details": {
     "promesse": {
