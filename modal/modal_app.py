@@ -50,6 +50,7 @@ image = (
     .add_local_dir(PROJECT_ROOT / "execution", remote_path="/root/project/execution")
     .add_local_dir(PROJECT_ROOT / "schemas", remote_path="/root/project/schemas")
     .add_local_dir(PROJECT_ROOT / "templates", remote_path="/root/project/templates")
+    .add_local_dir(PROJECT_ROOT / "directives", remote_path="/root/project/directives")
 )
 
 # Stub Modal
@@ -59,7 +60,7 @@ app = modal.App(
     secrets=[
         modal.Secret.from_name("supabase-credentials"),   # SUPABASE_URL, SUPABASE_KEY
         modal.Secret.from_name("anthropic-credentials"),   # ANTHROPIC_API_KEY
-        modal.Secret.from_name("github-credentials"),      # GITHUB_TOKEN, GITHUB_REPO, GITHUB_DEFAULT_BRANCH
+        # modal.Secret.from_name("github-credentials"),   # GITHUB_TOKEN - À créer pour self-anneal
     ]
 )
 
