@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T16:05:47.686897",
+    "generated_at": "2026-02-11T18:53:43.168229",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,27 +9,27 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 74,
+    "scripts_count": 76,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 276
+    "commits": 279
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "859e453",
-      "message": "feat: Tier 1 API cost optimizations (-68% costs)",
+      "hash": "ea2f922",
+      "message": "chore: Fin de journee - 11/02/2026 19:52:40,10",
       "date": "2026-02-11"
     },
-    "total_commits": 276,
+    "total_commits": 279,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 138
+        "commits": 147
       },
       {
         "name": "github-actions[bot]",
-        "commits": 73
+        "commits": 82
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 23
+        "commits": 31
       },
       {
         "name": "Automai",
@@ -92,11 +92,11 @@
     }
   ],
   "scripts": {
-    "total": 74,
-    "total_lines": 43380,
+    "total": 76,
+    "total_lines": 44126,
     "categories": {
       "generation": 6,
-      "utils": 59,
+      "utils": 61,
       "tests": 3,
       "export": 3,
       "validation": 3
@@ -114,18 +114,18 @@
       },
       {
         "name": "orchestrateur.py",
-        "lines": 1591,
+        "lines": 1683,
         "path": "execution/gestionnaires/orchestrateur.py"
+      },
+      {
+        "name": "gestionnaire_promesses.py",
+        "lines": 1649,
+        "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
         "name": "valider_acte.py",
         "lines": 1571,
         "path": "execution/core/valider_acte.py"
-      },
-      {
-        "name": "gestionnaire_promesses.py",
-        "lines": 1548,
-        "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
         "name": "chat_handler.py",
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "ea2f922",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Fin de journee - 11/02/2026 19:52:40,10",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "0c0a496",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Rename modal/ to deployment_modal/ to avoid package conflict",
+      "type": "refactor",
+      "type_label": "Refactor",
+      "type_icon": "♻️",
+      "type_color": "yellow"
+    },
+    {
+      "hash": "0f61e49",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "859e453",
       "author": "Tom",
       "date": "2026-02-11",
@@ -791,36 +821,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "55ce52f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-09",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "619587f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-08",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "bf990e0",
-      "author": "Tom",
-      "date": "2026-02-08",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 16:05"
+    "last_updated": "2026-02-11 18:53"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 16:05"
+    "last_updated": "2026-02-11 18:53"
   },
   "conformity_details": {
     "promesse": {
