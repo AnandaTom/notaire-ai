@@ -675,17 +675,21 @@ def create_chat_router():
         - Met a jour le contexte de la conversation
         """
         try:
+            import uuid
             historique = request.history or []
             contexte = request.context or {}
-            conversation_id = request.conversation_id
 
-            # Charger l'historique depuis Supabase si conversation_id fourni
+            # Générer un conversation_id si non fourni
+            conversation_id = request.conversation_id or str(uuid.uuid4())
+            is_new_conversation = request.conversation_id is None
+
             # Vrais UUIDs pour satisfaire les FK Supabase (pas d'auth frontend)
-            REAL_USER_ID = "9776afda-de1f-4241-8dcf-a8ae0fd4e53d"
+            # TODO: Extraire du JWT quand auth frontend sera connecté
+            REAL_USER_ID = "3138517c-eb64-4b05-af16-7070bf969dd5"  # Jean Dupont (test2@notomail.fr)
             REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
 
             supabase = _get_supabase()
-            if supabase and conversation_id:
+            if supabase:
                 try:
                     # Utiliser .limit(1) au lieu de .maybe_single() pour éviter erreur 406
                     conv_resp = supabase.table("conversations").select("*").eq(
@@ -715,8 +719,13 @@ def create_chat_router():
                             "messages": [],
                             "message_count": 0,
                         }).execute()
-                except Exception:
-                    pass  # Fallback silencieux
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).error(
+                        f"[CHAT] Erreur creation conversation {conversation_id}: {e}",
+                        exc_info=True
+                    )
+                    # Continue sans bloquer - la conversation peut fonctionner sans persistance
 
             # ============================================================
             # Agent Anthropic intelligent (avec fallback keyword)
@@ -794,8 +803,13 @@ def create_chat_router():
                     supabase.table("conversations").update(update_data).eq(
                         "id", conversation_id
                     ).execute()
-                except Exception:
-                    pass  # Fallback silencieux
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).error(
+                        f"[CHAT] Erreur persistance messages conv={conversation_id}: {e}",
+                        exc_info=True
+                    )
+                    # Continue - l'utilisateur recoit quand meme la reponse
 
             # Extraire fichier_url depuis action si present
             fichier_url = None
@@ -840,15 +854,19 @@ def create_chat_router():
 
         async def event_generator():
             try:
+                import uuid
                 historique = request.history or []
                 contexte = request.context or {}
-                conversation_id = request.conversation_id
 
-                REAL_USER_ID = "9776afda-de1f-4241-8dcf-a8ae0fd4e53d"
+                # Générer un conversation_id si non fourni
+                conversation_id = request.conversation_id or str(uuid.uuid4())
+
+                # TODO: Extraire du JWT quand auth frontend sera connecté
+                REAL_USER_ID = "3138517c-eb64-4b05-af16-7070bf969dd5"  # Jean Dupont (test2@notomail.fr)
                 REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
 
                 supabase = _get_supabase()
-                if supabase and conversation_id:
+                if supabase:
                     try:
                         # Utiliser .limit(1) au lieu de .maybe_single() pour éviter 406
                         conv_resp = supabase.table("conversations").select("*").eq(
@@ -874,8 +892,12 @@ def create_chat_router():
                                 "messages": [],
                                 "message_count": 0,
                             }).execute()
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        import logging
+                        logging.getLogger(__name__).error(
+                            f"[CHAT STREAM] Erreur init conversation {conversation_id}: {e}",
+                            exc_info=True
+                        )
 
                 # Agent Anthropic en streaming
                 from execution.anthropic_agent import AnthropicAgent
@@ -898,7 +920,7 @@ def create_chat_router():
                         full_metadata = done_data
 
                         # Persister dans Supabase avant de yielder done
-                        if supabase and conversation_id:
+                        if supabase:
                             try:
                                 # Utiliser .limit(1) pour éviter erreur 406
                                 conv = supabase.table("conversations").select(
@@ -935,8 +957,16 @@ def create_chat_router():
                                 supabase.table("conversations").update(update_data).eq(
                                     "id", conversation_id
                                 ).execute()
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                import logging
+                                logging.getLogger(__name__).error(
+                                    f"[CHAT STREAM] Erreur persistance conv={conversation_id}: {e}",
+                                    exc_info=True
+                                )
+
+                        # Ajouter conversation_id au done event pour le frontend
+                        done_data["conversation_id"] = conversation_id
+                        event = {"event": "done", "data": json.dumps(done_data)}
 
                     yield event
 
@@ -963,6 +993,7 @@ def create_chat_router():
                         "data": json.dumps({
                             "content": reponse.content,
                             "suggestions": reponse.suggestions,
+                            "conversation_id": conversation_id,
                         }),
                     }
                 except Exception as e2:
@@ -1012,7 +1043,12 @@ def create_chat_router():
                     "updated_at": conv.get("updated_at"),
                 })
             return {"conversations": conversations}
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(
+                f"[CHAT] Erreur liste conversations: {e}",
+                exc_info=True
+            )
             return {"conversations": []}
 
     @router.get("/conversations/{conversation_id}")
@@ -1055,7 +1091,8 @@ def create_chat_router():
     @router.post("/feedback")
     async def submit_feedback(request: FeedbackRequest):
         """Enregistre un feedback sur un message assistant."""
-        REAL_USER_ID = "9776afda-de1f-4241-8dcf-a8ae0fd4e53d"
+        # IMPORTANT: user_id doit exister dans auth.users (FK constraint)
+        REAL_USER_ID = "3138517c-eb64-4b05-af16-7070bf969dd5"  # Jean Dupont (test2@notomail.fr)
         REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
 
         supabase = _get_supabase()
@@ -1086,8 +1123,13 @@ def create_chat_router():
                 "etude_id": REAL_ETUDE_ID,
             }).execute()
             return {"status": "ok", "saved": True}
-        except Exception:
-            # Fallback: retourner ok meme si sauvegarde echoue
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(
+                f"[CHAT] Erreur sauvegarde feedback conv={request.conversation_id}: {e}",
+                exc_info=True
+            )
+            # Retourner ok pour ne pas bloquer l'UX, mais indiquer que pas sauvegarde
             return {"status": "ok", "saved": False}
 
     return router
