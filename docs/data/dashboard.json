@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T15:51:26.387210",
+    "generated_at": "2026-02-11T16:06:56.907918",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 280
+    "commits": 284
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "46bf8b3",
-      "message": "Merge branch 'tom/dev' into master - Phase 3 Agent Intelligent",
+      "hash": "6835d1a",
+      "message": "Merge branch 'tom/dev'",
       "date": "2026-02-11"
     },
-    "total_commits": 280,
+    "total_commits": 284,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 137
+        "commits": 139
       },
       {
         "name": "github-actions[bot]",
-        "commits": 72
+        "commits": 74
       },
       {
         "name": "augustinfrance-aico",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 74,
-    "total_lines": 43372,
+    "total_lines": 43380,
     "categories": {
       "generation": 6,
       "utils": 59,
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "6835d1a",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "859e453",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "Tier 1 API cost optimizations (-68% costs)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "3895760",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "46bf8b3",
       "author": "Tom",
       "date": "2026-02-11",
@@ -631,6 +661,16 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
+    },
+    {
+      "hash": "3dc1157",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
     },
     {
       "hash": "466775b",
@@ -781,46 +821,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "afee646",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "a5f924f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-10",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "d32a88a",
-      "author": "Automai",
-      "date": "2026-02-10",
-      "message": "Merge pull request #19 from AnandaTom/tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "125389a",
-      "author": "Tom",
-      "date": "2026-02-10",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 15:51"
+    "last_updated": "2026-02-11 16:06"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 15:51"
+    "last_updated": "2026-02-11 16:06"
   },
   "conformity_details": {
     "promesse": {
