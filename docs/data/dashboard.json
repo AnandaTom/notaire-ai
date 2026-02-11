@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T16:06:56.907918",
+    "generated_at": "2026-02-11T16:26:17.340874",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 74,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 284
+    "commits": 287
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "6835d1a",
-      "message": "Merge branch 'tom/dev'",
+      "hash": "e277767",
+      "message": "wip: cost optimization work in progress",
       "date": "2026-02-11"
     },
-    "total_commits": 284,
+    "total_commits": 287,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 139
+        "commits": 141
       },
       {
         "name": "github-actions[bot]",
-        "commits": 74
+        "commits": 75
       },
       {
         "name": "augustinfrance-aico",
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "e277767",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "wip: cost optimization work in progress",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "bd48540",
+      "author": "Tom",
+      "date": "2026-02-11",
+      "message": "security: Fix vulnerabilities - Update Next.js and dependencies",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "de5dd8e",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "6835d1a",
       "author": "Tom",
       "date": "2026-02-11",
@@ -791,36 +821,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "72ff915",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Améliorations frontend et configuration",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "f45202a",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "a4fa3fb",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Fin de journee - 11/02/2026 13:37:47,94",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 16:06"
+    "last_updated": "2026-02-11 16:26"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 16:06"
+    "last_updated": "2026-02-11 16:26"
   },
   "conformity_details": {
     "promesse": {
