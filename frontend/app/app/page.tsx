@@ -6,6 +6,7 @@ import ChatArea from '@/components/ChatArea'
 import Header from '@/components/Header'
 import ParagraphReview from '@/components/ParagraphReview'
 import type { Message, ConversationSummary, DocumentSection } from '@/types'
+import { supabase } from '@/lib/supabase'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ''
@@ -45,7 +46,10 @@ export default function Home() {
   const [reviewSections, setReviewSections] = useState<DocumentSection[] | null>(null)
   const [reviewWorkflowId, setReviewWorkflowId] = useState<string | null>(null)
 
-  // Init: load userId + conversationId from localStorage
+  // User info state
+  const [userInfo, setUserInfo] = useState<{ nom: string; prenom: string } | null>(null)
+
+  // Init: load userId + conversationId from localStorage + user info
   useEffect(() => {
     const uid = getOrCreateUserId()
     setUserId(uid)
@@ -61,6 +65,22 @@ export default function Home() {
     }
 
     loadConversations()
+
+    // Charger les infos utilisateur depuis Supabase
+    const loadUserInfo = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data } = await supabase
+          .from('notaire_users')
+          .select('nom, prenom')
+          .eq('auth_user_id', user.id)
+          .single()
+        if (data) {
+          setUserInfo(data)
+        }
+      }
+    }
+    loadUserInfo()
   }, [])
 
   const loadConversations = useCallback(async () => {
@@ -342,13 +362,14 @@ export default function Home() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-5">
-      <div className="w-full max-w-[1100px] h-[92vh] bg-ivory rounded-[20px] shadow-lg grid grid-cols-[280px_1fr] overflow-hidden border border-gold/10">
+    <div className="h-screen w-screen overflow-hidden">
+      <div className="w-full h-full bg-ivory grid grid-cols-[280px_1fr] overflow-hidden">
         <Sidebar
           conversations={conversations}
           activeConversationId={conversationId}
           onSelectConversation={selectConversation}
           onNewConversation={startNewConversation}
+          userInfo={userInfo}
         />
         <main className="flex flex-col bg-ivory min-h-0 overflow-hidden">
           <Header progressPct={progressPct} />

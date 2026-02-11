@@ -10,6 +10,7 @@ interface SidebarProps {
   activeConversationId: string
   onSelectConversation: (id: string) => void
   onNewConversation: () => void
+  userInfo?: { nom: string; prenom: string } | null
 }
 
 function timeAgo(dateStr: string): string {
@@ -28,6 +29,7 @@ export default function Sidebar({
   activeConversationId,
   onSelectConversation,
   onNewConversation,
+  userInfo,
 }: SidebarProps) {
   return (
     <aside className="bg-navy flex flex-col relative overflow-hidden">
@@ -57,7 +59,7 @@ export default function Sidebar({
             Connecté en tant que
           </p>
           <h3 className="font-serif text-base text-white font-medium">
-            Me Charlotte Diaz
+            {userInfo ? `Me ${userInfo.prenom} ${userInfo.nom}` : 'Chargement...'}
           </h3>
         </div>
       </div>
