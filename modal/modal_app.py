@@ -45,6 +45,7 @@ image = (
         "sse-starlette>=1.6.0",
         "anthropic>=0.40.0",
         "requests>=2.31.0",
+        "jsonschema>=4.20.0",  # Tier 1: validation déterministe
     )
     .add_local_dir(PROJECT_ROOT / "api", remote_path="/root/project/api")
     .add_local_dir(PROJECT_ROOT / "execution", remote_path="/root/project/execution")
