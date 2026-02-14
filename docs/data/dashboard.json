@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-14T11:55:51.191306",
+    "generated_at": "2026-02-14T12:14:09.858632",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 333
+    "commits": 335
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "ccb8048",
+      "hash": "074cb9d",
       "message": "chore: Travail du 14/02/2026",
       "date": "2026-02-14"
     },
-    "total_commits": 333,
+    "total_commits": 335,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 156
+        "commits": 157
       },
       {
         "name": "github-actions[bot]",
-        "commits": 93
+        "commits": 94
       },
       {
         "name": "augustinfrance-aico",
@@ -623,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "074cb9d",
+      "author": "Tom",
+      "date": "2026-02-14",
+      "message": "Travail du 14/02/2026",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "6623b70",
+      "author": "github-actions[bot]",
+      "date": "2026-02-14",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "ccb8048",
       "author": "Tom",
       "date": "2026-02-14",
@@ -797,26 +817,6 @@
       "author": "Tom",
       "date": "2026-02-11",
       "message": "Sync tom/dev with master after v2.0.0 merge",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "1c3196c",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "d592893",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge branch tom/dev into master - Release v2.0.0 + Audit Fevrier 2026",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-14 11:55"
+    "last_updated": "2026-02-14 12:14"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-14 11:55"
+    "last_updated": "2026-02-14 12:14"
   },
   "conformity_details": {
     "promesse": {
