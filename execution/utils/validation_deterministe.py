@@ -317,29 +317,35 @@ def detecter_type_acte_rapide(texte: str) -> Optional[str]:
     """
     texte_lower = texte.lower()
 
-    # Patterns clairs (priorité descendante)
+    # Patterns clairs (priorité descendante — l'ORDRE est critique)
+
+    # 1. Viager (priorité max car spécifique)
     if re.search(r'\bviager\b', texte_lower):
         return "viager"
 
+    # 2. Promesse (avant "vente" car "promesse de vente" contient "vente")
     if re.search(r'\bpromesse\b', texte_lower):
-        # Sous-types promesse
         if re.search(r'\bterrain\b', texte_lower):
             return "promesse_terrain"
         if re.search(r'\bhors.*copro|maison\b', texte_lower):
             return "promesse_hors_copropriete"
         return "promesse_vente"
 
-    if re.search(r'\bvente\b', texte_lower):
-        return "vente"
-
-    if re.search(r'\bdonation\b', texte_lower):
-        return "donation_partage"
-
+    # 3. Modificatif (AVANT edd car "modificatif edd" doit matcher ici, pas reglement)
     if re.search(r'\bmodificatif\b', texte_lower):
         return "modificatif_edd"
 
+    # 4. Donation
+    if re.search(r'\bdonation\b', texte_lower):
+        return "donation_partage"
+
+    # 5. EDD / Règlement copropriété (après modificatif)
     if re.search(r'\bedd\b|r[eè]glement.*copro', texte_lower):
         return "reglement_copropriete"
+
+    # 6. Vente (last — "promesse de vente" already caught above)
+    if re.search(r'\bvente\b', texte_lower):
+        return "vente"
 
     # Ambigu → nécessite LLM
     return None

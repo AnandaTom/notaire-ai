@@ -146,12 +146,16 @@ TOOLS = [
                 "type_acte": {
                     "type": "string",
                     "enum": ["promesse_vente", "vente"],
-                    "description": "Type d'acte a generer (defaut: promesse_vente)",
+                    "description": (
+                        "Type d'acte a generer. 'promesse_vente' pour promesse unilaterale "
+                        "(copropriete, hors copro, terrain, viager), 'vente' pour acte de vente "
+                        "definitif. Si non specifie, utilise le type_acte du contexte de session."
+                    ),
                 },
                 "type_force": {
                     "type": "string",
                     "enum": ["standard", "premium", "avec_mobilier", "multi_biens"],
-                    "description": "Forcer un type de promesse (optionnel, auto-detecte sinon)",
+                    "description": "Forcer un sous-type de promesse (optionnel, auto-detecte sinon)",
                 },
                 "force": {
                     "type": "boolean",
@@ -461,7 +465,7 @@ class ToolExecutor:
                 "fichier_url": None,
             }
 
-        # Output dir: NOTAIRE_OUTPUT_DIR (Modal=/outputs, local=outputs/)
+        # Répertoire de sortie : outputs/ pour que /files/ et /download/ trouvent le fichier
         output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -474,23 +478,22 @@ class ToolExecutor:
 
         logger.info(
             f"[GENERATE] type_acte={type_acte}, "
-            f"{len(donnees)} top-level keys: {list(donnees.keys())}"
+            f"{len(donnees)} top-level keys: {list(donnees.keys())}, "
+            f"output_dir={output_dir}"
         )
 
         # Parametre force pour generation partielle (brouillon)
         force = tool_input.get("force", False)
 
-        # ---- Routing: promesse vs vente ----
+        # ===== ROUTING : Vente vs Promesse =====
         if type_acte == "vente":
             return self._generate_vente(donnees, output_dir, force, agent_state)
         else:
-            return self._generate_promesse(
-                donnees, output_dir, force, tool_input, agent_state
-            )
+            return self._generate_promesse(donnees, tool_input, output_dir, force, agent_state)
 
     def _generate_promesse(
-        self, donnees: Dict, output_dir: Path, force: bool,
-        tool_input: Dict, agent_state: Dict
+        self, donnees: Dict, tool_input: Dict, output_dir: Path,
+        force: bool, agent_state: Dict
     ) -> Dict:
         """Genere une promesse de vente via GestionnairePromesses."""
         from execution.gestionnaires.gestionnaire_promesses import TypePromesse
@@ -530,34 +533,60 @@ class ToolExecutor:
         self, donnees: Dict, output_dir: Path, force: bool, agent_state: Dict
     ) -> Dict:
         """Genere un acte de vente via OrchestratorNotaire."""
-        from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+        import time
+        try:
+            from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+        except ImportError:
+            return {
+                "succes": False,
+                "type_acte": "vente",
+                "erreurs": ["Module OrchestratorNotaire non disponible."],
+                "warnings": [],
+                "fichier_docx": None,
+            }
 
-        orchestrateur = OrchestratorNotaire(supabase_client=self.supabase)
-        output_path = str(output_dir / f"vente_{Path(output_dir).name}.docx")
+        start = time.time()
+        orchestrateur = OrchestratorNotaire()
 
-        resultat = orchestrateur.generer_acte_complet(
-            "vente", donnees, output=output_path
-        )
+        # Construire le chemin de sortie avec timestamp unique
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_path = str(output_dir / f"vente_{timestamp}.docx")
 
-        fichier_url = None
-        fichier_docx = None
-        if resultat.fichiers_generes:
-            fichier_docx = resultat.fichiers_generes[0]
-            filename = Path(fichier_docx).name
-            agent_state["fichier_genere"] = fichier_docx
-            agent_state["fichier_url"] = f"/files/{filename}"
-            fichier_url = f"/files/{filename}"
+        try:
+            resultat = orchestrateur.generer_acte_complet(
+                "vente", donnees, output=output_path
+            )
 
-        return {
-            "succes": resultat.statut == "succes",
-            "type_acte": "vente",
-            "fichier_docx": fichier_docx,
-            "fichier_url": fichier_url,
-            "erreurs": resultat.erreurs,
-            "warnings": resultat.alertes,
-            "duree_generation": resultat.duree_totale_ms / 1000,
-            "score_conformite": resultat.score_conformite,
-        }
+            fichier_docx = None
+            if resultat.fichiers_generes:
+                fichier_docx = resultat.fichiers_generes[0]
+            elif resultat.statut == "succes" and Path(output_path).exists():
+                fichier_docx = output_path
+
+            if fichier_docx:
+                agent_state["fichier_genere"] = fichier_docx
+                filename = Path(fichier_docx).name
+                agent_state["fichier_url"] = f"/files/{filename}"
+
+            return {
+                "succes": resultat.statut == "succes",
+                "type_acte": "vente",
+                "fichier_docx": fichier_docx,
+                "score_conformite": resultat.score_conformite,
+                "erreurs": resultat.erreurs,
+                "warnings": resultat.alertes,
+                "duree_generation": round(time.time() - start, 2),
+            }
+        except Exception as e:
+            logger.error(f"[GENERATE] Erreur generation vente: {e}", exc_info=True)
+            return {
+                "succes": False,
+                "type_acte": "vente",
+                "erreurs": [f"Erreur lors de la generation de l'acte de vente: {str(e)}"],
+                "warnings": [],
+                "fichier_docx": None,
+            }
 
     def _exec_search_clauses(
         self, tool_input: Dict, agent_state: Dict
