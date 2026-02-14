@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-11T21:10:54.684807",
+    "generated_at": "2026-02-14T11:25:44.571966",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -9,27 +9,27 @@
     "templates_count": 4,
     "templates_prod": 4,
     "avg_conformity": 87.9,
-    "scripts_count": 76,
+    "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 319
+    "commits": 329
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "3d75a77",
-      "message": "feat(sprint-1): Smart routing API unifiée + Bilan Jour 1 complet",
-      "date": "2026-02-11"
+      "hash": "43d3b95",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "date": "2026-02-14"
     },
-    "total_commits": 319,
+    "total_commits": 329,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 153
+        "commits": 154
       },
       {
         "name": "github-actions[bot]",
-        "commits": 85
+        "commits": 91
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 31
+        "commits": 34
       },
       {
         "name": "Automai",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-11"
+      "last_modified": "2026-02-14"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1602,
-      "last_modified": "2026-02-11"
+      "last_modified": "2026-02-14"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-11"
+      "last_modified": "2026-02-14"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,16 +88,16 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-11"
+      "last_modified": "2026-02-14"
     }
   ],
   "scripts": {
-    "total": 76,
-    "total_lines": 44274,
+    "total": 77,
+    "total_lines": 44717,
     "categories": {
-      "generation": 6,
-      "utils": 61,
+      "utils": 62,
       "tests": 3,
+      "generation": 6,
       "export": 3,
       "validation": 3
     },
@@ -129,7 +129,7 @@
       },
       {
         "name": "chat_handler.py",
-        "lines": 1128,
+        "lines": 1170,
         "path": "execution/chat_handler.py"
       },
       {
@@ -163,24 +163,56 @@
         "count": 6
       },
       {
-        "name": "variables_vente.json",
-        "count": 23
+        "name": "questions_donation_partage.json",
+        "count": 6
       },
       {
         "name": "variables_reglement_copropriete.json",
         "count": 17
       },
       {
+        "name": "clauses_promesse_catalogue.json",
+        "count": 9
+      },
+      {
+        "name": "variables_donation_partage.json",
+        "count": 18
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
         "name": "sections_catalogue.json",
         "count": 7
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "variables_modificatif_edd.json",
+        "count": 12
+      },
+      {
+        "name": "promesse_catalogue_unifie.json",
+        "count": 12
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_vente.json",
+        "count": 23
       },
       {
         "name": "questions_modificatif_edd.json",
         "count": 2
       },
       {
-        "name": "questions_donation_partage.json",
-        "count": 6
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
       },
       {
         "name": "questions_promesse_vente.json",
@@ -191,79 +223,47 @@
         "count": 8
       },
       {
-        "name": "questions_reglement_copropriete.json",
-        "count": 2
-      },
-      {
-        "name": "variables_promesse.json",
-        "count": 24
-      },
-      {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
         "name": "variables_promesse_vente.json",
         "count": 30
-      },
-      {
-        "name": "promesse_catalogue_unifie.json",
-        "count": 12
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "clauses_promesse_catalogue.json",
-        "count": 9
-      },
-      {
-        "name": "variables_modificatif_edd.json",
-        "count": 12
-      },
-      {
-        "name": "variables_donation_partage.json",
-        "count": 18
       }
     ]
   },
   "docs": {
     "legal": [
-      "CGU_TEMPLATE.md",
-      "POLITIQUE_CONFIDENTIALITE.md",
       "BASES_LEGALES.md",
-      "OBLIGATIONS_CSN.md",
-      "REGISTRE_TRAITEMENTS.md"
+      "CGU_TEMPLATE.md",
+      "REGISTRE_TRAITEMENTS.md",
+      "POLITIQUE_CONFIDENTIALITE.md",
+      "OBLIGATIONS_CSN.md"
     ],
     "directives": [
-      "validation_donnees.md",
-      "modifier_acte.md",
-      "gestion_flexible.md",
-      "collecte_informations.md",
-      "mise_a_jour_statuts_donation.md",
-      "agents_opus_46.md",
-      "generation_promesses_avancee.md",
-      "creer_donation_partage.md",
       "integration_titre_propriete.md",
-      "README.md",
-      "bonnes_pratiques_templates.md",
-      "apprentissage_continu.md",
-      "workflow_notaire.md",
-      "pipeline_generation.md",
-      "lecons_apprises.md",
-      "formatage_docx.md",
-      "analyse_trames_promesse.md",
-      "workflow_agent_optimise.md",
-      "creer_modificatif_edd.md",
-      "creer_acte.md",
-      "workflow_titre_promesse_vente.md",
-      "ajouter_template.md",
-      "flexibilite_systeme.md",
+      "generation_promesses_avancee.md",
       "creer_reglement_copropriete.md",
+      "modifier_acte.md",
+      "README.md",
+      "analyse_trames_promesse.md",
+      "lecons_apprises.md",
+      "agents_opus_46.md",
+      "collecte_informations.md",
+      "workflow_titre_promesse_vente.md",
+      "pipeline_generation.md",
+      "gestion_flexible.md",
+      "flexibilite_systeme.md",
+      "workflow_notaire.md",
+      "mise_a_jour_statuts_donation.md",
+      "etat_des_lieux.md",
+      "creer_acte.md",
+      "apprentissage_continu.md",
+      "ajouter_template.md",
+      "creer_donation_partage.md",
       "workflow_promesse_intelligent.md",
-      "creer_promesse_vente.md",
-      "etat_des_lieux.md"
+      "workflow_agent_optimise.md",
+      "formatage_docx.md",
+      "creer_modificatif_edd.md",
+      "bonnes_pratiques_templates.md",
+      "validation_donnees.md",
+      "creer_promesse_vente.md"
     ],
     "total_legal": 5,
     "total_directives": 27
@@ -623,6 +623,106 @@
   ],
   "activity": [
     {
+      "hash": "43d3b95",
+      "author": "Tom",
+      "date": "2026-02-14",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "49cd51c",
+      "author": "github-actions[bot]",
+      "date": "2026-02-14",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "cdf6d34",
+      "author": "github-actions[bot]",
+      "date": "2026-02-13",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "45c9190",
+      "author": "github-actions[bot]",
+      "date": "2026-02-12",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "886f8fe",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "1880e27",
+      "author": "Payoss",
+      "date": "2026-02-12",
+      "message": "Mise à jour documentation et anthropic agent",
+      "type": "docs",
+      "type_label": "Documentation",
+      "type_icon": "📝",
+      "type_color": "purple"
+    },
+    {
+      "hash": "704f9a9",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "746d916",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Merge payoss/dev - Améliorations sécurité, chat et services",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "51638e4",
+      "author": "Payoss",
+      "date": "2026-02-11",
+      "message": "Améliorations sécurité, chat et services",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "60ba8a2",
+      "author": "github-actions[bot]",
+      "date": "2026-02-11",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "3d75a77",
       "author": "Tom",
       "date": "2026-02-11",
@@ -721,106 +821,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "0c0a496",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Rename modal/ to deployment_modal/ to avoid package conflict",
-      "type": "refactor",
-      "type_label": "Refactor",
-      "type_icon": "♻️",
-      "type_color": "yellow"
-    },
-    {
-      "hash": "63df600",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "9a468b4",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Améliorations agent Anthropic et chat handler",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "b245cd1",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "b22e538",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Merge branch 'payoss/dev' - Amélioration isolation multi-tenant et pages dossier...",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "f57a8c6",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Amélioration isolation multi-tenant et pages dossiers/clients",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "00e2057",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "f4bf6cc",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Add jsonschema dependency for Tier 1 optimizations in Modal",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "2129dd0",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "f0a496f",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Merge payoss/dev: Affichage dynamique utilisateur",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1024,7 +1024,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-11"
+    "last_updated": "2026-02-14"
   },
   "overview": {
     "overall_score": 67,
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-11 21:10"
+    "last_updated": "2026-02-14 11:25"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-11 21:10"
+    "last_updated": "2026-02-14 11:25"
   },
   "conformity_details": {
     "promesse": {
