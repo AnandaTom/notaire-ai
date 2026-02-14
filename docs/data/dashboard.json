@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-14T11:25:44.571966",
+    "generated_at": "2026-02-14T11:27:00.307559",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 329
+    "commits": 331
   },
   "git": {
-    "branch": "tom/dev",
+    "branch": "master",
     "last_commit": {
-      "hash": "43d3b95",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "62275ae",
+      "message": "Merge pull request #21 from AnandaTom/tom/dev",
       "date": "2026-02-14"
     },
-    "total_commits": 329,
+    "total_commits": 331,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 91
+        "commits": 92
       },
       {
         "name": "augustinfrance-aico",
@@ -41,7 +41,7 @@
       },
       {
         "name": "Automai",
-        "commits": 5
+        "commits": 6
       }
     ]
   },
@@ -623,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "62275ae",
+      "author": "Automai",
+      "date": "2026-02-14",
+      "message": "Merge pull request #21 from AnandaTom/tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "9c667c8",
+      "author": "github-actions[bot]",
+      "date": "2026-02-14",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "43d3b95",
       "author": "Tom",
       "date": "2026-02-14",
@@ -801,26 +821,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "e489e39",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "ea2f922",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Fin de journee - 11/02/2026 19:52:40,10",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-14 11:25"
+    "last_updated": "2026-02-14 11:27"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-14 11:25"
+    "last_updated": "2026-02-14 11:27"
   },
   "conformity_details": {
     "promesse": {
