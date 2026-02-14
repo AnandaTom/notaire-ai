@@ -42,17 +42,13 @@ MAX_TOOL_ITERATIONS = 8    # Securite anti-boucle infinie
 MAX_OUTPUT_TOKENS = 2048
 MAX_HISTORY_MESSAGES = 20  # Limiter le contexte envoye a Claude
 
-# Messages de statut pour les appels d'outils (affichage frontend)
-TOOL_STATUS_MESSAGES = {
-    "detect_property_type": "Detection du type de bien...",
-    "get_questions": "Recherche des questions...",
-    "submit_answers": "Enregistrement des reponses...",
-    "get_collection_progress": "Calcul de la progression...",
-    "validate_deed_data": "Validation des donnees...",
-    "generate_document": "Generation du document...",
-    "search_clauses": "Recherche de clauses...",
-    "submit_feedback": "Enregistrement du feedback...",
-}
+# DEPRECATED: Messages statiques remplacés par _get_tool_status() dynamique
+# Conservé pour référence historique
+# TOOL_STATUS_MESSAGES = {
+#     "detect_property_type": "Detection du type de bien...",
+#     "get_questions": "Recherche des questions...",
+#     ...
+# }
 
 
 # =============================================================================
@@ -101,11 +97,26 @@ Tu disposes de 8 outils:
 - Suggestions d'actions: SUGGESTIONS: option1 | option2 | option3
 - Document genere: FICHIER: /chemin/du/fichier.docx
 
+## REGLE CRITIQUE - Enregistrement des donnees
+AVANT de generer un document, tu DOIS TOUJOURS appeler submit_answers pour enregistrer \
+les informations fournies par le notaire. Sinon, le document sera VIDE.
+
+Quand le notaire fournit des informations (noms, adresses, prix, dates, etc.):
+1. Extraire TOUTES les donnees du message
+2. Appeler submit_answers avec un objet structure, par exemple:
+   - "promettants": [{"nom": "Martin", "prenoms": "Jean", "date_naissance": "15/03/1965", ...}]
+   - "beneficiaires": [{"nom": "Dupont", "prenoms": "Marie", ...}]
+   - "bien": {"adresse": {"numero": "15", "rue": "rue des Fleurs", "code_postal": "75008", ...}}
+   - "prix": {"montant": 450000, "lettres": "quatre cent cinquante mille euros"}
+   - etc.
+3. SEULEMENT APRES avoir appele submit_answers, tu peux appeler generate_document
+
 ## Regle importante - Generation forcee
 Si le notaire demande explicitement de generer le document (meme incomplet), \
 utilise generate_document avec force=true.
 Phrases declencheuses: "genere quand meme", "genere le document", "telecharger maintenant", \
 "force la generation", "je veux generer", "generer avec les infos actuelles".
+MAIS TOUJOURS appeler submit_answers AVANT generate_document avec les donnees deja collectees.
 Affiche un avertissement sur les champs manquants mais genere le fichier DOCX.
 Le notaire peut ensuite completer manuellement le document.
 """
@@ -188,9 +199,10 @@ class AnthropicAgent:
             self.supabase.table("conversations").update({
                 "agent_state": agent_state,
             }).eq("id", conversation_id).execute()
+            logger.info(f"[STATE] Saved successfully for conv={conversation_id[:8]}")
             return True
         except Exception as e:
-            logger.warning(f"[STATE] Error saving agent_state: {e}")
+            logger.error(f"[STATE] FAILED to save agent_state: {e}", exc_info=True)
             return False
 
     # =========================================================================
@@ -368,9 +380,21 @@ class AnthropicAgent:
         if not fichier_url and agent_state.get("fichier_genere"):
             fichier_url = agent_state["fichier_genere"]
 
+        # Transformer chemin local en URL signée avec HMAC-SHA256
+        # Sécurité: URL expire après 1h, signature vérifiée côté serveur
+        if fichier_url and not fichier_url.startswith("/download/"):
+            from pathlib import Path
+            from execution.security.signed_urls import generate_signed_url
+            filename = Path(fichier_url).name
+            if filename:
+                # URL signée valide 1 heure (3600 secondes)
+                fichier_url = generate_signed_url(filename, expires_in=3600)
+            else:
+                fichier_url = None
+
         return AgentResponse(
             content=content,
-            suggestions=suggestions,
+            suggestions=suggestions or self._generate_suggestions(agent_state),
             section=section,
             fichier_url=fichier_url,
             agent_state=agent_state,
@@ -382,6 +406,144 @@ class AnthropicAgent:
                 "categorie_bien": agent_state.get("categorie_bien"),
             },
         )
+
+    # =========================================================================
+    # Suggestions et résumés intelligents (SANS appel API)
+    # =========================================================================
+
+    def _generate_suggestions(self, agent_state: Dict) -> List[str]:
+        """
+        Génère des suggestions contextuelles basées sur l'état de l'agent.
+        SANS appel API - 100% local.
+        """
+        suggestions = []
+
+        progress = agent_state.get("progress", {})
+        pct = progress.get("pourcentage", 0)
+        type_acte = agent_state.get("type_acte")
+        donnees = agent_state.get("donnees_collectees", {})
+        manquants = progress.get("champs_manquants", [])
+
+        # Cas 1: Document prêt
+        if pct >= 100:
+            suggestions.append("Générer le document")
+            suggestions.append("Vérifier les données")
+            if type_acte:
+                suggestions.append(f"Modifier le {type_acte}")
+
+        # Cas 2: Collecte en cours
+        elif pct > 0:
+            if manquants:
+                # Suggestion basée sur le premier champ manquant
+                premier_manquant = manquants[0]
+                if "prix" in premier_manquant.lower():
+                    suggestions.append("Renseigner le prix")
+                elif "vendeur" in premier_manquant.lower() or "promettant" in premier_manquant.lower():
+                    suggestions.append("Ajouter un vendeur")
+                elif "acquereur" in premier_manquant.lower() or "beneficiaire" in premier_manquant.lower():
+                    suggestions.append("Ajouter un acquéreur")
+                elif "bien" in premier_manquant.lower() or "adresse" in premier_manquant.lower():
+                    suggestions.append("Décrire le bien")
+                else:
+                    suggestions.append(f"Renseigner {premier_manquant}")
+            suggestions.append("Voir la progression")
+            if pct >= 70:
+                suggestions.append("Générer un brouillon")
+
+        # Cas 3: Type d'acte connu mais pas de données
+        elif type_acte:
+            suggestions.append("Commencer par le vendeur")
+            suggestions.append("Commencer par l'acquéreur")
+            suggestions.append("Décrire le bien")
+
+        # Cas 4: Début de conversation
+        else:
+            suggestions.append("Créer une promesse de vente")
+            suggestions.append("Créer un acte de vente")
+            suggestions.append("Voir mes dossiers")
+
+        return suggestions[:4]  # Max 4 suggestions
+
+    def _build_smart_summary(self, agent_state: Dict) -> str:
+        """
+        Génère un résumé intelligent de ce qui a été collecté.
+        SANS appel API - 100% local, économise ~500-1000 tokens.
+        """
+        donnees = agent_state.get("donnees_collectees", {})
+        type_acte = agent_state.get("type_acte", "l'acte")
+        progress = agent_state.get("progress", {})
+
+        # Construire les parties collectées
+        parts = []
+
+        # Vendeurs/Promettants
+        promettants = donnees.get("promettants", [])
+        if promettants:
+            noms = [p.get("nom", "?") for p in promettants if p.get("nom")]
+            if noms:
+                parts.append(f"Vendeur(s) : {', '.join(noms)}")
+
+        # Acquéreurs/Bénéficiaires
+        beneficiaires = donnees.get("beneficiaires", [])
+        if beneficiaires:
+            noms = [b.get("nom", "?") for b in beneficiaires if b.get("nom")]
+            if noms:
+                parts.append(f"Acquéreur(s) : {', '.join(noms)}")
+
+        # Bien
+        bien = donnees.get("bien", {})
+        adresse = bien.get("adresse", {})
+        if adresse.get("voie"):
+            parts.append(f"Bien : {adresse.get('voie')}, {adresse.get('ville', '')}")
+
+        # Prix
+        prix = donnees.get("prix", {})
+        if prix.get("montant"):
+            parts.append(f"Prix : {prix['montant']:,} €".replace(",", " "))
+
+        # Construire le message selon la progression
+        pct = progress.get("pourcentage", 0)
+        manquants = progress.get("champs_manquants", [])[:3]
+
+        if pct >= 100:
+            resume = "Toutes les informations sont collectées :\n"
+            resume += "\n".join(f"• {p}" for p in parts)
+            resume += "\n\nSouhaitez-vous générer le document ?"
+        elif pct > 50 and parts:
+            resume = f"J'ai enregistré {pct}% des informations :\n"
+            resume += "\n".join(f"• {p}" for p in parts)
+            if manquants:
+                resume += f"\n\nIl me manque encore : {', '.join(manquants[:3])}"
+        elif parts:
+            resume = "J'ai noté :\n"
+            resume += "\n".join(f"• {p}" for p in parts)
+            resume += f"\n\nContinuons avec les détails de {type_acte}."
+        else:
+            resume = f"Je suis prêt à vous aider avec {type_acte}. Par quoi souhaitez-vous commencer ?"
+
+        return resume
+
+    def _get_tool_status(self, tool_name: str, agent_state: Dict) -> str:
+        """
+        Génère un message de statut contextuel pour un outil.
+        Remplace les messages génériques statiques.
+        """
+        type_acte = agent_state.get("type_acte", "l'acte")
+        section = agent_state.get("section_courante", "")
+        categorie = agent_state.get("categorie_bien", "")
+
+        templates = {
+            "detect_property_type": f"Analyse du type de bien{' (' + categorie + ')' if categorie else ''}...",
+            "get_questions": f"Chargement des questions{' pour ' + section if section else ''}...",
+            "submit_answers": "Enregistrement de vos réponses...",
+            "get_collection_progress": f"Calcul de l'avancement de {type_acte}...",
+            "validate_deed_data": "Vérification de la cohérence des données...",
+            "generate_document": f"Génération de {type_acte}...",
+            "search_clauses": "Recherche de clauses adaptées...",
+            "submit_feedback": "Enregistrement de votre retour...",
+        }
+
+        return templates.get(tool_name, f"Traitement en cours...")
 
     # =========================================================================
     # Boucle principale
@@ -488,14 +650,14 @@ class AnthropicAgent:
                 self._save_agent_state(conversation_id, agent_state)
                 return self._parse_response(final_text, agent_state)
 
-        # Max iterations atteint - securite anti-boucle
+        # Max iterations atteint - résumé intelligent SANS appel API
         logger.warning(f"Max tool iterations ({MAX_TOOL_ITERATIONS}) atteint pour conversation {conversation_id}")
+
+        # Générer un résumé local à partir de agent_state (économise ~500-1000 tokens)
+        summary_text = self._build_smart_summary(agent_state)
+
         self._save_agent_state(conversation_id, agent_state)
-        return AgentResponse(
-            content="J'ai effectue plusieurs operations. Que souhaitez-vous faire maintenant ?",
-            suggestions=["Voir la progression", "Generer le document", "Poser une question"],
-            agent_state=agent_state,
-        )
+        return self._parse_response(summary_text, agent_state)
 
     # =========================================================================
     # Streaming (SSE)
@@ -595,9 +757,8 @@ class AnthropicAgent:
                 tool_results = []
                 for block in response.content:
                     if block.type == "tool_use":
-                        status_msg = TOOL_STATUS_MESSAGES.get(
-                            block.name, f"Execution: {block.name}..."
-                        )
+                        # Message de statut contextuel (dynamique selon agent_state)
+                        status_msg = self._get_tool_status(block.name, agent_state)
                         yield {
                             "event": "status",
                             "data": json.dumps({"message": status_msg}),
@@ -642,14 +803,18 @@ class AnthropicAgent:
                 }
                 return
 
-        # Max iterations
+        # Max iterations - résumé intelligent SANS appel API (économise ~500-1000 tokens)
+        logger.warning(f"Max tool iterations atteint (stream) pour conversation {conversation_id}")
+
+        # Générer un résumé local à partir de agent_state
+        summary_text = self._build_smart_summary(agent_state)
+
         self._save_agent_state(conversation_id, agent_state)
-        fallback = "J'ai effectue plusieurs operations. Que souhaitez-vous faire maintenant ?"
-        yield {"event": "token", "data": json.dumps({"text": fallback})}
+        yield {"event": "token", "data": json.dumps({"text": summary_text})}
         yield {
             "event": "done",
             "data": json.dumps({
-                "content": fallback,
-                "suggestions": ["Voir la progression", "Generer le document"],
+                "content": summary_text,
+                "suggestions": self._generate_suggestions(agent_state),
             }),
         }

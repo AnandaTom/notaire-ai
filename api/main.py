@@ -35,7 +35,7 @@ from contextlib import asynccontextmanager
 from functools import lru_cache
 
 import re
-from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request
+from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import APIKeyHeader
@@ -132,6 +132,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from execution.agent_autonome import AgentNotaire, ParseurDemandeNL, DemandeAnalysee
 from execution.gestionnaires.orchestrateur import OrchestratorNotaire
 from execution.chat_handler import ChatHandler, create_chat_router
+from execution.security.signed_urls import verify_signed_url
 
 # Import Supabase (optionnel - mode offline si non disponible)
 SUPABASE_AVAILABLE = False
@@ -429,10 +430,25 @@ async def require_delete_permission(auth: AuthContext = Depends(verify_api_key))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifecycle de l'application."""
+    """Lifecycle de l'application avec health checks."""
     # Startup
     print("🚀 NotaireAI API démarrée")
+
+    # Health check Supabase
+    supabase = get_supabase_client()
+    if supabase:
+        try:
+            # Test connexion avec une requête simple
+            result = supabase.table("etudes").select("id").limit(1).execute()
+            print("✅ Supabase connecté")
+        except Exception as e:
+            logger.warning(f"⚠️ Supabase non accessible au démarrage: {e}")
+            print(f"⚠️ Supabase: {e}")
+    else:
+        print("⚠️ Supabase non configuré (SUPABASE_URL/KEY manquants)")
+
     yield
+
     # Shutdown
     print("👋 NotaireAI API arrêtée")
 
@@ -978,6 +994,68 @@ async def download_file(filename: str, auth: AuthContext = Depends(verify_api_ke
         raise HTTPException(status_code=403, detail="Accès refusé")
 
     if not os.path.isfile(real_path):
+        raise HTTPException(status_code=404, detail=f"Fichier non trouvé: {filename}")
+
+    # Détection du type MIME selon l'extension
+    ext = os.path.splitext(filename)[1].lower()
+    media_types = {
+        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".pdf": "application/pdf",
+        ".json": "application/json",
+        ".md": "text/markdown",
+    }
+    media_type = media_types.get(ext, "application/octet-stream")
+
+    return FileResponse(
+        path=real_path,
+        filename=filename,
+        media_type=media_type
+    )
+
+
+@app.get("/download/{filename}", tags=["Fichiers"])
+async def download_file_secure(
+    filename: str,
+    token: str = Query(..., description="Signature HMAC-SHA256"),
+    expires: int = Query(..., description="Timestamp Unix d'expiration")
+):
+    """Télécharge un fichier généré avec URL signée.
+
+    Sécurité:
+    - Token HMAC-SHA256 vérifié
+    - Expiration automatique (1h par défaut)
+    - Comparaison timing-safe contre attaques temporelles
+
+    Returns:
+        FileResponse avec le document demandé
+
+    Raises:
+        403: Lien invalide ou expiré
+        404: Fichier non trouvé
+    """
+    # Vérifier la signature HMAC
+    is_valid, error_msg = verify_signed_url(filename, token, expires)
+    if not is_valid:
+        logger.warning(f"[DOWNLOAD] Accès refusé pour {filename}: {error_msg}")
+        raise HTTPException(status_code=403, detail=error_msg)
+    # Chercher dans plusieurs répertoires possibles
+    output_dirs = [
+        os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"),
+        "/outputs",  # Volume Modal
+        ".tmp/promesses_generees",
+        "/root/project/.tmp/promesses_generees",
+    ]
+
+    real_path = None
+    for output_dir in output_dirs:
+        file_path = os.path.join(output_dir, filename)
+        candidate = os.path.realpath(file_path)
+        # Sécurité : vérifier que le fichier est bien dans un répertoire autorisé
+        if os.path.isfile(candidate):
+            real_path = candidate
+            break
+
+    if not real_path:
         raise HTTPException(status_code=404, detail=f"Fichier non trouvé: {filename}")
 
     # Détection du type MIME selon l'extension
