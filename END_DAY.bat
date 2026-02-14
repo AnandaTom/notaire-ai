@@ -1,6 +1,7 @@
 @echo off
-REM End of Day v2.0 - NotaireAI
-REM Ameliore: check changements, check PR existante, git add cible
+setlocal enabledelayedexpansion
+REM End of Day v2.1 - NotaireAI
+REM Fix: delayed expansion pour ERRORLEVEL dans blocs IF imbriques
 
 cd /d "%~dp0"
 
@@ -77,31 +78,34 @@ echo [4/4] Verification Pull Request...
 gh pr list --head %BRANCH% --state open --json number > "%TEMP%\notomai_pr.tmp" 2>nul
 findstr /C:"number" "%TEMP%\notomai_pr.tmp" >nul 2>nul
 
-IF %ERRORLEVEL% EQU 0 (
+IF !ERRORLEVEL! EQU 0 (
     echo PR deja ouverte pour %BRANCH% - pas de doublon.
     echo.
     echo ========================================
     echo   Push OK - PR existante mise a jour
     echo   Bonne soiree !
     echo ========================================
-) ELSE (
-    echo Creation d'une nouvelle PR...
-    gh pr create --title "Travail du %date%" --body "Auto-PR - Travail de la journee sur %BRANCH%" 2>nul
-
-    IF %ERRORLEVEL% EQU 0 (
-        echo.
-        echo ========================================
-        echo   PR creee ! Bonne soiree !
-        echo ========================================
-    ) ELSE (
-        echo.
-        echo ========================================
-        echo   Push OK mais PR non creee
-        echo   (peut-etre aucune difference avec master)
-        echo   Bonne soiree !
-        echo ========================================
-    )
+    goto :end
 )
 
+echo Creation d'une nouvelle PR...
+gh pr create --title "Travail du %date%" --body "Auto-PR - Travail de la journee sur %BRANCH%" 2>nul
+
+IF !ERRORLEVEL! EQU 0 (
+    echo.
+    echo ========================================
+    echo   PR creee ! Bonne soiree !
+    echo ========================================
+) ELSE (
+    echo.
+    echo ========================================
+    echo   Push OK mais PR non creee
+    echo   (peut-etre aucune difference avec master)
+    echo   Bonne soiree !
+    echo ========================================
+)
+
+:end
 echo.
 pause
+endlocal
