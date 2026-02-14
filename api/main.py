@@ -1586,6 +1586,59 @@ async def lister_types_promesse(auth: AuthContext = Depends(verify_api_key)):
 
 
 # =============================================================================
+# Endpoints Vente
+# =============================================================================
+
+@app.post("/ventes/generer", tags=["Ventes"])
+async def generer_vente(
+    donnees: Dict[str, Any],
+    auth: AuthContext = Depends(require_write_permission)
+):
+    """
+    Génère un acte de vente définitif au format DOCX.
+
+    - **donnees**: Données complètes (vendeurs, acquéreurs, bien, prix, etc.)
+
+    Retourne le fichier DOCX et une URL de téléchargement.
+    """
+    try:
+        from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+
+        output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        orchestrateur = OrchestratorNotaire(supabase_client=get_supabase_client())
+
+        import time
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        output_path = str(output_dir / f"vente_{ts}.docx")
+
+        resultat = orchestrateur.generer_acte_complet(
+            "vente", donnees, output=output_path
+        )
+
+        fichier_url = None
+        if resultat.fichiers_generes:
+            filename = Path(resultat.fichiers_generes[0]).name
+            fichier_url = f"/files/{filename}"
+
+        return {
+            "succes": resultat.statut == "succes",
+            "workflow_id": resultat.workflow_id,
+            "fichier_docx": resultat.fichiers_generes[0] if resultat.fichiers_generes else None,
+            "fichier_url": fichier_url,
+            "score_conformite": resultat.score_conformite,
+            "duree_ms": resultat.duree_totale_ms,
+            "erreurs": resultat.erreurs,
+            "alertes": resultat.alertes,
+        }
+
+    except Exception as e:
+        logger.error(f"Erreur génération vente: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Erreur lors de la génération de l'acte de vente")
+
+
+# =============================================================================
 # Endpoints Questions & Réponses (Q&R) - Collecte interactive
 # =============================================================================
 

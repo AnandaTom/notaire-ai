@@ -63,6 +63,14 @@ d'actes notariaux pour les etudes notariales francaises.
 Tu guides les notaires pas a pas pour collecter les informations necessaires \
 et generer des promesses de vente et actes de vente conformes au droit francais.
 
+## Types d'actes supportes
+- **Promesse de vente** (type_acte="promesse_vente"): 5 categories de bien \
+  (copropriete, hors copropriete, terrain a batir, viager, creation copro)
+- **Acte de vente definitif** (type_acte="vente"): lots de copropriete
+
+Quand le notaire demande un "acte de vente" ou une "vente", utilise type_acte="vente". \
+Quand il demande une "promesse" ou un "compromis", utilise type_acte="promesse_vente".
+
 ## Tes outils
 Tu disposes de 8 outils:
 
@@ -71,18 +79,18 @@ Tu disposes de 8 outils:
 3. **submit_answers** - Enregistrer les reponses du notaire
 4. **get_collection_progress** - Voir la progression (% completion, champs manquants)
 5. **validate_deed_data** - Verifier la coherence des donnees
-6. **generate_document** - Generer le document final DOCX
+6. **generate_document** - Generer le document final DOCX (promesse ou vente)
 7. **search_clauses** - Rechercher des clauses juridiques
 8. **submit_feedback** - Enregistrer un retour du notaire
 
 ## Workflow type
-1. Le notaire dit ce qu'il veut (ex: "creer une promesse pour un appartement")
+1. Le notaire dit ce qu'il veut (ex: "creer une promesse pour un appartement" ou "acte de vente")
 2. Detecte la categorie avec detect_property_type
 3. Recupere les questions section par section avec get_questions
 4. Pose les questions de maniere conversationnelle (2-4 a la fois, pas toutes)
 5. Enregistre les reponses avec submit_answers
 6. Valide avec validate_deed_data quand suffisamment complet
-7. Genere avec generate_document si tout est bon
+7. Genere avec generate_document(type_acte="promesse_vente" ou "vente") si tout est bon
 
 ## Regles de communication
 - Toujours en francais, vouvoiement
@@ -376,11 +384,13 @@ class AnthropicAgent:
             fichier_url = fichier_match.group(1)
             content = content.replace(fichier_match.group(0), '').strip()
 
-        # Fallback fichier depuis agent_state
-        if not fichier_url and agent_state.get("fichier_genere"):
+        # Fallback fichier depuis agent_state (fichier_url > fichier_genere)
+        if not fichier_url and agent_state.get("fichier_url"):
+            fichier_url = agent_state["fichier_url"]
+        elif not fichier_url and agent_state.get("fichier_genere"):
             fichier_url = agent_state["fichier_genere"]
 
-        # Transformer chemin local en URL signée avec HMAC-SHA256
+        # Transformer chemin local ou /files/ en URL signée avec HMAC-SHA256
         # Sécurité: URL expire après 1h, signature vérifiée côté serveur
         if fichier_url and not fichier_url.startswith("/download/"):
             from pathlib import Path
@@ -777,6 +787,16 @@ class AnthropicAgent:
                             tool_input=block.input,
                             agent_state=agent_state,
                         )
+
+                        # Emettre un event file_ready si document genere
+                        if block.name == "generate_document" and result.get("succes"):
+                            yield {
+                                "event": "file_ready",
+                                "data": json.dumps({
+                                    "fichier_url": result.get("fichier_url"),
+                                    "type_acte": result.get("type_acte"),
+                                }),
+                            }
 
                         tool_results.append({
                             "type": "tool_result",

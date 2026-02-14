@@ -329,17 +329,17 @@ def detecter_type_acte_rapide(texte: str) -> Optional[str]:
             return "promesse_hors_copropriete"
         return "promesse_vente"
 
-    if re.search(r'\bvente\b.*\bacte\b|\bacte\b.*\bvente\b', texte_lower):
+    if re.search(r'\bvente\b', texte_lower):
         return "vente"
 
     if re.search(r'\bdonation\b', texte_lower):
         return "donation_partage"
 
-    if re.search(r'\bedd\b|règlement.*copro', texte_lower):
-        return "reglement_copropriete"
-
     if re.search(r'\bmodificatif\b', texte_lower):
         return "modificatif_edd"
+
+    if re.search(r'\bedd\b|r[eè]glement.*copro', texte_lower):
+        return "reglement_copropriete"
 
     # Ambigu → nécessite LLM
     return None
