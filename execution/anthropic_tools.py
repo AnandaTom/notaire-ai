@@ -142,10 +142,19 @@ TOOLS = [
         "input_schema": {
             "type": "object",
             "properties": {
+                "type_acte": {
+                    "type": "string",
+                    "enum": ["promesse_vente", "vente"],
+                    "description": (
+                        "Type d'acte a generer. 'promesse_vente' pour promesse unilaterale "
+                        "(copropriete, hors copro, terrain, viager), 'vente' pour acte de vente "
+                        "definitif. Si non specifie, utilise le type_acte du contexte de session."
+                    ),
+                },
                 "type_force": {
                     "type": "string",
                     "enum": ["standard", "premium", "avec_mobilier", "multi_biens"],
-                    "description": "Forcer un type de promesse (optionnel, auto-detecte sinon)",
+                    "description": "Forcer un sous-type de promesse (optionnel, auto-detecte sinon)",
                 },
                 "force": {
                     "type": "boolean",
@@ -434,8 +443,8 @@ class ToolExecutor:
     def _exec_generate_document(
         self, tool_input: Dict, agent_state: Dict
     ) -> Dict:
-        """Genere le document DOCX final."""
-        from execution.gestionnaires.gestionnaire_promesses import TypePromesse
+        """Genere le document DOCX final (promesse ou vente)."""
+        import os
 
         donnees = agent_state.get("donnees_collectees", {})
 
@@ -456,7 +465,39 @@ class ToolExecutor:
                 "fichier_docx": None,
             }
 
-        logger.info(f"[GENERATE] Generating with {len(donnees)} top-level keys: {list(donnees.keys())}")
+        # Déterminer le type d'acte (tool_input > agent_state > défaut)
+        type_acte = (
+            tool_input.get("type_acte")
+            or agent_state.get("type_acte")
+            or "promesse_vente"
+        )
+
+        # Répertoire de sortie : outputs/ pour que /files/ et /download/ trouvent le fichier
+        output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        logger.info(
+            f"[GENERATE] type_acte={type_acte}, "
+            f"{len(donnees)} top-level keys: {list(donnees.keys())}, "
+            f"output_dir={output_dir}"
+        )
+
+        # Paramètre force pour génération partielle (brouillon)
+        force = tool_input.get("force", False)
+
+        # ===== ROUTING : Vente vs Promesse =====
+        if type_acte == "vente":
+            return self._generate_vente(donnees, output_dir, force, agent_state)
+        else:
+            return self._generate_promesse(donnees, tool_input, output_dir, force, agent_state)
+
+    def _generate_promesse(
+        self, donnees: Dict, tool_input: Dict, output_dir: Path,
+        force: bool, agent_state: Dict
+    ) -> Dict:
+        """Génère une promesse de vente via GestionnairePromesses."""
+        from execution.gestionnaires.gestionnaire_promesses import TypePromesse
+
         type_force = None
         type_force_str = tool_input.get("type_force")
         if type_force_str:
@@ -465,17 +506,19 @@ class ToolExecutor:
             except ValueError:
                 pass
 
-        # Paramètre force pour génération partielle (brouillon)
-        force = tool_input.get("force", False)
-
         gestionnaire = self._get_gestionnaire()
-        resultat = gestionnaire.generer(donnees, type_force=type_force, force=force)
+        resultat = gestionnaire.generer(
+            donnees, type_force=type_force, force=force, output_dir=output_dir
+        )
 
         if resultat.succes and resultat.fichier_docx:
             agent_state["fichier_genere"] = resultat.fichier_docx
+            filename = Path(resultat.fichier_docx).name
+            agent_state["fichier_url"] = f"/files/{filename}"
 
         return {
             "succes": resultat.succes,
+            "type_acte": "promesse_vente",
             "categorie_bien": resultat.categorie_bien.value,
             "type_promesse": resultat.type_promesse.value,
             "fichier_docx": resultat.fichier_docx,
@@ -484,6 +527,65 @@ class ToolExecutor:
             "warnings": resultat.warnings,
             "duree_generation": round(resultat.duree_generation, 2),
         }
+
+    def _generate_vente(
+        self, donnees: Dict, output_dir: Path, force: bool, agent_state: Dict
+    ) -> Dict:
+        """Génère un acte de vente via OrchestratorNotaire."""
+        import time
+        try:
+            from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+        except ImportError:
+            return {
+                "succes": False,
+                "type_acte": "vente",
+                "erreurs": ["Module OrchestratorNotaire non disponible."],
+                "warnings": [],
+                "fichier_docx": None,
+            }
+
+        start = time.time()
+        orchestrateur = OrchestratorNotaire()
+
+        # Construire le chemin de sortie
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_path = str(output_dir / f"vente_{timestamp}.docx")
+
+        try:
+            resultat = orchestrateur.generer_acte_complet(
+                "vente", donnees, output=output_path
+            )
+
+            fichier_docx = None
+            if resultat.fichiers_generes:
+                fichier_docx = resultat.fichiers_generes[0]
+            elif resultat.statut == "succes" and Path(output_path).exists():
+                fichier_docx = output_path
+
+            if fichier_docx:
+                agent_state["fichier_genere"] = fichier_docx
+                filename = Path(fichier_docx).name
+                agent_state["fichier_url"] = f"/files/{filename}"
+
+            return {
+                "succes": resultat.statut == "succes",
+                "type_acte": "vente",
+                "fichier_docx": fichier_docx,
+                "score_conformite": resultat.score_conformite,
+                "erreurs": resultat.erreurs,
+                "warnings": resultat.alertes,
+                "duree_generation": round(time.time() - start, 2),
+            }
+        except Exception as e:
+            logger.error(f"[GENERATE] Erreur generation vente: {e}", exc_info=True)
+            return {
+                "succes": False,
+                "type_acte": "vente",
+                "erreurs": [f"Erreur lors de la generation de l'acte de vente: {str(e)}"],
+                "warnings": [],
+                "fichier_docx": None,
+            }
 
     def _exec_search_clauses(
         self, tool_input: Dict, agent_state: Dict
