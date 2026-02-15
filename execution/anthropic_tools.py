@@ -14,6 +14,7 @@ Les tools wrappent:
 """
 
 import json
+import os
 import sys
 import logging
 from pathlib import Path
@@ -135,7 +136,7 @@ TOOLS = [
         "description": (
             "Genere le document final (promesse de vente ou acte de vente) au format DOCX. "
             "Verifier d'abord avec get_collection_progress que la collecte est suffisante, "
-            "puis valider avec validate_deed_data. Retourne le chemin du fichier. "
+            "puis valider avec validate_deed_data. Retourne le chemin du fichier et fichier_url. "
             "Si le notaire demande explicitement de generer meme avec des donnees incompletes, "
             "utiliser force=true pour generer un brouillon avec les champs manquants vides."
         ),
@@ -145,11 +146,15 @@ TOOLS = [
                 "type_acte": {
                     "type": "string",
                     "enum": ["promesse_vente", "vente"],
+<<<<<<< HEAD
+                    "description": "Type d'acte a generer (defaut: promesse_vente)",
+=======
                     "description": (
                         "Type d'acte a generer. 'promesse_vente' pour promesse unilaterale "
                         "(copropriete, hors copro, terrain, viager), 'vente' pour acte de vente "
                         "definitif. Si non specifie, utilise le type_acte du contexte de session."
                     ),
+>>>>>>> origin/master
                 },
                 "type_force": {
                     "type": "string",
@@ -444,8 +449,11 @@ class ToolExecutor:
         self, tool_input: Dict, agent_state: Dict
     ) -> Dict:
         """Genere le document DOCX final (promesse ou vente)."""
+<<<<<<< HEAD
+=======
         import os
 
+>>>>>>> origin/master
         donnees = agent_state.get("donnees_collectees", {})
 
         # SAFEGUARD: Verifier que les donnees ne sont pas vides
@@ -463,15 +471,47 @@ class ToolExecutor:
                 ],
                 "warnings": [],
                 "fichier_docx": None,
+                "fichier_url": None,
             }
 
+<<<<<<< HEAD
+        # Output dir: NOTAIRE_OUTPUT_DIR (Modal=/outputs, local=outputs/)
+        output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Determiner le type d'acte (tool_input > agent_state > defaut)
+=======
         # Déterminer le type d'acte (tool_input > agent_state > défaut)
+>>>>>>> origin/master
         type_acte = (
             tool_input.get("type_acte")
             or agent_state.get("type_acte")
             or "promesse_vente"
         )
 
+<<<<<<< HEAD
+        logger.info(
+            f"[GENERATE] type_acte={type_acte}, "
+            f"{len(donnees)} top-level keys: {list(donnees.keys())}"
+        )
+
+        # Parametre force pour generation partielle (brouillon)
+        force = tool_input.get("force", False)
+
+        # ---- Routing: promesse vs vente ----
+        if type_acte == "vente":
+            return self._generate_vente(donnees, output_dir, force, agent_state)
+        else:
+            return self._generate_promesse(
+                donnees, output_dir, force, tool_input, agent_state
+            )
+
+    def _generate_promesse(
+        self, donnees: Dict, output_dir: Path, force: bool,
+        tool_input: Dict, agent_state: Dict
+    ) -> Dict:
+        """Genere une promesse de vente via GestionnairePromesses."""
+=======
         # Répertoire de sortie : outputs/ pour que /files/ et /download/ trouvent le fichier
         output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -496,6 +536,7 @@ class ToolExecutor:
         force: bool, agent_state: Dict
     ) -> Dict:
         """Génère une promesse de vente via GestionnairePromesses."""
+>>>>>>> origin/master
         from execution.gestionnaires.gestionnaire_promesses import TypePromesse
 
         type_force = None
@@ -512,8 +553,12 @@ class ToolExecutor:
         )
 
         if resultat.succes and resultat.fichier_docx:
-            agent_state["fichier_genere"] = resultat.fichier_docx
             filename = Path(resultat.fichier_docx).name
+            agent_state["fichier_genere"] = resultat.fichier_docx
+<<<<<<< HEAD
+=======
+            filename = Path(resultat.fichier_docx).name
+>>>>>>> origin/master
             agent_state["fichier_url"] = f"/files/{filename}"
 
         return {
@@ -522,6 +567,7 @@ class ToolExecutor:
             "categorie_bien": resultat.categorie_bien.value,
             "type_promesse": resultat.type_promesse.value,
             "fichier_docx": resultat.fichier_docx,
+            "fichier_url": agent_state.get("fichier_url"),
             "sections_incluses": resultat.sections_incluses,
             "erreurs": resultat.erreurs,
             "warnings": resultat.warnings,
@@ -531,6 +577,37 @@ class ToolExecutor:
     def _generate_vente(
         self, donnees: Dict, output_dir: Path, force: bool, agent_state: Dict
     ) -> Dict:
+<<<<<<< HEAD
+        """Genere un acte de vente via OrchestratorNotaire."""
+        from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+
+        orchestrateur = OrchestratorNotaire(supabase_client=self.supabase)
+        output_path = str(output_dir / f"vente_{Path(output_dir).name}.docx")
+
+        resultat = orchestrateur.generer_acte_complet(
+            "vente", donnees, output=output_path
+        )
+
+        fichier_url = None
+        fichier_docx = None
+        if resultat.fichiers_generes:
+            fichier_docx = resultat.fichiers_generes[0]
+            filename = Path(fichier_docx).name
+            agent_state["fichier_genere"] = fichier_docx
+            agent_state["fichier_url"] = f"/files/{filename}"
+            fichier_url = f"/files/{filename}"
+
+        return {
+            "succes": resultat.statut == "succes",
+            "type_acte": "vente",
+            "fichier_docx": fichier_docx,
+            "fichier_url": fichier_url,
+            "erreurs": resultat.erreurs,
+            "warnings": resultat.alertes,
+            "duree_generation": resultat.duree_totale_ms / 1000,
+            "score_conformite": resultat.score_conformite,
+        }
+=======
         """Génère un acte de vente via OrchestratorNotaire."""
         import time
         try:
@@ -586,6 +663,7 @@ class ToolExecutor:
                 "warnings": [],
                 "fichier_docx": None,
             }
+>>>>>>> origin/master
 
     def _exec_search_clauses(
         self, tool_input: Dict, agent_state: Dict

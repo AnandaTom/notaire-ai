@@ -331,14 +331,23 @@ def detecter_type_acte_rapide(texte: str) -> Optional[str]:
             return "promesse_hors_copropriete"
         return "promesse_vente"
 
+<<<<<<< HEAD
+    if re.search(r'\bvente\b', texte_lower):
+        return "vente"
+=======
     # 3. Modificatif (AVANT edd car "modificatif edd" doit matcher ici, pas reglement)
     if re.search(r'\bmodificatif\b', texte_lower):
         return "modificatif_edd"
+>>>>>>> origin/master
 
     # 4. Donation
     if re.search(r'\bdonation\b', texte_lower):
         return "donation_partage"
 
+<<<<<<< HEAD
+    if re.search(r'\bmodificatif\b', texte_lower):
+        return "modificatif_edd"
+=======
     # 5. EDD / Règlement copropriété (après modificatif)
     if re.search(r'\bedd\b|r[eè]glement.*copro', texte_lower):
         return "reglement_copropriete"
@@ -348,6 +357,10 @@ def detecter_type_acte_rapide(texte: str) -> Optional[str]:
         return "vente"
     if re.search(r'\bvente\b', texte_lower):
         return "vente"
+>>>>>>> origin/master
+
+    if re.search(r'\bedd\b|r[eè]glement.*copro', texte_lower):
+        return "reglement_copropriete"
 
     # Ambigu → nécessite LLM
     return None
