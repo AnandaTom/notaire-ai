@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-14T14:09:19.835799",
+    "generated_at": "2026-02-15T06:52:05.456762",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 333
+    "commits": 334
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "ceef7f5",
-      "message": "fix: 7 corrections critiques chatbot → pipeline génération",
+      "hash": "315fba6",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-02-14"
     },
-    "total_commits": 333,
+    "total_commits": 334,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 95
+        "commits": 96
       },
       {
         "name": "augustinfrance-aico",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-14"
+      "last_modified": "2026-02-15"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1602,
-      "last_modified": "2026-02-14"
+      "last_modified": "2026-02-15"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-14"
+      "last_modified": "2026-02-15"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,7 +88,7 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-14"
+      "last_modified": "2026-02-15"
     }
   ],
   "scripts": {
@@ -623,6 +623,16 @@
   ],
   "activity": [
     {
+      "hash": "315fba6",
+      "author": "github-actions[bot]",
+      "date": "2026-02-14",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "ceef7f5",
       "author": "Payoss",
       "date": "2026-02-14",
@@ -811,16 +821,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "d592893",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge branch tom/dev into master - Release v2.0.0 + Audit Fevrier 2026",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1024,7 +1024,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-14"
+    "last_updated": "2026-02-15"
   },
   "overview": {
     "overall_score": 67,
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-14 14:09"
+    "last_updated": "2026-02-15 06:52"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-14 14:09"
+    "last_updated": "2026-02-15 06:52"
   },
   "conformity_details": {
     "promesse": {
