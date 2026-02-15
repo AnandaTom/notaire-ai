@@ -913,16 +913,13 @@ class OrchestratorNotaire:
         """
         Détection rapide du type d'acte par regex (0 coût LLM).
 
+        Délègue à la version canonique dans validation_deterministe.py
+        pour éviter la duplication de code.
+
         Retourne None si ambigu → nécessite fallback LLM.
-
         Économie: -$0.016/génération sur 80% des cas
-
-        Args:
-            texte: Texte de la demande
-
-        Returns:
-            Type d'acte détecté ou None si ambigu
         """
+<<<<<<< HEAD
         import re
 
         texte_lower = texte.lower()
@@ -953,6 +950,26 @@ class OrchestratorNotaire:
 
         # Ambigu → nécessite LLM
         return None
+=======
+        try:
+            from execution.utils.validation_deterministe import detecter_type_acte_rapide as _detect
+            return _detect(texte)
+        except ImportError:
+            try:
+                from utils.validation_deterministe import detecter_type_acte_rapide as _detect
+                return _detect(texte)
+            except ImportError:
+                # Fallback minimal si import échoue (Modal, tests isolés)
+                import re
+                texte_lower = texte.lower()
+                if re.search(r'\bpromesse\b', texte_lower):
+                    return "promesse_vente"
+                if re.search(r'\bmodificatif\b', texte_lower):
+                    return "modificatif_edd"
+                if re.search(r'\bvente\b', texte_lower):
+                    return "vente"
+                return None
+>>>>>>> origin/master
 
     def _choisir_modele(
         self,

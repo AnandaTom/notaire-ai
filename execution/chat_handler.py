@@ -554,11 +554,24 @@ Je vais charger la liste de vos dossiers depuis votre espace securise.
         )
 
     def _reponse_confirmation(self, entites, message, contexte, etude_id) -> ReponseChat:
+<<<<<<< HEAD
         """Reponse aux confirmations. Declenche la generation si prete."""
         # Si le questionnaire est complet et l'utilisateur confirme la generation
         if contexte.etape_workflow == "generation_prete":
             return self._declencher_generation(contexte, etude_id)
         elif contexte.etape_workflow:
+=======
+        """Reponse aux confirmations. Declenche la generation si pret."""
+        # Detecter si l'utilisateur demande la generation du document
+        msg_lower = message.lower() if message else ""
+        mots_generation = ["generer", "générer", "telecharger", "télécharger", "document", "oui"]
+        demande_generation = any(mot in msg_lower for mot in mots_generation)
+
+        if contexte.etape_workflow == "generation_prete" and contexte.donnees_collectees and demande_generation:
+            return self._declencher_generation(contexte, etude_id)
+
+        if contexte.etape_workflow:
+>>>>>>> origin/master
             return ReponseChat(
                 content="Parfait, je continue avec les informations fournies.",
                 suggestions=["Etape suivante", "Modifier", "Annuler"]
@@ -570,6 +583,7 @@ Je vais charger la liste de vos dossiers depuis votre espace securise.
             )
 
     def _declencher_generation(self, contexte, etude_id) -> ReponseChat:
+<<<<<<< HEAD
         """Declenche la generation DOCX depuis les donnees collectees."""
         from pathlib import Path
 
@@ -626,6 +640,64 @@ Je vais charger la liste de vos dossiers depuis votre espace securise.
             return ReponseChat(
                 content=f"Erreur lors de la generation : {str(e)}",
                 suggestions=["Reessayer", "Modifier les donnees", "Aide"],
+=======
+        """Declenche la generation DOCX depuis les donnees collectees (fallback ChatHandler)."""
+        try:
+            import os
+            from pathlib import Path
+            from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
+
+            donnees = contexte.donnees_collectees
+            type_acte = contexte.type_acte_en_cours or "promesse_vente"
+
+            output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
+            output_dir.mkdir(parents=True, exist_ok=True)
+
+            if type_acte == "vente":
+                from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+                from datetime import datetime
+                orchestrateur = OrchestratorNotaire()
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_path = str(output_dir / f"vente_{timestamp}.docx")
+                resultat = orchestrateur.generer_acte_complet("vente", donnees, output=output_path)
+                if resultat.statut == "succes" and resultat.fichiers_generes:
+                    filename = Path(resultat.fichiers_generes[0]).name
+                    return ReponseChat(
+                        content=f"Votre acte de vente a ete genere avec succes.",
+                        suggestions=["Telecharger le document", "Modifier", "Nouveau dossier"],
+                        action={"type": "document_generated", "fichier_url": f"/files/{filename}"},
+                        contexte_mis_a_jour={"etape_workflow": "termine"}
+                    )
+                else:
+                    erreurs = ", ".join(resultat.erreurs[:3]) if resultat.erreurs else "Erreur inconnue"
+                    return ReponseChat(
+                        content=f"La generation a echoue: {erreurs}",
+                        suggestions=["Modifier les donnees", "Reessayer", "Aide"]
+                    )
+            else:
+                gestionnaire = GestionnairePromesses()
+                resultat = gestionnaire.generer(donnees, force=True, output_dir=output_dir)
+                if resultat.succes and resultat.fichier_docx:
+                    filename = Path(resultat.fichier_docx).name
+                    return ReponseChat(
+                        content=f"Votre promesse de vente a ete generee avec succes.",
+                        suggestions=["Telecharger le document", "Modifier", "Nouveau dossier"],
+                        action={"type": "document_generated", "fichier_url": f"/files/{filename}"},
+                        contexte_mis_a_jour={"etape_workflow": "termine"}
+                    )
+                else:
+                    erreurs = ", ".join(resultat.erreurs[:3]) if resultat.erreurs else "Erreur inconnue"
+                    return ReponseChat(
+                        content=f"La generation a echoue: {erreurs}",
+                        suggestions=["Modifier les donnees", "Reessayer", "Aide"]
+                    )
+        except Exception as e:
+            if self.verbose:
+                print(f"[ChatHandler] Erreur generation: {e}")
+            return ReponseChat(
+                content=f"Une erreur est survenue lors de la generation. Veuillez reessayer.",
+                suggestions=["Reessayer", "Aide", "Annuler"]
+>>>>>>> origin/master
             )
 
     def _reponse_annulation(self, entites, message, contexte, etude_id) -> ReponseChat:

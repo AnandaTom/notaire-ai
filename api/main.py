@@ -1050,8 +1050,9 @@ async def download_file_secure(
     for output_dir in output_dirs:
         file_path = os.path.join(output_dir, filename)
         candidate = os.path.realpath(file_path)
-        # Sécurité : vérifier que le fichier est bien dans un répertoire autorisé
-        if os.path.isfile(candidate):
+        real_base = os.path.realpath(output_dir)
+        # Sécurité : vérifier que le fichier est dans un répertoire autorisé (path traversal)
+        if os.path.isfile(candidate) and candidate.startswith(real_base + os.sep):
             real_path = candidate
             break
 
