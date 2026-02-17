@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-17T06:58:35.419695",
+    "generated_at": "2026-02-17T16:09:21.979715",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 336
+    "commits": 338
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "a0413fe",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-02-16"
+      "hash": "98ebb0e",
+      "message": "feat: workflow engine frontend complet (20 composants + store Zustand)",
+      "date": "2026-02-17"
     },
-    "total_commits": 336,
+    "total_commits": 338,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 99
+        "commits": 100
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 45
+        "commits": 46
       },
       {
         "name": "Payoss",
@@ -623,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "98ebb0e",
+      "author": "Augustin",
+      "date": "2026-02-17",
+      "message": "workflow engine frontend complet (20 composants + store Zustand)",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "cc3346d",
+      "author": "github-actions[bot]",
+      "date": "2026-02-17",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "a0413fe",
       "author": "github-actions[bot]",
       "date": "2026-02-16",
@@ -801,26 +821,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "09aa4a1",
-      "author": "Tom",
-      "date": "2026-02-11",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "8592402",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-17 06:58"
+    "last_updated": "2026-02-17 16:09"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-17 06:58"
+    "last_updated": "2026-02-17 16:09"
   },
   "conformity_details": {
     "promesse": {
