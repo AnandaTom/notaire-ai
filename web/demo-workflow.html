@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notomai — Workflow Engine Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivory: '#fdfcfa',
+            cream: '#f9f7f4',
+            sand: '#f3efe9',
+            champagne: '#e8e2d9',
+            gold: { light: '#d4b978', DEFAULT: '#c4a35a', dark: '#a8893d' },
+            charcoal: '#2c2c2c',
+            graphite: '#4a4a4a',
+            slate: '#7a7a7a',
+            navy: '#1e3a5f',
+          },
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans: ['DM Sans', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'DM Sans', system-ui, sans-serif; }
+    .font-serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+    /* Subtle paper texture */
+    .bg-paper {
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes progressPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @keyframes checkDraw {
+      from { stroke-dashoffset: 20; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes barGrow {
+      from { width: 0; }
+    }
+    @keyframes dotPulse {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    .anim-fade-up { animation: fadeInUp 0.5s ease-out both; }
+    .anim-fade { animation: fadeIn 0.4s ease-out both; }
+    .anim-slide-left { animation: slideInLeft 0.4s ease-out both; }
+    .anim-scale { animation: scaleIn 0.3s ease-out both; }
+    .anim-pulse { animation: progressPulse 1.5s ease-in-out infinite; }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    /* Custom radio */
+    .radio-option input:checked + .radio-label {
+      border-color: #c4a35a;
+      background: linear-gradient(135deg, #fdfcfa 0%, #f9f7f4 100%);
+      box-shadow: 0 0 0 2px rgba(196, 163, 90, 0.15);
+    }
+    .radio-option input:checked + .radio-label .radio-dot {
+      background: #c4a35a;
+      box-shadow: 0 0 0 3px rgba(196, 163, 90, 0.2);
+    }
+
+    /* Tab active underline */
+    .tab-active {
+      color: #c4a35a;
+      border-bottom: 2px solid #c4a35a;
+      font-weight: 600;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e8e2d9; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #c4a35a; }
+
+    /* Progress bar animation */
+    .progress-bar-fill {
+      animation: barGrow 1s ease-out both;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Dots animation */
+    .dot-1 { animation: dotPulse 1.4s ease-in-out infinite; animation-delay: 0s; }
+    .dot-2 { animation: dotPulse 1.4s ease-in-out infinite; animation-delay: 0.2s; }
+    .dot-3 { animation: dotPulse 1.4s ease-in-out infinite; animation-delay: 0.4s; }
+
+    /* Decorative line pattern */
+    .deco-line {
+      background: repeating-linear-gradient(
+        90deg,
+        #e8e2d9 0px,
+        #e8e2d9 8px,
+        transparent 8px,
+        transparent 16px
+      );
+      height: 1px;
+    }
+
+    /* Hover card lift */
+    .card-lift {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px -8px rgba(196, 163, 90, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-ivory bg-paper min-h-screen text-charcoal">
+
+  <!-- ========== HEADER ========== -->
+  <header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur-sm border-b border-champagne">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-gradient-to-br from-gold to-gold-dark rounded-lg flex items-center justify-center shadow-sm">
+          <span class="text-white font-serif font-bold text-sm">N</span>
+        </div>
+        <span class="font-serif text-xl font-semibold tracking-tight text-charcoal">Notomai</span>
+        <span class="text-[0.65rem] font-medium text-gold bg-gold/10 px-2 py-0.5 rounded-full ml-1">DEMO</span>
+      </div>
+
+      <!-- Tabs -->
+      <nav class="flex gap-1" id="tabNav">
+        <button onclick="showScreen(0)" class="tab-btn tab-active px-4 py-2 text-[0.82rem] rounded-t-lg transition-all" data-tab="0">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Selection
+          </span>
+        </button>
+        <button onclick="showScreen(1)" class="tab-btn px-4 py-2 text-[0.82rem] text-slate hover:text-charcoal rounded-t-lg transition-all" data-tab="1">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i>
+            Formulaire
+          </span>
+        </button>
+        <button onclick="showScreen(2)" class="tab-btn px-4 py-2 text-[0.82rem] text-slate hover:text-charcoal rounded-t-lg transition-all" data-tab="2">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+            Relecture
+          </span>
+        </button>
+        <button onclick="showScreen(3)" class="tab-btn px-4 py-2 text-[0.82rem] text-slate hover:text-charcoal rounded-t-lg transition-all" data-tab="3">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+            Generation
+          </span>
+        </button>
+      </nav>
+
+      <div class="text-[0.72rem] text-slate">
+        v2.0.0 &middot; Fevrier 2026
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== SCREEN 0: TYPE SELECTION ========== -->
+  <main id="screen0" class="screen">
+    <div class="max-w-3xl mx-auto py-16 px-6">
+      <div class="text-center mb-12 anim-fade-up">
+        <h1 class="font-serif text-3xl font-semibold text-charcoal mb-3">
+          Creer un nouvel acte
+        </h1>
+        <p class="text-[0.9rem] text-slate max-w-md mx-auto leading-relaxed">
+          Selectionnez le type d'acte notarial a generer. Le systeme adaptera automatiquement le formulaire.
+        </p>
+        <div class="deco-line w-24 mx-auto mt-6"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-5">
+        <!-- Promesse de vente -->
+        <button onclick="showScreen(1)" class="card-lift group flex flex-col items-start gap-4 p-7 bg-cream border border-champagne rounded-2xl hover:border-gold text-left anim-fade-up delay-1">
+          <div class="w-12 h-12 bg-sand border border-champagne rounded-xl flex items-center justify-center group-hover:bg-gold/10 group-hover:border-gold/30 transition-all">
+            <i data-lucide="file-text" class="w-5 h-5 text-gold-dark"></i>
+          </div>
+          <div>
+            <h3 class="text-[0.95rem] font-semibold text-charcoal mb-1.5">Promesse de vente</h3>
+            <p class="text-[0.78rem] text-slate leading-relaxed">Promesse unilaterale de vente (copropriete, maison, terrain, viager)</p>
+          </div>
+          <div class="flex items-center gap-2 mt-auto">
+            <span class="text-[0.68rem] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">88.9% conformite</span>
+            <span class="text-[0.68rem] font-medium text-slate bg-sand px-2 py-0.5 rounded-full">4 categories</span>
+          </div>
+        </button>
+
+        <!-- Acte de vente -->
+        <button onclick="showScreen(1)" class="card-lift group flex flex-col items-start gap-4 p-7 bg-cream border border-champagne rounded-2xl hover:border-gold text-left anim-fade-up delay-2">
+          <div class="w-12 h-12 bg-sand border border-champagne rounded-xl flex items-center justify-center group-hover:bg-gold/10 group-hover:border-gold/30 transition-all">
+            <i data-lucide="file-check" class="w-5 h-5 text-gold-dark"></i>
+          </div>
+          <div>
+            <h3 class="text-[0.95rem] font-semibold text-charcoal mb-1.5">Acte de vente</h3>
+            <p class="text-[0.78rem] text-slate leading-relaxed">Acte de vente definitif de lots de copropriete</p>
+          </div>
+          <div class="flex items-center gap-2 mt-auto">
+            <span class="text-[0.68rem] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">80.2% conformite</span>
+            <span class="text-[0.68rem] font-medium text-slate bg-sand px-2 py-0.5 rounded-full">361 bookmarks</span>
+          </div>
+        </button>
+
+        <!-- Reglement copropriete -->
+        <button onclick="showScreen(1)" class="card-lift group flex flex-col items-start gap-4 p-7 bg-cream border border-champagne rounded-2xl hover:border-gold text-left anim-fade-up delay-3">
+          <div class="w-12 h-12 bg-sand border border-champagne rounded-xl flex items-center justify-center group-hover:bg-gold/10 group-hover:border-gold/30 transition-all">
+            <i data-lucide="building" class="w-5 h-5 text-gold-dark"></i>
+          </div>
+          <div>
+            <h3 class="text-[0.95rem] font-semibold text-charcoal mb-1.5">Reglement de copropriete</h3>
+            <p class="text-[0.78rem] text-slate leading-relaxed">Etat descriptif de division et reglement de copropriete</p>
+          </div>
+          <div class="flex items-center gap-2 mt-auto">
+            <span class="text-[0.68rem] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">85.5% conformite</span>
+            <span class="text-[0.68rem] font-medium text-slate bg-sand px-2 py-0.5 rounded-full">116 bookmarks</span>
+          </div>
+        </button>
+
+        <!-- Modificatif EDD -->
+        <button onclick="showScreen(1)" class="card-lift group flex flex-col items-start gap-4 p-7 bg-cream border border-champagne rounded-2xl hover:border-gold text-left anim-fade-up delay-4">
+          <div class="w-12 h-12 bg-sand border border-champagne rounded-xl flex items-center justify-center group-hover:bg-gold/10 group-hover:border-gold/30 transition-all">
+            <i data-lucide="file-pen" class="w-5 h-5 text-gold-dark"></i>
+          </div>
+          <div>
+            <h3 class="text-[0.95rem] font-semibold text-charcoal mb-1.5">Modificatif EDD</h3>
+            <p class="text-[0.78rem] text-slate leading-relaxed">Modification de l'etat descriptif de division</p>
+          </div>
+          <div class="flex items-center gap-2 mt-auto">
+            <span class="text-[0.68rem] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">91.7% conformite</span>
+            <span class="text-[0.68rem] font-medium text-slate bg-sand px-2 py-0.5 rounded-full">60 bookmarks</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========== SCREEN 1: FORM + SIDEBAR ========== -->
+  <main id="screen1" class="screen hidden">
+    <!-- Sub-header with workflow info -->
+    <div class="bg-cream border-b border-champagne">
+      <div class="max-w-7xl mx-auto px-6 py-2.5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button onclick="showScreen(0)" class="flex items-center gap-1.5 text-[0.78rem] text-slate hover:text-charcoal transition-colors">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            Retour
+          </button>
+          <div class="w-px h-4 bg-champagne"></div>
+          <span class="text-[0.82rem] font-semibold text-charcoal">Promesse de vente</span>
+          <span class="text-[0.68rem] font-medium text-navy bg-navy/10 px-2 py-0.5 rounded-full">Copropriete</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+            <span class="text-[0.75rem] font-medium text-emerald-600">85% confiance</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[0.72rem] text-slate">34%</span>
+            <div class="w-28 h-1.5 bg-champagne rounded-full overflow-hidden">
+              <div class="h-full bg-gold rounded-full progress-bar-fill" style="width: 34%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex" style="height: calc(100vh - 110px);">
+      <!-- SIDEBAR -->
+      <aside class="w-72 bg-cream border-r border-champagne overflow-y-auto flex-shrink-0 py-5 px-4">
+        <div class="mb-5 px-2">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[0.72rem] font-semibold text-slate uppercase tracking-wider">Progression</span>
+            <span class="text-[0.78rem] font-semibold text-gold">34%</span>
+          </div>
+          <div class="w-full h-2 bg-champagne/60 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-gold to-gold-light rounded-full progress-bar-fill" style="width: 34%"></div>
+          </div>
+        </div>
+
+        <nav class="space-y-0.5">
+          <!-- Completed sections -->
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/50 transition-all group">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-charcoal block truncate">1. Informations generales</span>
+              <span class="text-[0.65rem] text-emerald-600">Termine</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/50 transition-all group">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-charcoal block truncate">2. Type de bien</span>
+              <span class="text-[0.65rem] text-emerald-600">Termine</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/50 transition-all group">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-charcoal block truncate">3. Designation du bien</span>
+              <span class="text-[0.65rem] text-emerald-600">Termine</span>
+            </div>
+          </button>
+
+          <!-- Current section -->
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left bg-gold/8 border border-gold/20 transition-all">
+            <div class="w-5 h-5 bg-gold/20 rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-gold-dark">4</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-semibold text-charcoal block truncate">4. Vendeur - Identite</span>
+              <span class="text-[0.65rem] text-gold-dark font-medium">En cours</span>
+            </div>
+          </button>
+
+          <!-- Upcoming sections -->
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/30 transition-all opacity-60">
+            <div class="w-5 h-5 bg-sand rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-slate">5</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-slate block truncate">5. Vendeur - Matrimonial</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/30 transition-all opacity-60">
+            <div class="w-5 h-5 bg-sand rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-slate">6</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-slate block truncate">6. Acquereur - Identite</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/30 transition-all opacity-60">
+            <div class="w-5 h-5 bg-sand rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-slate">7</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-slate block truncate">7. Acquereur - Matrimonial</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/30 transition-all opacity-60">
+            <div class="w-5 h-5 bg-sand rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-slate">8</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-slate block truncate">8. Lots de copropriete</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/30 transition-all opacity-60">
+            <div class="w-5 h-5 bg-sand rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-slate">9</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-slate block truncate">9. Prix et paiement</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/30 transition-all opacity-60">
+            <div class="w-5 h-5 bg-sand rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-slate">10</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-slate block truncate">10. Conditions suspensives</span>
+            </div>
+          </button>
+
+          <button class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left hover:bg-sand/30 transition-all opacity-60">
+            <div class="w-5 h-5 bg-sand rounded-md flex items-center justify-center flex-shrink-0">
+              <span class="text-[0.6rem] font-bold text-slate">11</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[0.78rem] font-medium text-slate block truncate">11. Diagnostics</span>
+            </div>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- MAIN FORM -->
+      <div class="flex-1 overflow-y-auto">
+        <div class="max-w-2xl mx-auto py-8 px-8">
+          <!-- Section title -->
+          <div class="mb-8 anim-fade-up">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 bg-gold/15 rounded-lg flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-gold-dark"></i>
+              </div>
+              <h2 class="font-serif text-xl font-semibold text-charcoal">Vendeur &mdash; Identite</h2>
+            </div>
+            <p class="text-[0.82rem] text-slate ml-9">Renseignez l'identite complete du vendeur (promettant).</p>
+          </div>
+
+          <!-- Form fields -->
+          <div class="space-y-6">
+            <!-- Nom -->
+            <div class="anim-fade-up delay-1">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-1.5">
+                Nom de famille <span class="text-red-400">*</span>
+              </label>
+              <input type="text" value="MARTIN" class="w-full px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.88rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/40" />
+            </div>
+
+            <!-- Prenom -->
+            <div class="anim-fade-up delay-2">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-1.5">
+                Prenoms <span class="text-red-400">*</span>
+              </label>
+              <input type="text" value="Jean-Pierre, Marie" class="w-full px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.88rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/40" />
+            </div>
+
+            <!-- Date de naissance -->
+            <div class="anim-fade-up delay-3">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-1.5">
+                Date de naissance <span class="text-red-400">*</span>
+              </label>
+              <input type="date" value="1967-03-15" class="w-full px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.88rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all" />
+              <p class="text-[0.72rem] text-slate mt-1.5 ml-1">Format: JJ/MM/AAAA</p>
+            </div>
+
+            <!-- Lieu de naissance -->
+            <div class="anim-fade-up delay-4">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-1.5">
+                Lieu de naissance <span class="text-red-400">*</span>
+              </label>
+              <input type="text" value="Lyon 3eme (Rhone)" class="w-full px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.88rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/40" />
+            </div>
+
+            <!-- Situation matrimoniale (radio) -->
+            <div class="anim-fade-up">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-3">
+                Situation matrimoniale <span class="text-red-400">*</span>
+              </label>
+              <div class="space-y-2">
+                <label class="radio-option flex cursor-pointer">
+                  <input type="radio" name="matrimonial" class="hidden peer" />
+                  <div class="radio-label flex items-center gap-3 w-full px-4 py-3 bg-cream border border-champagne rounded-xl transition-all hover:border-gold/40">
+                    <div class="radio-dot w-4 h-4 rounded-full border-2 border-champagne transition-all flex-shrink-0"></div>
+                    <span class="text-[0.85rem] text-charcoal">Celibataire</span>
+                  </div>
+                </label>
+                <label class="radio-option flex cursor-pointer">
+                  <input type="radio" name="matrimonial" class="hidden peer" checked />
+                  <div class="radio-label flex items-center gap-3 w-full px-4 py-3 bg-cream border border-gold rounded-xl transition-all" style="background: linear-gradient(135deg, #fdfcfa 0%, #f9f7f4 100%); box-shadow: 0 0 0 2px rgba(196, 163, 90, 0.15);">
+                    <div class="radio-dot w-4 h-4 rounded-full border-2 border-gold bg-gold flex-shrink-0" style="box-shadow: 0 0 0 3px rgba(196, 163, 90, 0.2);"></div>
+                    <span class="text-[0.85rem] text-charcoal font-medium">Marie(e)</span>
+                  </div>
+                </label>
+                <label class="radio-option flex cursor-pointer">
+                  <input type="radio" name="matrimonial" class="hidden peer" />
+                  <div class="radio-label flex items-center gap-3 w-full px-4 py-3 bg-cream border border-champagne rounded-xl transition-all hover:border-gold/40">
+                    <div class="radio-dot w-4 h-4 rounded-full border-2 border-champagne transition-all flex-shrink-0"></div>
+                    <span class="text-[0.85rem] text-charcoal">Pacse(e)</span>
+                  </div>
+                </label>
+                <label class="radio-option flex cursor-pointer">
+                  <input type="radio" name="matrimonial" class="hidden peer" />
+                  <div class="radio-label flex items-center gap-3 w-full px-4 py-3 bg-cream border border-champagne rounded-xl transition-all hover:border-gold/40">
+                    <div class="radio-dot w-4 h-4 rounded-full border-2 border-champagne transition-all flex-shrink-0"></div>
+                    <span class="text-[0.85rem] text-charcoal">Divorce(e)</span>
+                  </div>
+                </label>
+                <label class="radio-option flex cursor-pointer">
+                  <input type="radio" name="matrimonial" class="hidden peer" />
+                  <div class="radio-label flex items-center gap-3 w-full px-4 py-3 bg-cream border border-champagne rounded-xl transition-all hover:border-gold/40">
+                    <div class="radio-dot w-4 h-4 rounded-full border-2 border-champagne transition-all flex-shrink-0"></div>
+                    <span class="text-[0.85rem] text-charcoal">Veuf/Veuve</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Regime matrimonial (sous-question, visible car marie) -->
+            <div class="ml-4 pl-4 border-l-2 border-gold/30 anim-slide-left">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-1.5">
+                Regime matrimonial
+              </label>
+              <input type="text" value="Communaute de biens reduite aux acquets" class="w-full px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.88rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all" />
+              <p class="text-[0.72rem] text-slate mt-1.5 ml-1">Regime legal par defaut si non specifie au contrat de mariage</p>
+            </div>
+
+            <!-- Boolean: Conjoint intervient -->
+            <div class="anim-fade-up">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-3">
+                Le conjoint intervient-il a l'acte ?
+              </label>
+              <div class="flex gap-3">
+                <label class="flex-1 cursor-pointer">
+                  <input type="radio" name="conjoint" class="hidden peer" checked />
+                  <div class="peer-checked:bg-emerald-50 peer-checked:border-emerald-400 peer-checked:text-emerald-700 flex items-center justify-center gap-2 px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-slate transition-all hover:border-gold/40">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    Oui
+                  </div>
+                </label>
+                <label class="flex-1 cursor-pointer">
+                  <input type="radio" name="conjoint" class="hidden peer" />
+                  <div class="peer-checked:bg-red-50 peer-checked:border-red-300 peer-checked:text-red-600 flex items-center justify-center gap-2 px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-slate transition-all hover:border-gold/40">
+                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                    Non
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Adresse -->
+            <div class="anim-fade-up">
+              <label class="block text-[0.82rem] font-medium text-charcoal mb-1.5">
+                Adresse du domicile <span class="text-red-400">*</span>
+              </label>
+              <input type="text" value="42 avenue des Champs-Elysees, 75008 Paris" class="w-full px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.88rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all" />
+            </div>
+          </div>
+
+          <!-- Navigation buttons -->
+          <div class="flex items-center justify-between mt-10 pt-6 border-t border-champagne">
+            <button class="flex items-center gap-2 px-5 py-2.5 text-[0.82rem] font-medium text-slate border border-champagne rounded-xl hover:bg-sand hover:text-charcoal transition-all">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              Precedent
+            </button>
+            <button onclick="showScreen(2)" class="flex items-center gap-2 px-6 py-2.5 bg-gold text-white rounded-xl text-[0.85rem] font-semibold hover:bg-gold-dark transition-all shadow-lg shadow-gold/20">
+              Suivant
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========== SCREEN 2: REVIEW ========== -->
+  <main id="screen2" class="screen hidden">
+    <div class="max-w-2xl mx-auto py-8 px-6">
+      <div class="mb-8 anim-fade-up">
+        <h2 class="font-serif text-xl font-semibold text-charcoal mb-2">
+          Relecture avant generation
+        </h2>
+        <p class="text-[0.85rem] text-slate">
+          Verifiez les informations saisies avant de generer le document.
+        </p>
+      </div>
+
+      <!-- Alerts -->
+      <div class="space-y-2 mb-6 anim-fade-up delay-1">
+        <div class="flex items-start gap-2.5 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0"></i>
+          <p class="text-[0.82rem] text-amber-700">Le diagnostic DPE n'a pas ete renseigne. Il est obligatoire depuis le 1er janvier 2023.</p>
+        </div>
+        <div class="flex items-start gap-2.5 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0"></i>
+          <p class="text-[0.82rem] text-amber-700">L'indemnite d'immobilisation n'est pas renseignee (recommande: 10% du prix).</p>
+        </div>
+      </div>
+
+      <!-- Review sections -->
+      <div class="space-y-3">
+        <!-- Section 1: Vendeur -->
+        <div class="border border-champagne rounded-xl overflow-hidden bg-ivory anim-fade-up delay-1">
+          <button onclick="toggleReviewSection(this)" class="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-sand/50 transition-all">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <span class="flex-1 text-left text-[0.85rem] font-medium text-charcoal">Vendeur - Identite</span>
+            <span class="text-[0.72rem] text-slate mr-2">6/6</span>
+            <i data-lucide="chevron-up" class="w-4 h-4 text-slate section-chevron"></i>
+          </button>
+          <div class="px-5 pb-4 border-t border-champagne/50 section-content">
+            <div class="pt-3 space-y-2">
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Nom</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">MARTIN</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Prenoms</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Jean-Pierre, Marie</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Date de naissance</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">15/03/1967</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Lieu de naissance</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Lyon 3eme (Rhone)</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Situation matrimoniale</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Marie(e)</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Adresse</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">42 av. Champs-Elysees, 75008 Paris</span>
+              </div>
+            </div>
+            <button onclick="showScreen(1)" class="mt-3 flex items-center gap-1.5 text-[0.78rem] text-gold-dark hover:text-gold font-medium transition-colors">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Modifier
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 2: Vendeur Matrimonial -->
+        <div class="border border-champagne rounded-xl overflow-hidden bg-ivory anim-fade-up delay-2">
+          <button onclick="toggleReviewSection(this)" class="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-sand/50 transition-all">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <span class="flex-1 text-left text-[0.85rem] font-medium text-charcoal">Vendeur - Regime matrimonial</span>
+            <span class="text-[0.72rem] text-slate mr-2">3/3</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate section-chevron"></i>
+          </button>
+          <div class="px-5 pb-4 border-t border-champagne/50 section-content hidden">
+            <div class="pt-3 space-y-2">
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Regime</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Communaute reduite aux acquets</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Contrat de mariage</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Non</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Conjoint intervient</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Oui</span>
+              </div>
+            </div>
+            <button class="mt-3 flex items-center gap-1.5 text-[0.78rem] text-gold-dark hover:text-gold font-medium transition-colors">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Modifier
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 3: Acquereur -->
+        <div class="border border-champagne rounded-xl overflow-hidden bg-ivory anim-fade-up delay-3">
+          <button onclick="toggleReviewSection(this)" class="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-sand/50 transition-all">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <span class="flex-1 text-left text-[0.85rem] font-medium text-charcoal">Acquereur - Identite</span>
+            <span class="text-[0.72rem] text-slate mr-2">5/5</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate section-chevron"></i>
+          </button>
+          <div class="px-5 pb-4 border-t border-champagne/50 section-content hidden">
+            <div class="pt-3 space-y-2">
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Nom</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">DUPONT</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Prenoms</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Sophie, Anne</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Date de naissance</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">22/07/1985</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Situation</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Celibataire</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Adresse</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">15 rue Victor Hugo, 69002 Lyon</span>
+              </div>
+            </div>
+            <button class="mt-3 flex items-center gap-1.5 text-[0.78rem] text-gold-dark hover:text-gold font-medium transition-colors">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Modifier
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 4: Bien -->
+        <div class="border border-champagne rounded-xl overflow-hidden bg-ivory anim-fade-up delay-4">
+          <button onclick="toggleReviewSection(this)" class="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-sand/50 transition-all">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <span class="flex-1 text-left text-[0.85rem] font-medium text-charcoal">Designation du bien</span>
+            <span class="text-[0.72rem] text-slate mr-2">4/4</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate section-chevron"></i>
+          </button>
+          <div class="px-5 pb-4 border-t border-champagne/50 section-content hidden">
+            <div class="pt-3 space-y-2">
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Adresse du bien</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">8 rue de Rivoli, 75004 Paris</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Type</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Appartement T3</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Surface Carrez</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">68.50 m&sup2;</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Cadastre</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">AH 0068 (Paris 4e)</span>
+              </div>
+            </div>
+            <button class="mt-3 flex items-center gap-1.5 text-[0.78rem] text-gold-dark hover:text-gold font-medium transition-colors">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Modifier
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 5: Prix -->
+        <div class="border border-champagne rounded-xl overflow-hidden bg-ivory anim-fade-up">
+          <button onclick="toggleReviewSection(this)" class="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-sand/50 transition-all">
+            <div class="w-5 h-5 bg-emerald-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>
+            </div>
+            <span class="flex-1 text-left text-[0.85rem] font-medium text-charcoal">Prix et paiement</span>
+            <span class="text-[0.72rem] text-slate mr-2">2/2</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate section-chevron"></i>
+          </button>
+          <div class="px-5 pb-4 border-t border-champagne/50 section-content hidden">
+            <div class="pt-3 space-y-2">
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Prix de vente</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">485 000 &euro;</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Modalites</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Comptant le jour de la signature</span>
+              </div>
+            </div>
+            <button class="mt-3 flex items-center gap-1.5 text-[0.78rem] text-gold-dark hover:text-gold font-medium transition-colors">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Modifier
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 6: Diagnostics (incomplete) -->
+        <div class="border border-amber-200 rounded-xl overflow-hidden bg-ivory anim-fade-up">
+          <button onclick="toggleReviewSection(this)" class="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-sand/50 transition-all">
+            <div class="w-5 h-5 bg-amber-100 rounded-md flex items-center justify-center flex-shrink-0">
+              <i data-lucide="alert-triangle" class="w-3 h-3 text-amber-500"></i>
+            </div>
+            <span class="flex-1 text-left text-[0.85rem] font-medium text-charcoal">Diagnostics</span>
+            <span class="text-[0.72rem] text-amber-600 font-medium mr-2">1/3</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate section-chevron"></i>
+          </button>
+          <div class="px-5 pb-4 border-t border-champagne/50 section-content hidden">
+            <div class="pt-3 space-y-2">
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Amiante</span>
+                <span class="text-[0.82rem] font-medium text-charcoal ml-4 text-right">Negatif - 12/01/2025</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">DPE</span>
+                <span class="text-[0.82rem] font-medium text-slate/40 italic ml-4 text-right">Non renseigne</span>
+              </div>
+              <div class="flex justify-between items-baseline py-1.5">
+                <span class="text-[0.8rem] text-slate">Plomb</span>
+                <span class="text-[0.82rem] font-medium text-slate/40 italic ml-4 text-right">Non renseigne</span>
+              </div>
+            </div>
+            <button onclick="showScreen(1)" class="mt-3 flex items-center gap-1.5 text-[0.78rem] text-gold-dark hover:text-gold font-medium transition-colors">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Modifier
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate button -->
+      <div class="mt-10 flex justify-center anim-fade-up">
+        <button onclick="showScreen(3)" class="px-10 py-4 bg-gold text-white rounded-xl text-[0.92rem] font-semibold hover:bg-gold-dark transition-all shadow-xl shadow-gold/25 flex items-center gap-2.5">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+          Generer le document
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========== SCREEN 3: GENERATION PROGRESS ========== -->
+  <main id="screen3" class="screen hidden">
+    <div class="max-w-lg mx-auto py-16 px-6">
+      <div class="text-center mb-10 anim-fade-up">
+        <div class="w-16 h-16 bg-gold/10 rounded-2xl flex items-center justify-center mx-auto mb-5 anim-scale">
+          <i data-lucide="file-text" class="w-8 h-8 text-gold"></i>
+        </div>
+        <h2 class="font-serif text-xl font-semibold text-charcoal mb-2">Generation en cours</h2>
+        <p class="text-[0.85rem] text-slate">Promesse de vente &mdash; Copropriete</p>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="mb-8 anim-fade-up delay-1">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[0.78rem] font-medium text-charcoal" id="progressLabel">Assemblage du document...</span>
+          <span class="text-[0.78rem] font-semibold text-gold" id="progressPercent">72%</span>
+        </div>
+        <div class="w-full h-2.5 bg-champagne/60 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-gold to-gold-light rounded-full transition-all duration-700" id="progressBar" style="width: 72%"></div>
+        </div>
+      </div>
+
+      <!-- Steps checklist -->
+      <div class="space-y-2 anim-fade-up delay-2" id="generationSteps">
+        <!-- Step 1: Done -->
+        <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50/50 border border-emerald-200/50 rounded-xl">
+          <div class="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+          </div>
+          <span class="text-[0.85rem] text-emerald-700 font-medium flex-1">Detection du type d'acte</span>
+          <span class="text-[0.72rem] text-emerald-500">0.3s</span>
+        </div>
+
+        <!-- Step 2: Done -->
+        <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50/50 border border-emerald-200/50 rounded-xl">
+          <div class="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+          </div>
+          <span class="text-[0.85rem] text-emerald-700 font-medium flex-1">Validation des donnees</span>
+          <span class="text-[0.72rem] text-emerald-500">1.2s</span>
+        </div>
+
+        <!-- Step 3: Done -->
+        <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50/50 border border-emerald-200/50 rounded-xl">
+          <div class="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+          </div>
+          <span class="text-[0.85rem] text-emerald-700 font-medium flex-1">Enrichissement cadastre</span>
+          <span class="text-[0.72rem] text-emerald-500">2.1s</span>
+        </div>
+
+        <!-- Step 4: In progress -->
+        <div class="flex items-center gap-3 px-4 py-3 bg-gold/5 border border-gold/20 rounded-xl">
+          <div class="w-6 h-6 bg-gold/15 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="flex gap-0.5">
+              <div class="w-1.5 h-1.5 bg-gold rounded-full dot-1"></div>
+              <div class="w-1.5 h-1.5 bg-gold rounded-full dot-2"></div>
+              <div class="w-1.5 h-1.5 bg-gold rounded-full dot-3"></div>
+            </div>
+          </div>
+          <span class="text-[0.85rem] text-gold-dark font-semibold flex-1">Assemblage du document</span>
+          <span class="text-[0.72rem] text-gold anim-pulse">en cours...</span>
+        </div>
+
+        <!-- Step 5: Pending -->
+        <div class="flex items-center gap-3 px-4 py-3 bg-cream border border-champagne rounded-xl opacity-50">
+          <div class="w-6 h-6 bg-sand rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="text-[0.6rem] font-bold text-slate">5</span>
+          </div>
+          <span class="text-[0.85rem] text-slate flex-1">Export DOCX</span>
+        </div>
+
+        <!-- Step 6: Pending -->
+        <div class="flex items-center gap-3 px-4 py-3 bg-cream border border-champagne rounded-xl opacity-50">
+          <div class="w-6 h-6 bg-sand rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="text-[0.6rem] font-bold text-slate">6</span>
+          </div>
+          <span class="text-[0.85rem] text-slate flex-1">Verification conformite</span>
+        </div>
+      </div>
+
+      <!-- Completion state (hidden initially, shown by button) -->
+      <div id="completionState" class="hidden mt-10">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+            <i data-lucide="award" class="w-8 h-8 text-emerald-600"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-charcoal mb-1">Document genere avec succes</h3>
+          <p class="text-[0.9rem] text-emerald-600 font-medium mb-6">Conformite : 88.9%</p>
+
+          <a href="#" class="inline-flex items-center gap-2.5 px-8 py-3.5 bg-gold text-white rounded-xl text-[0.9rem] font-semibold hover:bg-gold-dark transition-all shadow-xl shadow-gold/25 mb-6">
+            <i data-lucide="download" class="w-5 h-5"></i>
+            Telecharger le DOCX
+          </a>
+
+          <!-- Feedback panel -->
+          <div class="mt-8 bg-ivory border border-champagne rounded-xl p-5 text-left">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="message-square" class="w-4 h-4 text-gold-dark"></i>
+              <h4 class="text-[0.85rem] font-semibold text-charcoal">Donner un retour</h4>
+            </div>
+            <div class="flex gap-2 mb-3">
+              <button class="px-3 py-1.5 rounded-lg text-[0.78rem] font-medium border bg-red-50 border-red-300 text-red-700">Erreur</button>
+              <button class="px-3 py-1.5 rounded-lg text-[0.78rem] font-medium border bg-cream border-champagne text-slate hover:border-gold-light">Suggestion</button>
+              <button class="px-3 py-1.5 rounded-lg text-[0.78rem] font-medium border bg-cream border-champagne text-slate hover:border-gold-light">Question</button>
+            </div>
+            <textarea placeholder="Decrivez le probleme ou votre suggestion..." rows="3" class="w-full px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-charcoal resize-none focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/50 mb-3"></textarea>
+            <div class="flex justify-end">
+              <button class="flex items-center gap-2 px-4 py-2 bg-gold text-white rounded-lg text-[0.82rem] font-medium hover:bg-gold-dark transition-all">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                Envoyer
+              </button>
+            </div>
+          </div>
+
+          <button onclick="showScreen(0)" class="mt-6 text-[0.82rem] text-slate hover:text-charcoal transition-colors underline">
+            Retour a l'accueil
+          </button>
+        </div>
+      </div>
+
+      <!-- Simulate completion button -->
+      <div class="mt-8 text-center" id="simulateBtn">
+        <button onclick="simulateCompletion()" class="text-[0.78rem] text-slate hover:text-gold transition-colors border border-champagne rounded-lg px-4 py-2 hover:border-gold/30">
+          <i data-lucide="fast-forward" class="w-3.5 h-3.5 inline mr-1"></i>
+          Simuler la fin de generation
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Screen management
+    function showScreen(index) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+      document.getElementById('screen' + index).classList.remove('hidden');
+
+      // Update tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('text-slate');
+      });
+      const activeTab = document.querySelector(`.tab-btn[data-tab="${index}"]`);
+      if (activeTab) {
+        activeTab.classList.add('tab-active');
+        activeTab.classList.remove('text-slate');
+      }
+
+      // Re-init icons for newly visible content
+      setTimeout(() => lucide.createIcons(), 50);
+
+      // Reset generation state when navigating to screen 3
+      if (index === 3) {
+        resetGeneration();
+      }
+    }
+
+    // Review section toggle
+    function toggleReviewSection(btn) {
+      const content = btn.nextElementSibling;
+      const chevron = btn.querySelector('.section-chevron');
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        chevron.setAttribute('data-lucide', 'chevron-up');
+      } else {
+        content.classList.add('hidden');
+        chevron.setAttribute('data-lucide', 'chevron-down');
+      }
+      lucide.createIcons();
+    }
+
+    // Generation simulation
+    function resetGeneration() {
+      document.getElementById('completionState').classList.add('hidden');
+      document.getElementById('simulateBtn').classList.remove('hidden');
+      document.getElementById('progressBar').style.width = '72%';
+      document.getElementById('progressPercent').textContent = '72%';
+      document.getElementById('progressLabel').textContent = 'Assemblage du document...';
+    }
+
+    function simulateCompletion() {
+      document.getElementById('simulateBtn').classList.add('hidden');
+
+      // Animate progress to 100%
+      const bar = document.getElementById('progressBar');
+      const percent = document.getElementById('progressPercent');
+      const label = document.getElementById('progressLabel');
+
+      // Step through to completion
+      setTimeout(() => {
+        bar.style.width = '85%';
+        percent.textContent = '85%';
+        label.textContent = 'Export DOCX...';
+      }, 500);
+
+      setTimeout(() => {
+        bar.style.width = '95%';
+        percent.textContent = '95%';
+        label.textContent = 'Verification conformite...';
+      }, 1200);
+
+      setTimeout(() => {
+        bar.style.width = '100%';
+        percent.textContent = '100%';
+        label.textContent = 'Termine !';
+
+        // Show completion state
+        setTimeout(() => {
+          document.getElementById('generationSteps').classList.add('hidden');
+          document.getElementById('completionState').classList.remove('hidden');
+          lucide.createIcons();
+        }, 400);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
