@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-18T17:29:56.960586",
+    "generated_at": "2026-02-18T21:53:41.489369",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,32 +12,32 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 347
+    "commits": 373
   },
   "git": {
-    "branch": "tom/dev",
+    "branch": "master",
     "last_commit": {
-      "hash": "bcd5c43",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "06bd49b",
+      "message": "Merge branch 'tom/dev'",
       "date": "2026-02-18"
     },
-    "total_commits": 347,
+    "total_commits": 373,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 158
+        "commits": 166
       },
       {
         "name": "github-actions[bot]",
-        "commits": 101
+        "commits": 109
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 46
+        "commits": 49
       },
       {
         "name": "Payoss",
-        "commits": 36
+        "commits": 44
       },
       {
         "name": "Automai",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 44898,
+    "total_lines": 45110,
     "categories": {
       "utils": 62,
       "tests": 3,
@@ -129,7 +129,7 @@
       },
       {
         "name": "chat_handler.py",
-        "lines": 1237,
+        "lines": 1242,
         "path": "execution/chat_handler.py"
       },
       {
@@ -143,14 +143,14 @@
         "path": "execution/generation/generer_donnees_test.py"
       },
       {
+        "name": "anthropic_agent.py",
+        "lines": 1041,
+        "path": "execution/anthropic_agent.py"
+      },
+      {
         "name": "secure_client_manager.py",
         "lines": 937,
         "path": "execution/security/secure_client_manager.py"
-      },
-      {
-        "name": "gestionnaire_titres.py",
-        "lines": 919,
-        "path": "execution/gestionnaires/gestionnaire_titres.py"
       }
     ]
   },
@@ -234,6 +234,7 @@
       "CGU_TEMPLATE.md",
       "REGISTRE_TRAITEMENTS.md",
       "POLITIQUE_CONFIDENTIALITE.md",
+      "PROCEDURE_INCIDENT.md",
       "OBLIGATIONS_CSN.md"
     ],
     "directives": [
@@ -265,7 +266,7 @@
       "validation_donnees.md",
       "creer_promesse_vente.md"
     ],
-    "total_legal": 5,
+    "total_legal": 6,
     "total_directives": 27
   },
   "tasks": {
@@ -623,7 +624,57 @@
   ],
   "activity": [
     {
-      "hash": "bcd5c43",
+      "hash": "06bd49b",
+      "author": "Tom",
+      "date": "2026-02-18",
+      "message": "Merge branch 'tom/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "36c0c76",
+      "author": "Tom",
+      "date": "2026-02-18",
+      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "8e13733",
+      "author": "Tom",
+      "date": "2026-02-18",
+      "message": "agent intelligence upgrade + outils equipe + skills",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "f179d32",
+      "author": "Tom",
+      "date": "2026-02-18",
+      "message": "page Mes Documents, liens Chat<->Workflow, 30 tests Vitest",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "af1ad93",
+      "author": "Tom",
+      "date": "2026-02-18",
+      "message": "nettoyage frontend — 734 lignes nettes, 6 composants, Tailwind migration",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "ba1f037",
       "author": "Tom",
       "date": "2026-02-18",
       "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
@@ -633,17 +684,7 @@
       "type_color": "gray"
     },
     {
-      "hash": "208238a",
-      "author": "Payoss",
-      "date": "2026-02-14",
-      "message": "7 corrections critiques chatbot → pipeline génération",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "9688da3",
+      "hash": "d35683c",
       "author": "github-actions[bot]",
       "date": "2026-02-18",
       "message": "auto-update dashboard data [skip ci]",
@@ -653,9 +694,19 @@
       "type_color": "blue"
     },
     {
-      "hash": "98c03da",
+      "hash": "beb811c",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "ajout PROJECT_STATE.md + enrichissement architecture",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "77f065e",
       "author": "github-actions[bot]",
-      "date": "2026-02-17",
+      "date": "2026-02-18",
       "message": "auto-update dashboard data [skip ci]",
       "type": "chore",
       "type_label": "Maintenance",
@@ -663,149 +714,49 @@
       "type_color": "blue"
     },
     {
-      "hash": "98ebb0e",
+      "hash": "606e43d",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "f7e8b22",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "regles comportementales agent + conventions projet",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "cb10732",
+      "author": "github-actions[bot]",
+      "date": "2026-02-18",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "4bc9262",
       "author": "Augustin",
-      "date": "2026-02-17",
-      "message": "workflow engine frontend complet (20 composants + store Zustand)",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "cc3346d",
-      "author": "github-actions[bot]",
-      "date": "2026-02-17",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "a0413fe",
-      "author": "github-actions[bot]",
-      "date": "2026-02-16",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "c8ae347",
-      "author": "github-actions[bot]",
-      "date": "2026-02-15",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "315fba6",
-      "author": "github-actions[bot]",
-      "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "ceef7f5",
-      "author": "Payoss",
-      "date": "2026-02-14",
-      "message": "7 corrections critiques chatbot → pipeline génération",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "6d9634d",
-      "author": "github-actions[bot]",
-      "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "074cb9d",
-      "author": "Tom",
-      "date": "2026-02-14",
-      "message": "Travail du 14/02/2026",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "6623b70",
-      "author": "github-actions[bot]",
-      "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "ccb8048",
-      "author": "Tom",
-      "date": "2026-02-14",
-      "message": "Travail du 14/02/2026",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "efd980b",
-      "author": "Tom",
-      "date": "2026-02-14",
-      "message": "Connect chatbot to DOCX generation pipeline",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "ad75df8",
-      "author": "github-actions[bot]",
-      "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "62275ae",
-      "author": "Automai",
-      "date": "2026-02-14",
-      "message": "Merge pull request #21 from AnandaTom/tom/dev",
+      "date": "2026-02-18",
+      "message": "Merge pull request #23 from AnandaTom/augustin/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
     },
     {
-      "hash": "9c667c8",
-      "author": "github-actions[bot]",
-      "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "43d3b95",
+      "hash": "c6d3745",
       "author": "Tom",
-      "date": "2026-02-14",
+      "date": "2026-02-18",
       "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "type": "other",
       "type_label": "Autre",
@@ -813,9 +764,59 @@
       "type_color": "gray"
     },
     {
-      "hash": "49cd51c",
+      "hash": "d017da2",
+      "author": "Augustin",
+      "date": "2026-02-18",
+      "message": "ajout politique de confidentialite en HTML",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "1627941",
       "author": "github-actions[bot]",
-      "date": "2026-02-14",
+      "date": "2026-02-18",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "2a65d2b",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "17be6ff",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "systeme memoire persistant + commande /audit",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "b9e0de2",
+      "author": "Tom",
+      "date": "2026-02-18",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "44b6aec",
+      "author": "github-actions[bot]",
+      "date": "2026-02-18",
       "message": "auto-update dashboard data [skip ci]",
       "type": "chore",
       "type_label": "Maintenance",
@@ -1248,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-18 17:29"
+    "last_updated": "2026-02-18 21:53"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-18 17:29"
+    "last_updated": "2026-02-18 21:53"
   },
   "conformity_details": {
     "promesse": {
