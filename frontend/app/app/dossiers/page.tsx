@@ -7,8 +7,7 @@ import { Plus, Search, Filter, FolderOpen, ArrowLeft, RefreshCw } from 'lucide-r
 import { supabase } from '@/lib/supabase'
 import DossierCard from '@/components/DossierCard'
 import type { Dossier } from '@/types'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
+import { API_URL } from '@/lib/config'
 
 // Récupérer l'etude_id du notaire connecté
 async function getUserEtudeId(): Promise<string | null> {

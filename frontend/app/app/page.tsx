@@ -7,9 +7,7 @@ import Header from '@/components/Header'
 import ParagraphReview from '@/components/ParagraphReview'
 import type { Message, ConversationSummary, DocumentSection } from '@/types'
 import { supabase } from '@/lib/supabase'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ''
+import { API_URL, API_KEY } from '@/lib/config'
 
 function getOrCreateUserId(): string {
   if (typeof window === 'undefined') return ''

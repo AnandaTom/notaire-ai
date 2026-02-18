@@ -15,8 +15,17 @@ export default function ViagerBadge({ detection, className = '' }: ViagerBadgePr
 
   if (!sous_type) return null;
 
-  // Couleurs et icônes par sous-type
-  const typeConfig = {
+  type BadgeColor = 'blue' | 'yellow' | 'green' | 'purple' | 'gray';
+
+  interface BadgeConfig {
+    color: BadgeColor;
+    icon: string;
+    label: string;
+    description: string;
+  }
+
+  // Couleurs et icones par sous-type
+  const typeConfig: Record<string, BadgeConfig> = {
     viager: {
       color: 'blue',
       icon: '🏡',
@@ -43,14 +52,14 @@ export default function ViagerBadge({ detection, className = '' }: ViagerBadgePr
     },
   };
 
-  const config = typeConfig[sous_type] || {
+  const config: BadgeConfig = typeConfig[sous_type] || {
     color: 'gray',
     icon: '📄',
     label: sous_type,
     description: 'Type spécifique détecté',
   };
 
-  const colorClasses = {
+  const colorClasses: Record<BadgeColor, string> = {
     blue: 'bg-blue-50 border-blue-200 text-blue-900',
     yellow: 'bg-yellow-50 border-yellow-200 text-yellow-900',
     green: 'bg-green-50 border-green-200 text-green-900',
@@ -58,7 +67,7 @@ export default function ViagerBadge({ detection, className = '' }: ViagerBadgePr
     gray: 'bg-gray-50 border-gray-200 text-gray-900',
   };
 
-  const textColorClasses = {
+  const textColorClasses: Record<BadgeColor, string> = {
     blue: 'text-blue-700',
     yellow: 'text-yellow-700',
     green: 'text-green-700',

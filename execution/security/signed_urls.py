@@ -26,12 +26,18 @@ logger = logging.getLogger(__name__)
 SIGNING_KEY = os.getenv("URL_SIGNING_KEY")
 
 if not SIGNING_KEY:
-    logger.warning(
-        "URL_SIGNING_KEY non définie! Utilisation d'une clé temporaire. "
-        "CRITIQUE: Définir URL_SIGNING_KEY dans les secrets Modal pour la production."
-    )
-    # Clé temporaire pour dev uniquement - NE PAS utiliser en prod
-    SIGNING_KEY = "dev_only_key_change_in_production_immediately"
+    if os.getenv("MODAL_ENVIRONMENT") or os.getenv("PRODUCTION"):
+        raise RuntimeError(
+            "URL_SIGNING_KEY non definie en production! "
+            "Ajouter URL_SIGNING_KEY dans les secrets Modal."
+        )
+    else:
+        logger.warning(
+            "URL_SIGNING_KEY non definie — mode dev uniquement. "
+            "Les URLs signees ne seront pas securisees."
+        )
+        import secrets as _secrets
+        SIGNING_KEY = _secrets.token_hex(32)
 
 
 def _get_signing_key() -> bytes:

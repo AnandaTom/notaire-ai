@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
  * gere la conversation intelligemment.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notaire-ai--fastapi-app.modal.run'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
 
 export async function POST(request: NextRequest) {
   try {

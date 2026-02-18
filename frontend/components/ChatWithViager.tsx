@@ -90,7 +90,7 @@ export default function ChatWithViager() {
         (q) => !donnees[q.variable]
       );
       if (nextQuestion) {
-        return nextQuestion.texte;
+        return nextQuestion.question;
       }
     }
 
@@ -188,11 +188,11 @@ export default function ChatWithViager() {
               {questionsViager[0]?.questions.slice(0, 3).map((q) => (
                 <div key={q.id} className="bg-white p-3 rounded border border-blue-200">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {q.texte}
+                    {q.question}
                     {q.obligatoire && <span className="text-red-500 ml-1">*</span>}
                   </label>
-                  {q.help && (
-                    <p className="text-xs text-gray-500 mb-2">{q.help}</p>
+                  {q.aide && (
+                    <p className="text-xs text-gray-500 mb-2">{q.aide}</p>
                   )}
                   {q.type === 'number' && (
                     <input
