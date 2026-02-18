@@ -14,7 +14,6 @@ Les tools wrappent:
 """
 
 import json
-import os
 import sys
 import logging
 from pathlib import Path
@@ -136,7 +135,7 @@ TOOLS = [
         "description": (
             "Genere le document final (promesse de vente ou acte de vente) au format DOCX. "
             "Verifier d'abord avec get_collection_progress que la collecte est suffisante, "
-            "puis valider avec validate_deed_data. Retourne le chemin du fichier et fichier_url. "
+            "puis valider avec validate_deed_data. Retourne le chemin du fichier. "
             "Si le notaire demande explicitement de generer meme avec des donnees incompletes, "
             "utiliser force=true pour generer un brouillon avec les champs manquants vides."
         ),
@@ -445,6 +444,8 @@ class ToolExecutor:
         self, tool_input: Dict, agent_state: Dict
     ) -> Dict:
         """Genere le document DOCX final (promesse ou vente)."""
+        import os
+
         donnees = agent_state.get("donnees_collectees", {})
 
         # SAFEGUARD: Verifier que les donnees ne sont pas vides
@@ -462,19 +463,18 @@ class ToolExecutor:
                 ],
                 "warnings": [],
                 "fichier_docx": None,
-                "fichier_url": None,
             }
 
-        # Répertoire de sortie : outputs/ pour que /files/ et /download/ trouvent le fichier
-        output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-        # Determiner le type d'acte (tool_input > agent_state > defaut)
+        # Déterminer le type d'acte (tool_input > agent_state > défaut)
         type_acte = (
             tool_input.get("type_acte")
             or agent_state.get("type_acte")
             or "promesse_vente"
         )
+
+        # Répertoire de sortie : outputs/ pour que /files/ et /download/ trouvent le fichier
+        output_dir = Path(os.getenv("NOTAIRE_OUTPUT_DIR", "outputs"))
+        output_dir.mkdir(parents=True, exist_ok=True)
 
         logger.info(
             f"[GENERATE] type_acte={type_acte}, "
@@ -482,7 +482,7 @@ class ToolExecutor:
             f"output_dir={output_dir}"
         )
 
-        # Parametre force pour generation partielle (brouillon)
+        # Paramètre force pour génération partielle (brouillon)
         force = tool_input.get("force", False)
 
         # ===== ROUTING : Vente vs Promesse =====
@@ -495,7 +495,7 @@ class ToolExecutor:
         self, donnees: Dict, tool_input: Dict, output_dir: Path,
         force: bool, agent_state: Dict
     ) -> Dict:
-        """Genere une promesse de vente via GestionnairePromesses."""
+        """Génère une promesse de vente via GestionnairePromesses."""
         from execution.gestionnaires.gestionnaire_promesses import TypePromesse
 
         type_force = None
@@ -512,8 +512,8 @@ class ToolExecutor:
         )
 
         if resultat.succes and resultat.fichier_docx:
-            filename = Path(resultat.fichier_docx).name
             agent_state["fichier_genere"] = resultat.fichier_docx
+            filename = Path(resultat.fichier_docx).name
             agent_state["fichier_url"] = f"/files/{filename}"
 
         return {
@@ -522,7 +522,6 @@ class ToolExecutor:
             "categorie_bien": resultat.categorie_bien.value,
             "type_promesse": resultat.type_promesse.value,
             "fichier_docx": resultat.fichier_docx,
-            "fichier_url": agent_state.get("fichier_url"),
             "sections_incluses": resultat.sections_incluses,
             "erreurs": resultat.erreurs,
             "warnings": resultat.warnings,
@@ -532,7 +531,7 @@ class ToolExecutor:
     def _generate_vente(
         self, donnees: Dict, output_dir: Path, force: bool, agent_state: Dict
     ) -> Dict:
-        """Genere un acte de vente via OrchestratorNotaire."""
+        """Génère un acte de vente via OrchestratorNotaire."""
         import time
         try:
             from execution.gestionnaires.orchestrateur import OrchestratorNotaire
@@ -548,7 +547,7 @@ class ToolExecutor:
         start = time.time()
         orchestrateur = OrchestratorNotaire()
 
-        # Construire le chemin de sortie avec timestamp unique
+        # Construire le chemin de sortie
         from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_path = str(output_dir / f"vente_{timestamp}.docx")

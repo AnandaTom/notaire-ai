@@ -930,8 +930,6 @@ class OrchestratorNotaire:
                 # Fallback minimal si import échoue (Modal, tests isolés)
                 import re
                 texte_lower = texte.lower()
-                if re.search(r'\bviager\b', texte_lower):
-                    return "viager"
                 if re.search(r'\bpromesse\b', texte_lower):
                     return "promesse_vente"
                 if re.search(r'\bmodificatif\b', texte_lower):

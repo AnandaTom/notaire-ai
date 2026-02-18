@@ -343,7 +343,9 @@ def detecter_type_acte_rapide(texte: str) -> Optional[str]:
     if re.search(r'\bedd\b|r[eè]glement.*copro', texte_lower):
         return "reglement_copropriete"
 
-    # 6. Vente (last — "promesse de vente" already caught above)
+    # 6. Vente (acte de vente explicite, puis standalone)
+    if re.search(r'\bvente\b.*\bacte\b|\bacte\b.*\bvente\b', texte_lower):
+        return "vente"
     if re.search(r'\bvente\b', texte_lower):
         return "vente"
 

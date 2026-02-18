@@ -268,15 +268,6 @@ class ChatHandler:
         """
         Genere une reponse appropriee selon l'intention.
         """
-        # Intercept: si generation prete et l'utilisateur demande de generer
-        if contexte.etape_workflow == "generation_prete":
-            msg_lower = message.lower()
-            if any(mot in msg_lower for mot in [
-                "generer", "générer", "genere", "génère", "oui", "ok",
-                "d'accord", "confirme", "telecharger", "télécharger"
-            ]):
-                return self._declencher_generation(contexte, etude_id)
-
         # Mapping intention → generateur de reponse
         handlers = {
             IntentionChat.SALUTATION: self._reponse_salutation,
@@ -360,16 +351,6 @@ Que souhaitez-vous faire ?""",
             try:
                 from execution.questionnaire_manager import QuestionnaireManager
                 qm = QuestionnaireManager(str(type_acte))
-
-                # Pre-fill from extracted entities if available
-                prefill = self._build_prefill_from_entities(entites)
-                if prefill:
-                    for q_id, value in prefill.items():
-                        try:
-                            qm.record_answer(q_id, value)
-                        except Exception:
-                            pass
-
                 next_q = qm.get_next_question()
 
                 if next_q:
@@ -554,7 +535,7 @@ Je vais charger la liste de vos dossiers depuis votre espace securise.
         )
 
     def _reponse_confirmation(self, entites, message, contexte, etude_id) -> ReponseChat:
-        """Reponse aux confirmations. Declenche la generation si prete."""
+        """Reponse aux confirmations. Declenche la generation si pret."""
         # Detecter si l'utilisateur demande la generation du document
         msg_lower = message.lower() if message else ""
         mots_generation = ["generer", "générer", "telecharger", "télécharger", "document", "oui"]
@@ -577,6 +558,7 @@ Je vais charger la liste de vos dossiers depuis votre espace securise.
     def _declencher_generation(self, contexte, etude_id) -> ReponseChat:
         """Declenche la generation DOCX depuis les donnees collectees (fallback ChatHandler)."""
         try:
+            import os
             from pathlib import Path
             from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
 
@@ -588,6 +570,7 @@ Je vais charger la liste de vos dossiers depuis votre espace securise.
 
             if type_acte == "vente":
                 from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+                from datetime import datetime
                 orchestrateur = OrchestratorNotaire()
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_path = str(output_dir / f"vente_{timestamp}.docx")
@@ -638,44 +621,6 @@ Je vais charger la liste de vos dossiers depuis votre espace securise.
             suggestions=["Creer un acte", "Voir mes dossiers", "Aide"],
             contexte_mis_a_jour={"type_acte_en_cours": None, "etape_workflow": None}
         )
-
-    def _build_prefill_from_entities(self, entites: Dict) -> Dict[str, str]:
-        """Construit un dict de pre-remplissage pour le QuestionnaireManager
-        a partir des entites extraites par le parseur NL."""
-        prefill = {}
-
-        # Vendeur
-        vendeur = entites.get("vendeur")
-        if vendeur and isinstance(vendeur, dict):
-            if vendeur.get("nom"):
-                prefill["vendeur_nom"] = vendeur["nom"]
-            if vendeur.get("prenoms"):
-                prefill["vendeur_prenoms"] = vendeur["prenoms"]
-
-        # Acquereur
-        acquereur = entites.get("acquereur")
-        if acquereur and isinstance(acquereur, dict):
-            if acquereur.get("nom"):
-                prefill["acquereur_nom"] = acquereur["nom"]
-            if acquereur.get("prenoms"):
-                prefill["acquereur_prenoms"] = acquereur["prenoms"]
-
-        # Bien
-        bien = entites.get("bien")
-        if bien and isinstance(bien, dict):
-            if bien.get("adresse"):
-                prefill["bien_adresse"] = bien["adresse"]
-            if bien.get("type"):
-                prefill["bien_type"] = bien["type"]
-            if bien.get("surface"):
-                prefill["bien_surface"] = str(bien["surface"])
-
-        # Prix
-        prix = entites.get("prix")
-        if prix is not None:
-            prefill["prix_montant"] = str(prix)
-
-        return prefill
 
     def _reponse_inconnu(self, entites, message, contexte, etude_id) -> ReponseChat:
         """Reponse par defaut quand l'intention n'est pas comprise."""
