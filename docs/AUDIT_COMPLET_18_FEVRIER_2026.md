@@ -39,7 +39,7 @@ Le projet est impressionnant en ambition et en profondeur (7 templates, 71 secti
 | CLI `notaire.py` | 8/10 | Point d'entree unifie, 10 commandes |
 | Supabase schema | 7/10 | 17 tables, RLS active, multi-tenant, chiffrement PII |
 | Modal deployment | 7/10 | CRON jobs, self-anneal, persistent volume |
-| Backend API (FastAPI) | 6/10 | Chat SSE fonctionne, mais endpoints workflow manquent |
+| Backend API (FastAPI) | 8/10 | 39 endpoints, 2887 lignes, workflow + chat + agents complets |
 | Frontend Next.js | 4/10 | Design soigne, 23 composants, MAIS api.ts manquant |
 | Securite RGPD | 5/10 | Bases posees mais lacunes critiques |
 
@@ -57,21 +57,33 @@ Le projet est impressionnant en ambition et en profondeur (7 templates, 71 secti
 
 **Paradoxe** : La page chat (`app/app/page.tsx`) fait des fetch directement vers Modal et fonctionne. Seul le workflow guide est casse.
 
-### CRITIQUE #2 : Mismatch Endpoints Backend <-> Frontend
+### CRITIQUE #2 : Mismatch Formats Frontend <-> Backend
+
+> **ERRATUM (18/02/2026 soir)** : L'analyse initiale affirmait que les endpoints
+> `/workflow/*` n'existaient pas. C'etait **FAUX**. Les 5 endpoints workflow existent
+> dans api/main.py (lignes 1891-2296) et sont TOTALEMENT implementes. L'erreur venait
+> d'une lecture incomplete du fichier (2887 lignes — les endpoints workflow commencent
+> a la ligne 1891). Le vrai probleme est un mismatch de format entre frontend et backend.
 
 Le frontend attend ces endpoints :
 
-| Endpoint attendu | Existe dans api/main.py ? | Existe dans chat_handler.py ? |
-|-----------------|-------|-------|
-| POST /chat/stream | via router | OUI (SSE EventSourceResponse) |
-| GET /chat/conversations | via router | OUI |
-| GET /chat/conversations/{id} | via router | OUI |
-| POST /chat/feedback | via router | OUI |
-| POST /workflow/start | NON | NON |
-| POST /workflow/{id}/submit | NON | NON |
-| GET /workflow/{id}/generate-stream | NON | NON |
+| Endpoint attendu | Existe dans api/main.py ? | Ligne | Statut |
+|-----------------|-------|-------|-------|
+| POST /chat/stream | via router | chat_handler.py | OUI, fonctionne |
+| GET /chat/conversations | via router | chat_handler.py | OUI, fonctionne |
+| POST /workflow/promesse/start | OUI | L1891 | COMPLET (80+ lignes) |
+| POST /workflow/promesse/{id}/submit | OUI | L1975 | COMPLET (70+ lignes) |
+| POST /workflow/promesse/{id}/generate | OUI | L2046 | COMPLET (90+ lignes) |
+| GET /workflow/promesse/{id}/generate-stream | OUI | L2141 | COMPLET (SSE, 100+ lignes) |
+| GET /workflow/promesse/{id}/status | OUI | L2246 | COMPLET (50+ lignes) |
 
-**Verdict** : Le chat fonctionne. Le workflow guide n'a aucun backend.
+**Le vrai probleme** : Le frontend (workflowStore.ts) envoyait des formats differents de ce que le backend attend :
+- `type_acte` au lieu de `categorie_bien`
+- Attendait `{id, titre}` mais backend retourne `{key, title}`
+- `sectionId` inutile (le backend track sa propre progression)
+
+**Verdict reel** : Le backend est complet (39 endpoints, 2887 lignes). Le seul fichier manquant
+etait `frontend/lib/api/` qui fait le pont et le mapping de format. Corrige dans l'AXE 1.
 
 ### CRITIQUE #3 : Hardcoded UUIDs dans `chat_handler.py`
 
@@ -321,7 +333,7 @@ Ne PAS attaquer Septeo frontalement. Se positionner comme :
 | Tache | Qui | Duree | Priorite |
 |-------|-----|-------|----------|
 | Creer `frontend/lib/api.ts` -- Client API avec toutes les fonctions importees par workflowStore | Tom | 2-3 jours | CRITIQUE |
-| Creer les endpoints `/workflow/*` dans l'API | Augustin | 3-4 jours | CRITIQUE |
+| ~~Creer les endpoints `/workflow/*`~~ | ~~Augustin~~ | ~~3-4 jours~~ | **DEJA FAIT** (api/main.py L1891-2296) |
 | Supprimer la Supabase anon key hardcodee de supabase.ts | Tom | 30 min | CRITIQUE |
 | Supprimer les UUIDs hardcodes dans chat_handler.py -- extraire du JWT | Augustin | 1 jour | CRITIQUE |
 | Revue croisee : verifier que tout s'integre | Payoss | 1 jour | CRITIQUE |
@@ -414,7 +426,9 @@ OUI, globalement. L'architecture 3 couches (Directive/Orchestration/Execution) e
 
 ### Le plus urgent
 
-Creer `frontend/lib/api.ts` + les endpoints `/workflow/*` = le workflow guide fonctionne. Sans ca, le produit est une coquille vide cote utilisateur.
+~~Creer `frontend/lib/api.ts` + les endpoints `/workflow/*`~~ = **CORRIGE** (AXE 1, commit 3c6e009).
+Les endpoints backend existaient deja (39 endpoints dans api/main.py). Seul le client frontend manquait.
+Ce qui reste : mismatches de format (geres dans api/index.ts), UUIDs hardcodes dans chat_handler.py, anon key en dur.
 
 ---
 
