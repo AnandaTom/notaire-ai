@@ -11,19 +11,13 @@
 
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
-| C-002 | UUIDs hardcodes (multi-tenant casse) | `chat_handler.py:755-756` | Augustin (axe 5) | 18/02 | Tous les users = meme UUID de test |
-| C-003 | Supabase anon key en dur | `frontend/lib/supabase.ts:6` | Augustin (axe 5) | 18/02 | Fuite dans le bundle client si .env.local absent |
+| C-003 | Supabase anon key en dur | `frontend/lib/supabase.ts:6` | Paul | 18/02 | Fuite dans le bundle client si .env.local absent |
 
 ### IMPORTANT
 
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
-| I-001 | 13 vues SECURITY_DEFINER | Supabase | Augustin (axe 4) | 18/02 | Doivent etre INVOKER |
-| I-002 | api_costs_tracking sans RLS | Supabase | Augustin (axe 4) | 18/02 | Donnees couts accessibles publiquement |
-| I-003 | 8 fonctions search_path mutable | Supabase | Augustin (axe 4) | 18/02 | Risque injection SQL |
 | I-004 | Pas de DPA signe avec Supabase | Legal | Paul | 18/02 | OBLIGATOIRE RGPD |
-| I-005 | Pas de registre des traitements | Legal | Paul | 18/02 | OBLIGATOIRE RGPD |
-| I-006 | Cle dev par defaut signed_urls.py | `security/signed_urls.py` | Augustin (axe 5) | 18/02 | Devrait crasher en prod |
 | I-007 | DOCX metadata non strippee | `core/exporter_docx.py` | Augustin | 18/02 | Risque RGPD (auteur, chemins) |
 | I-008 | self_anneal.py n'existe pas | `modal_app.py:187` | - | 18/02 | Importe mais manquant, gere par try/except |
 | I-009 | weekly_catalog_sync ecrit sur FS read-only | `modal_app.py:251` | - | 18/02 | Modal = read-only hors /outputs |
@@ -55,6 +49,12 @@
 | C-008 | .gitignore bloque frontend/lib/ | 18/02 | `3c6e009` | Ajout !frontend/lib/ |
 | C-009 | SSE ne peut pas s'authentifier | 18/02 | `3c6e009` | API key en query param dans verify_api_key() |
 | AUDIT-001 | Audit affirme endpoints /workflow/* absents | 18/02 | `9bacf0f` | ERREUR — existent L1891-2296, erratum ajoute |
+| C-002 | UUIDs hardcodes dans chat_handler.py | 18/02 | `9e19166` | Augustin — suppression UUIDs, auth dynamique |
+| I-001 | 13 vues SECURITY_DEFINER | 18/02 | `9e19166` | Augustin — toutes passees en SECURITY_INVOKER |
+| I-002 | api_costs_tracking sans RLS | 18/02 | `9e19166` | Augustin — RLS activee + 25 policies |
+| I-003 | 8 fonctions search_path mutable | 18/02 | `9e19166` | Augustin — SET search_path ajoute |
+| I-005 | Pas de registre des traitements | 18/02 | `9e19166` | Augustin — registre mis a jour |
+| I-006 | Cle dev par defaut signed_urls.py | 18/02 | `9e19166` | Augustin — cle par defaut supprimee |
 
 ---
 

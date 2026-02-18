@@ -8,6 +8,43 @@
 
 ---
 
+## Stack technique
+
+### Backend
+- **Runtime** : Python 3.10-3.13 (3.14 incompatible — httpcore)
+- **Framework** : FastAPI >= 0.104 + Uvicorn + SSE-Starlette
+- **Deploy** : Modal (Docker, volumes, CRON) — migration GCP Cloud Run prevue
+- **ORM/DB** : supabase-py >= 2.3, httpx >= 0.27
+- **Docs** : Jinja2 >= 3.1, python-docx >= 1.1, markdown >= 3.5
+- **Securite** : cryptography >= 46.0
+- **Validation** : jsonschema >= 4.20, pydantic >= 2.5
+- **Tests** : pytest >= 7.4, pytest-asyncio
+
+### Frontend
+- **Framework** : Next.js 14.2.35 (App Router)
+- **UI** : React 18.3 + TailwindCSS 3.4 + Lucide React
+- **State** : Zustand 5.0.11 (selectors individuels)
+- **Auth/DB** : @supabase/supabase-js 2.95.3
+- **Markdown** : react-markdown 9.0
+- **TypeScript** : 5.x strict mode
+- **Tests** : AUCUN (ni Vitest, ni Jest, ni Playwright)
+
+### Infrastructure
+- **DB** : Supabase (wcklvjckzktijtgakdrk) — Frankfurt EU, 17 tables
+- **Auth** : API keys 3 niveaux (read/write/delete) + Supabase Auth
+- **CI/CD** : GitHub Actions (deploy.yml + test.yml)
+- **Monitoring** : AUCUN (Sentry prevu)
+
+### Patterns cles
+- **API calls frontend** : toujours via `frontend/lib/api/`, jamais fetch() direct
+- **Config** : `frontend/lib/config.ts` centralise API_URL, API_KEY, timeouts
+- **SSE** : EventSource ne supporte pas les headers → API key en query param
+- **Imports backend** : conditionnels DANS les endpoints (pas top-level, evite crash Modal)
+- **Templates** : Jinja2 avec guards `{% if var %}`, sections via `{% include %}` (vente only)
+- **DOCX** : formatage hardcode dans `exporter_docx.py` — NE JAMAIS MODIFIER
+
+---
+
 ## Stats globales
 
 | Categorie | Quantite | LOC approx |

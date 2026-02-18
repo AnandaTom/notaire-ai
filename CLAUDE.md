@@ -22,7 +22,8 @@ Avant de repondre a "ou on en est ?", "est-ce que X marche ?", "qu'est-ce qui re
 1. git log --oneline -20        → commits recents, qui a fait quoi
 2. git status                   → etat actuel du working tree
 3. Lire les fichiers memoire :
-   - memory/CODE_MAP.md         → endpoints, fichiers, LOC
+   - memory/PROJECT_STATE.md    → features done / en cours / a faire
+   - memory/CODE_MAP.md         → stack, endpoints, fichiers, LOC
    - memory/ISSUES.md           → problemes ouverts/fermes
    - memory/JOURNAL.md          → ce qui a ete fait recemment
    - memory/CHECKLIST.md        → regles de verification
@@ -66,8 +67,9 @@ N'attends pas qu'on te le demande.
 
 | Fichier | Contenu | Quand mettre a jour |
 |---------|---------|---------------------|
+| `memory/PROJECT_STATE.md` | Features done / en cours / a faire | Si feature ajoutee, terminee, ou bloquee |
 | `memory/JOURNAL.md` | Ce qui a ete fait, par qui, quand | Chaque session |
-| `memory/CODE_MAP.md` | Endpoints, fichiers, LOC | Si fichiers ajoutes/supprimes ou endpoints changes |
+| `memory/CODE_MAP.md` | Stack, endpoints, fichiers, LOC | Si fichiers ajoutes/supprimes ou endpoints changes |
 | `memory/ISSUES.md` | Bugs ouverts/fermes, attribution | Si bug trouve ou corrige |
 | `memory/CHECKLIST.md` | Regles de verification | Si nouvelle lecon apprise |
 | `memory/CONVENTIONS.md` | Patterns, naming, workflow Git | Si nouvelle convention adoptee |
