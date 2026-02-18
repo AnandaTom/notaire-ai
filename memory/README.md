@@ -11,5 +11,6 @@ repeter les memes erreurs et garder le contexte entre sessions.
 | `CODE_MAP.md` | Cartographie exhaustive du code — endpoints, fichiers, LOC |
 | `CHECKLIST.md` | Regles de verification avant d'affirmer, modifier, commiter |
 | `ISSUES.md` | Tracker des problemes — ouverts/fermes, severite, attribution |
+| `CONVENTIONS.md` | Regles de code, naming, workflow Git, patterns a suivre |
 
 **Regle** : ces fichiers sont mis a jour a chaque session de travail.
