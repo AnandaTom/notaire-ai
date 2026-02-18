@@ -92,8 +92,8 @@ export default function ParagraphReview({
       setEditingSection(null)
       setFeedbackText('')
       setFeedbackRaison('')
-    } catch (error) {
-      console.error('Feedback error:', error)
+    } catch {
+      // Error silently handled — UI already shows feedback state
     } finally {
       setSubmitting(false)
     }

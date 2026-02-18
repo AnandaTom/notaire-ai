@@ -30,11 +30,19 @@ export default function Header({ progressPct }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-cream border border-champagne rounded-xl text-[0.8rem] text-graphite hover:border-gold hover:bg-sand transition-all">
+          <button
+            disabled
+            title="Bientôt disponible"
+            className="flex items-center gap-2 px-4 py-2.5 bg-cream border border-champagne rounded-xl text-[0.8rem] text-graphite opacity-50 cursor-not-allowed"
+          >
             <FileText className="w-4 h-4" />
             Brouillons
           </button>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-gold border border-gold rounded-xl text-[0.8rem] text-white hover:bg-gold-dark transition-all">
+          <button
+            disabled
+            title="Bientôt disponible"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gold border border-gold rounded-xl text-[0.8rem] text-white opacity-50 cursor-not-allowed"
+          >
             <Download className="w-4 h-4" />
             Exporter
           </button>

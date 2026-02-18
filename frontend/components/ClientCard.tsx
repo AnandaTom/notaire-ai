@@ -3,17 +3,10 @@
 import { User, Building2, Mail, Phone, FolderOpen, ChevronRight } from 'lucide-react'
 import type { Client } from '@/types'
 import Link from 'next/link'
+import { formatDate } from '@/lib/format'
 
 interface ClientCardProps {
   client: Client
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
 }
 
 export default function ClientCard({ client }: ClientCardProps) {

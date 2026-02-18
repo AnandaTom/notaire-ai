@@ -44,12 +44,21 @@
 
 ---
 
+## Apres avoir modifie du code (OBLIGATOIRE)
+
+1. [ ] **`/review`** — Lancer le reviewer sub-agent (correctness + effectiveness)
+2. [ ] **Corriger** les issues CRITICAL et MODERATE identifiees
+3. [ ] **Re-review** si des corrections ont ete faites
+4. [ ] **`/document`** — Lancer le documenter sub-agent (scripts + directives + memory/)
+5. [ ] **Verifier** que memory/JOURNAL.md a ete mis a jour
+
 ## Avant de commiter
 
-1. [ ] **`next build`** passe (si frontend modifie)
-2. [ ] **`git diff --stat`** — verifier qu'on ne commite que ce qu'on veut
-3. [ ] **Pas de secrets** dans le diff (API keys, passwords, tokens)
-4. [ ] **Message de commit** clair et descriptif pour que les autres Claude comprennent
+1. [ ] **`/review` et `/document` ont ete executes** (voir section ci-dessus)
+2. [ ] **`next build`** passe (si frontend modifie)
+3. [ ] **`git diff --stat`** — verifier qu'on ne commite que ce qu'on veut
+4. [ ] **Pas de secrets** dans le diff (API keys, passwords, tokens)
+5. [ ] **Message de commit** clair et descriptif pour que les autres Claude comprennent
 
 ---
 
