@@ -266,7 +266,6 @@ export default function Home() {
       setStatusText(null)
       loadConversations()
     } catch (error) {
-      console.error('Erreur streaming:', error)
       // Si le message assistant placeholder existe avec contenu vide, le remplir
       setMessages((prev) => {
         const last = prev[prev.length - 1]
@@ -348,8 +347,8 @@ export default function Home() {
       const data = await response.json()
       setReviewSections(data.sections)
       setReviewWorkflowId(workflowId)
-    } catch (error) {
-      console.error('Review error:', error)
+    } catch {
+      // Review fetch failed — silently handled
     }
   }
 

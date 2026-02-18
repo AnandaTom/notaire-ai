@@ -50,13 +50,14 @@
 | Categorie | Quantite | LOC approx |
 |-----------|----------|------------|
 | Endpoints API (api/main.py) | 39 | 2887 |
-| Endpoints Agents (api/agents.py) | 4 | 748 |
+| Endpoints Agents (api/agents.py) | 4 | ~960 |
 | Chat router (chat_handler.py) | 4+ | 1237 |
-| Composants React | 23 | ~3500 |
+| Composants React | 25 | ~3200 |
 | Scripts Python (execution/) | 60+ | ~20000 |
 | Templates Jinja2 | 9 + 60 sections | - |
 | Schemas JSON | 17 | - |
-| Tests | 257 | - |
+| Tests backend | 257 | - |
+| Tests frontend | 30 | Vitest + Testing Library |
 
 ---
 
@@ -127,26 +128,28 @@
 
 ---
 
-## api/agents.py — 748 lignes, 4 endpoints
+## api/agents.py — ~960 lignes, 4 endpoints
 
 | Route | Methode | Ligne | Description |
 |-------|---------|-------|-------------|
-| `/agents` | GET | 440 | Liste agents disponibles |
-| `/agents/{name}/execute` | POST | 517 | Executer un agent |
-| `/agents/orchestrate` | POST | 592 | Generation parallele (3-5x) |
-| `/agents/status` | GET | 720 | Status & monitoring |
+| `/agents` | GET | 525 | Liste agents disponibles |
+| `/agents/{name}/execute` | POST | 602 | Executer un agent |
+| `/agents/orchestrate` | POST | 677 | Generation parallele (3-5x) |
+| `/agents/status` | GET | 945 | Status & monitoring |
 
 ---
 
 ## Frontend — Fichiers cles
 
-### frontend/lib/ (cree le 18/02)
+### frontend/lib/ (cree le 18/02, enrichi AXE 2)
 
 | Fichier | LOC | Role | Exporte |
 |---------|-----|------|---------|
+| `auth.ts` | 23 | Auth helper (AXE 2) | getUserEtudeId() |
+| `format.ts` | 14 | Formatage dates (AXE 2) | formatDate() |
 | `config.ts` | 19 | Config centralisee | API_URL, API_KEY, FETCH_TIMEOUT, WORKFLOW_SUPPORTED_TYPES |
 | `constants.ts` | 63 | Labels UI | TYPE_ACTE_LABELS, CATEGORIE_LABELS, STEP_LABELS, SECTION_STATUS_COLORS, GENERATION_STEPS |
-| `supabase.ts` | 25 | Client Supabase | supabase, getCurrentUser() |
+| `supabase.ts` | 18 | Client Supabase (Proxy lazy init) | supabase |
 | `api/client.ts` | 188 | Client HTTP | ApiError, apiFetch<T>(), apiSSE<T>() |
 | `api/index.ts` | 314 | Pont frontend↔backend | startWorkflow(), submitAnswers(), validateField(), streamGeneration(), sendFeedback() |
 | `api/promesse.ts` | 111 | API promesse | detecterType(), getQuestions(), validerPromesse() |
@@ -161,7 +164,7 @@
 
 | Fichier | LOC | Types cles |
 |---------|-----|------------|
-| `index.ts` | 96 | Message, ConversationSummary, DocumentSection |
+| `index.ts` | 115 | Message, ConversationSummary, DocumentSection, Dossier, Partie, ActeGenere, Client |
 | `workflow.ts` | 126 | WorkflowStep, TypeActe, CategorieBien, SousType, Section, Question |
 
 ### frontend/components/workflow/ (20 composants)
@@ -178,17 +181,44 @@
 | `GenerationProgress.tsx` | ~150 | Progression generation |
 | `fields/*.tsx` | 7 fichiers | TextField, NumberField, DateField, BooleanField, SelectField, ContactField, ArrayField |
 
+### frontend/components/ (extraits AXE 2)
+
+| Fichier | LOC | Role |
+|---------|-----|------|
+| `MessageBubble.tsx` | 213 | Bulle message chat (extrait de ChatArea) |
+| `TypingIndicator.tsx` | 29 | Indicateur de saisie (extrait de ChatArea) |
+| `DocumentCard.tsx` | 131 | Card document genere (AXE 7) |
+| `ChatArea.tsx` | 148 | Zone de chat + lien Mode guide (AXE 7) |
+| `ParagraphReview.tsx` | 252 | Relecture paragraphe par paragraphe |
+| `Header.tsx` | 77 | En-tete (Brouillons/Exporter disabled) |
+| `Sidebar.tsx` | ~200 | Navigation laterale + NavLinks Documents/Workflow (AXE 7) |
+| `ClientCard.tsx` | ~80 | Card client (import format.ts) |
+| `DossierCard.tsx` | ~90 | Card dossier (import format.ts) |
+
 ### frontend/app/ (pages)
 
 | Route | Fichier | LOC |
 |-------|---------|-----|
-| `/` | `page.tsx` | ~150 |
-| `/login` | `login/page.tsx` | ~120 |
+| `/` | `page.tsx` | 110 |
+| `/login` | `login/page.tsx` | 191 |
 | `/app` | `app/page.tsx` | 400 |
 | `/app/clients` | `app/clients/page.tsx` | ~180 |
-| `/app/workflow` | `app/workflow/page.tsx` | ~33 |
+| `/app/clients/[id]` | `app/clients/[id]/page.tsx` | ~40 |
+| `/app/documents` | `app/documents/page.tsx` | 213 |
+| `/app/workflow` | `app/workflow/page.tsx` | ~45 |
 | `/app/dossiers` | `app/dossiers/page.tsx` | ~160 |
+| `/app/dossiers/[id]` | `app/dossiers/[id]/page.tsx` | ~40 |
 | API proxy | `api/chat/route.ts` | ~150 |
+
+### frontend/__tests__/ (AXE 8 — cree le 18/02)
+
+| Fichier | Tests | Cible |
+|---------|-------|-------|
+| `format.test.ts` | 6 | formatDate() — null, undefined, vide, invalide, ISO, date-only |
+| `auth.test.ts` | 4 | getUserEtudeId() — happy path, no user, no etude, erreur |
+| `MessageBubble.test.tsx` | 11 | Rendu user/assistant, feedback, download, section, quick actions, welcome |
+| `ChatArea.test.tsx` | 9 | Submit, empty submit, typing indicator, mode guide, streaming |
+| **Total** | **30** | Vitest 4.0 + Testing Library + jsdom |
 
 ---
 
@@ -198,7 +228,7 @@
 |---------|-----|------|
 | `agent_autonome.py` | 3142 | Agent intelligent NL + Q&R |
 | `chat_handler.py` | 1237 | Chat SSE + contexte |
-| `anthropic_agent.py` | 820 | Wrapper Claude API |
+| `anthropic_agent.py` | 1030 | Wrapper Claude API (3-tier prompt caching, directive loading) |
 | `core/assembler_acte.py` | 792 | Assemblage Jinja2 |
 | `gestionnaires/gestionnaire_promesses.py` | 1695 | Orchestration promesses |
 | `services/cadastre_service.py` | 673 | APIs cadastre gouv.fr |
@@ -227,7 +257,7 @@
 
 | Fichier | LOC | Role |
 |---------|-----|------|
-| `deployment_modal/modal_app.py` | 381 | Config Modal (Docker, volumes, CRON) |
+| `deployment_modal/modal_app.py` | 397 | Config Modal (Docker, volumes, CRON, docs_original mount, github-credentials) |
 
 ---
 

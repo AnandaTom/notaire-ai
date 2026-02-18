@@ -19,8 +19,7 @@
 |----|----------|---------|-----|-----------|-------|
 | I-004 | Pas de DPA signe avec Supabase | Legal | Paul | 18/02 | OBLIGATOIRE RGPD |
 | I-007 | DOCX metadata non strippee | `core/exporter_docx.py` | Augustin | 18/02 | Risque RGPD (auteur, chemins) |
-| I-008 | self_anneal.py n'existe pas | `modal_app.py:187` | - | 18/02 | Importe mais manquant, gere par try/except |
-| I-009 | weekly_catalog_sync ecrit sur FS read-only | `modal_app.py:251` | - | 18/02 | Modal = read-only hors /outputs |
+| I-008 | self_anneal.py n'existe pas | `modal_app.py` | - | 18/02 | Manquant; daily_learning_job gere maintenant l'erreur + log dans audit_logs (threshold 5+ corrections) |
 | I-010 | Endpoints /cadastre/* absents de api/main.py | `api/main.py` | - | 18/02 | Documentes dans CLAUDE.md mais pas integres |
 
 ### MOYEN
@@ -41,6 +40,7 @@
 
 | ID | Probleme | Ferme le | Commit | Notes |
 |----|----------|----------|--------|-------|
+| I-009 | weekly_catalog_sync ecrit sur FS read-only | 18/02 | tom/dev | Corrige: ecriture fichier supprimee, persistence uniquement via Supabase |
 | C-001 | `frontend/lib/api.ts` n'existe pas | 18/02 | `3c6e009` | Cree frontend/lib/api/{client,index,promesse}.ts |
 | C-004 | URLs hardcodees dans 6 fichiers frontend | 18/02 | `3c6e009` | Centralise dans frontend/lib/config.ts |
 | C-005 | Bug URL Modal dans route.ts | 18/02 | `3c6e009` | notaire-ai → notomai |

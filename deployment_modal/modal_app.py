@@ -52,6 +52,7 @@ image = (
     .add_local_dir(PROJECT_ROOT / "schemas", remote_path="/root/project/schemas")
     .add_local_dir(PROJECT_ROOT / "templates", remote_path="/root/project/templates")
     .add_local_dir(PROJECT_ROOT / "directives", remote_path="/root/project/directives")
+    .add_local_dir(PROJECT_ROOT / "docs_original", remote_path="/root/project/docs_original")
 )
 
 # Stub Modal
@@ -61,7 +62,7 @@ app = modal.App(
     secrets=[
         modal.Secret.from_name("supabase-credentials"),   # SUPABASE_URL, SUPABASE_KEY, URL_SIGNING_KEY
         modal.Secret.from_name("anthropic-credentials"),   # ANTHROPIC_API_KEY
-        # modal.Secret.from_name("github-credentials"),   # GITHUB_TOKEN - À créer pour self-anneal
+        modal.Secret.from_name("github-credentials"),     # GITHUB_TOKEN pour self-anneal
     ]
 )
 
@@ -153,7 +154,7 @@ def daily_learning_job():
         # 2. Analyser les corrections
         corrections = supabase.table("audit_logs").select(
             "details"
-        ).like("action", "feedback_correction").gte(
+        ).like("action", "feedback_correction%").gte(
             "created_at", yesterday
         ).execute()
 
@@ -182,18 +183,32 @@ def daily_learning_job():
 
         print(f"[{datetime.now()}] Rapport généré avec succès")
 
-        # 4. Self-anneal: créer PR GitHub si feedbacks confirmés (3+)
-        try:
-            from execution.self_anneal import run_self_anneal
-            anneal_result = run_self_anneal(supabase)
-            rapport["self_anneal"] = anneal_result
-            print(f"  Self-anneal: {anneal_result.get('status', 'unknown')} "
-                  f"({anneal_result.get('corrections_applied', 0)} corrections)")
-            if anneal_result.get("pr_url"):
-                print(f"  PR: {anneal_result['pr_url']}")
-        except Exception as anneal_err:
-            print(f"⚠️ Self-anneal ignoré: {anneal_err}")
-            rapport["self_anneal"] = {"status": "error", "error": str(anneal_err)}
+        # 4. Self-anneal: creer PR GitHub si feedbacks confirmes (5+ minimum)
+        total_corrections = len(corrections.data or [])
+        if total_corrections >= 5:
+            try:
+                from execution.self_anneal import run_self_anneal
+                anneal_result = run_self_anneal(supabase)
+                rapport["self_anneal"] = anneal_result
+                print(f"  Self-anneal: {anneal_result.get('status', 'unknown')} "
+                      f"({anneal_result.get('corrections_applied', 0)} corrections)")
+                if anneal_result.get("pr_url"):
+                    print(f"  PR: {anneal_result['pr_url']}")
+            except Exception as anneal_err:
+                print(f"Self-anneal erreur: {anneal_err}")
+                rapport["self_anneal"] = {"status": "error", "error": str(anneal_err)}
+                # Logger l'erreur dans audit_logs
+                try:
+                    supabase.table("audit_logs").insert({
+                        "action": "self_anneal_error",
+                        "resource_type": "system",
+                        "details": {"error": str(anneal_err), "corrections_count": total_corrections}
+                    }).execute()
+                except Exception:
+                    pass
+        else:
+            print(f"  Self-anneal: {total_corrections} corrections < seuil (5), ignore")
+            rapport["self_anneal"] = {"status": "skipped", "reason": f"{total_corrections} < 5 corrections"}
 
     except Exception as e:
         print(f"❌ Erreur job apprentissage: {e}")
@@ -247,12 +262,9 @@ def weekly_catalog_sync():
         print(f"  Stats clauses: {stats}")
         print(f"  Clauses nouvellement actives: {len(nouvelles_validees)}")
 
-        # Sauvegarder le catalogue mis à jour
+        # Note: On Modal, the container filesystem is ephemeral and rebuilt on cold start.
+        # Writing to /root/project/ would be lost. We only persist via Supabase below.
         catalog["derniere_sync"] = datetime.now().isoformat()
-        catalog_path.write_text(
-            json.dumps(catalog, ensure_ascii=False, indent=2),
-            encoding="utf-8"
-        )
 
         # Logger dans Supabase
         from supabase import create_client

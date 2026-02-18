@@ -9,8 +9,18 @@
 
 - **Branches** : `payoss/dev`, `tom/dev`, `augustin/dev` → merge sur `master`
 - **Commits** : `feat:`, `fix:`, `chore:`, `docs:` — message en anglais, body en francais OK
+- **Commit end-of-day** : genere automatiquement par `generate_commit_msg.py` depuis `memory/JOURNAL.md`
 - **Push** : toujours push dev PUIS merge fast-forward sur master
 - **Jamais** : force push sur master, amend de commits publies, --no-verify
+
+## Journal (memory/JOURNAL.md)
+
+- **Format entete** : `## YYYY-MM-DD — Prenom (Pseudo)` (tiret long `—`)
+- **Plusieurs sessions/jour** : ajouter `(matin)`, `(soir)`, `(nuit)` entre date et tiret
+- **Ne jamais ecraser** l'entree d'un autre dev — toujours ajouter en dessous
+- **Nouvelles entrees** : avant le bloc `## Template entree journal` en fin de fichier
+- **Scripts lies** : `generate_commit_msg.py` (filtre par dev), `read_team_commits.py` (lit les commits equipe)
+- **Anti-conflit** : le format par dev permet a git de merger proprement les entrees paralleles
 
 ## Frontend (Next.js 14 + TypeScript)
 

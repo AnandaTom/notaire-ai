@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen, Users } from 'lucide-react'
+import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen, Users, FileText, ClipboardList } from 'lucide-react'
 import type { ConversationSummary } from '@/types'
 
 interface SidebarProps {
@@ -118,6 +118,8 @@ export default function Sidebar({
           </p>
           <NavLink href="/app/dossiers" icon={FolderOpen} label="Mes Dossiers" />
           <NavLink href="/app/clients" icon={Users} label="Mes Clients" />
+          <NavLink href="/app/documents" icon={FileText} label="Mes Documents" />
+          <NavLink href="/app/workflow" icon={ClipboardList} label="Workflow guide" />
         </div>
 
         {/* References */}
@@ -125,8 +127,8 @@ export default function Sidebar({
           <p className="text-[0.65rem] text-white/35 uppercase tracking-widest px-2 mb-2.5">
             References
           </p>
-          <NavItem icon={HelpCircle} label="Code civil" />
-          <NavItem icon={Book} label="Modeles" />
+          <NavItem icon={HelpCircle} label="Code civil" disabled />
+          <NavItem icon={Book} label="Modeles" disabled />
         </div>
       </div>
 
@@ -147,12 +149,21 @@ export default function Sidebar({
 function NavItem({
   icon: Icon,
   label,
+  disabled,
 }: {
   icon: React.ComponentType<{ className?: string }>
   label: string
+  disabled?: boolean
 }) {
   return (
-    <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl cursor-pointer transition-all mb-1 text-white/70 hover:bg-white/10 hover:text-white">
+    <div
+      className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all mb-1 ${
+        disabled
+          ? 'text-white/30 cursor-not-allowed'
+          : 'text-white/70 cursor-pointer hover:bg-white/10 hover:text-white'
+      }`}
+      title={disabled ? 'Bientôt disponible' : undefined}
+    >
       <Icon className="w-[18px] h-[18px] opacity-70" />
       <span className="text-[0.85rem]">{label}</span>
     </div>

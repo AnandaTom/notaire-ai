@@ -68,6 +68,24 @@ export interface Dossier {
   updated_at: string
 }
 
+// Types pour les actes generes
+export interface ActeGenere {
+  id: string
+  nom?: string
+  type_acte: 'vente' | 'promesse_vente' | 'reglement_copropriete' | 'modificatif_edd' | 'autre'
+  status: 'brouillon' | 'genere' | 'valide' | 'signe' | 'archive' | 'annule'
+  reference_interne?: string
+  fichier_docx?: string
+  fichier_pdf?: string
+  taux_completion?: number
+  temps_generation_ms?: number
+  prix_bien?: number
+  dossier_id?: string
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
 // Types pour la gestion des clients
 export interface Client {
   id: string

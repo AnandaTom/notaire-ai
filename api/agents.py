@@ -22,9 +22,12 @@ Version: 2.1.0 - Tier 1 Cost Optimizations (-68% costs)
 import sys
 import time
 import asyncio
+import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Literal
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Request
 from pydantic import BaseModel, Field
@@ -180,7 +183,7 @@ async def execute_cadastre_enricher(prompt: str, context: dict) -> dict:
         - data: dict (données dossier à enrichir)
 
     Returns:
-        - enriched_data: dict
+        - enriched_data: dict (bien enrichi avec cadastre)
         - source: "api_cadastre_gouv"
         - duration_ms: float
     """
@@ -204,14 +207,14 @@ async def execute_cadastre_enricher(prompt: str, context: dict) -> dict:
             "duration_ms": (time.time() - start) * 1000
         }
 
-    # Enrich data
-    result = service.enrichir_cadastre(donnees)
+    # Enrich data — offload blocking I/O (HTTP calls to BAN/IGN APIs)
+    result = await asyncio.to_thread(service.enrichir_cadastre, donnees)
 
     return {
         "status": "success",
         "enriched": result.get("enriched", False),
         "fields_added": result.get("fields_added", []),
-        "data": result.get("data", donnees),
+        "enriched_data": result.get("data", donnees),
         "warnings": result.get("warnings", []),
         "duration_ms": (time.time() - start) * 1000
     }
@@ -244,7 +247,9 @@ async def execute_data_collector_qr(prompt: str, context: dict) -> dict:
 
     # En mode API, on utilise toujours prefill_only (pas d'interaction terminal)
     # Le frontend gérera les questions manquantes via son propre workflow
-    resultat = collecteur.collecter(
+    # Offload blocking I/O (schema loading, file reads)
+    resultat = await asyncio.to_thread(
+        collecteur.collecter,
         donnees_initiales=donnees_existantes,
         mode="prefill_only"
     )
@@ -262,52 +267,55 @@ async def execute_data_collector_qr(prompt: str, context: dict) -> dict:
 
 async def execute_clause_suggester(prompt: str, context: dict) -> dict:
     """
-    Execute clause-suggester agent.
+    Execute clause-suggester agent via le vrai moteur suggerer_clauses.py.
 
     Input context:
-        - acte_md: str (assembled Markdown)
-        - metadata: dict (type_acte, bien, prix, etc.)
+        - metadata: dict (type_acte, prix, pret, etc.)
+        - donnees: dict (donnees completes de l'acte)
 
     Returns:
         - suggestions: List[dict]
         - total_suggestions: int
         - critiques: int, recommandees: int, optionnelles: int
     """
-    # TODO: Implémenter suggester_clauses.py
-    # Pour l'instant, retourner mock data
-
     start = time.time()
 
     metadata = context.get("metadata", {})
+    donnees = context.get("donnees", {})
     type_acte = metadata.get("type_acte", "promesse_vente")
-    prix_montant = metadata.get("prix", {}).get("montant", 0)
-    pret = metadata.get("pret", {})
 
-    suggestions = []
+    try:
+        from execution.utils.suggerer_clauses import suggerer_clauses
 
-    # Mock: Condition suspensive prêt si pret applicable
-    if pret.get("applicable") and pret.get("montant", 0) > 50000:
-        suggestions.append({
-            "id": "condition_suspensive_pret",
-            "nom": "Condition suspensive d'obtention de prêt",
-            "priorite": 1,  # CRITIQUE
-            "score": 95,
-            "justification": f"Prêt de {pret['montant']}€ → obligatoire (art. 1589-1 Code Civil)",
-            "variables_disponibles": True,
-            "section_insertion": "CONDITIONS SUSPENSIVES"
-        })
+        raw_suggestions = suggerer_clauses(donnees, type_acte, verbose=False)
 
-    # Mock: Garantie bancaire si prix > 500k€
-    if prix_montant > 500000:
-        suggestions.append({
-            "id": "garantie_bancaire",
-            "nom": "Garantie bancaire",
-            "priorite": 2,  # RECOMMANDÉE
-            "score": 65,
-            "justification": f"Prix {prix_montant}€ > 500k€ → sécurisation vendeur recommandée",
-            "variables_disponibles": True,
-            "section_insertion": "GARANTIES"
-        })
+        # Mapper SuggestionClause vers le format API
+        priorite_map = {"obligatoire": 1, "recommandee": 2, "optionnelle": 3}
+        score_map = {"obligatoire": 95, "recommandee": 65, "optionnelle": 35}
+
+        suggestions = [
+            {
+                "id": s.clause_id,
+                "nom": s.nom,
+                "priorite": priorite_map.get(s.priorite, 3),
+                "score": score_map.get(s.priorite, 35),
+                "justification": s.raison,
+                "variables_disponibles": len(s.variables_manquantes) == 0,
+                "section_insertion": s.categorie,
+            }
+            for s in raw_suggestions
+        ]
+    except Exception as e:
+        logger.warning(f"Clause suggester error: {e}")
+        suggestions = []
+        return {
+            "status": "error",
+            "error": str(e),
+            "suggestions": [],
+            "total_suggestions": 0,
+            "critiques": 0, "recommandees": 0, "optionnelles": 0,
+            "duration_ms": (time.time() - start) * 1000
+        }
 
     return {
         "status": "success",
@@ -322,20 +330,19 @@ async def execute_clause_suggester(prompt: str, context: dict) -> dict:
 
 async def execute_post_generation_reviewer(prompt: str, context: dict) -> dict:
     """
-    Execute post-generation-reviewer agent.
+    Execute post-generation-reviewer agent — QA deterministe.
+
+    Verifie le DOCX genere sur 7 dimensions sans necesiter les trames originales.
 
     Input context:
         - docx_path: str
-        - donnees: dict (données utilisées pour génération)
+        - donnees: dict (donnees utilisees pour generation)
 
     Returns:
         - status: "PASS" | "WARNING" | "BLOCKED"
         - qa_score: int (0-100)
         - issues: List[dict]
     """
-    # TODO: Implémenter reviewer_qa.py avec python-docx
-    # Pour l'instant, retourner mock data
-
     start = time.time()
 
     docx_path = context.get("docx_path")
@@ -348,24 +355,102 @@ async def execute_post_generation_reviewer(prompt: str, context: dict) -> dict:
             "duration_ms": (time.time() - start) * 1000
         }
 
-    # Mock QA checks
     issues = []
-    qa_score = 94  # Mock
+    qa_score = 100
 
-    # Vérifications mock
-    quotites_vendues = sum(q.get("valeur", 0) / q.get("base", 1)
-                           for q in donnees.get("quotites_vendues", []))
+    # Dimension 1: Fichier DOCX valide et lisible
+    try:
+        from docx import Document as DocxDocument
+        if Path(docx_path).exists():
+            doc = DocxDocument(docx_path)
+            paragraphs = [p.text for p in doc.paragraphs]
+            full_text = "\n".join(paragraphs)
+        else:
+            issues.append({"severite": "CRITIQUE", "dimension": "fichier", "message": f"Fichier introuvable: {docx_path}"})
+            qa_score -= 30
+            doc = None
+            full_text = ""
+    except Exception as e:
+        issues.append({"severite": "CRITIQUE", "dimension": "fichier", "message": f"DOCX invalide: {e}"})
+        qa_score -= 30
+        doc = None
+        full_text = ""
 
-    if abs(quotites_vendues - 1.0) > 0.001:
+    # Dimension 2: Variables Jinja2 non-resolues
+    if full_text:
+        import re
+        unresolved = re.findall(r'\{\{[^}]+\}\}', full_text)
+        if unresolved:
+            issues.append({
+                "severite": "CRITIQUE",
+                "dimension": "variables",
+                "message": f"{len(unresolved)} variable(s) Jinja2 non-resolue(s): {', '.join(unresolved[:5])}"
+            })
+            qa_score -= min(20, len(unresolved) * 5)
+
+    # Dimension 3: Quotites
+    for field_name in ["quotites_vendues", "quotites_acquises"]:
+        quotites = donnees.get(field_name, [])
+        if quotites:
+            total = sum(
+                q.get("valeur", 0) / max(q.get("base", 1), 1)
+                for q in quotites
+            )
+            if abs(total - 1.0) > 0.001:
+                issues.append({
+                    "severite": "CRITIQUE",
+                    "dimension": "quotites",
+                    "message": f"{field_name} = {total*100:.1f}% (attendu: 100%)"
+                })
+                qa_score -= 15
+
+    # Dimension 4: Prix
+    prix = donnees.get("prix", {})
+    montant = prix.get("montant", 0)
+    if montant <= 0:
         issues.append({
-            "severite": "CRITIQUE",
-            "dimension": "quotites",
-            "message": f"Quotités vendues ≠ 100% ({quotites_vendues*100:.1f}%)"
+            "severite": "AVERTISSEMENT",
+            "dimension": "prix",
+            "message": "Prix non renseigne ou <= 0"
         })
-        qa_score -= 20
+        qa_score -= 5
+
+    # Dimension 5: Sections obligatoires (headings dans le DOCX)
+    if doc:
+        headings = [p.text.strip().upper() for p in doc.paragraphs if p.style and "heading" in (p.style.name or "").lower()]
+        sections_attendues = ["COMPARUTION", "DESIGNATION", "PRIX"]
+        for section in sections_attendues:
+            if not any(section in h for h in headings):
+                issues.append({
+                    "severite": "AVERTISSEMENT",
+                    "dimension": "sections",
+                    "message": f"Section '{section}' absente des headings"
+                })
+                qa_score -= 3
+
+    # Dimension 6: Longueur minimale du document
+    if doc and len(doc.paragraphs) < 10:
+        issues.append({
+            "severite": "AVERTISSEMENT",
+            "dimension": "completude",
+            "message": f"Document tres court ({len(doc.paragraphs)} paragraphes)"
+        })
+        qa_score -= 10
+
+    # Dimension 7: Parties presentes
+    promettants = donnees.get("promettants", donnees.get("vendeurs", []))
+    beneficiaires = donnees.get("beneficiaires", donnees.get("acquereurs", []))
+    if not promettants:
+        issues.append({"severite": "AVERTISSEMENT", "dimension": "parties", "message": "Aucun vendeur/promettant"})
+        qa_score -= 5
+    if not beneficiaires:
+        issues.append({"severite": "AVERTISSEMENT", "dimension": "parties", "message": "Aucun acquereur/beneficiaire"})
+        qa_score -= 5
+
+    qa_score = max(0, qa_score)
 
     status = "BLOCKED" if any(i["severite"] == "CRITIQUE" for i in issues) else \
-             "WARNING" if len(issues) > 5 else \
+             "WARNING" if issues else \
              "PASS"
 
     return {
@@ -373,8 +458,8 @@ async def execute_post_generation_reviewer(prompt: str, context: dict) -> dict:
         "qa_score": qa_score,
         "issues": issues,
         "dimensions_checked": [
-            "bookmarks", "quotites", "prix", "carrez", "diagnostics",
-            "formatage", "sections", "legal", "coherence", "metadata"
+            "fichier", "variables", "quotites", "prix",
+            "sections", "completude", "parties"
         ],
         "duration_ms": (time.time() - start) * 1000
     }
@@ -634,16 +719,18 @@ async def orchestrate_generation(request: OrchestrateRequest):
 
     try:
         # Phase 3: Exécution agents
-        if strategy == "parallel":
-            # Group 1: Parallel (cadastre, collector, auditor)
-            tasks = []
+        # Build tasks and labels in lockstep to avoid index mismatch
+        tasks = []
+        task_names = []
 
-            # Cadastre enricher
+        if strategy == "parallel":
+            # Cadastre enricher (only if address available)
             if intent.bien:
                 tasks.append(execute_cadastre_enricher(
                     prompt=request.demande,
                     context={"data": {"bien": intent.bien}}
                 ))
+                task_names.append("cadastre-enricher")
 
             # Data collector (prefill mode)
             tasks.append(execute_data_collector_qr(
@@ -659,12 +746,12 @@ async def orchestrate_generation(request: OrchestrateRequest):
                     "mode": request.mode
                 }
             ))
+            task_names.append("data-collector-qr")
 
             # Execute in parallel
             results = await asyncio.gather(*tasks, return_exceptions=True)
 
-            for i, result in enumerate(results):
-                agent_name = ["cadastre-enricher", "data-collector-qr"][i]
+            for agent_name, result in zip(task_names, results):
                 if isinstance(result, Exception):
                     errors.append(f"{agent_name}: {str(result)}")
                     agents_executed.append({
@@ -682,33 +769,171 @@ async def orchestrate_generation(request: OrchestrateRequest):
                     })
 
         else:
-            # Sequential fallback
-            # Execute agents one by one
-            pass
+            # Sequential fallback — run agents one by one
+            if intent.bien:
+                try:
+                    cadastre_result = await execute_cadastre_enricher(
+                        prompt=request.demande,
+                        context={"data": {"bien": intent.bien}}
+                    )
+                    agents_executed.append({"name": "cadastre-enricher", "status": "success", "duration_ms": cadastre_result.get("duration_ms", 0), "result": cadastre_result})
+                except Exception as e:
+                    errors.append(f"cadastre-enricher: {e}")
+                    agents_executed.append({"name": "cadastre-enricher", "status": "error", "duration_ms": 0, "error": str(e)})
 
-        # Phase 4-7: Workflow standard (validation, assemblage, export, QA)
-        # TODO: Intégrer WorkflowRapide ou orchestrateur
+            try:
+                qr_result = await execute_data_collector_qr(
+                    prompt=request.demande,
+                    context={"type_acte": intent.type_acte.value, "donnees_existantes": {"promettants": [intent.vendeur] if intent.vendeur else [], "beneficiaires": [intent.acquereur] if intent.acquereur else [], "bien": intent.bien or {}, "prix": intent.prix or {}}, "mode": request.mode}
+                )
+                agents_executed.append({"name": "data-collector-qr", "status": "success", "duration_ms": qr_result.get("duration_ms", 0), "result": qr_result})
+            except Exception as e:
+                errors.append(f"data-collector-qr: {e}")
+                agents_executed.append({"name": "data-collector-qr", "status": "error", "duration_ms": 0, "error": str(e)})
+
+        # Phase 4-7: Pipeline reel — validation, assemblage, export, QA
+        # Merge des donnees collectees par les agents paralleles
+        merged_donnees = {
+            "promettants": [intent.vendeur] if intent.vendeur else [],
+            "beneficiaires": [intent.acquereur] if intent.acquereur else [],
+            "bien": intent.bien or {},
+            "prix": intent.prix or {},
+        }
+
+        # Integrer les resultats des agents paralleles
+        for agent_info in agents_executed:
+            if agent_info.get("status") != "success" or not agent_info.get("result"):
+                continue
+            result = agent_info["result"]
+            if agent_info["name"] == "cadastre-enricher" and result.get("enriched_data"):
+                # Merge cadastre data into bien
+                enriched = result["enriched_data"]
+                if isinstance(enriched, dict):
+                    bien_enrichi = enriched.get("bien", enriched)
+                    merged_donnees["bien"].update(bien_enrichi)
+            elif agent_info["name"] == "data-collector-qr" and result.get("data"):
+                # Merge Q&R collected data (without overwriting existing data)
+                for key, val in result["data"].items():
+                    if key not in merged_donnees or not merged_donnees[key]:
+                        merged_donnees[key] = val
+
+        # Phase 4-5: Generation reelle via le pipeline existant
+        output_info = None
+        type_acte_str = intent.type_acte.value if hasattr(intent.type_acte, 'value') else str(intent.type_acte)
+
+        try:
+            if type_acte_str in ("promesse_vente", "promesse"):
+                from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
+                gestionnaire = GestionnairePromesses()
+                gen_result = gestionnaire.generer(merged_donnees, force=True)
+                if gen_result.succes and gen_result.fichier_docx:
+                    file_path = gen_result.fichier_docx
+                    import os
+                    output_info = {
+                        "file_path": file_path,
+                        "file_size_kb": round(os.path.getsize(file_path) / 1024, 1) if os.path.exists(file_path) else 0,
+                        "pages": 24,  # Estimation standard promesse
+                    }
+                    agents_executed.append({
+                        "name": "workflow-orchestrator",
+                        "status": "success",
+                        "duration_ms": gen_result.duree_generation * 1000,
+                    })
+                else:
+                    errors.extend(gen_result.erreurs)
+                    agents_executed.append({
+                        "name": "workflow-orchestrator",
+                        "status": "error",
+                        "duration_ms": gen_result.duree_generation * 1000,
+                        "error": "; ".join(gen_result.erreurs),
+                    })
+                warnings.extend(gen_result.warnings)
+            else:
+                from execution.gestionnaires.orchestrateur import OrchestratorNotaire
+                orch = OrchestratorNotaire()
+                wf_result = orch.generer_acte_complet(type_acte_str, merged_donnees)
+                if wf_result.statut == "succes" and wf_result.fichiers_generes:
+                    file_path = wf_result.fichiers_generes[0]
+                    import os
+                    output_info = {
+                        "file_path": file_path,
+                        "file_size_kb": round(os.path.getsize(file_path) / 1024, 1) if os.path.exists(file_path) else 0,
+                        "pages": 24,
+                    }
+                    agents_executed.append({
+                        "name": "workflow-orchestrator",
+                        "status": "success",
+                        "duration_ms": wf_result.duree_totale_ms,
+                    })
+                else:
+                    errors.extend(wf_result.erreurs)
+                    agents_executed.append({
+                        "name": "workflow-orchestrator",
+                        "status": "error",
+                        "duration_ms": wf_result.duree_totale_ms,
+                        "error": "; ".join(wf_result.erreurs),
+                    })
+                warnings.extend(wf_result.alertes)
+        except Exception as gen_err:
+            logger.error(f"Erreur generation pipeline: {gen_err}", exc_info=True)
+            errors.append(f"generation: {str(gen_err)}")
+            agents_executed.append({
+                "name": "workflow-orchestrator",
+                "status": "error",
+                "duration_ms": 0,
+                "error": str(gen_err),
+            })
+
+        # Phase 6: Suggestions de clauses (reel)
+        if output_info and not errors:
+            try:
+                clause_result = await execute_clause_suggester(
+                    prompt=request.demande,
+                    context={"metadata": {"type_acte": type_acte_str, "prix": merged_donnees.get("prix", {}), "pret": merged_donnees.get("pret", {})}, "donnees": merged_donnees}
+                )
+                clause_status = clause_result.get("status", "success")
+                agents_executed.append({
+                    "name": "clause-suggester",
+                    "status": clause_status,
+                    "duration_ms": clause_result.get("duration_ms", 0),
+                    "result": clause_result,
+                })
+            except Exception as clause_err:
+                logger.warning(f"Clause suggester failed (non-blocking): {clause_err}")
+
+        # Phase 7: QA review (reel)
+        if output_info and not errors:
+            try:
+                qa_result = await execute_post_generation_reviewer(
+                    prompt="QA review",
+                    context={"docx_path": output_info["file_path"], "donnees": merged_donnees}
+                )
+                agents_executed.append({
+                    "name": "post-generation-reviewer",
+                    "status": "success",
+                    "duration_ms": qa_result.get("duration_ms", 0),
+                    "result": qa_result,
+                })
+                if qa_result.get("status") == "BLOCKED":
+                    errors.append(f"QA blocked: {'; '.join(i.get('message', '') for i in qa_result.get('issues', []))}")
+            except Exception as qa_err:
+                logger.warning(f"Post-gen reviewer failed (non-blocking): {qa_err}")
 
         duration_total_ms = (time.time() - start_workflow) * 1000
 
-        # Mock response for now
         return OrchestrateResponse(
             workflow_id=workflow_id,
             status="success" if not errors else "error",
             strategy_used=strategy,
             duration_total_ms=duration_total_ms,
-            speedup_vs_sequential=2.6 if strategy == "parallel" else None,
+            speedup_vs_sequential=round(max(sum(a.get("duration_ms", 0) for a in agents_executed if a.get("name") in {"cadastre-enricher", "data-collector-qr"}), 1) / max(duration_total_ms, 1), 1) if strategy == "parallel" else None,
             agents_executed=agents_executed,
             data_quality={
-                "completion": 100,
+                "completion": 100 if output_info else 0,
                 "validation_errors": len(errors),
                 "warnings": len(warnings)
             },
-            output={
-                "file_path": "outputs/promesse_20260211.docx",
-                "file_size_kb": 92,
-                "pages": 24
-            } if not errors else None,
+            output=output_info,
             errors=errors,
             warnings=warnings
         )

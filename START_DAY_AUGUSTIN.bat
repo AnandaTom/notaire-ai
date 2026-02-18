@@ -1,5 +1,5 @@
 @echo off
-REM Ultimate Simple Workflow - NotaireAI v2.0
+REM Ultimate Simple Workflow - NotaireAI - AUGUSTIN v2.0
 REM Double-click le matin, oubliez tout le reste
 REM Inclut la lecture des commits des autres devs
 
@@ -7,7 +7,7 @@ cd /d "%~dp0"
 
 echo.
 echo ========================================
-echo   NotaireAI - Demarrage Journee v2.0
+echo   NotaireAI - Demarrage Journee (AUGUSTIN)
 echo ========================================
 echo.
 
@@ -30,7 +30,7 @@ IF EXIST ".tmp\team_commits.md" (
 
 REM 3. Lancer auto-sync en arriere-plan
 echo [3/4] Lancement auto-sync...
-start /min powershell -ExecutionPolicy Bypass -File ".\auto_sync_v2.ps1"
+start /min powershell -ExecutionPolicy Bypass -File ".\auto_sync_v2.ps1" -BRANCH "augustin/dev"
 
 echo [4/4] Termine !
 echo.

@@ -3,6 +3,7 @@
 import { FileText, Users, Calendar, ChevronRight, Clock } from 'lucide-react'
 import type { Dossier } from '@/types'
 import Link from 'next/link'
+import { formatDate } from '@/lib/format'
 
 interface DossierCardProps {
   dossier: Dossier
@@ -21,14 +22,6 @@ const STATUT_COLORS: Record<string, { bg: string; text: string }> = {
   en_cours: { bg: 'bg-amber-500/20', text: 'text-amber-600' },
   termine: { bg: 'bg-green-500/20', text: 'text-green-600' },
   archive: { bg: 'bg-gray-500/20', text: 'text-gray-500' },
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
 }
 
 export default function DossierCard({ dossier }: DossierCardProps) {

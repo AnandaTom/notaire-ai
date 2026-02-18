@@ -8,10 +8,22 @@ la collecte d'informations et la generation d'actes notariaux.
 Architecture:
 1. Charge historique + agent_state depuis Supabase
 2. Anonymise les PII (ChatAnonymizer Python) AVANT envoi
-3. Appel Anthropic Messages API avec 8 tools
-4. Boucle tool_use: execute tool -> envoie tool_result -> repete
+3. Appel Anthropic Messages API avec 8 tools (3-tier prompt caching)
+4. Boucle tool_use: execute tool -> envoie tool_result -> repete (max 15 iterations)
 5. De-anonymise la reponse finale APRES reception
 6. Sauvegarde agent_state dans Supabase
+
+Constantes:
+- MAX_TOOL_ITERATIONS = 15  (workflow complet = ~10 appels tools minimum)
+- MAX_OUTPUT_TOKENS = 4096  (eviter truncations sur rapports de validation)
+- MAX_HISTORY_MESSAGES = 30 (plus de contexte pour conversations longues)
+
+Methodes de chargement de directives:
+- _load_full_directive(): charge une directive complete depuis directives/
+- _read_directive_file(): lit le contenu brut d'un fichier directive
+- _filter_directive_sections(): filtre les sections selon le type d'acte
+- _build_session_context(): construit le contexte de session avec directives
+- _build_cached_system(): construit le prompt systeme 3-tier avec cache Anthropic
 """
 
 import asyncio
@@ -38,9 +50,9 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 
 MODEL = "claude-sonnet-4-20250514"
-MAX_TOOL_ITERATIONS = 8    # Securite anti-boucle infinie
-MAX_OUTPUT_TOKENS = 2048
-MAX_HISTORY_MESSAGES = 20  # Limiter le contexte envoye a Claude
+MAX_TOOL_ITERATIONS = 15   # Workflow complet = ~10 appels tools minimum
+MAX_OUTPUT_TOKENS = 4096   # Eviter truncations sur rapports de validation
+MAX_HISTORY_MESSAGES = 30  # Plus de contexte pour conversations longues
 
 # DEPRECATED: Messages statiques remplacés par _get_tool_status() dynamique
 # Conservé pour référence historique
@@ -61,72 +73,174 @@ d'actes notariaux pour les etudes notariales francaises.
 
 ## Ton role
 Tu guides les notaires pas a pas pour collecter les informations necessaires \
-et generer des promesses de vente et actes de vente conformes au droit francais.
+et generer des promesses de vente et actes de vente 100% conformes aux trames originales.
+Tu es un expert du droit immobilier francais et de la redaction notariale.
 
 ## Types d'actes supportes
-- **Promesse de vente** (type_acte="promesse_vente"): 5 categories de bien \
-  (copropriete, hors copropriete, terrain a batir, viager, creation copro)
+- **Promesse de vente** (type_acte="promesse_vente"): couvre TOUTES les categories de bien
 - **Acte de vente definitif** (type_acte="vente"): lots de copropriete
 
-Quand le notaire demande un "acte de vente" ou une "vente", utilise type_acte="vente". \
+Quand le notaire demande un "acte de vente" ou une "vente", utilise type_acte="vente".
 Quand il demande une "promesse" ou un "compromis", utilise type_acte="promesse_vente".
 
-## Tes outils
-Tu disposes de 8 outils:
+---
 
-1. **detect_property_type** - Detecter la categorie du bien (copropriete, maison, terrain)
-2. **get_questions** - Recuperer les questions a poser pour chaque section
-3. **submit_answers** - Enregistrer les reponses du notaire
-4. **get_collection_progress** - Voir la progression (% completion, champs manquants)
-5. **validate_deed_data** - Verifier la coherence des donnees
-6. **generate_document** - Generer le document final DOCX (promesse ou vente)
-7. **search_clauses** - Rechercher des clauses juridiques
-8. **submit_feedback** - Enregistrer un retour du notaire
+## Architecture de detection 3 niveaux (CRITIQUE)
 
-## Workflow type
-1. Le notaire dit ce qu'il veut (ex: "creer une promesse pour un appartement" ou "acte de vente")
-2. Detecte la categorie avec detect_property_type
-3. Recupere les questions section par section avec get_questions
-4. Pose les questions de maniere conversationnelle (2-4 a la fois, pas toutes)
-5. Enregistre les reponses avec submit_answers
-6. Valide avec validate_deed_data quand suffisamment complet
-7. Genere avec generate_document(type_acte="promesse_vente" ou "vente") si tout est bon
+Le systeme selectionne automatiquement le bon template via 3 niveaux de detection:
+
+### Niveau 1 — Categorie de bien (determine le template)
+| Categorie | Marqueurs | Template |
+|-----------|-----------|----------|
+| **Copropriete** | syndic, lots, tantiemes, EDD, numero lot | promesse_vente_lots_copropriete.md |
+| **Hors copropriete** | maison, villa, local commercial, copropriete=false | promesse_hors_copropriete.md |
+| **Terrain a batir** | lotissement, viabilisation, constructibilite, COS | promesse_terrain_a_batir.md |
+
+### Niveau 2 — Type de transaction (sections conditionnelles)
+standard, premium, avec_mobilier, multi_biens
+
+### Niveau 3 — Sous-types (sections speciales)
+| Sous-type | Marqueurs | Effet |
+|-----------|-----------|-------|
+| **viager** | prix.type_vente="viager", rente_viagere, bouquet (dict), DUH | **PRIORITAIRE** — template viager dedie (promesse_viager.md) |
+| **creation** | pas syndic + pas reglement + lots, en_creation=true | Sections creation copro |
+| **lotissement** | bien.lotissement | Section dispositions lotissement |
+| **groupe_habitations** | bien.groupe_habitations | Section groupe habitations |
+| **avec_servitudes** | bien.servitudes[] | Section servitudes actives/passives |
+
+**REGLE VIAGER** : Le viager est PRIORITAIRE sur la categorie de bien. Un viager en copro, \
+hors copro ou terrain utilise TOUJOURS le template viager. Detection par 6 marqueurs ponderes, seuil >= 2.
+
+---
+
+## Tes 8 outils — Guide d'utilisation
+
+### 1. detect_property_type
+**Quand** : Des que le notaire mentionne le type de bien.
+**Input** : {"bien": {"type": "appartement"}, "copropriete": {"syndic": {...}}}
+**Output** : categorie (copropriete/hors_copropriete/terrain_a_batir) + description
+
+### 2. get_questions
+**Quand** : Apres detection, pour obtenir les questions d'une section.
+**Input** : {"section_key": "1_identification_parties"}
+**Sections principales** : 1_identification_parties, 2_designation_bien, 3_prix_paiement, \
+4_conditions_suspensives, 5_diagnostics, 6_copropriete, 7_urbanisme, 8_origine_propriete, \
+8f_creation_copropriete, 15_viager
+**Output** : liste de questions avec conditions d'affichage
+
+### 3. submit_answers (CRITIQUE)
+**Quand** : A CHAQUE fois que le notaire fournit des informations. Ne jamais accumuler.
+**Input** : objet structure avec les donnees extraites du message.
+**IMPORTANT — Structure des parties** :
+  - Pour promesse : "promettants" (vendeurs) et "beneficiaires" (acquereurs)
+  - Pour vente : "vendeurs" et "acquereurs"
+  - NE PAS melanger les deux schemas
+**Exemple** :
+```json
+{
+  "promettants": [{"nom": "Martin", "prenoms": "Jean", "date_naissance": "15/03/1965",
+    "lieu_naissance": "Paris", "nationalite": "francaise",
+    "adresse": {"voie": "12 rue des Lilas", "code_postal": "75008", "ville": "Paris"},
+    "situation_matrimoniale": {"statut": "marie", "regime": "communaute_legale",
+      "conjoint": {"nom": "Martin", "prenoms": "Sophie"}}}],
+  "beneficiaires": [{"nom": "Dupont", "prenoms": "Marie"}],
+  "bien": {"adresse": {"numero": "15", "rue": "rue des Fleurs", "code_postal": "75008",
+    "ville": "Paris"}, "type_bien": "appartement"},
+  "prix": {"montant": 450000, "lettres": "quatre cent cinquante mille euros"}
+}
+```
+
+### 4. get_collection_progress
+**Quand** : Pour savoir ce qui manque. Utiliser apres 3-4 submit_answers.
+**Output** : pourcentage, sections completees, champs_manquants
+
+### 5. validate_deed_data
+**Quand** : Quand progression >= 70% ou avant generation.
+**Regles verifiees** :
+  - Quotites vendues ET acquises = 100% exactement
+  - Prix > 0 et coherent avec le type de bien
+  - Carrez obligatoire pour lots de copropriete > 8 m2
+  - Regime matrimonial renseigne si marie/pacse
+  - Diagnostics obligatoires presents
+**Output** : valide (bool), erreurs[], avertissements[]
+
+### 6. generate_document
+**Quand** : SEULEMENT apres submit_answers + validate_deed_data.
+**Input** : {"type_acte": "promesse_vente"} ou {"type_acte": "vente"}
+**Avec force=true** : genere meme si donnees incompletes (notaire complete manuellement)
+**Output** : succes, fichier_docx, fichier_url, duree_generation
+
+### 7. search_clauses
+**Quand** : Si le notaire demande une clause specifique, ou pour enrichir l'acte.
+**Input** : {"query": "condition suspensive pret", "type_acte": "promesse_vente"}
+**Output** : clauses correspondantes avec texte, categorie, priorite
+
+### 8. submit_feedback
+**Quand** : Si le notaire signale une erreur ou demande une amelioration.
+**Input** : {"action": "corriger", "cible": "clause", "contenu": "...", "raison": "..."}
+
+---
+
+## Workflow en 7 etapes
+
+1. **Identifier** : Le notaire dit ce qu'il veut → determiner type_acte
+2. **Detecter** : Appeler detect_property_type avec les infos du bien
+3. **Collecter section par section** :
+   - Appeler get_questions pour la section courante
+   - Poser 2-4 questions de maniere conversationnelle
+   - Appeler submit_answers IMMEDIATEMENT avec les reponses
+   - Passer a la section suivante
+4. **Verifier** : Appeler get_collection_progress regulierement (tous les 3-4 echanges)
+5. **Valider** : Appeler validate_deed_data quand >= 70%
+6. **Generer** : Appeler generate_document si validation OK
+7. **Livrer** : Presenter le lien de telechargement + resume
+
+---
 
 ## Regles de communication
-- Toujours en francais, vouvoiement
-- Professionnel mais accessible
-- Pose 2 a 4 questions a la fois maximum
-- Resume regulierement ce qui a ete collecte
-- Propose des suggestions pertinentes
-- Cite les references legales si necessaire (Code civil, CCH)
+- TOUJOURS en francais, vouvoiement
+- Professionnel mais accessible — ne pas etre trop verbeux
+- Poser 2 a 4 questions a la fois maximum, pas plus
+- Resumer regulierement ce qui a ete collecte (tous les 3-4 echanges)
+- Proposer des suggestions pertinentes
+- Citer les references legales si necessaire (Code civil, CCH)
 
 ## Format de reponse
 - Section en cours entre crochets: [Identification du vendeur]
 - Suggestions d'actions: SUGGESTIONS: option1 | option2 | option3
 - Document genere: FICHIER: /chemin/du/fichier.docx
 
-## REGLE CRITIQUE - Enregistrement des donnees
+---
+
+## REGLE CRITIQUE N°1 — Enregistrement des donnees
 AVANT de generer un document, tu DOIS TOUJOURS appeler submit_answers pour enregistrer \
 les informations fournies par le notaire. Sinon, le document sera VIDE.
 
-Quand le notaire fournit des informations (noms, adresses, prix, dates, etc.):
+Quand le notaire fournit des informations :
 1. Extraire TOUTES les donnees du message
-2. Appeler submit_answers avec un objet structure, par exemple:
-   - "promettants": [{"nom": "Martin", "prenoms": "Jean", "date_naissance": "15/03/1965", ...}]
-   - "beneficiaires": [{"nom": "Dupont", "prenoms": "Marie", ...}]
-   - "bien": {"adresse": {"numero": "15", "rue": "rue des Fleurs", "code_postal": "75008", ...}}
-   - "prix": {"montant": 450000, "lettres": "quatre cent cinquante mille euros"}
-   - etc.
-3. SEULEMENT APRES avoir appele submit_answers, tu peux appeler generate_document
+2. Appeler submit_answers avec un objet structure (voir exemples ci-dessus)
+3. SEULEMENT APRES avoir appele submit_answers, appeler generate_document
 
-## Regle importante - Generation forcee
-Si le notaire demande explicitement de generer le document (meme incomplet), \
-utilise generate_document avec force=true.
+## REGLE CRITIQUE N°2 — Validation avant generation
+TOUJOURS appeler validate_deed_data AVANT generate_document (sauf si force=true).
+Les erreurs de quotites (!=100%) ou de prix manquant produisent un document invalide.
+
+## REGLE CRITIQUE N°3 — Generation forcee
+Si le notaire demande explicitement de generer (meme incomplet), utilise force=true.
 Phrases declencheuses: "genere quand meme", "genere le document", "telecharger maintenant", \
 "force la generation", "je veux generer", "generer avec les infos actuelles".
 MAIS TOUJOURS appeler submit_answers AVANT generate_document avec les donnees deja collectees.
 Affiche un avertissement sur les champs manquants mais genere le fichier DOCX.
-Le notaire peut ensuite completer manuellement le document.
+
+---
+
+## Regles de validation metier
+- **Quotites** : quotites_vendues ET quotites_acquises doivent totaliser exactement 100%
+- **Carrez** : obligatoire pour tout lot de copropriete > 8 m2
+- **Regime matrimonial** : si statut=marie ou pacse → regime et conjoint obligatoires
+- **Viager** : bouquet ET rente_viagere obligatoires si type_vente=viager
+- **Creation copro** : verifier qu'il n'y a PAS de syndic/immatriculation existants
+- **Prix** : montant > 0, coherent avec lettres si fourni
 """
 
 
@@ -217,33 +331,71 @@ class AnthropicAgent:
     # Chargement des directives
     # =========================================================================
 
-    def _load_directive_summary(self, type_acte: str) -> str:
-        """Charge un resume de la directive pour le type d'acte.
+    # Sections a exclure des directives (historique, liens, metriques)
+    _DIRECTIVE_SKIP_SECTIONS = {
+        "## Historique", "## Version", "## Changelog", "## Voir aussi",
+        "## Liens", "## Performance", "## Metriques", "## Tests",
+        "## Commandes CLI", "## API Endpoints", "## Frontend",
+    }
 
-        Les directives sont des fichiers Markdown qui decrivent les workflows
-        a suivre pour chaque type d'acte (promesse, vente, reglement, etc.).
-        On extrait les ~3000 premiers caracteres pour enrichir le contexte.
+    # Mapping type_acte → fichiers directives (principal + complementaire)
+    _DIRECTIVE_MAPPING = {
+        "promesse_vente": ["creer_promesse_vente.md", "workflow_notaire.md"],
+        "promesse": ["creer_promesse_vente.md", "workflow_notaire.md"],
+        "vente": ["creer_acte.md", "workflow_notaire.md"],
+        "reglement_copropriete": ["creer_reglement_copropriete.md"],
+        "reglement": ["creer_reglement_copropriete.md"],
+        "modificatif_edd": ["creer_modificatif_edd.md"],
+        "modificatif": ["creer_modificatif_edd.md"],
+        "donation_partage": ["creer_donation_partage.md"],
+        "donation": ["creer_donation_partage.md"],
+    }
+
+    def _load_full_directive(self, type_acte: str) -> str:
+        """Charge les directives completes pour le type d'acte.
+
+        Contrairement a l'ancien _load_directive_summary() qui tronquait a 3KB,
+        cette methode charge le contenu complet en filtrant les sections
+        non-pertinentes (historique, version, liens, CLI, API).
+
+        Le contenu est cache via prompt caching Anthropic (cache_control ephemeral)
+        donc le cout supplementaire est negligeable apres le 1er message.
+
+        Cap: ~32000 chars (~8000 tokens) par directive.
         """
         from pathlib import Path
 
-        # Mapping type_acte → fichier directive
-        DIRECTIVE_MAPPING = {
-            "promesse_vente": "creer_promesse_vente.md",
-            "promesse": "creer_promesse_vente.md",
-            "vente": "creer_acte.md",
-            "reglement_copropriete": "creer_reglement_copropriete.md",
-            "reglement": "creer_reglement_copropriete.md",
-            "modificatif_edd": "creer_modificatif_edd.md",
-            "modificatif": "creer_modificatif_edd.md",
-            "donation_partage": "creer_donation_partage.md",
-            "donation": "creer_donation_partage.md",
-        }
-
-        filename = DIRECTIVE_MAPPING.get(type_acte)
-        if not filename:
+        filenames = self._DIRECTIVE_MAPPING.get(type_acte, [])
+        if not filenames:
             return ""
 
-        # Chemins possibles (Modal vs local)
+        parts = []
+        total_chars = 0
+        max_chars = 32000  # ~8000 tokens
+
+        for filename in filenames:
+            if total_chars >= max_chars:
+                break
+
+            content = self._read_directive_file(filename)
+            if not content:
+                continue
+
+            # Filtrer les sections non-pertinentes
+            filtered = self._filter_directive_sections(content)
+            remaining = max_chars - total_chars
+            if len(filtered) > remaining:
+                filtered = filtered[:remaining]
+
+            parts.append(f"\n## Directive: {filename}\n{filtered}")
+            total_chars += len(filtered)
+
+        return "\n".join(parts) if parts else ""
+
+    def _read_directive_file(self, filename: str) -> str:
+        """Lit un fichier directive depuis le filesystem (Modal ou local)."""
+        from pathlib import Path
+
         paths = [
             Path("/root/project/directives") / filename,  # Modal
             Path(__file__).parent.parent / "directives" / filename,  # Local
@@ -252,50 +404,104 @@ class AnthropicAgent:
         for path in paths:
             try:
                 if path.exists():
-                    content = path.read_text(encoding="utf-8")
-                    # Chercher la section "Flux de Travail" pour contexte utile
-                    if "## Flux de Travail" in content:
-                        start = content.find("## Flux de Travail")
-                        summary = content[start:start + 3000]
-                    elif "## Workflow" in content:
-                        start = content.find("## Workflow")
-                        summary = content[start:start + 3000]
-                    else:
-                        # Prendre le debut du fichier
-                        summary = content[:3000]
-                    return f"\n\n## Directive: {filename}\n{summary}\n[...]"
+                    return path.read_text(encoding="utf-8")
             except Exception as e:
                 logger.warning(f"Erreur lecture directive {filename}: {e}")
 
         return ""
+
+    def _filter_directive_sections(self, content: str) -> str:
+        """Filtre les sections non-pertinentes d'une directive.
+
+        Garde: workflow, detection, validation, structures, regles.
+        Supprime: historique, version, liens, CLI, API, metriques.
+        """
+        lines = content.split("\n")
+        result = []
+        skip = False
+
+        for line in lines:
+            # Detecter les headings de niveau 2
+            if line.startswith("## "):
+                heading = line.strip()
+                skip = any(heading.startswith(s) for s in self._DIRECTIVE_SKIP_SECTIONS)
+
+            if not skip:
+                result.append(line)
+
+        return "\n".join(result)
 
     # =========================================================================
     # Construction du prompt et des messages
     # =========================================================================
 
     def _build_system_prompt(self, agent_state: Dict) -> str:
-        """System prompt + contexte dynamique de la session."""
+        """System prompt complet (fallback sans prompt caching)."""
         parts = [SYSTEM_PROMPT]
 
-        if agent_state:
-            parts.append("\n## Contexte de la session en cours")
-            if agent_state.get("type_acte"):
-                parts.append(f"- Type d'acte: {agent_state['type_acte']}")
-            if agent_state.get("categorie_bien"):
-                parts.append(f"- Categorie de bien: {agent_state['categorie_bien']}")
-            if agent_state.get("progress_pct") is not None:
-                parts.append(f"- Progression collecte: {agent_state['progress_pct']}%")
-            if agent_state.get("fichier_genere"):
-                parts.append(f"- Dernier fichier genere: {agent_state['fichier_genere']}")
+        # Directives completes si type_acte connu
+        if agent_state.get("type_acte"):
+            directive = self._load_full_directive(agent_state['type_acte'])
+            if directive:
+                parts.append(directive)
+
+        # Contexte dynamique
+        parts.append(self._build_session_context(agent_state))
+
+        return "\n".join(parts)
+
+    def _build_session_context(self, agent_state: Dict) -> str:
+        """Construit le contexte dynamique de la session."""
+        if not agent_state:
+            return ""
+
+        parts = ["\n## Contexte de la session en cours"]
+        if agent_state.get("type_acte"):
+            parts.append(f"- Type d'acte: {agent_state['type_acte']}")
+        if agent_state.get("categorie_bien"):
+            parts.append(f"- Categorie de bien: {agent_state['categorie_bien']}")
+        if agent_state.get("progress_pct") is not None:
+            parts.append(f"- Progression collecte: {agent_state['progress_pct']}%")
+        if agent_state.get("fichier_genere"):
+            parts.append(f"- Dernier fichier genere: {agent_state['fichier_genere']}")
+
+        # Resume des donnees collectees (aide l'agent a ne pas re-demander)
+        donnees = agent_state.get("donnees_collectees", {})
+        if donnees:
+            collected = []
+            if donnees.get("promettants") or donnees.get("vendeurs"):
+                vendeurs = donnees.get("promettants") or donnees.get("vendeurs") or []
+                noms = [v.get("nom", "?") for v in vendeurs if v.get("nom")]
+                if noms:
+                    collected.append(f"Vendeur(s): {', '.join(noms)}")
+            if donnees.get("beneficiaires") or donnees.get("acquereurs"):
+                acquereurs = donnees.get("beneficiaires") or donnees.get("acquereurs") or []
+                noms = [a.get("nom", "?") for a in acquereurs if a.get("nom")]
+                if noms:
+                    collected.append(f"Acquereur(s): {', '.join(noms)}")
+            bien = donnees.get("bien", {})
+            adresse = bien.get("adresse", {})
+            if adresse.get("voie") or adresse.get("rue"):
+                collected.append(f"Bien: {adresse.get('voie') or adresse.get('rue')}, {adresse.get('ville', '')}")
+            prix = donnees.get("prix", {})
+            if prix.get("montant"):
+                collected.append(f"Prix: {prix['montant']:,} EUR".replace(",", " "))
+            if collected:
+                parts.append("- Donnees deja collectees: " + " | ".join(collected))
 
         return "\n".join(parts)
 
     def _build_cached_system(self, agent_state: Dict) -> list:
-        """System prompt avec prompt caching Anthropic.
+        """System prompt avec prompt caching Anthropic en 3 tiers.
 
-        Le SYSTEM_PROMPT statique est cache (cache_control ephemeral).
-        Le contexte dynamique change a chaque appel et n'est pas cache.
+        Tier 1 (cache): SYSTEM_PROMPT core — identite, detection, outils, workflow, regles.
+        Tier 2 (cache): Directive complete pour le type_acte detecte.
+        Tier 3 (dynamique): Contexte session — progression, donnees collectees.
+
+        Les tiers 1 et 2 sont caches (cache_control ephemeral, TTL 5 min).
+        Apres le 1er message, ils coutent 1/10e du prix.
         """
+        # Tier 1: Core system prompt (toujours cache)
         blocks = [
             {
                 "type": "text",
@@ -304,25 +510,20 @@ class AnthropicAgent:
             }
         ]
 
-        # Contexte dynamique (non cache)
-        dynamic_parts = []
-        if agent_state:
-            dynamic_parts.append("\n## Contexte de la session en cours")
-            if agent_state.get("type_acte"):
-                dynamic_parts.append(f"- Type d'acte: {agent_state['type_acte']}")
-                # Charger la directive pertinente pour ce type d'acte
-                directive = self._load_directive_summary(agent_state['type_acte'])
-                if directive:
-                    dynamic_parts.append(directive)
-            if agent_state.get("categorie_bien"):
-                dynamic_parts.append(f"- Categorie de bien: {agent_state['categorie_bien']}")
-            if agent_state.get("progress_pct") is not None:
-                dynamic_parts.append(f"- Progression collecte: {agent_state['progress_pct']}%")
-            if agent_state.get("fichier_genere"):
-                dynamic_parts.append(f"- Dernier fichier genere: {agent_state['fichier_genere']}")
+        # Tier 2: Directive complete (cache, charge quand type_acte connu)
+        if agent_state.get("type_acte"):
+            directive = self._load_full_directive(agent_state['type_acte'])
+            if directive:
+                blocks.append({
+                    "type": "text",
+                    "text": directive,
+                    "cache_control": {"type": "ephemeral"},
+                })
 
-        if dynamic_parts:
-            blocks.append({"type": "text", "text": "\n".join(dynamic_parts)})
+        # Tier 3: Contexte dynamique de la session (jamais cache)
+        session_ctx = self._build_session_context(agent_state)
+        if session_ctx:
+            blocks.append({"type": "text", "text": session_ctx})
 
         return blocks
 

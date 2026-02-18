@@ -1,29 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Plus, Search, Users, ArrowLeft, RefreshCw, Building2, User } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import ClientCard from '@/components/ClientCard'
 import type { Client } from '@/types'
-
-// Récupérer l'etude_id du notaire connecté
-async function getUserEtudeId(): Promise<string | null> {
-  try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
-
-    const { data } = await supabase
-      .from('notaire_users')
-      .select('etude_id')
-      .eq('auth_user_id', user.id)
-      .single()
-
-    return data?.etude_id || null
-  } catch {
-    return null
-  }
-}
+import { getUserEtudeId } from '@/lib/auth'
 
 const TYPE_OPTIONS = [
   { value: '', label: 'Tous les types' },
@@ -72,7 +55,6 @@ export default function ClientsPage() {
       if (supabaseError) throw supabaseError
       setClients(data || [])
     } catch (err) {
-      console.error('Erreur chargement clients:', err)
       setError('Impossible de charger les clients. Verifiez votre connexion.')
 
       // Donnees de demo en cas d'erreur
@@ -130,7 +112,7 @@ export default function ClientsPage() {
     }
   }
 
-  const filteredClients = clients.filter((c) => {
+  const filteredClients = useMemo(() => clients.filter((c) => {
     if (!searchQuery) return true
     const search = searchQuery.toLowerCase()
     const matchNom = c.nom?.toLowerCase().includes(search)
@@ -139,10 +121,10 @@ export default function ClientsPage() {
     const matchEmail = c.email?.toLowerCase().includes(search)
     const matchVille = c.ville?.toLowerCase().includes(search)
     return matchNom || matchPrenom || matchRaisonSociale || matchEmail || matchVille
-  })
+  }), [clients, searchQuery])
 
-  const physiquesCount = clients.filter((c) => c.type_personne === 'physique').length
-  const moralesCount = clients.filter((c) => c.type_personne === 'morale').length
+  const physiquesCount = useMemo(() => clients.filter((c) => c.type_personne === 'physique').length, [clients])
+  const moralesCount = useMemo(() => clients.filter((c) => c.type_personne === 'morale').length, [clients])
 
   return (
     <div className="min-h-screen bg-ivory">

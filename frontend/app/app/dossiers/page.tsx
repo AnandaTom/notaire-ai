@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Search, Filter, FolderOpen, ArrowLeft, RefreshCw } from 'lucide-react'
@@ -8,24 +8,7 @@ import { supabase } from '@/lib/supabase'
 import DossierCard from '@/components/DossierCard'
 import type { Dossier } from '@/types'
 import { API_URL } from '@/lib/config'
-
-// Récupérer l'etude_id du notaire connecté
-async function getUserEtudeId(): Promise<string | null> {
-  try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
-
-    const { data } = await supabase
-      .from('notaire_users')
-      .select('etude_id')
-      .eq('auth_user_id', user.id)
-      .single()
-
-    return data?.etude_id || null
-  } catch {
-    return null
-  }
-}
+import { getUserEtudeId } from '@/lib/auth'
 
 const TYPE_OPTIONS = [
   { value: '', label: 'Tous les types' },
@@ -103,7 +86,6 @@ export default function DossiersPage() {
         setDossiers(data || [])
       }
     } catch (err) {
-      console.error('Erreur chargement dossiers:', err)
       setError('Impossible de charger les dossiers. Verifiez votre connexion.')
 
       // Donnees de demo en cas d'erreur
@@ -143,7 +125,7 @@ export default function DossiersPage() {
     }
   }
 
-  const filteredDossiers = dossiers.filter((d) => {
+  const filteredDossiers = useMemo(() => dossiers.filter((d) => {
     if (!searchQuery) return true
     const search = searchQuery.toLowerCase()
     const matchNumero = d.numero?.toLowerCase().includes(search)
@@ -158,7 +140,7 @@ export default function DossiersPage() {
         b.ville?.toLowerCase().includes(search)
     )
     return matchNumero || matchParties || matchBien
-  })
+  }), [dossiers, searchQuery])
 
   return (
     <div className="min-h-screen bg-ivory">
@@ -175,7 +157,10 @@ export default function DossiersPage() {
               </div>
               <div>
                 <h1 className="font-serif text-2xl text-charcoal font-semibold">Mes Dossiers</h1>
-                <p className="text-[0.8rem] text-slate">{dossiers.length} dossier{dossiers.length > 1 ? 's' : ''}</p>
+                <p className="text-[0.8rem] text-slate">
+                  {filteredDossiers.length} dossier{filteredDossiers.length > 1 ? 's' : ''}
+                  {searchQuery && filteredDossiers.length !== dossiers.length && ` sur ${dossiers.length}`}
+                </p>
               </div>
             </div>
           </div>
