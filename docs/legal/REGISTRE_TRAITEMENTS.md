@@ -183,7 +183,7 @@
 | **DPA sous-traitant** | Signé avec Supabase (24/01/2026) | ✅ |
 | **Politique d'accès** | Un agent = une étude | ✅ |
 | **Formation** | Guide de déploiement sécurisé | ✅ |
-| **Gestion des incidents** | Procédure de notification 72h | ⚠️ À documenter |
+| **Gestion des incidents** | Procédure de notification 72h | ✅ Voir `PROCEDURE_INCIDENT.md` |
 | **Audit régulier** | Vérification des accès | ⚠️ À planifier |
 
 ---

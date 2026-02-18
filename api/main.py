@@ -395,9 +395,10 @@ async def verify_api_key(
             print(f"⚠️ Erreur Supabase auth: {e}")
 
     # 3. Mode offline/dégradé - accepter avec contexte limité
-    # UNIQUEMENT en local (jamais sur Modal/production)
-    if os.getenv("NOTOMAI_DEV_MODE") == "1" and not os.getenv("MODAL_ENVIRONMENT"):
-        print("[WARN] Mode developpement actif - authentification desactivee")
+    # UNIQUEMENT en local (jamais sur Modal/production/staging)
+    is_production = os.getenv("MODAL_ENVIRONMENT") or os.getenv("PRODUCTION") or os.getenv("RAILWAY_ENVIRONMENT")
+    if os.getenv("NOTOMAI_DEV_MODE") == "1" and not is_production:
+        print("[WARN] Mode developpement actif - authentification desactivee (local uniquement)")
         return AuthContext(
             etude_id="dev-etude-id",
             etude_nom="Mode Développement",
