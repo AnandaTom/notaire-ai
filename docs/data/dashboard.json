@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-18T17:55:44.688871",
+    "generated_at": "2026-02-18T18:10:18.637752",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 344
+    "commits": 347
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "d39d543",
-      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
+      "hash": "2a65d2b",
+      "message": "Merge branch 'payoss/dev'",
       "date": "2026-02-18"
     },
-    "total_commits": 344,
+    "total_commits": 347,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 103
+        "commits": 104
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 39
+        "commits": 41
       },
       {
         "name": "Automai",
@@ -623,6 +623,36 @@
   ],
   "activity": [
     {
+      "hash": "2a65d2b",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "17be6ff",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "systeme memoire persistant + commande /audit",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "44b6aec",
+      "author": "github-actions[bot]",
+      "date": "2026-02-18",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "d39d543",
       "author": "Payoss",
       "date": "2026-02-18",
@@ -786,36 +816,6 @@
       "hash": "49cd51c",
       "author": "github-actions[bot]",
       "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "cdf6d34",
-      "author": "github-actions[bot]",
-      "date": "2026-02-13",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "45c9190",
-      "author": "github-actions[bot]",
-      "date": "2026-02-12",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "886f8fe",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
       "message": "auto-update dashboard data [skip ci]",
       "type": "chore",
       "type_label": "Maintenance",
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-18 17:55"
+    "last_updated": "2026-02-18 18:10"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-18 17:55"
+    "last_updated": "2026-02-18 18:10"
   },
   "conformity_details": {
     "promesse": {
