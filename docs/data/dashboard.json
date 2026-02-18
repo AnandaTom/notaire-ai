@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-18T18:10:18.637752",
+    "generated_at": "2026-02-18T18:26:41.376927",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 347
+    "commits": 351
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "2a65d2b",
-      "message": "Merge branch 'payoss/dev'",
+      "hash": "4bc9262",
+      "message": "Merge pull request #23 from AnandaTom/augustin/dev",
       "date": "2026-02-18"
     },
-    "total_commits": 347,
+    "total_commits": 351,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 104
+        "commits": 105
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 46
+        "commits": 49
       },
       {
         "name": "Payoss",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 44878,
+    "total_lines": 44889,
     "categories": {
       "utils": 62,
       "tests": 3,
@@ -129,7 +129,7 @@
       },
       {
         "name": "chat_handler.py",
-        "lines": 1237,
+        "lines": 1242,
         "path": "execution/chat_handler.py"
       },
       {
@@ -234,6 +234,7 @@
       "CGU_TEMPLATE.md",
       "REGISTRE_TRAITEMENTS.md",
       "POLITIQUE_CONFIDENTIALITE.md",
+      "PROCEDURE_INCIDENT.md",
       "OBLIGATIONS_CSN.md"
     ],
     "directives": [
@@ -265,7 +266,7 @@
       "validation_donnees.md",
       "creer_promesse_vente.md"
     ],
-    "total_legal": 5,
+    "total_legal": 6,
     "total_directives": 27
   },
   "tasks": {
@@ -623,6 +624,36 @@
   ],
   "activity": [
     {
+      "hash": "4bc9262",
+      "author": "Augustin",
+      "date": "2026-02-18",
+      "message": "Merge pull request #23 from AnandaTom/augustin/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "d017da2",
+      "author": "Augustin",
+      "date": "2026-02-18",
+      "message": "ajout politique de confidentialite en HTML",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "1627941",
+      "author": "github-actions[bot]",
+      "date": "2026-02-18",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "2a65d2b",
       "author": "Payoss",
       "date": "2026-02-18",
@@ -667,6 +698,16 @@
       "author": "Payoss",
       "date": "2026-02-18",
       "message": "corriger les erreurs factuelles — les endpoints backend EXISTENT",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "9e19166",
+      "author": "Augustin",
+      "date": "2026-02-18",
+      "message": "securite Supabase, CI/CD, secrets code + procedure incident RGPD",
       "type": "fix",
       "type_label": "Fix",
       "type_icon": "🐛",
@@ -774,46 +815,6 @@
     },
     {
       "hash": "ad75df8",
-      "author": "github-actions[bot]",
-      "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "62275ae",
-      "author": "Automai",
-      "date": "2026-02-14",
-      "message": "Merge pull request #21 from AnandaTom/tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "9c667c8",
-      "author": "github-actions[bot]",
-      "date": "2026-02-14",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "43d3b95",
-      "author": "Tom",
-      "date": "2026-02-14",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "49cd51c",
       "author": "github-actions[bot]",
       "date": "2026-02-14",
       "message": "auto-update dashboard data [skip ci]",
@@ -1248,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-18 18:10"
+    "last_updated": "2026-02-18 18:26"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-18 18:10"
+    "last_updated": "2026-02-18 18:26"
   },
   "conformity_details": {
     "promesse": {
