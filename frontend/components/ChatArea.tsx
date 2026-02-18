@@ -1,7 +1,8 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { Paperclip, Mic, Send, FileText, FilePlus, Edit } from 'lucide-react'
+import Link from 'next/link'
+import { Paperclip, Mic, Send, FileText, FilePlus, Edit, ListChecks } from 'lucide-react'
 import type { Message } from '@/types'
 import MessageBubble from './MessageBubble'
 import TypingIndicator from './TypingIndicator'
@@ -98,7 +99,16 @@ export default function ChatArea({
       </div>
 
       {/* Input Area */}
-      <form onSubmit={handleSubmit} className="px-7 py-5 bg-ivory border-t border-champagne">
+      <div className="px-7 pt-3 pb-0 bg-ivory border-t border-champagne flex justify-end">
+        <Link
+          href="/app/workflow"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[0.78rem] text-gold-dark hover:bg-gold/10 rounded-lg transition-colors font-medium"
+        >
+          <ListChecks className="w-4 h-4" />
+          Mode guide
+        </Link>
+      </div>
+      <form onSubmit={handleSubmit} className="px-7 pb-5 pt-2 bg-ivory">
         <div className="flex gap-3 items-end">
           <div className="flex-1 relative">
             <textarea

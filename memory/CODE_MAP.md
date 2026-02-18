@@ -52,11 +52,12 @@
 | Endpoints API (api/main.py) | 39 | 2887 |
 | Endpoints Agents (api/agents.py) | 4 | ~960 |
 | Chat router (chat_handler.py) | 4+ | 1237 |
-| Composants React | 23 | ~2900 |
+| Composants React | 25 | ~3200 |
 | Scripts Python (execution/) | 60+ | ~20000 |
 | Templates Jinja2 | 9 + 60 sections | - |
 | Schemas JSON | 17 | - |
-| Tests | 257 | - |
+| Tests backend | 257 | - |
+| Tests frontend | 30 | Vitest + Testing Library |
 
 ---
 
@@ -148,7 +149,7 @@
 | `format.ts` | 14 | Formatage dates (AXE 2) | formatDate() |
 | `config.ts` | 19 | Config centralisee | API_URL, API_KEY, FETCH_TIMEOUT, WORKFLOW_SUPPORTED_TYPES |
 | `constants.ts` | 63 | Labels UI | TYPE_ACTE_LABELS, CATEGORIE_LABELS, STEP_LABELS, SECTION_STATUS_COLORS, GENERATION_STEPS |
-| `supabase.ts` | ? | Client Supabase (Paul, pas encore cree) | supabase, getCurrentUser() |
+| `supabase.ts` | 18 | Client Supabase (Proxy lazy init) | supabase |
 | `api/client.ts` | 188 | Client HTTP | ApiError, apiFetch<T>(), apiSSE<T>() |
 | `api/index.ts` | 314 | Pont frontend↔backend | startWorkflow(), submitAnswers(), validateField(), streamGeneration(), sendFeedback() |
 | `api/promesse.ts` | 111 | API promesse | detecterType(), getQuestions(), validerPromesse() |
@@ -163,7 +164,7 @@
 
 | Fichier | LOC | Types cles |
 |---------|-----|------------|
-| `index.ts` | 96 | Message, ConversationSummary, DocumentSection |
+| `index.ts` | 115 | Message, ConversationSummary, DocumentSection, Dossier, Partie, ActeGenere, Client |
 | `workflow.ts` | 126 | WorkflowStep, TypeActe, CategorieBien, SousType, Section, Question |
 
 ### frontend/components/workflow/ (20 composants)
@@ -186,10 +187,11 @@
 |---------|-----|------|
 | `MessageBubble.tsx` | 213 | Bulle message chat (extrait de ChatArea) |
 | `TypingIndicator.tsx` | 29 | Indicateur de saisie (extrait de ChatArea) |
-| `ChatArea.tsx` | 138 | Zone de chat (apres extraction) |
+| `DocumentCard.tsx` | 131 | Card document genere (AXE 7) |
+| `ChatArea.tsx` | 148 | Zone de chat + lien Mode guide (AXE 7) |
 | `ParagraphReview.tsx` | 252 | Relecture paragraphe par paragraphe |
 | `Header.tsx` | 77 | En-tete (Brouillons/Exporter disabled) |
-| `Sidebar.tsx` | ~160 | Navigation laterale (NavItem disabled prop) |
+| `Sidebar.tsx` | ~200 | Navigation laterale + NavLinks Documents/Workflow (AXE 7) |
 | `ClientCard.tsx` | ~80 | Card client (import format.ts) |
 | `DossierCard.tsx` | ~90 | Card dossier (import format.ts) |
 
@@ -202,10 +204,21 @@
 | `/app` | `app/page.tsx` | 400 |
 | `/app/clients` | `app/clients/page.tsx` | ~180 |
 | `/app/clients/[id]` | `app/clients/[id]/page.tsx` | ~40 |
-| `/app/workflow` | `app/workflow/page.tsx` | ~33 |
+| `/app/documents` | `app/documents/page.tsx` | 213 |
+| `/app/workflow` | `app/workflow/page.tsx` | ~45 |
 | `/app/dossiers` | `app/dossiers/page.tsx` | ~160 |
 | `/app/dossiers/[id]` | `app/dossiers/[id]/page.tsx` | ~40 |
 | API proxy | `api/chat/route.ts` | ~150 |
+
+### frontend/__tests__/ (AXE 8 — cree le 18/02)
+
+| Fichier | Tests | Cible |
+|---------|-------|-------|
+| `format.test.ts` | 6 | formatDate() — null, undefined, vide, invalide, ISO, date-only |
+| `auth.test.ts` | 4 | getUserEtudeId() — happy path, no user, no etude, erreur |
+| `MessageBubble.test.tsx` | 11 | Rendu user/assistant, feedback, download, section, quick actions, welcome |
+| `ChatArea.test.tsx` | 9 | Submit, empty submit, typing indicator, mode guide, streaming |
+| **Total** | **30** | Vitest 4.0 + Testing Library + jsdom |
 
 ---
 

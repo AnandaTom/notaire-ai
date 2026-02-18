@@ -221,7 +221,56 @@
 - Backend 257 tests inchanges (pas de modif Python)
 
 ### Branches
-- `tom/dev` — tous les changements locaux, pas encore commite
+- `tom/dev` — AXE 2 commite en `af1ad93`
+
+---
+
+## 2026-02-18 (nuit, suite 2) — Tom
+
+### Contexte
+- Suite de l'audit 10 axes. AXE 2 commite. Attaque AXE 7 (UX) + AXE 8 (Tests)
+
+### Ce qui a ete fait
+
+**AXE 7 — UX & Experience Notaire**
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| CREE | `app/app/documents/page.tsx` | Page "Mes Documents" (~213 lignes), liste `actes_generes` Supabase |
+| CREE | `components/DocumentCard.tsx` | Card document (131 lignes) — type, status, completion, download DOCX/PDF |
+| MODIFIE | `components/Sidebar.tsx` | +2 NavLinks : "Mes Documents" (/app/documents), "Workflow guide" (/app/workflow) |
+| MODIFIE | `components/ChatArea.tsx` | +lien "Mode guide" au-dessus de l'input → /app/workflow |
+| MODIFIE | `app/app/workflow/page.tsx` | +bouton flottant "Retour au chat" (fixed bottom-right) |
+| MODIFIE | `types/index.ts` | +ActeGenere interface (14 champs), nom rendu optionnel |
+
+**AXE 8 — Tests Frontend (de 0 a 30)**
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| INSTALLE | `package.json` | +vitest, @testing-library/react, @testing-library/jest-dom, @vitejs/plugin-react, jsdom |
+| CREE | `vitest.config.ts` | Config Vitest — React plugin, jsdom, path alias @/, css:false |
+| CREE | `vitest.setup.ts` | Setup jest-dom/vitest matchers |
+| CREE | `__tests__/format.test.ts` | 6 tests : null, undefined, vide, invalide, ISO, date-only |
+| CREE | `__tests__/auth.test.ts` | 4 tests : happy path, no user, no etude_id, erreur reseau |
+| CREE | `__tests__/MessageBubble.test.tsx` | 11 tests : user/assistant, feedback +/-, download, section, quickActions, welcome, legal ref |
+| CREE | `__tests__/ChatArea.test.tsx` | 9 tests : submit, empty submit, typing dots, mode guide link, disabled btn, streaming placeholder |
+
+### Review
+
+**1 passe (feature-dev:code-reviewer)** — 6 issues :
+- CRITIQUE : API key in query string (pre-existant, EventSource limitation)
+- CRITIQUE : Supabase errors (deja corrige dans le code reel)
+- IMPORTANT : `nom` type required vs optional (CORRIGE)
+- IMPORTANT : etude_id guard (deja present dans le code reel)
+- IMPORTANT : fragile CSS class test (note pour futur)
+- IMPORTANT : download sans feedback erreur (pre-existant)
+
+### Build / Tests
+- `vitest run` — 30 passed, 0 failed ✅
+- `next build` — a verifier (en cours)
+
+### Branches
+- `tom/dev` — changements locaux, pas encore commite
 
 ---
 

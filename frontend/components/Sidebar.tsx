@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen, Users } from 'lucide-react'
+import { Plus, MessageSquare, Book, Scale, HelpCircle, Shield, FolderOpen, Users, FileText, ClipboardList } from 'lucide-react'
 import type { ConversationSummary } from '@/types'
 
 interface SidebarProps {
@@ -118,6 +118,8 @@ export default function Sidebar({
           </p>
           <NavLink href="/app/dossiers" icon={FolderOpen} label="Mes Dossiers" />
           <NavLink href="/app/clients" icon={Users} label="Mes Clients" />
+          <NavLink href="/app/documents" icon={FileText} label="Mes Documents" />
+          <NavLink href="/app/workflow" icon={ClipboardList} label="Workflow guide" />
         </div>
 
         {/* References */}
