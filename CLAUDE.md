@@ -184,16 +184,20 @@ python notaire.py dashboard
 | `/review-pr` | `/review-pr 42` | Auto | Revue de code Notomai |
 | `/status` | `/status` | Auto | Dashboard complet du projet |
 | `/sprint-plan` | `/sprint-plan` | Auto | Planning sprint 3 devs |
+| 🔍 **`/review`** | `/review [fichier]` | **Auto** | **Revue code 2 passes (correctness + effectiveness)** |
+| 📝 **`/document`** | `/document [fichier]` | **Auto** | **Mise à jour docs (scripts + directives + CLAUDE.md)** |
 
 ### Agents Claude Code (sous-agents spécialisés)
 
-#### Agents Existants (v1.0)
+#### Agents Existants (v1.0 + v2.1)
 
 | Agent | Déclencheur | Rôle |
 |-------|-------------|------|
 | `template-auditor` | Modification de templates Jinja2 | Audit conformité vs `docs_original/` |
 | `schema-validator` | Modification de schémas JSON | Validation cohérence cross-schemas |
 | `security-reviewer` | Code sécurité/RGPD | Revue PII, credentials, RLS |
+| 🔍 **`reviewer`** | **Auto: après création/modification script** | **Revue 2 passes: correctness + effectiveness** |
+| 📝 **`documenter`** | **Auto: après review clean** | **Synchro docstrings + directives + CLAUDE.md** |
 
 #### 🆕 Agents Opus 4.6 (11/02/2026) - Agent Teams
 
@@ -464,6 +468,28 @@ Après chaque acte généré :
 - Si nouvelle situation → Ajouter la question dans `questions_notaire.json`
 - Si nouveau template → Documenter dans `ajouter_template.md`
 
+### APRÈS chaque création/modification de script — OBLIGATOIRE
+
+**Tu DOIS appeler ces 2 sous-agents dans l'ordre après avoir créé ou significativement modifié un script Python.** Ne pas les appeler est une erreur. Ne pas attendre que l'utilisateur demande — c'est automatique.
+
+```
+Code modifié → /review → corrections → /document → commit
+```
+
+| Étape | Skill | Sous-agent | Quand |
+|-------|-------|------------|-------|
+| 1 | `/review` | `superpowers:code-reviewer` | Après écriture/modification de code |
+| 2 | `/document` | `general-purpose` (documenter) | Après que le review passe clean |
+
+**Règles :**
+- **`/review` d'abord** — Pas de documentation sur du code bugué. Corriger d'abord.
+- **`/document` ensuite** — Synchro docstrings + directives + CLAUDE.md avec le code réel.
+- **Si le review trouve des CRITICAL** → corriger → re-review → puis documenter.
+- **Si aucun changement de code** (juste des questions, de la recherche) → ne pas appeler.
+- **Les deux agents chargent avec zéro contexte** — c'est le but. Yeux frais = meilleure qualité.
+
+**Prompts des agents :** `~/.claude/agents/reviewer.md` et `~/.claude/agents/documenter.md`
+
 ### Intégration de nouvelles sections (Vagues 4-5+)
 
 **Règle d'Or** : **TOUJOURS** ajouter les sections à la FIN de `partie_developpee.md`, jamais inline.
@@ -542,8 +568,12 @@ Tu es l'agent Notomai. Tu :
 6. **Es flexible** sur les templates, annexes et clauses
 7. **Améliores continuellement** les directives et scripts
 8. **ENRICHIS LA BASE** à chaque nouvelle clause, question ou situation
+9. **APPELLES `/review` après chaque modification de code** — pas optionnel, pas "si j'y pense"
+10. **APPELLES `/document` après que le review passe** — synchro docs obligatoire
 
-Be pragmatic. Be reliable. Self-anneal. **Build knowledge.**
+**Boucle obligatoire : Code → `/review` → fix → `/document` → commit**
+
+Be pragmatic. Be reliable. Self-anneal. **Build knowledge. Review everything. Document everything.**
 
 ---
 
