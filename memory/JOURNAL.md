@@ -64,6 +64,47 @@
 
 ---
 
+## 2026-02-18 (soir, suite) — Paul (Payoss)
+
+### Contexte
+- Suite session : creation systeme memoire, conventions, commande /audit
+- Integration des regles comportementales dans CLAUDE.md
+- Decouverte du commit d'Augustin en parallele
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| CREE | `memory/JOURNAL.md` | Journal quotidien |
+| CREE | `memory/CODE_MAP.md` | Cartographie exhaustive (39 endpoints, LOC) |
+| CREE | `memory/CHECKLIST.md` | Regles verification avant affirmation |
+| CREE | `memory/ISSUES.md` | Tracker 17 issues ouvertes, 8 fermees |
+| CREE | `memory/CONVENTIONS.md` | Regles code, naming, Git, securite |
+| CREE | `memory/README.md` | Index des fichiers memoire |
+| CREE | `.claude/commands/audit.md` | Commande /audit 5 phases |
+| MODIFIE | `CLAUDE.md` | +74 lignes regles comportementales en tete |
+| MIS A JOUR | `memory/ISSUES.md` | Ferme 6 issues corrigees par Augustin |
+
+### Decouvertes
+
+1. **Augustin a commite `9e19166`** pendant la session — fixes axes 4, 5, 6, 9 :
+   - 13 vues SECURITY_DEFINER → INVOKER
+   - RLS sur api_costs_tracking + 25 policies
+   - 9 fonctions avec SET search_path
+   - UUIDs hardcodes supprimes de chat_handler.py
+   - Cle dev supprimee de signed_urls.py
+   - CI/CD fix (main→master, chemins Modal)
+   - Procedure incident RGPD ajoutee
+2. **Augustin a aussi commite `d017da2`** — politique de confidentialite HTML (637 lignes)
+3. **PR #23 mergee** pour les fixes Augustin
+
+### Branches
+- `payoss/dev` et `master` synchronises
+- Commits: `17be6ff` (memoire) + `f7e8b22` (conventions) + merge `606e43d`
+- Augustin: `9e19166` (securite) + `d017da2` (politique confidentialite) via PR #23
+
+---
+
 ## Template entree journal
 
 ```

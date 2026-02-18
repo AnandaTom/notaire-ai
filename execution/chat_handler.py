@@ -750,10 +750,15 @@ def create_chat_router():
             conversation_id = request.conversation_id or str(uuid.uuid4())
             is_new_conversation = request.conversation_id is None
 
-            # Vrais UUIDs pour satisfaire les FK Supabase (pas d'auth frontend)
-            # TODO: Extraire du JWT quand auth frontend sera connecté
-            REAL_USER_ID = "3138517c-eb64-4b05-af16-7070bf969dd5"  # Jean Dupont (test2@notomail.fr)
-            REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
+            # Extraire user_id et etude_id depuis la requete
+            # Le frontend doit envoyer ces champs (provenant de Supabase Auth)
+            REAL_USER_ID = request.user_id if request.user_id else os.getenv("FALLBACK_USER_ID", "")
+            REAL_ETUDE_ID = request.etude_id if request.etude_id else os.getenv("FALLBACK_ETUDE_ID", "")
+            if not REAL_USER_ID or not REAL_ETUDE_ID:
+                import logging
+                logging.getLogger("notomai.chat").warning(
+                    "user_id ou etude_id manquant dans la requete chat — persistance Supabase desactivee"
+                )
 
             supabase = _get_supabase()
             if supabase:
@@ -928,12 +933,12 @@ def create_chat_router():
                 # Générer un conversation_id si non fourni
                 conversation_id = request.conversation_id or str(uuid.uuid4())
 
-                # TODO: Extraire du JWT quand auth frontend sera connecté
-                REAL_USER_ID = "3138517c-eb64-4b05-af16-7070bf969dd5"  # Jean Dupont (test2@notomail.fr)
-                REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
+                # Extraire user_id et etude_id depuis la requete
+                REAL_USER_ID = request.user_id if request.user_id else os.getenv("FALLBACK_USER_ID", "")
+                REAL_ETUDE_ID = request.etude_id if request.etude_id else os.getenv("FALLBACK_ETUDE_ID", "")
 
                 supabase = _get_supabase()
-                if supabase:
+                if supabase and REAL_USER_ID and REAL_ETUDE_ID:
                     try:
                         # Utiliser .limit(1) au lieu de .maybe_single() pour éviter 406
                         conv_resp = supabase.table("conversations").select("*").eq(
@@ -1158,9 +1163,9 @@ def create_chat_router():
     @router.post("/feedback")
     async def submit_feedback(request: FeedbackRequest):
         """Enregistre un feedback sur un message assistant."""
-        # IMPORTANT: user_id doit exister dans auth.users (FK constraint)
-        REAL_USER_ID = "3138517c-eb64-4b05-af16-7070bf969dd5"  # Jean Dupont (test2@notomail.fr)
-        REAL_ETUDE_ID = "a2cb1402-4784-47de-9261-99e9d22bbf08"
+        # Extraire user_id depuis la conversation (pas de JWT ici, mais la FK doit exister)
+        REAL_USER_ID = os.getenv("FALLBACK_USER_ID", "")
+        REAL_ETUDE_ID = os.getenv("FALLBACK_ETUDE_ID", "")
 
         supabase = _get_supabase()
         if not supabase:

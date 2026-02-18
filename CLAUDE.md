@@ -2,6 +2,82 @@
 
 > This file is mirrored across CLAUDE.md, AGENTS.md, and GEMINI.md so the same instructions load in any AI environment.
 
+---
+
+## Regle #0 : Ne jamais affirmer sans verifier
+
+**AVANT** de repondre a toute question sur l'etat du projet, le code, ou l'avancement :
+
+1. Lis les fichiers concernes (`git log`, `git status`, code source)
+2. Verifie tes affirmations contre le code REEL, pas ta memoire
+3. Si tu n'es pas sur → dis-le. "Je ne suis pas certain, laisse-moi verifier" > une reponse fausse
+
+Tu ne dis **JAMAIS** : "oui c'est fait", "ca fonctionne", "c'est implemente" sans avoir **LU le fichier correspondant dans la session en cours**. Ta memoire de sessions precedentes est **UNRELIABLE** — seul le code fait foi.
+
+### Routine pre-reponse (obligatoire sur les questions projet)
+
+Avant de repondre a "ou on en est ?", "est-ce que X marche ?", "qu'est-ce qui reste a faire ?" :
+
+```
+1. git log --oneline -20        → commits recents, qui a fait quoi
+2. git status                   → etat actuel du working tree
+3. Lire les fichiers memoire :
+   - memory/PROJECT_STATE.md    → features done / en cours / a faire
+   - memory/CODE_MAP.md         → stack, endpoints, fichiers, LOC
+   - memory/ISSUES.md           → problemes ouverts/fermes
+   - memory/JOURNAL.md          → ce qui a ete fait recemment
+   - memory/CHECKLIST.md        → regles de verification
+   - memory/CONVENTIONS.md      → patterns et naming
+4. ALORS SEULEMENT → repondre
+```
+
+### Self-Annealing
+
+Quand quelque chose casse ou qu'une erreur survient :
+
+1. **Diagnostic** — cause racine, pas le symptome. Lis le stacktrace, reproduis mentalement
+2. **Fix** — corrige le probleme
+3. **Test** — verifie que ca marche
+4. **Document** — note l'erreur, la cause, et la solution dans `memory/ISSUES.md`
+5. **Prevention** — si c'est un pattern recurrent, mets a jour `memory/CONVENTIONS.md`
+
+Ne fais jamais : corriger un symptome sans comprendre la cause, ou "essayer des trucs" au hasard.
+
+### Multi-developpeurs (3 devs actifs)
+
+Ce projet a 3 contributeurs qui commitent en parallele (Paul, Tom, Augustin).
+
+- Avant de modifier un fichier → verifie que ta version est a jour (`git log`)
+- Avant d'affirmer un etat → quelqu'un d'autre a peut-etre change les choses
+- Conflits potentiels → signale quand tu modifies un fichier que quelqu'un d'autre a touche recemment
+- "La derniere fois c'etait comme ca" ne vaut rien. **Verifie.**
+
+### Qualite des reponses
+
+- **Verite > Rapidite** — prends 30 secondes de plus pour verifier plutot que de repondre faux
+- **"Je ne sais pas"** est une reponse valide — suivi de "laisse-moi verifier" et une action concrete
+- **Concis > Verbeux** — pas de paves. Reponds a la question, point.
+- **Code > Explication** — si tu peux montrer du code, fais-le au lieu d'expliquer en 3 paragraphes
+- **Pas de flatterie** — pas de "Excellente question !" ni de "C'est une tres bonne idee !"
+
+### Mise a jour memoire = automatique
+
+A chaque fin de tache significative, mets a jour les fichiers `memory/` concernes.
+N'attends pas qu'on te le demande.
+
+| Fichier | Contenu | Quand mettre a jour |
+|---------|---------|---------------------|
+| `memory/PROJECT_STATE.md` | Features done / en cours / a faire | Si feature ajoutee, terminee, ou bloquee |
+| `memory/JOURNAL.md` | Ce qui a ete fait, par qui, quand | Chaque session |
+| `memory/CODE_MAP.md` | Stack, endpoints, fichiers, LOC | Si fichiers ajoutes/supprimes ou endpoints changes |
+| `memory/ISSUES.md` | Bugs ouverts/fermes, attribution | Si bug trouve ou corrige |
+| `memory/CHECKLIST.md` | Regles de verification | Si nouvelle lecon apprise |
+| `memory/CONVENTIONS.md` | Patterns, naming, workflow Git | Si nouvelle convention adoptee |
+
+---
+
+## Architecture 3 couches
+
 You operate within a 3-layer architecture that separates concerns to maximize reliability. LLMs are probabilistic, whereas most business logic is deterministic and requires consistency. This system fixes that mismatch.
 
 ---

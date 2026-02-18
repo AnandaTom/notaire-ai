@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politique de Confidentialit&eacute; - Notomai</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #1a1a2e;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 60px 0 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        .header-content { position: relative; z-index: 1; }
+        .logo {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #e94560;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .header .subtitle {
+            font-size: 16px;
+            font-weight: 300;
+            opacity: 0.8;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .header-meta {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 13px;
+            opacity: 0.6;
+        }
+        .header-meta span { display: flex; align-items: center; gap: 6px; }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation TOC */
+        .toc {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin: -30px auto 40px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .toc h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #999;
+            margin-bottom: 16px;
+        }
+        .toc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .toc a {
+            color: #1a1a2e;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toc a:hover { background: #f0f4ff; color: #0f3460; }
+        .toc a .num {
+            font-size: 11px;
+            font-weight: 600;
+            color: #e94560;
+            min-width: 24px;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border: 1px solid #eee;
+        }
+        .section h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section h2 .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .icon-blue { background: #e8f0fe; }
+        .icon-green { background: #e6f7ed; }
+        .icon-purple { background: #f0e8fe; }
+        .icon-red { background: #fee8e8; }
+        .icon-orange { background: #fef3e8; }
+        .icon-teal { background: #e8fef6; }
+
+        .section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin: 24px 0 12px;
+        }
+        .section p, .section li {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.8;
+        }
+        .section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .section ul li {
+            padding: 6px 0 6px 24px;
+            position: relative;
+        }
+        .section ul li::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #e94560;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        thead th {
+            background: #f8f9fa;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            border-bottom: 2px solid #eee;
+        }
+        tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #444;
+        }
+        tbody tr:hover { background: #fafbff; }
+
+        /* Highlight box */
+        .highlight {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        .highlight strong { color: #1a1a2e; }
+
+        .info-box {
+            background: #e8f4fd;
+            border-left: 4px solid #2196f3;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+            font-size: 14px;
+            color: #1565c0;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-eu { background: #e8f0fe; color: #1a73e8; }
+        .badge-fr { background: #e6f7ed; color: #137333; }
+        .badge-us { background: #fee8e8; color: #c5221f; }
+
+        /* Rights cards */
+        .rights-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .right-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+        .right-card:hover {
+            border-color: #0f3460;
+            box-shadow: 0 4px 12px rgba(15,52,96,0.1);
+        }
+        .right-card h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1a1a2e;
+        }
+        .right-card .article {
+            font-size: 12px;
+            color: #e94560;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .right-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Contact */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .contact-card {
+            text-align: center;
+            padding: 24px 16px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+        }
+        .contact-card .contact-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .contact-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .contact-card p {
+            font-size: 13px;
+            color: #666;
+        }
+        .contact-card a {
+            color: #0f3460;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: #999;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .footer strong { color: #666; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header h1 { font-size: 26px; }
+            .header-meta { flex-direction: column; gap: 8px; }
+            .toc-grid { grid-template-columns: 1fr; }
+            .section { padding: 24px; }
+            .rights-grid { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-content">
+        <div class="logo">Notomai</div>
+        <h1>Politique de Confidentialit&eacute;</h1>
+        <p class="subtitle">Information sur le traitement de vos donn&eacute;es personnelles conform&eacute;ment au R&egrave;glement (UE) 2016/679 (RGPD)</p>
+        <div class="header-meta">
+            <span>Version 1.0</span>
+            <span>En vigueur depuis le 24 janvier 2026</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h3>Sommaire</h3>
+        <div class="toc-grid">
+            <a href="#s1"><span class="num">01</span> Responsable de traitement</a>
+            <a href="#s2"><span class="num">02</span> Donn&eacute;es collect&eacute;es</a>
+            <a href="#s3"><span class="num">03</span> Finalit&eacute;s du traitement</a>
+            <a href="#s4"><span class="num">04</span> Destinataires</a>
+            <a href="#s5"><span class="num">05</span> Transferts de donn&eacute;es</a>
+            <a href="#s6"><span class="num">06</span> Dur&eacute;e de conservation</a>
+            <a href="#s7"><span class="num">07</span> S&eacute;curit&eacute; des donn&eacute;es</a>
+            <a href="#s8"><span class="num">08</span> Vos droits</a>
+            <a href="#s9"><span class="num">09</span> Exercer vos droits</a>
+            <a href="#s10"><span class="num">10</span> Cookies</a>
+            <a href="#s11"><span class="num">11</span> Modifications</a>
+            <a href="#s12"><span class="num">12</span> Contact</a>
+        </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section" id="s1">
+        <h2><span class="icon icon-blue">&#128100;</span> 1. Identit&eacute; du Responsable de Traitement</h2>
+        <p>Le responsable du traitement de vos donn&eacute;es personnelles est l'<strong>&eacute;tude notariale</strong> que vous avez contact&eacute;e pour votre dossier.</p>
+        <p style="margin-top:8px;">Notomai agit en qualit&eacute; de <strong>sous-traitant technique</strong> pour le compte de l'&eacute;tude notariale.</p>
+        <table style="margin-top:20px;">
+            <thead>
+                <tr><th>Information</th><th>D&eacute;tail</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Sous-traitant</strong></td><td>Notomai &mdash; Agence IA Automatisation</td></tr>
+                <tr><td><strong>Repr&eacute;sentant</strong></td><td>Tom Randeau, Co-Founder</td></tr>
+                <tr><td><strong>Adresse</strong></td><td>2B chemin des Garennes, 69260 Charbonni&egrave;res-les-Bains</td></tr>
+                <tr><td><strong>Contact</strong></td><td>contact@notomai.fr</td></tr>
+                <tr><td><strong>DPO du notariat</strong></td><td>ADNOV &mdash; 95 Avenue des Logissons, 13770 VENELLES<br>dpo@groupeadsn.fr</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section" id="s2">
+        <h2><span class="icon icon-green">&#128196;</span> 2. Donn&eacute;es Collect&eacute;es</h2>
+        <p>Dans le cadre de votre dossier notarial, les donn&eacute;es suivantes peuvent &ecirc;tre collect&eacute;es&nbsp;:</p>
+
+        <h3>2.1 Donn&eacute;es d'identification</h3>
+        <ul>
+            <li>Nom et pr&eacute;noms</li>
+            <li>Date et lieu de naissance</li>
+            <li>Nationalit&eacute;</li>
+            <li>Adresse postale</li>
+            <li>Adresse email</li>
+            <li>Num&eacute;ro de t&eacute;l&eacute;phone</li>
+            <li>Profession</li>
+            <li>Num&eacute;ro de pi&egrave;ce d'identit&eacute;</li>
+        </ul>
+
+        <h3>2.2 Donn&eacute;es relatives &agrave; la situation personnelle</h3>
+        <ul>
+            <li>Situation matrimoniale (c&eacute;libataire, mari&eacute;, pacs&eacute;, divorc&eacute;, veuf)</li>
+            <li>R&eacute;gime matrimonial</li>
+            <li>Nom du conjoint/partenaire le cas &eacute;ch&eacute;ant</li>
+        </ul>
+
+        <h3>2.3 Donn&eacute;es relatives au dossier</h3>
+        <ul>
+            <li>Nature de l'op&eacute;ration (vente, achat, succession, etc.)</li>
+            <li>D&eacute;signation des biens concern&eacute;s</li>
+            <li>Montants et conditions financi&egrave;res</li>
+            <li>Informations bancaires pour les r&egrave;glements</li>
+        </ul>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section" id="s3">
+        <h2><span class="icon icon-purple">&#127919;</span> 3. Finalit&eacute;s du Traitement</h2>
+        <p>Vos donn&eacute;es sont trait&eacute;es pour les finalit&eacute;s suivantes&nbsp;:</p>
+        <table>
+            <thead>
+                <tr><th>Finalit&eacute;</th><th>Base l&eacute;gale</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>&Eacute;tablissement de l'acte authentique</td><td>Ex&eacute;cution du contrat + Mission de service public</td></tr>
+                <tr><td>V&eacute;rifications l&eacute;gales obligatoires</td><td>Obligation l&eacute;gale</td></tr>
+                <tr><td>Conservation des minutes</td><td>Obligation l&eacute;gale (75 ans)</td></tr>
+                <tr><td>Formalit&eacute;s administratives (SPF, cadastre)</td><td>Obligation l&eacute;gale</td></tr>
+                <tr><td>Facturation et comptabilit&eacute;</td><td>Obligation l&eacute;gale</td></tr>
+                <tr><td>Gestion de la relation client</td><td>Int&eacute;r&ecirc;t l&eacute;gitime</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section" id="s4">
+        <h2><span class="icon icon-orange">&#128229;</span> 4. Destinataires des Donn&eacute;es</h2>
+        <p>Vos donn&eacute;es peuvent &ecirc;tre communiqu&eacute;es &agrave;&nbsp;:</p>
+
+        <h3>4.1 Destinataires obligatoires (base l&eacute;gale)</h3>
+        <ul>
+            <li>Service de la Publicit&eacute; Fonci&egrave;re</li>
+            <li>Cadastre</li>
+            <li>Direction G&eacute;n&eacute;rale des Finances Publiques</li>
+            <li>CRPCEN (Caisse de Retraite et de Pr&eacute;voyance des Clercs et Employ&eacute;s de Notaires)</li>
+        </ul>
+
+        <h3>4.2 Destinataires contractuels</h3>
+        <ul>
+            <li>Autres notaires intervenant au dossier</li>
+            <li>Banques (pour les pr&ecirc;ts et r&egrave;glements)</li>
+            <li>Experts (g&eacute;om&egrave;tres, diagnostiqueurs)</li>
+        </ul>
+
+        <h3>4.3 Sous-traitants techniques</h3>
+        <table>
+            <thead>
+                <tr><th>Sous-traitant</th><th>R&ocirc;le</th><th>Localisation</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Notomai</strong></td><td>Assistance &agrave; la r&eacute;daction d'actes</td><td><span class="badge badge-fr">France / UE</span></td></tr>
+                <tr><td><strong>Supabase</strong></td><td>H&eacute;bergement s&eacute;curis&eacute; des donn&eacute;es</td><td><span class="badge badge-eu">UE (Francfort)</span></td></tr>
+                <tr><td><strong>Anthropic</strong></td><td>Assistant IA pour l'aide &agrave; la r&eacute;daction</td><td><span class="badge badge-us">&Eacute;tats-Unis</span></td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:12px;">Tous les sous-traitants sont contractuellement tenus aux m&ecirc;mes obligations de protection des donn&eacute;es.</p>
+        <div class="info-box" style="margin-top:16px;">
+            <strong>Concernant Anthropic&nbsp;:</strong> Lors de l'utilisation du chatbot d'assistance, les &eacute;changes textuels peuvent &ecirc;tre transmis &agrave; l'API Anthropic (Claude) pour g&eacute;n&eacute;rer des r&eacute;ponses. Anthropic s'engage contractuellement &agrave; ne pas utiliser ces donn&eacute;es pour l'entra&icirc;nement de ses mod&egrave;les et &agrave; ne pas les conserver au-del&agrave; de 30 jours. Un module d'anonymisation est en cours d'int&eacute;gration.
+        </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section" id="s5">
+        <h2><span class="icon icon-teal">&#127758;</span> 5. Transferts de Donn&eacute;es</h2>
+        <div class="highlight">
+            <strong>Vos donn&eacute;es sont stock&eacute;es exclusivement dans l'Union Europ&eacute;enne</strong> (r&eacute;gion Francfort, Allemagne).
+        </div>
+        <p><strong>Exception&nbsp;:</strong> Les &eacute;changes avec le chatbot d'assistance sont transmis &agrave; Anthropic (&Eacute;tats-Unis) pour le traitement par intelligence artificielle, dans le cadre des Clauses Contractuelles Types (SCCs) de la Commission Europ&eacute;enne. Un module d'anonymisation est en cours de d&eacute;ploiement pour minimiser les donn&eacute;es personnelles transmises.</p>
+        <p style="margin-top:12px;">Aucun transfert de donn&eacute;es personnelles n'est effectu&eacute; vers des pays tiers hors UE, sauf obligation l&eacute;gale.</p>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section" id="s6">
+        <h2><span class="icon icon-red">&#9202;</span> 6. Dur&eacute;e de Conservation</h2>
+        <table>
+            <thead>
+                <tr><th>Type de donn&eacute;es</th><th>Dur&eacute;e</th><th>Justification</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Minutes notariales</td><td><strong>75 ans</strong></td><td>Obligation l&eacute;gale</td></tr>
+                <tr><td>Annexes des actes</td><td><strong>30 ans</strong></td><td>Obligation l&eacute;gale</td></tr>
+                <tr><td>Donn&eacute;es comptables</td><td><strong>10 ans</strong></td><td>Obligation l&eacute;gale</td></tr>
+                <tr><td>Donn&eacute;es de gestion</td><td><strong>Dur&eacute;e de la relation + 5 ans</strong></td><td>Prescription civile</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:12px;">&Agrave; l'issue de ces dur&eacute;es, les donn&eacute;es sont soit archiv&eacute;es d&eacute;finitivement (minutes), soit anonymis&eacute;es ou supprim&eacute;es.</p>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="section" id="s7">
+        <h2><span class="icon icon-green">&#128274;</span> 7. S&eacute;curit&eacute; des Donn&eacute;es</h2>
+        <p>Nous mettons en &oelig;uvre des mesures techniques et organisationnelles appropri&eacute;es&nbsp;:</p>
+        <table>
+            <thead>
+                <tr><th>Mesure</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Chiffrement</strong></td><td>AES-256 au repos, TLS 1.3 en transit</td></tr>
+                <tr><td><strong>Contr&ocirc;le d'acc&egrave;s</strong></td><td>Isolation stricte par &eacute;tude notariale</td></tr>
+                <tr><td><strong>Authentification</strong></td><td>Cl&eacute;s API s&eacute;curis&eacute;es et hash&eacute;es</td></tr>
+                <tr><td><strong>Tra&ccedil;abilit&eacute;</strong></td><td>Journalisation de toutes les actions</td></tr>
+                <tr><td><strong>Sauvegarde</strong></td><td>Copies automatiques et s&eacute;curis&eacute;es</td></tr>
+                <tr><td><strong>Pseudonymisation</strong></td><td>Hachage des noms pour les recherches</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="section" id="s8">
+        <h2><span class="icon icon-purple">&#9989;</span> 8. Vos Droits</h2>
+        <p>Conform&eacute;ment au RGPD, vous disposez des droits suivants&nbsp;:</p>
+        <div class="rights-grid">
+            <div class="right-card">
+                <div class="article">Article 15</div>
+                <h4>Droit d'acc&egrave;s</h4>
+                <p>Obtenir confirmation que vos donn&eacute;es sont trait&eacute;es et en recevoir une copie.</p>
+            </div>
+            <div class="right-card">
+                <div class="article">Article 16</div>
+                <h4>Droit de rectification</h4>
+                <p>Demander la correction de donn&eacute;es inexactes ou incompl&egrave;tes.</p>
+            </div>
+            <div class="right-card">
+                <div class="article">Article 17</div>
+                <h4>Droit &agrave; l'effacement</h4>
+                <p>Demander la suppression de vos donn&eacute;es, sous r&eacute;serve des obligations l&eacute;gales.</p>
+            </div>
+            <div class="right-card">
+                <div class="article">Article 20</div>
+                <h4>Droit &agrave; la portabilit&eacute;</h4>
+                <p>Recevoir vos donn&eacute;es dans un format structur&eacute; et lisible par machine.</p>
+            </div>
+            <div class="right-card">
+                <div class="article">Article 21</div>
+                <h4>Droit d'opposition</h4>
+                <p>Vous opposer au traitement pour des motifs l&eacute;gitimes, sauf obligations l&eacute;gales.</p>
+            </div>
+            <div class="right-card">
+                <div class="article">Article 18</div>
+                <h4>Droit de limitation</h4>
+                <p>Demander la limitation du traitement dans certains cas.</p>
+            </div>
+        </div>
+        <div class="highlight">
+            <strong>Important&nbsp;:</strong> Pour les actes authentiques, seule l'anonymisation est possible apr&egrave;s les d&eacute;lais l&eacute;gaux. Les minutes notariales doivent &ecirc;tre conserv&eacute;es 75 ans.
+        </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="section" id="s9">
+        <h2><span class="icon icon-blue">&#128232;</span> 9. Comment Exercer vos Droits</h2>
+
+        <h3>9.1 Aupr&egrave;s du notaire</h3>
+        <p>Contactez directement l'&eacute;tude notariale en charge de votre dossier. Votre demande sera trait&eacute;e sous <strong>1 mois</strong> (prolongeable &agrave; 3 mois si complexe).</p>
+
+        <h3>9.2 Aupr&egrave;s du DPO</h3>
+        <p>Pour toute question sur la protection de vos donn&eacute;es dans le notariat&nbsp;:</p>
+        <ul>
+            <li><strong>ADNOV</strong> (DPO mutualis&eacute; du notariat)</li>
+            <li>Email&nbsp;: <strong>dpo@adnov.fr</strong></li>
+            <li>Adresse&nbsp;: 95 Avenue des Logissons, 13770 VENELLES</li>
+        </ul>
+
+        <h3>9.3 R&eacute;clamation</h3>
+        <p>Si vous estimez que vos droits ne sont pas respect&eacute;s, vous pouvez introduire une r&eacute;clamation aupr&egrave;s de&nbsp;:</p>
+        <div class="info-box">
+            <strong>Commission Nationale de l'Informatique et des Libert&eacute;s (CNIL)</strong><br>
+            Site web&nbsp;: www.cnil.fr<br>
+            Adresse&nbsp;: 3 Place de Fontenoy &mdash; TSA 80715 &mdash; 75334 Paris Cedex 07
+        </div>
+    </div>
+
+    <!-- Section 10 -->
+    <div class="section" id="s10">
+        <h2><span class="icon icon-orange">&#127850;</span> 10. Cookies et Traceurs</h2>
+        <p>L'application Notomai n'utilise <strong>pas de cookies</strong> ni de traceurs publicitaires.</p>
+        <p style="margin-top:8px;">Seuls des cookies techniques strictement n&eacute;cessaires au fonctionnement peuvent &ecirc;tre utilis&eacute;s (session, authentification).</p>
+    </div>
+
+    <!-- Section 11 -->
+    <div class="section" id="s11">
+        <h2><span class="icon icon-teal">&#128260;</span> 11. Modifications de la Politique</h2>
+        <p>Cette politique peut &ecirc;tre mise &agrave; jour pour refl&eacute;ter les &eacute;volutions l&eacute;gales ou techniques. En cas de modification substantielle, vous en serez inform&eacute; via votre notaire.</p>
+        <table style="margin-top:16px;">
+            <thead>
+                <tr><th>Version</th><th>Date</th><th>Modification</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1.0</td><td>24/01/2026</td><td>Version initiale</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 12 -->
+    <div class="section" id="s12">
+        <h2><span class="icon icon-red">&#128222;</span> 12. Contact</h2>
+        <p>Pour toute question relative &agrave; cette politique&nbsp;:</p>
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">&#127970;</div>
+                <h4>Votre notaire</h4>
+                <p>Premier interlocuteur pour votre dossier</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">&#128737;</div>
+                <h4>DPO notariat</h4>
+                <p><a href="mailto:dpo@adnov.fr">dpo@adnov.fr</a></p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">&#128187;</div>
+                <h4>Support Notomai</h4>
+                <p><a href="mailto:contact@notomai.fr">contact@notomai.fr</a></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <p><strong>Notomai</strong> &mdash; Agence IA Automatisation</p>
+    <p>Cette politique de confidentialit&eacute; est &eacute;tablie conform&eacute;ment au R&egrave;glement (UE) 2016/679 relatif &agrave; la protection des donn&eacute;es personnelles (RGPD) et &agrave; la loi n&deg;78-17 du 6 janvier 1978 modifi&eacute;e.</p>
+</div>
+
+</body>
+</html>

@@ -2,7 +2,7 @@ name: Deploy to Modal
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -20,11 +20,19 @@ jobs:
       - name: Install Modal
         run: pip install modal
 
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run tests before deploy
+        run: pytest tests/ -v --tb=short
+
       - name: Deploy to Modal
         env:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
-        run: modal deploy modal_app.py
+        run: modal deploy deployment_modal/modal_app.py
 
       - name: Sync templates to Modal Volume
         env:
