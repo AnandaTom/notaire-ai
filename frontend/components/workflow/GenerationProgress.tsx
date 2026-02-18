@@ -4,8 +4,7 @@ import { useEffect } from 'react'
 import { Check, Loader2, AlertCircle, Download, Award } from 'lucide-react'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { GENERATION_STEPS } from '@/lib/constants'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
+import { API_URL } from '@/lib/config'
 
 export default function GenerationProgress() {
   const generationEvents = useWorkflowStore((s) => s.generationEvents)
