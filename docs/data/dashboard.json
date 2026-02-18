@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-18T07:00:56.718500",
+    "generated_at": "2026-02-18T17:42:48.875309",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 339
+    "commits": 341
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "98c03da",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-02-17"
+      "hash": "3c6e009",
+      "message": "feat(axe1): connexion frontend ↔ backend complète — API client, config centralisée, SSE auth",
+      "date": "2026-02-18"
     },
-    "total_commits": 339,
+    "total_commits": 341,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 101
+        "commits": 102
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 35
+        "commits": 37
       },
       {
         "name": "Automai",
@@ -623,6 +623,26 @@
   ],
   "activity": [
     {
+      "hash": "3c6e009",
+      "author": "Payoss",
+      "date": "2026-02-18",
+      "message": "connexion frontend ↔ backend complète — API client, config centralisée, SSE auth",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "9688da3",
+      "author": "github-actions[bot]",
+      "date": "2026-02-18",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "98c03da",
       "author": "github-actions[bot]",
       "date": "2026-02-17",
@@ -801,26 +821,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "51638e4",
-      "author": "Payoss",
-      "date": "2026-02-11",
-      "message": "Améliorations sécurité, chat et services",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "60ba8a2",
-      "author": "github-actions[bot]",
-      "date": "2026-02-11",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1248,7 +1248,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-18 07:00"
+    "last_updated": "2026-02-18 17:42"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1400,7 +1400,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-18 07:00"
+    "last_updated": "2026-02-18 17:42"
   },
   "conformity_details": {
     "promesse": {
