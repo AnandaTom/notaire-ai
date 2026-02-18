@@ -299,7 +299,14 @@ async def verify_api_key(
     2. Sinon dans Supabase agent_api_keys
 
     Format de clé attendu: nai_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+    Accepte aussi ?api_key=... en query param pour les endpoints SSE
+    (EventSource ne supporte pas les headers custom).
     """
+    # Fallback: query param pour SSE (EventSource ne supporte pas les headers)
+    if not api_key:
+        api_key = request.query_params.get("api_key")
+
     if not api_key:
         raise HTTPException(
             status_code=401,

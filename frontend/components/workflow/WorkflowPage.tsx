@@ -9,8 +9,7 @@ import DynamicForm from './DynamicForm'
 import DocumentReview from './DocumentReview'
 import GenerationProgress from './GenerationProgress'
 import FeedbackPanel from './FeedbackPanel'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://notomai--notaire-ai-fastapi-app.modal.run'
+import { API_URL } from '@/lib/config'
 
 const TYPE_CARDS: { type: TypeActe; label: string; description: string; icon: typeof FileText }[] = [
   {
