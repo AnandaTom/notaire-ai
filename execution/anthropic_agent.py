@@ -279,10 +279,7 @@ class AnthropicAgent:
         """Initialise le client Anthropic async (lazy)."""
         if self._client is None:
             from anthropic import AsyncAnthropic
-            self._client = AsyncAnthropic(
-                timeout=120.0,     # 2 min max per request (default 600s)
-                max_retries=2,     # Built-in retry with backoff on 429/5xx
-            )
+            self._client = AsyncAnthropic()  # Utilise ANTHROPIC_API_KEY env var
         return self._client
 
     # =========================================================================

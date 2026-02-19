@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notomai | Assistant</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Zone de détection hover pour le toggle -->
+    <div class="sidebar-hover-zone"></div>
+
+    <!-- Bouton toggle sidebar -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Afficher/Masquer le menu">
+        <span class="toggle-icon">›</span>
+    </button>
+
+    <!-- Overlay pour fermer la sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-seal">N</div>
+                <div class="logo-text">
+                    <h1>Notomai</h1>
+                    <p>Rédaction et création<br>d'actes notariés</p>
+                </div>
+            </div>
+
+            <nav class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="#" class="nav-item active">
+                    <span class="icon">💬</span>
+                    <span>Assistant</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">📁</span>
+                    <span>Mes dossiers</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>Clients</span>
+                </a>
+            </nav>
+
+            <nav class="nav-section">
+                <div class="nav-title">Actions rapides</div>
+                <a href="#" class="nav-item" onclick="quickAction('creer_vente')">
+                    <span class="icon">📄</span>
+                    <span>Créer une vente</span>
+                </a>
+                <a href="#" class="nav-item" onclick="quickAction('creer_promesse')">
+                    <span class="icon">📝</span>
+                    <span>Créer une promesse</span>
+                </a>
+                <a href="#" class="nav-item" onclick="quickAction('rechercher')">
+                    <span class="icon">🔍</span>
+                    <span>Rechercher</span>
+                </a>
+            </nav>
+
+            <!-- Security badge -->
+            <div class="security-badge">
+                <div class="badge-header">
+                    <span>🔒</span>
+                    <span>Données sécurisées</span>
+                </div>
+                <div class="badge-text">
+                    Chiffrement AES-256 - Hébergement UE - Conforme RGPD
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-card">
+                    <div class="user-avatar" id="userAvatar">C</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Me Charlotte Diaz</div>
+                        <div class="user-role" id="userRole">Notaire</div>
+                        <div class="user-etude" id="userEtude">Étude Diaz & Associés</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h2 id="headerTitle">Bonjour, Me Charlotte Diaz</h2>
+                    <p>Comment puis-je vous aider aujourd'hui ?</p>
+                </div>
+                <div class="header-right">
+                    <div class="api-mode-indicator demo" id="apiModeIndicator">
+                        <span class="dot"></span>
+                        <span id="apiModeText">Mode Démo</span>
+                    </div>
+                    <button class="settings-btn" onclick="showSettingsModal()" title="Configuration">
+                        ⚙️
+                    </button>
+                    <div class="security-indicator">
+                        <span class="dot"></span>
+                        <span>Connexion sécurisée</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="chat-container">
+                <div class="messages" id="messages">
+                    <!-- Messages s'affichent ici -->
+                </div>
+
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span>L'assistant rédige...</span>
+                </div>
+            </div>
+
+            <!-- Smart suggestions -->
+            <div class="smart-suggestions">
+                <div class="smart-suggestions-title">
+                    <span>💡</span>
+                    <span>Suggestions basées sur votre activité</span>
+                </div>
+                <div class="smart-suggestions-list" id="smartSuggestions">
+                    <!-- Suggestions dynamiques -->
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea
+                            class="chat-input"
+                            id="chatInput"
+                            placeholder="Décrivez ce que vous souhaitez faire..."
+                            rows="1"
+                        ></textarea>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <p>📎 Glissez vos fichiers ici ou cliquez pour parcourir</p>
+                            <p class="formats">PDF, DOCX, JPG, PNG (max. 10 Mo)</p>
+                            <div class="uploaded-files" id="uploadedFiles"></div>
+                        </div>
+                    </div>
+                    <div class="input-actions">
+                        <button class="action-btn" id="uploadBtn" onclick="toggleUpload()" title="Joindre un fichier">
+                            📎
+                        </button>
+                        <button class="action-btn" id="voiceBtn" onclick="toggleVoice()" title="Dictée vocale">
+                            🎤
+                        </button>
+                    </div>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+
+                <!-- Security footer -->
+                <div class="security-footer">
+                    <span>🔒 Chiffrement de bout en bout</span>
+                    <span>🇪🇺 Données hébergées en Europe</span>
+                    <span>✓ Conforme RGPD & secret professionnel</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.jpg,.jpeg,.png" style="display:none" onchange="handleFileSelect(event)">
+
+    <!-- Modal de feedback -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal">
+            <h3>Aidez-nous à nous améliorer</h3>
+            <div class="modal-field">
+                <label>Type de problème</label>
+                <select id="feedbackType">
+                    <option value="vocabulaire">Vocabulaire incorrect</option>
+                    <option value="intention">Mauvaise compréhension</option>
+                    <option value="erreur_donnees">Erreur dans les données</option>
+                    <option value="suggestion">Suggestion d'amélioration</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label>Quelle aurait été la bonne réponse ?</label>
+                <textarea id="feedbackCorrection" placeholder="Décrivez ce qui aurait dû être dit ou fait..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closeFeedbackModal()">Annuler</button>
+                <button class="modal-btn primary" onclick="submitFeedback()">Envoyer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/app.js"></script>
+
+    <!-- Sidebar Toggle Logic -->
+    <script>
+        // Variable pour détecter le changement de taille d'écran
+        let wasSmallScreen = window.innerWidth <= 1024;
+
+        // Gestion de la sidebar rétractable
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            const isCollapsed = sidebar.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                // Ouvrir
+                sidebar.classList.remove('collapsed');
+                toggle.classList.add('open');
+                overlay.classList.add('visible');
+            } else {
+                // Fermer
+                sidebar.classList.add('collapsed');
+                toggle.classList.remove('open');
+                overlay.classList.remove('visible');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.add('collapsed');
+            toggle.classList.remove('open');
+            overlay.classList.remove('visible');
+        }
+
+        function openSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.remove('collapsed');
+            toggle.classList.add('open');
+            overlay.classList.add('visible');
+        }
+
+        // Initialiser l'état de la sidebar
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const isSmallScreen = window.innerWidth <= 1024;
+
+            // Sur petits écrans: sidebar fermée par défaut
+            if (isSmallScreen) {
+                sidebar.classList.add('collapsed');
+            }
+            // Sur grands écrans: sidebar toujours visible (pas de classe collapsed)
+        });
+
+        // Gérer le redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const isSmallScreen = window.innerWidth <= 1024;
+
+            // Détection du passage grand → petit écran
+            if (isSmallScreen && !wasSmallScreen) {
+                // On passe de grand à petit : fermer la sidebar
+                sidebar.classList.add('collapsed');
+                toggle.classList.remove('open');
+                overlay.classList.remove('visible');
+            }
+
+            // Détection du passage petit → grand écran
+            if (!isSmallScreen && wasSmallScreen) {
+                // On passe de petit à grand : ouvrir la sidebar
+                sidebar.classList.remove('collapsed');
+                toggle.classList.remove('open');
+                overlay.classList.remove('visible');
+            }
+
+            // Mettre à jour l'état
+            wasSmallScreen = isSmallScreen;
+        });
+
+        // Mettre à jour l'indicateur de mode API
+        function updateAPIModeIndicator() {
+            const indicator = document.getElementById('apiModeIndicator');
+            const text = document.getElementById('apiModeText');
+            const apiMode = localStorage.getItem('notomai_api_mode') || 'demo';
+
+            if (indicator && text) {
+                if (apiMode === 'api') {
+                    indicator.className = 'api-mode-indicator api';
+                    text.textContent = 'Mode Production';
+                } else {
+                    indicator.className = 'api-mode-indicator demo';
+                    text.textContent = 'Mode Démo';
+                }
+            }
+        }
+
+        // Appeler au chargement
+        document.addEventListener('DOMContentLoaded', updateAPIModeIndicator);
+
+        // Observer les changements dans localStorage
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'notomai_api_mode') {
+                updateAPIModeIndicator();
+            }
+        });
+    </script>
+</body>
+</html>

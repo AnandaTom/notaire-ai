@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 import type {
   WorkflowState,
   WorkflowStep,
@@ -11,6 +10,42 @@ import type {
   Progression,
 } from '@/types/workflow'
 import * as api from '@/lib/api'
+
+// --- Sauvegarde localStorage (anti-perte de donnees) ---
+const STORAGE_KEY = 'notomai_workflow_draft'
+
+function saveDraft(state: Pick<WorkflowState, 'workflowId' | 'donnees' | 'currentSectionIndex' | 'typeActe' | 'step'>) {
+  try {
+    if (typeof window !== 'undefined' && state.workflowId && state.step === 'COLLECTING') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        workflowId: state.workflowId,
+        donnees: state.donnees,
+        currentSectionIndex: state.currentSectionIndex,
+        typeActe: state.typeActe,
+        savedAt: Date.now(),
+      }))
+    }
+  } catch { /* quota exceeded — ignore */ }
+}
+
+function loadDraft(): { workflowId: string; donnees: Record<string, unknown>; currentSectionIndex: number; typeActe: TypeActe; savedAt: number } | null {
+  try {
+    if (typeof window === 'undefined') return null
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const draft = JSON.parse(raw)
+    // Expire apres 24h
+    if (Date.now() - draft.savedAt > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(STORAGE_KEY)
+      return null
+    }
+    return draft
+  } catch { return null }
+}
+
+function clearDraft() {
+  try { if (typeof window !== 'undefined') localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
+}
 
 interface WorkflowActions {
   // Navigation
@@ -31,6 +66,9 @@ interface WorkflowActions {
   startGeneration: () => void
   addGenerationEvent: (event: GenerationEvent) => void
   setGenerationResult: (url: string, score: number) => void
+
+  // Brouillon
+  restoreDraft: () => Promise<boolean>
 
   // Reset
   reset: () => void
@@ -82,9 +120,7 @@ function setNestedValue(obj: Record<string, unknown>, path: string, value: unkno
   return copy
 }
 
-export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
-  persist(
-    (set, get) => ({
+export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, get) => ({
   ...initialState,
 
   setStep: (step) => set({ step }),
@@ -153,6 +189,10 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
           : 0,
       },
     })
+
+    // Sauvegarde auto localStorage
+    const state = get()
+    saveDraft({ workflowId: state.workflowId, donnees: updated, currentSectionIndex: state.currentSectionIndex, typeActe: state.typeActe, step: state.step })
   },
 
   submitCurrentSection: async () => {
@@ -267,32 +307,61 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
     })
   },
 
+  // Restaurer un brouillon depuis localStorage
+  // Re-fetch les sections depuis l'API puis restaure donnees + position
+  restoreDraft: async () => {
+    const draft = loadDraft()
+    if (!draft) return false
+
+    set({ isLoading: true, error: null, typeActe: draft.typeActe })
+
+    try {
+      // Re-demarre le workflow cote backend pour recuperer les sections
+      const result = await api.startWorkflow({
+        type_acte: draft.typeActe,
+        source: 'workflow_restore',
+      })
+
+      const sections: Section[] = (result.sections || []).map((s) => ({
+        id: s.id,
+        titre: s.titre,
+        description: s.description,
+        questions: s.questions as Section['questions'],
+      }))
+
+      const safeIndex = Math.min(draft.currentSectionIndex, Math.max(sections.length - 1, 0))
+
+      set({
+        workflowId: result.workflow_id,
+        dossierId: result.dossier_id,
+        detection: result.detection as Detection,
+        sections,
+        currentSectionIndex: safeIndex,
+        donnees: draft.donnees,
+        step: 'COLLECTING',
+        progression: {
+          ...initialProgression,
+          sections_total: sections.length,
+          champs_remplis: Object.keys(flattenObj(draft.donnees)).length,
+        },
+        isLoading: false,
+      })
+      return true
+    } catch {
+      // Si la restauration echoue, nettoyer le brouillon corrompu
+      clearDraft()
+      set({ isLoading: false, error: null })
+      return false
+    }
+  },
+
   reset: () => {
+    clearDraft()
     set(initialState)
-    // Clear persisted state on explicit reset
-    try { localStorage.removeItem('notomai-workflow') } catch {}
   },
 
   setError: (error) => set({ error }),
-}),
-    {
-      name: 'notomai-workflow',
-      partialize: (state) => ({
-        step: state.step,
-        workflowId: state.workflowId,
-        dossierId: state.dossierId,
-        typeActe: state.typeActe,
-        detection: state.detection,
-        sections: state.sections,
-        currentSectionIndex: state.currentSectionIndex,
-        donnees: state.donnees,
-        progression: state.progression,
-        fichierUrl: state.fichierUrl,
-        conformiteScore: state.conformiteScore,
-      }),
-    },
-  ),
-)
+}))
 
 // Helper: aplatir un objet nested
 function flattenObj(obj: Record<string, unknown>, prefix = ''): Record<string, unknown> {

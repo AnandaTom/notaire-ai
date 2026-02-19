@@ -3,12 +3,8 @@
  * Gère les interactions avec la base de données
  */
 
-// Config loaded from env.js (see env.js.example) — NEVER hardcode keys
-const SUPABASE_URL = window.__NOTOMAI_ENV__?.SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = window.__NOTOMAI_ENV__?.SUPABASE_ANON_KEY || '';
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error('Missing Supabase config. Load env.js before supabase-client.js');
-}
+const SUPABASE_URL = 'https://wcklvjckzktijtgakdrk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indja2x2amNremt0aWp0Z2FrZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDI1NzksImV4cCI6MjA4NDU3ODU3OX0.lyfrGeuVSkivopQVWlq3tf6Uo5k4Z6BqOEPt5WuYXS4';
 
 const SupabaseClient = {
     // Session Supabase Auth (access_token, refresh_token, user)

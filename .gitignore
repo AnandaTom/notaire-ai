@@ -1,6 +1,5 @@
 # Environment variables
 .env
-web/env.js
 
 # Google OAuth credentials
 credentials.json
