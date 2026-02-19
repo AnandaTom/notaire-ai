@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T20:06:45.602623",
+    "generated_at": "2026-02-19T20:35:19.952533",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 419
+    "commits": 430
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "dd5690b",
+      "hash": "7f2312e",
       "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "date": "2026-02-19"
     },
-    "total_commits": 419,
+    "total_commits": 430,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 181
+        "commits": 186
       },
       {
         "name": "github-actions[bot]",
-        "commits": 122
+        "commits": 125
       },
       {
         "name": "augustinfrance-aico",
@@ -37,11 +37,11 @@
       },
       {
         "name": "Payoss",
-        "commits": 51
+        "commits": 54
       },
       {
         "name": "Automai",
-        "commits": 8
+        "commits": 9
       }
     ]
   },
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 45110,
+    "total_lines": 45214,
     "categories": {
       "utils": 62,
       "tests": 3,
@@ -133,6 +133,11 @@
         "path": "execution/chat_handler.py"
       },
       {
+        "name": "anthropic_agent.py",
+        "lines": 1101,
+        "path": "execution/anthropic_agent.py"
+      },
+      {
         "name": "generer_dashboard_data.py",
         "lines": 1080,
         "path": "execution/generer_dashboard_data.py"
@@ -141,11 +146,6 @@
         "name": "generer_donnees_test.py",
         "lines": 1049,
         "path": "execution/generation/generer_donnees_test.py"
-      },
-      {
-        "name": "anthropic_agent.py",
-        "lines": 1041,
-        "path": "execution/anthropic_agent.py"
       },
       {
         "name": "secure_client_manager.py",
@@ -624,6 +624,116 @@
   ],
   "activity": [
     {
+      "hash": "7f2312e",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "dbe3c58",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge branch 'tom/dev' of https://github.com/AnandaTom/notaire-ai into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "1adddb7",
+      "author": "Automai",
+      "date": "2026-02-19",
+      "message": "Merge pull request #26 from AnandaTom/payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "c73e11f",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge remote-tracking branch 'origin/payoss/dev' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "6d41f97",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "409f0cd",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "[Payoss] Audit post-branchement des 5 phases. Paul s'occupe d...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "5d754a1",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "c4be78d",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "Merge branch 'payoss/dev' — resolve 5 conflicts (keep both sides)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "6074634",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (1 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "744025e",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "enrichissement pipeline + RGPD anonymisation + workflow validation",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "bb73fe9",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "dd5690b",
       "author": "Tom",
       "date": "2026-02-19",
@@ -708,116 +818,6 @@
       "author": "Augustin",
       "date": "2026-02-19",
       "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "4b734da",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "resolve 3 conflicts with origin/master (Paul's securite+fiabilite)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "3a8c807",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "97adb7f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "5bb123a",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "fd9123f",
-      "author": "Automai",
-      "date": "2026-02-19",
-      "message": "Merge pull request #22 from AnandaTom/tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "c4223ea",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "update: project files (2 files)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "aa315a6",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "6a535d6",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "18c55c6",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "154c16c",
-      "author": "Automai",
-      "date": "2026-02-19",
-      "message": "Merge pull request #25 from AnandaTom/payoss/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "b4d4129",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "[payoss] Plan securite + fiabilite (6 issues, score audit 6.6→cibl...",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 20:06"
+    "last_updated": "2026-02-19 20:35"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 20:06"
+    "last_updated": "2026-02-19 20:35"
   },
   "conformity_details": {
     "promesse": {
