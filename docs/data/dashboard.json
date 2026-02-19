@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T16:20:31.492541",
+    "generated_at": "2026-02-19T16:28:20.657599",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 379
+    "commits": 382
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "b66e58d",
+      "hash": "bbfb691",
       "message": "Merge branch 'payoss/dev'",
       "date": "2026-02-19"
     },
-    "total_commits": 379,
+    "total_commits": 382,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,15 +29,15 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 112
+        "commits": 113
+      },
+      {
+        "name": "Payoss",
+        "commits": 49
       },
       {
         "name": "augustinfrance-aico",
         "commits": 49
-      },
-      {
-        "name": "Payoss",
-        "commits": 47
       },
       {
         "name": "Automai",
@@ -624,6 +624,36 @@
   ],
   "activity": [
     {
+      "hash": "bbfb691",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "b0845b9",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "workflow dynamique + index FK + RLS initplan",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "7e70e78",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "b66e58d",
       "author": "Payoss",
       "date": "2026-02-19",
@@ -792,36 +822,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "cb10732",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "4bc9262",
-      "author": "Augustin",
-      "date": "2026-02-18",
-      "message": "Merge pull request #23 from AnandaTom/augustin/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "c6d3745",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 16:20"
+    "last_updated": "2026-02-19 16:28"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 16:20"
+    "last_updated": "2026-02-19 16:28"
   },
   "conformity_details": {
     "promesse": {
