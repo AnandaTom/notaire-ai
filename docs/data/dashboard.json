@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T17:49:40.391603",
+    "generated_at": "2026-02-19T18:05:13.601620",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,36 +12,36 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 392
+    "commits": 400
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "fa7f854",
-      "message": "[Tom] Audit /audit score 6.2/10 (5 dimensions). Tom prend ...",
+      "hash": "6a535d6",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "date": "2026-02-19"
     },
-    "total_commits": 392,
+    "total_commits": 400,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 175
+        "commits": 176
       },
       {
         "name": "github-actions[bot]",
-        "commits": 115
+        "commits": 117
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 51
+        "commits": 52
       },
       {
         "name": "Payoss",
-        "commits": 50
+        "commits": 51
       },
       {
         "name": "Automai",
-        "commits": 6
+        "commits": 7
       }
     ]
   },
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 45110,
+    "total_lines": 45132,
     "categories": {
       "utils": 62,
       "tests": 3,
@@ -109,7 +109,7 @@
       },
       {
         "name": "exporter_docx.py",
-        "lines": 1896,
+        "lines": 1907,
         "path": "execution/core/exporter_docx.py"
       },
       {
@@ -144,7 +144,7 @@
       },
       {
         "name": "anthropic_agent.py",
-        "lines": 1041,
+        "lines": 1044,
         "path": "execution/anthropic_agent.py"
       },
       {
@@ -624,6 +624,56 @@
   ],
   "activity": [
     {
+      "hash": "6a535d6",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "18c55c6",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "154c16c",
+      "author": "Automai",
+      "date": "2026-02-19",
+      "message": "Merge pull request #25 from AnandaTom/payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "b4d4129",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "[payoss] Plan securite + fiabilite (6 issues, score audit 6.6→cibl...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "003142d",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "fa7f854",
       "author": "Tom",
       "date": "2026-02-19",
@@ -714,6 +764,16 @@
       "type_color": "blue"
     },
     {
+      "hash": "076f1b3",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "dc36e0e",
       "author": "Tom",
       "date": "2026-02-19",
@@ -722,6 +782,26 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
+    },
+    {
+      "hash": "bbfb691",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "b0845b9",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "workflow dynamique + index FK + RLS initplan",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
     },
     {
       "hash": "7e70e78",
@@ -738,86 +818,6 @@
       "author": "Payoss",
       "date": "2026-02-19",
       "message": "Merge branch 'payoss/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "7759eeb",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "hardcode project path in START_DAY_PAYOSS.bat",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "84c7097",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "1eecf9b",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "exclude vitest config from Next.js build (C-010)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "c19416f",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "33409e5",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "478c022",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "06bd49b",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "36c0c76",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 17:49"
+    "last_updated": "2026-02-19 18:05"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 17:49"
+    "last_updated": "2026-02-19 18:05"
   },
   "conformity_details": {
     "promesse": {
