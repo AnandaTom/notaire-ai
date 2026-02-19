@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T16:13:36.399050",
+    "generated_at": "2026-02-19T16:20:31.492541",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 376
+    "commits": 379
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "1eecf9b",
-      "message": "fix(frontend): exclude vitest config from Next.js build (C-010)",
+      "hash": "b66e58d",
+      "message": "Merge branch 'payoss/dev'",
       "date": "2026-02-19"
     },
-    "total_commits": 376,
+    "total_commits": 379,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 111
+        "commits": 112
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 45
+        "commits": 47
       },
       {
         "name": "Automai",
@@ -624,6 +624,36 @@
   ],
   "activity": [
     {
+      "hash": "b66e58d",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "7759eeb",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "hardcode project path in START_DAY_PAYOSS.bat",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "84c7097",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "1eecf9b",
       "author": "Payoss",
       "date": "2026-02-19",
@@ -788,36 +818,6 @@
       "author": "Tom",
       "date": "2026-02-18",
       "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "d017da2",
-      "author": "Augustin",
-      "date": "2026-02-18",
-      "message": "ajout politique de confidentialite en HTML",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "1627941",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "2a65d2b",
-      "author": "Payoss",
-      "date": "2026-02-18",
-      "message": "Merge branch 'payoss/dev'",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 16:13"
+    "last_updated": "2026-02-19 16:20"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 16:13"
+    "last_updated": "2026-02-19 16:20"
   },
   "conformity_details": {
     "promesse": {
