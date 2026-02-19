@@ -145,9 +145,9 @@ def extract_actions_from_body(body):
     return actions
 
 
-def generate_team_summary(days=1):
+def generate_team_summary(days=1, current_branch_override=None):
     """Genere le resume des commits de l'equipe."""
-    current = get_current_branch()
+    current = current_branch_override or get_current_branch()
     since = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
     branches = get_all_remote_branches()
 
@@ -228,7 +228,7 @@ def generate_team_summary(days=1):
         files_by_dev[dev] = dev_files
 
     # Detecter les fichiers touches par plusieurs devs
-    current_dev = get_current_branch().split("/")[0].capitalize()
+    current_dev = current.split("/")[0].capitalize()
     conflicts = []
     for dev, dev_files in files_by_dev.items():
         if dev.lower() != current_dev.lower():
@@ -265,7 +265,7 @@ def main():
         else:
             i += 1
 
-    summary = generate_team_summary(days)
+    summary = generate_team_summary(days, branch_override)
 
     if write_output:
         OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
