@@ -16,13 +16,7 @@ export default function DynamicQuestion({ question, value, onChange, allValues }
   const [fieldError, setFieldError] = useState<string | null>(null)
   const validateField = useWorkflowStore((s) => s.validateField)
 
-  // Evaluation condition d'affichage
-  if (question.condition_affichage && allValues) {
-    const visible = evaluateCondition(question.condition_affichage, allValues)
-    if (!visible) return null
-  }
-
-  // Validation temps reel avec debounce 800ms
+  // Hooks AVANT tout return conditionnel (regle des hooks React)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -46,6 +40,12 @@ export default function DynamicQuestion({ question, value, onChange, allValues }
     const erreur = messages.find((m: ValidationMessage) => m.niveau === 'erreur')
     setFieldError(erreur?.message || null)
   }, [question.variable, value, validateField])
+
+  // Evaluation condition d'affichage — APRES les hooks
+  if (question.condition_affichage && allValues) {
+    const visible = evaluateCondition(question.condition_affichage, allValues)
+    if (!visible) return null
+  }
 
   const renderField = () => {
     switch (question.type) {
@@ -148,7 +148,7 @@ export default function DynamicQuestion({ question, value, onChange, allValues }
             <DynamicQuestion
               key={sq.id}
               question={sq}
-              value={allValues?.[sq.variable]}
+              value={getNestedValue(allValues ?? {}, sq.variable)}
               onChange={(v) => onChange(v)}
               allValues={allValues}
             />

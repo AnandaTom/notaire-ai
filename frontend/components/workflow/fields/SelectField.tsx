@@ -15,13 +15,13 @@ export default function SelectField({ question, value, onChange, error }: Select
 
   return (
     <div className="space-y-2">
-      <label htmlFor={question.variable} className="block text-[0.82rem] font-medium text-charcoal">
+      <label htmlFor={useRadio ? undefined : question.variable} id={`${question.variable}-label`} className="block text-[0.82rem] font-medium text-charcoal">
         {question.question}
         {question.obligatoire && <span className="text-red-500 ml-0.5" aria-hidden="true">*</span>}
       </label>
 
       {useRadio ? (
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={question.question}>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-labelledby={`${question.variable}-label`} aria-describedby={error ? `${question.variable}-error` : question.aide ? `${question.variable}-aide` : undefined}>
           {options.map((option) => (
             <button
               key={option}

@@ -17,7 +17,7 @@ export default function BooleanField({ question, value, onChange, error }: Boole
         {question.obligatoire && <span className="text-red-500 ml-0.5" aria-hidden="true">*</span>}
       </label>
 
-      <div className="flex gap-3" role="radiogroup" aria-label={question.question}>
+      <div className="flex gap-3" role="radiogroup" aria-label={question.question} aria-describedby={error ? `${question.variable}-error` : question.aide ? `${question.variable}-aide` : undefined}>
         <button
           type="button"
           role="radio"

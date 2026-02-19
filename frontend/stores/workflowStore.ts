@@ -68,7 +68,7 @@ interface WorkflowActions {
   setGenerationResult: (url: string, score: number) => void
 
   // Brouillon
-  restoreDraft: () => boolean
+  restoreDraft: () => Promise<boolean>
 
   // Reset
   reset: () => void
@@ -308,16 +308,51 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, ge
   },
 
   // Restaurer un brouillon depuis localStorage
-  restoreDraft: () => {
+  // Re-fetch les sections depuis l'API puis restaure donnees + position
+  restoreDraft: async () => {
     const draft = loadDraft()
     if (!draft) return false
-    set({
-      workflowId: draft.workflowId,
-      donnees: draft.donnees,
-      currentSectionIndex: draft.currentSectionIndex,
-      typeActe: draft.typeActe,
-    })
-    return true
+
+    set({ isLoading: true, error: null, typeActe: draft.typeActe })
+
+    try {
+      // Re-demarre le workflow cote backend pour recuperer les sections
+      const result = await api.startWorkflow({
+        type_acte: draft.typeActe,
+        source: 'workflow_restore',
+      })
+
+      const sections: Section[] = (result.sections || []).map((s) => ({
+        id: s.id,
+        titre: s.titre,
+        description: s.description,
+        questions: s.questions as Section['questions'],
+      }))
+
+      const safeIndex = Math.min(draft.currentSectionIndex, Math.max(sections.length - 1, 0))
+
+      set({
+        workflowId: result.workflow_id,
+        dossierId: result.dossier_id,
+        detection: result.detection as Detection,
+        sections,
+        currentSectionIndex: safeIndex,
+        donnees: draft.donnees,
+        step: 'COLLECTING',
+        progression: {
+          ...initialProgression,
+          sections_total: sections.length,
+          champs_remplis: Object.keys(flattenObj(draft.donnees)).length,
+        },
+        isLoading: false,
+      })
+      return true
+    } catch {
+      // Si la restauration echoue, nettoyer le brouillon corrompu
+      clearDraft()
+      set({ isLoading: false, error: null })
+      return false
+    }
   },
 
   reset: () => {
