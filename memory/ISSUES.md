@@ -29,12 +29,12 @@
 | M-006 | Templates promesse sans {% include %} | `templates/` | Paul | 18/02 | Seul vente utilise les includes |
 | M-007 | Protection mots de passe compromis desactivee | Supabase Auth | - | 18/02 | Requiert plan Pro Supabase — pas dispo en Free |
 | M-008 | ~65 index Supabase inutilises | Supabase | Paul | 19/02 | Confirme par advisor perf 19/02 nuit (65 index) |
-| M-009 | Accessibilite frontend = ZERO | `frontend/components/` | Tom | 19/02 | 0 attributs aria/role/tabIndex (audit 19/02 soir) |
+| M-009 | Accessibilite frontend residuelle | `frontend/components/` | Tom | 19/02 | Wave 1 faite : aria-label sur boutons icone, role=dialog+focus trap ParagraphReview, aria-expanded sections, aria-label inputs. Reste : responsive M-017, ESLint jsx-a11y |
 | M-018 | 7 tests backend echoues (ENCRYPTION_MASTER_KEY) | `tests/test_chat_generation.py` | - | 19/02 | AgentClientAccess init echoue sans cle — 6 test_chat_generation + 1 tier1 |
 | M-011 | Multiple permissive policies feedbacks | Supabase | Augustin | 19/02 | 2 policies SELECT meme role, perf |
 | M-013 | CODE_MAP desynchronise | `memory/CODE_MAP.md` | Paul | 19/02 | LOC obsoletes: api/main.py 2940→2994, anthropic_agent.py 1030→1101, workflowStore.ts 318→436 |
 | M-014 | Ajouter message "mot de passe robuste" sur page inscription | Frontend (a creer) | Tom | 19/02 | Page inscription n'existe pas encore |
-| M-015 | 53 fichiers morts dans execution/ | `execution/` | Tom | 19/02 | Fichiers Python jamais importes — dead code |
+| M-015 | FAUX POSITIF — Scripts CLI dans execution/ | `execution/` | Tom | 19/02 | Analyse Python confirme : les 40+ fichiers "jamais importes" sont des scripts CLI legaux avec `if __name__ == '__main__'`. Seul 1 fichier veritablement mort : `comparer_trames_promesse.py`. Pas de suppression massive. |
 | M-016 | 7 tests backend en echec (pre-existants) | `tests/` | Tom | 19/02 | test_chat_generation (6) + test_tier1_optimizations (1) |
 | M-017 | Responsive minimal | `frontend/components/` | Tom | 19/02 | 14 classes md: seulement sur ~25 composants |
 

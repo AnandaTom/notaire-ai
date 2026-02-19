@@ -48,6 +48,7 @@ export default function ArrayField({ question, value, onChange, error }: ArrayFi
               <button
                 type="button"
                 onClick={() => removeItem(index)}
+                aria-label={`Supprimer l'élément : ${item}`}
                 className="p-1 text-slate hover:text-red-500 transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -64,12 +65,14 @@ export default function ArrayField({ question, value, onChange, error }: ArrayFi
           onChange={(e) => setNewItem(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={question.placeholder || 'Ajouter un élément...'}
+          aria-label={question.question}
           className="flex-1 px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/50"
         />
         <button
           type="button"
           onClick={addItem}
           disabled={!newItem.trim()}
+          aria-label="Ajouter l'élément"
           className="px-4 py-3 bg-gold/10 border border-gold/30 text-gold-dark rounded-xl hover:bg-gold/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
         >
           <Plus className="w-4 h-4" />

@@ -191,6 +191,7 @@ export default function MessageBubble({
                   : 'text-slate/40 hover:text-green-600 hover:bg-green-50'
               }`}
               title="Utile"
+              aria-label="Ce message est utile"
             >
               <ThumbsUp className="w-3.5 h-3.5" />
             </button>
@@ -202,6 +203,7 @@ export default function MessageBubble({
                   : 'text-slate/40 hover:text-red-500 hover:bg-red-50'
               }`}
               title="Pas utile"
+              aria-label="Ce message n'est pas utile"
             >
               <ThumbsDown className="w-3.5 h-3.5" />
             </button>

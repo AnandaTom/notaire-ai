@@ -6,6 +6,42 @@
 
 ---
 
+## 2026-02-19 (nuit, suite 3) — Tom
+
+### Contexte
+- Suite audit 7.3/10 : amélioration continue du process + fix M-009 accessibilité
+
+### Améliorations système audit
+| Action | Fichier | Détail |
+|--------|---------|--------|
+| MODIFIE | `.claude/commands/audit.md` | +Phase 6 (retro obligatoire) +Phase 7 (boucle /review+/document) +Slack summary +checks Notomai-spécifiques +référence AUDIT_HISTORY.md |
+| CREE | `memory/AUDIT_HISTORY.md` | Historique structuré scores par session, leçons apprises, patterns récurrents détectés |
+
+### M-009 — Accessibilité Wave 1 (6 composants)
+| Fichier | Changements |
+|---------|------------|
+| `ChatArea.tsx` | aria-label Paperclip/Mic/Send + aria-label textarea |
+| `MessageBubble.tsx` | aria-label ThumbsUp/ThumbsDown |
+| `WorkflowHeader.tsx` | aria-label bouton retour (suppression title) |
+| `ParagraphReview.tsx` | role=dialog + aria-modal={true} + focus trap (useRef+useEffect+handleDialogKeyDown) + aria-expanded sections + aria-label inputs/textarea |
+| `ArrayField.tsx` | aria-label delete/add buttons + input |
+| `ContactField.tsx` | aria-label 4 sub-inputs |
+
+### Issues
+- M-009 : Wave 1 terminée, score fluidité +0.5 estimé
+- M-015 : Faux positif confirmé — 40+ scripts CLI légitimes, pas dead code
+- I-017 : Confirmée fermée (déjà corrigée par Payoss dans merge 32b116f)
+
+### Résultats
+- Build TypeScript : OK (pré-existing Supabase prerender errors inchangées)
+- Tests : 30/30 Vitest ✅
+
+### Review
+- /review passé : 2 CRITICAL + 3 MODERATE trouvés et fixés dans la même session
+- Tous les CRITICAL/MODERATE corrigés avant commit
+
+---
+
 ## 2026-02-19 (nuit, suite 2) — Tom
 
 ### Contexte

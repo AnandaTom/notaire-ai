@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Check, Edit3, MessageSquare, X, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -41,6 +41,35 @@ export default function ParagraphReview({
     new Set(sections.map(s => s.id))
   )
   const [submitting, setSubmitting] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // Focus trap : déplacer le focus dans le dialog à l'ouverture
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+    const focusable = dialog.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    if (focusable.length > 0) focusable[0].focus()
+  }, [])
+
+  // Piéger Tab/Shift+Tab à l'intérieur du dialog
+  const handleDialogKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Tab') return
+    const dialog = dialogRef.current
+    if (!dialog) return
+    const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ))
+    if (focusable.length === 0) return
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus() }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+  }
 
   const reviewedCount = Object.keys(statuses).length
   const totalCount = sections.length
@@ -117,12 +146,19 @@ export default function ParagraphReview({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center overflow-y-auto py-8">
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-labelledby="review-dialog-title"
+      aria-modal={true}
+      onKeyDown={handleDialogKeyDown}
+      className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center overflow-y-auto py-8"
+    >
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-amber-50 to-white rounded-t-xl">
           <div>
-            <h2 className="text-lg font-semibold text-gray-800">
+            <h2 id="review-dialog-title" className="text-lg font-semibold text-gray-800">
               Relecture section par section
             </h2>
             <p className="text-sm text-gray-500">
@@ -138,7 +174,7 @@ export default function ParagraphReview({
                 Terminer la relecture
               </button>
             )}
-            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+            <button onClick={onClose} aria-label="Fermer la relecture" className="p-2 hover:bg-gray-100 rounded-lg">
               <X className="w-5 h-5 text-gray-500" />
             </button>
           </div>
@@ -161,8 +197,13 @@ export default function ParagraphReview({
             >
               {/* Section header */}
               <div
+                role="button"
+                tabIndex={0}
+                aria-expanded={expandedSections.has(section.id)}
+                aria-label={`${expandedSections.has(section.id) ? 'Réduire' : 'Développer'} la section : ${section.title}`}
                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
                 onClick={() => toggleExpand(section.id)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpand(section.id) } }}
               >
                 <div className="flex items-center gap-3">
                   {statusIcon(section.id)}
@@ -214,6 +255,7 @@ export default function ParagraphReview({
                         value={feedbackText}
                         onChange={e => setFeedbackText(e.target.value)}
                         placeholder="Texte corrige ou commentaire..."
+                        aria-label="Texte corrigé ou commentaire"
                         className="w-full p-3 border rounded-lg text-sm resize-y min-h-[80px] focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
                         rows={3}
                       />
@@ -221,6 +263,7 @@ export default function ParagraphReview({
                         value={feedbackRaison}
                         onChange={e => setFeedbackRaison(e.target.value)}
                         placeholder="Raison (optionnel)..."
+                        aria-label="Raison de la correction (optionnel)"
                         className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
                       />
                       <div className="flex gap-2">

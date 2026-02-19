@@ -38,6 +38,7 @@ export default function ContactField({ question, value, onChange, onBlur, error 
           onChange={(e) => update('nom', e.target.value)}
           onBlur={onBlur}
           placeholder="Nom"
+          aria-label="Nom"
           className="px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/50"
         />
         <input
@@ -46,6 +47,7 @@ export default function ContactField({ question, value, onChange, onBlur, error 
           onChange={(e) => update('prenom', e.target.value)}
           onBlur={onBlur}
           placeholder="Prénom"
+          aria-label="Prénom"
           className="px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/50"
         />
         <input
@@ -54,6 +56,7 @@ export default function ContactField({ question, value, onChange, onBlur, error 
           onChange={(e) => update('email', e.target.value)}
           onBlur={onBlur}
           placeholder="Email"
+          aria-label="Adresse email"
           className="px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/50"
         />
         <input
@@ -62,6 +65,7 @@ export default function ContactField({ question, value, onChange, onBlur, error 
           onChange={(e) => update('telephone', e.target.value)}
           onBlur={onBlur}
           placeholder="Téléphone"
+          aria-label="Numéro de téléphone"
           className="px-4 py-3 bg-cream border border-champagne rounded-xl text-[0.85rem] text-charcoal focus:outline-none focus:ring-2 focus:border-gold focus:ring-gold/10 transition-all placeholder:text-slate/50"
         />
       </div>

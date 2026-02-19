@@ -25,7 +25,7 @@ export default function WorkflowHeader({ onBack }: WorkflowHeaderProps) {
         <button
           onClick={onBack}
           className="p-2 text-slate hover:text-charcoal hover:bg-sand rounded-lg transition-all"
-          title="Retour au chat"
+          aria-label="Retour au chat"
         >
           <ArrowLeft className="w-4.5 h-4.5" />
         </button>
