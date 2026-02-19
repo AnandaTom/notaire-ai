@@ -17,6 +17,8 @@
 import { apiFetch, apiSSE } from './client'
 import type {
   TypeActe,
+  CategorieBien,
+  SousType,
   Section,
   Detection,
   Progression,
@@ -68,14 +70,18 @@ interface SSEStepEvent {
  * Demarre un workflow de generation guide.
  *
  * Mapping :
- *   Store envoie  { type_acte, etude_id, source }
+ *   Store envoie  { type_acte, categorie_bien?, sous_type?, etude_id, source }
  *   Backend attend { categorie_bien, sous_type?, titre_id?, prefill? }
  *
- * On mappe type_acte → categorie_bien (defaut 'copropriete' pour promesse_vente).
+ * categorie_bien est passe tel quel au backend (defaut 'copropriete').
  * Les autres types d'acte ne sont pas encore supportes en mode workflow.
  */
 export async function startWorkflow(request: {
   type_acte: TypeActe
+  categorie_bien?: CategorieBien
+  sous_type?: SousType
+  titre_id?: string
+  prefill?: Record<string, unknown>
   etude_id?: string
   source?: string
 }): Promise<StartWorkflowResponse> {
@@ -92,10 +98,10 @@ export async function startWorkflow(request: {
     {
       method: 'POST',
       body: JSON.stringify({
-        categorie_bien: 'copropriete',
-        sous_type: null,
-        titre_id: null,
-        prefill: null,
+        categorie_bien: request.categorie_bien || 'copropriete',
+        sous_type: request.sous_type || null,
+        titre_id: request.titre_id || null,
+        prefill: request.prefill || null,
       }),
     },
   )
