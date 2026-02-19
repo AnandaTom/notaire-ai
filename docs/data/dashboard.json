@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T16:30:46.182599",
+    "generated_at": "2026-02-19T17:49:40.391603",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,32 +12,32 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 383
+    "commits": 392
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "dc36e0e",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "fa7f854",
+      "message": "[Tom] Audit /audit score 6.2/10 (5 dimensions). Tom prend ...",
       "date": "2026-02-19"
     },
-    "total_commits": 383,
+    "total_commits": 392,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 168
+        "commits": 175
       },
       {
         "name": "github-actions[bot]",
-        "commits": 114
-      },
-      {
-        "name": "Payoss",
-        "commits": 49
+        "commits": 115
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 49
+        "commits": 51
+      },
+      {
+        "name": "Payoss",
+        "commits": 50
       },
       {
         "name": "Automai",
@@ -624,6 +624,96 @@
   ],
   "activity": [
     {
+      "hash": "fa7f854",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "[Tom] Audit /audit score 6.2/10 (5 dimensions). Tom prend ...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "1d2134f",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (5 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "8f951e4",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "fix 4 silent catches, migrate fetch() to apiFetch(), add X-API-Key to SSE",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "2b0d2bc",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (9 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "17581cd",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (10 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ccd0305",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "workflow dynamique + index FK + RLS initplan",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "3aae6b7",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (1 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "9c1f82c",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (1 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "d918e25",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "dc36e0e",
       "author": "Tom",
       "date": "2026-02-19",
@@ -728,96 +818,6 @@
       "author": "Tom",
       "date": "2026-02-18",
       "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "9a3c09b",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "8e13733",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "agent intelligence upgrade + outils equipe + skills",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "f179d32",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "page Mes Documents, liens Chat<->Workflow, 30 tests Vitest",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "af1ad93",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "nettoyage frontend — 734 lignes nettes, 6 composants, Tailwind migration",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "ba1f037",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "d35683c",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "beb811c",
-      "author": "Payoss",
-      "date": "2026-02-18",
-      "message": "ajout PROJECT_STATE.md + enrichissement architecture",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "77f065e",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "606e43d",
-      "author": "Payoss",
-      "date": "2026-02-18",
-      "message": "Merge branch 'payoss/dev'",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 16:30"
+    "last_updated": "2026-02-19 17:49"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 16:30"
+    "last_updated": "2026-02-19 17:49"
   },
   "conformity_details": {
     "promesse": {
