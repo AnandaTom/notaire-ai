@@ -1,6 +1,7 @@
 'use client'
 
-import { FileText, FileCheck, Building, FilePen, Download, Award } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { FileText, FileCheck, Building, FilePen, Download, Award, RotateCcw, Plus } from 'lucide-react'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import type { TypeActe } from '@/types/workflow'
 import WorkflowHeader from './WorkflowHeader'
@@ -63,9 +64,10 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
   const conformiteScore = useWorkflowStore((s) => s.conformiteScore)
   const workflowId = useWorkflowStore((s) => s.workflowId)
   const reset = useWorkflowStore((s) => s.reset)
+  const typeActe = useWorkflowStore((s) => s.typeActe)
+  const restoreFromDraft = useWorkflowStore((s) => s.restoreDraft)
 
   const [showRecovery, setShowRecovery] = useState(false)
-  const [hasHydrated, setHasHydrated] = useState(false)
 
   // Warn before leaving with unsaved data
   useEffect(() => {
@@ -78,27 +80,19 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
     return () => window.removeEventListener('beforeunload', handler)
   }, [step])
 
-  // Wait for Zustand persist hydration, then check for recoverable state
+  // Check for recoverable draft from localStorage on mount
   useEffect(() => {
-    const unsub = useWorkflowStore.persist.onFinishHydration(() => {
-      setHasHydrated(true)
-    })
-    // If already hydrated (fast path)
-    if (useWorkflowStore.persist.hasHydrated()) {
-      setHasHydrated(true)
-    }
-    return unsub
-  }, [])
-
-  useEffect(() => {
-    if (!hasHydrated) return
-    if (step === 'COLLECTING' || step === 'REVIEW') {
-      setShowRecovery(true)
-    } else if (initialType && step === 'IDLE') {
+    if (step !== 'IDLE') return
+    const hasDraft = typeof window !== 'undefined' && !!localStorage.getItem('notomai_workflow_draft')
+    if (hasDraft) {
+      restoreFromDraft().then((restored) => {
+        if (restored) setShowRecovery(true)
+      })
+    } else if (initialType) {
       // Auto-demarrage si type passe via URL (?type=promesse_vente)
       startWorkflow(initialType)
     }
-  }, [hasHydrated]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectType = async (type: TypeActe) => {
     await startWorkflow(type)
