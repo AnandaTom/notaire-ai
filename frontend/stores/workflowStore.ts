@@ -17,7 +17,7 @@ interface WorkflowActions {
   goToSection: (index: number) => void
 
   // Demarrage
-  startWorkflow: (typeActe: TypeActe, etudeId?: string) => Promise<void>
+  startWorkflow: (typeActe: TypeActe, etudeId?: string, options?: { categorie_bien?: Detection['categorie_bien']; sous_type?: Detection['sous_type'] }) => Promise<void>
 
   // Donnees
   updateField: (chemin: string, valeur: unknown) => void
@@ -93,11 +93,13 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, ge
     }
   },
 
-  startWorkflow: async (typeActe, etudeId) => {
+  startWorkflow: async (typeActe, etudeId, options) => {
     set({ isLoading: true, error: null, typeActe })
     try {
       const result = await api.startWorkflow({
         type_acte: typeActe,
+        categorie_bien: options?.categorie_bien,
+        sous_type: options?.sous_type,
         etude_id: etudeId,
         source: 'workflow_frontend',
       })
