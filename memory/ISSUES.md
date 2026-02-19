@@ -11,7 +11,7 @@
 
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
-| C-010 | `next build` CASSE — vitest.config.ts | `frontend/vitest.config.ts:1` | Tom/Paul | 19/02 | `/// <reference types="vitest" />` inclus dans compil TS Next.js. Fix: exclure dans tsconfig.json |
+| - | *(aucun critique ouvert)* | - | - | - | - |
 
 ### IMPORTANT
 
@@ -28,7 +28,6 @@
 
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
-| M-001 | startWorkflow hardcode categorie='copropriete' | `frontend/lib/api/index.ts:95` | Paul | 18/02 | Ne supporte pas terrain/hors copro |
 | M-003 | Pas de monitoring (Sentry) | - | Augustin (axe 6) | 18/02 | Aucun outil |
 | M-004 | Pas d'onboarding / tutoriel | - | Tom (axe 7) | 18/02 | Notaire perdu au 1er lancement |
 | M-005 | CLAUDE.md surdimensionne (500+ lignes) | `CLAUDE.md` | Paul (axe 10) | 18/02 | Melange doc, changelog, instructions |
@@ -36,7 +35,6 @@
 | M-007 | Protection mots de passe compromis desactivee | Supabase Auth | Paul | 18/02 | Confirme par Supabase advisor 19/02 |
 | M-008 | ~55 index Supabase inutilises | Supabase | Augustin | 19/02 | Dead weight, overhead INSERT/UPDATE |
 | M-009 | Accessibilite frontend minimale | `frontend/components/` | Tom | 19/02 | 19 aria/role/tabIndex sur ~25 composants |
-| M-010 | POST /ventes/generer absent de CODE_MAP | `api/main.py:1601` | - | 19/02 | 40 endpoints (pas 39) |
 | M-011 | Multiple permissive policies feedbacks | Supabase | Augustin | 19/02 | 2 policies SELECT meme role, perf |
 
 ---
@@ -62,6 +60,9 @@
 | I-006 | Cle dev par defaut signed_urls.py | 18/02 | `9e19166` | Augustin — cle supprimee |
 | C-003 | Supabase anon key en dur | 19/02 | tom/dev | Tom — Proxy lazy init, env vars only |
 | M-002 | Pas de tests frontend | 19/02 | tom/dev | Tom — 30 tests Vitest + Testing Library (AXE 8) |
+| C-010 | `next build` CASSE vitest.config.ts | 19/02 | `1eecf9b` | Paul — tsconfig.json exclut vitest.config.ts |
+| M-001 | startWorkflow hardcode copropriete | 19/02 | `b0845b9` | Paul — categorie_bien dynamique |
+| M-010 | POST /ventes/generer absent de CODE_MAP | 19/02 | - | Corrige dans CODE_MAP.md |
 
 ---
 

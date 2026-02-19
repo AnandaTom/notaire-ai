@@ -11,6 +11,42 @@ import type {
 } from '@/types/workflow'
 import * as api from '@/lib/api'
 
+// --- Sauvegarde localStorage (anti-perte de donnees) ---
+const STORAGE_KEY = 'notomai_workflow_draft'
+
+function saveDraft(state: Pick<WorkflowState, 'workflowId' | 'donnees' | 'currentSectionIndex' | 'typeActe' | 'step'>) {
+  try {
+    if (typeof window !== 'undefined' && state.workflowId && state.step === 'COLLECTING') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        workflowId: state.workflowId,
+        donnees: state.donnees,
+        currentSectionIndex: state.currentSectionIndex,
+        typeActe: state.typeActe,
+        savedAt: Date.now(),
+      }))
+    }
+  } catch { /* quota exceeded — ignore */ }
+}
+
+function loadDraft(): { workflowId: string; donnees: Record<string, unknown>; currentSectionIndex: number; typeActe: TypeActe; savedAt: number } | null {
+  try {
+    if (typeof window === 'undefined') return null
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const draft = JSON.parse(raw)
+    // Expire apres 24h
+    if (Date.now() - draft.savedAt > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(STORAGE_KEY)
+      return null
+    }
+    return draft
+  } catch { return null }
+}
+
+function clearDraft() {
+  try { if (typeof window !== 'undefined') localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
+}
+
 interface WorkflowActions {
   // Navigation
   setStep: (step: WorkflowStep) => void
@@ -30,6 +66,9 @@ interface WorkflowActions {
   startGeneration: () => void
   addGenerationEvent: (event: GenerationEvent) => void
   setGenerationResult: (url: string, score: number) => void
+
+  // Brouillon
+  restoreDraft: () => boolean
 
   // Reset
   reset: () => void
@@ -150,6 +189,10 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, ge
           : 0,
       },
     })
+
+    // Sauvegarde auto localStorage
+    const state = get()
+    saveDraft({ workflowId: state.workflowId, donnees: updated, currentSectionIndex: state.currentSectionIndex, typeActe: state.typeActe, step: state.step })
   },
 
   submitCurrentSection: async () => {
@@ -264,7 +307,23 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, ge
     })
   },
 
-  reset: () => set(initialState),
+  // Restaurer un brouillon depuis localStorage
+  restoreDraft: () => {
+    const draft = loadDraft()
+    if (!draft) return false
+    set({
+      workflowId: draft.workflowId,
+      donnees: draft.donnees,
+      currentSectionIndex: draft.currentSectionIndex,
+      typeActe: draft.typeActe,
+    })
+    return true
+  },
+
+  reset: () => {
+    clearDraft()
+    set(initialState)
+  },
 
   setError: (error) => set({ error }),
 }))

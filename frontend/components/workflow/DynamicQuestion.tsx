@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import type { Question, ValidationMessage } from '@/types/workflow'
 import { TextField, NumberField, BooleanField, SelectField, DateField, ArrayField, ContactField } from './fields'
 import { useWorkflowStore } from '@/stores/workflowStore'
@@ -22,7 +22,25 @@ export default function DynamicQuestion({ question, value, onChange, allValues }
     if (!visible) return null
   }
 
+  // Validation temps reel avec debounce 800ms
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!question.variable || value === undefined || value === '') {
+      setFieldError(null)
+      return
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(async () => {
+      const messages = await validateField(question.variable, value)
+      const erreur = messages.find((m: ValidationMessage) => m.niveau === 'erreur')
+      setFieldError(erreur?.message || null)
+    }, 800)
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [question.variable, value, validateField])
+
   const handleBlur = useCallback(async () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
     if (!question.variable || value === undefined || value === '') return
     const messages = await validateField(question.variable, value)
     const erreur = messages.find((m: ValidationMessage) => m.niveau === 'erreur')

@@ -6,6 +6,37 @@
 
 ---
 
+## 2026-02-19 (matin) — Augustin
+
+### Contexte
+- START_DAY.bat avait un conflit de merge avec master
+- Rebase augustin/dev sur origin/master (17 commits Tom/Paul importes)
+- Audit complet /audit lance
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| REBASE | augustin/dev | Rebase sur origin/master, 17 commits importes (Tom: agent intelligence, AXE 2, AXE 7-8; Paul: AXE 1) |
+| AUDIT | /audit | Audit 5 dimensions, score 5.8/10 |
+| MODIFIE | START_DAY.bat | v2.0 par Augustin (ajout lecture commits equipe) |
+
+### Decouvertes
+
+1. **60+ index Supabase inutilises** — tous les index crees preventifs ne sont jamais utilises
+2. **RLS policy `authenticated_update_own_notaire`** reevalue `auth.*()` par ligne (perf issue Supabase)
+3. **2 policies permissive SELECT sur feedbacks** pour `authenticated` — sous-optimal
+4. **api/main.py est passe a 2940 lignes** (+53 depuis dernier audit)
+
+### Build / Tests
+- Build frontend non verifie (skip pour rapidite)
+- Backend : pas de changement de code
+
+### Branches
+- `augustin/dev` rebase sur `origin/master` (a jour)
+
+---
+
 ## 2026-02-19 — Paul (Payoss)
 
 ### Contexte

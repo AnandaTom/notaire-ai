@@ -48,14 +48,15 @@ export default function DynamicForm({ section, onPrevious, onNext, isFirst, isLa
       </div>
 
       {/* Navigation */}
-      <div className="px-6 py-4 border-t border-champagne bg-ivory flex justify-between items-center">
+      <nav className="px-6 py-4 border-t border-champagne bg-ivory flex justify-between items-center" aria-label="Navigation du formulaire">
         <button
           type="button"
           onClick={onPrevious}
           disabled={isFirst}
+          aria-label="Section précédente"
           className="flex items-center gap-2 px-5 py-2.5 text-[0.85rem] text-graphite border border-champagne rounded-xl hover:bg-sand disabled:opacity-30 disabled:cursor-not-allowed transition-all"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           Précédent
         </button>
 
@@ -63,20 +64,22 @@ export default function DynamicForm({ section, onPrevious, onNext, isFirst, isLa
           type="button"
           onClick={handleNext}
           disabled={isLoading}
+          aria-label={isLast ? 'Vérifier et générer le document' : 'Section suivante'}
+          aria-busy={isLoading}
           className="flex items-center gap-2 px-6 py-2.5 text-[0.85rem] font-medium text-white bg-gold rounded-xl hover:bg-gold-dark disabled:opacity-50 transition-all shadow-sm shadow-gold/20"
         >
           {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
           ) : isLast ? (
             'Vérifier et générer'
           ) : (
             <>
               Suivant
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </>
           )}
         </button>
-      </div>
+      </nav>
     </div>
   )
 }
