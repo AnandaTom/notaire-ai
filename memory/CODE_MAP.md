@@ -50,7 +50,7 @@
 
 | Categorie | Quantite | LOC approx |
 |-----------|----------|------------|
-| Endpoints API (api/main.py) | 40 | 2940 |
+| Endpoints API (api/main.py) | 40 (+8 routers) | 2994 |
 | Endpoints Agents (api/agents.py) | 4 | 973 |
 | Chat router (chat_handler.py) | 4+ | 1242 |
 | Composants React | 25 | ~3200 |
@@ -122,8 +122,10 @@
 | 39 | `/feedback/paragraphe` | POST | 2589 | submit_paragraph_feedback() |
 
 ### Routers inclus (pas dans la table ci-dessus)
-- L496 : `chat_router` (from execution.chat_handler) — `/chat/stream`, `/chat/conversations`, etc.
-- L503 : `agents_router` (from api.agents) — `/agents`, `/agents/orchestrate`, etc.
+- L498 : `chat_router` (from execution.chat_handler) — `/chat/stream`, `/chat/conversations`, etc.
+- L505 : `agents_router` (from api.agents) — `/agents`, `/agents/orchestrate`, etc.
+- L513 : `cadastre_router` (from execution.api.api_cadastre) — `/cadastre/geocoder`, `/cadastre/parcelle`, etc.
+- L521 : `validation_router` (from execution.api.api_validation) — `/validation/champ`, `/validation/schema`, etc.
 
 ### Middleware / Auth
 - L200-350 : `verify_api_key()`, `require_write_permission`, `RateLimiter`
@@ -161,7 +163,7 @@
 
 | Fichier | LOC | Role |
 |---------|-----|------|
-| `workflowStore.ts` | 318 | Store Zustand — persist middleware (localStorage), importe `@/lib/api` |
+| `workflowStore.ts` | 436 | Store Zustand — persist middleware (localStorage), VALIDATING step, importe `@/lib/api` + `@/lib/api/promesse` |
 
 ### frontend/types/
 
@@ -174,7 +176,7 @@
 
 | Fichier | LOC | Role |
 |---------|-----|------|
-| `WorkflowPage.tsx` | 323 | Orchestrateur principal (5 ecrans + recovery UI + beforeunload) |
+| `WorkflowPage.tsx` | 341 | Orchestrateur principal (6 ecrans: IDLE, COLLECTING, VALIDATING, REVIEW, GENERATING, DONE + recovery UI + beforeunload + auto-start) |
 | `WorkflowHeader.tsx` | ~80 | En-tete avec progression |
 | `WorkflowSidebar.tsx` | ~100 | Navigation sections |
 | `DynamicForm.tsx` | ~200 | Construction formulaire depuis schema |
@@ -231,7 +233,7 @@
 |---------|-----|------|
 | `agent_autonome.py` | 3142 | Agent intelligent NL + Q&R |
 | `chat_handler.py` | 1237 | Chat SSE + contexte |
-| `anthropic_agent.py` | 1030 | Wrapper Claude API (3-tier prompt caching, directive loading) |
+| `anthropic_agent.py` | 1101 | Wrapper Claude API (3-tier prompt caching, directive loading, ChatAnonymizer) |
 | `core/assembler_acte.py` | 792 | Assemblage Jinja2 |
 | `gestionnaires/gestionnaire_promesses.py` | 1695 | Orchestration promesses |
 | `services/cadastre_service.py` | 673 | APIs cadastre gouv.fr |
@@ -277,12 +279,15 @@
 
 ---
 
-## Endpoints MANQUANTS (documentes dans CLAUDE.md mais absents)
+## Endpoints via routers (non dans la table principale mais actifs)
 
-| Endpoint | Documente ou ? | Existe ? |
-|----------|----------------|----------|
-| `/cadastre/geocoder` | CLAUDE.md | NON dans api/main.py — existe en CLI (cadastre_service.py) |
-| `/cadastre/parcelle` | CLAUDE.md | NON |
-| `/cadastre/sections` | CLAUDE.md | NON |
-| `/cadastre/enrichir` | CLAUDE.md | NON |
-| `/cadastre/surface` | CLAUDE.md | NON |
+| Endpoint | Router | Monte a |
+|----------|--------|---------|
+| `/cadastre/geocoder` | `api_cadastre.py` | L513 |
+| `/cadastre/parcelle` | `api_cadastre.py` | L513 |
+| `/cadastre/sections` | `api_cadastre.py` | L513 |
+| `/cadastre/enrichir` | `api_cadastre.py` | L513 |
+| `/cadastre/surface` | `api_cadastre.py` | L513 |
+| `/validation/champ` | `api_validation.py` | L521 |
+| `/validation/schema/{type}` | `api_validation.py` | L521 |
+| `/validation/donnees` | `api_validation.py` | L521 |

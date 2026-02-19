@@ -6,6 +6,38 @@
 
 ---
 
+## 2026-02-19 (nuit, suite) — Paul (Payoss)
+
+### Contexte
+- Audit post-branchement des 5 phases. Paul s'occupe du chatbot ce soir.
+
+### Audit /audit — Score 7.2/10 (↑ depuis 6.7)
+
+| Dimension | Score | Tendance |
+|-----------|-------|----------|
+| Architecture | 6.5 | → |
+| Optimisation | 6.0 | → |
+| Securite | **8.5** | **↑** |
+| Fiabilite | **8.0** | **↑** |
+| Fluidite | 6.0 | ↑ |
+
+### Decouvertes audit
+1. **C-011 REGRESSION** — Le merge `c4be78d` ("keep both sides") a restaure 6 fichiers legacy supprimes dans `b4d4129`. Cles anon Supabase de retour dans `frontend/assets/`, `frontend/pages/`, `frontend/index.html`, `web/supabase-client.js`.
+2. **65 index Supabase inutilises** (vs 68 precedemment — 3 ont ete utilises)
+3. **api/main.py passe a 2994 lignes** (+54 depuis CODE_MAP)
+4. **anthropic_agent.py passe a 1101 lignes** (+71 — anonymisation)
+5. **workflowStore.ts passe a 436 lignes** (+118 — VALIDATING + persist)
+
+### Tests verifies
+- Python : 348 passed, 7 failed (pre-existants), 4 skipped — **0 regression**
+- Frontend : `npm run build` — 11/11 pages OK
+- Modules individuels : data_enrichment OK, ChatAnonymizer roundtrip OK, EncryptionService roundtrip OK
+
+### Prochaine etape
+- Paul travaille sur le chatbot ce soir
+
+---
+
 ## 2026-02-19 (nuit) — Paul (Payoss)
 
 ### Contexte

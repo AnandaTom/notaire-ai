@@ -9,7 +9,9 @@
 
 ### CRITIQUE
 
-Aucun probleme critique ouvert.
+| ID | Probleme | Fichier | Qui | Ouvert le | Notes |
+|----|----------|---------|-----|-----------|-------|
+| C-011b | Cles anon Supabase REGRESSEES par merge | 6 fichiers legacy | Paul | 19/02 | Merge `c4be78d` "keep both sides" a restaure les fichiers supprimes dans `b4d4129`. Fichiers: `frontend/assets/js/app.js`, `frontend/public/assets/js/app.js`, `frontend/pages/login.html`, `frontend/index.html`, `web/supabase-client.js`, `web/questionnaires/questionnaire-common.js` |
 
 ### IMPORTANT
 
@@ -28,11 +30,11 @@ Aucun probleme critique ouvert.
 | M-005 | CLAUDE.md surdimensionne (500+ lignes) | `CLAUDE.md` | Paul (axe 10) | 18/02 | Melange doc, changelog, instructions |
 | M-006 | Templates promesse sans {% include %} | `templates/` | Paul | 18/02 | Seul vente utilise les includes |
 | M-007 | Protection mots de passe compromis desactivee | Supabase Auth | - | 18/02 | Requiert plan Pro Supabase — pas dispo en Free |
-| M-008 | ~68 index Supabase inutilises | Supabase | Augustin | 19/02 | Confirme par advisor perf 19/02 soir |
+| M-008 | ~65 index Supabase inutilises | Supabase | Paul | 19/02 | Confirme par advisor perf 19/02 nuit (65 index) |
 | M-009 | Accessibilite frontend = ZERO | `frontend/components/` | Tom | 19/02 | 0 attributs aria/role/tabIndex (audit 19/02 soir) |
 | M-010 | POST /ventes/generer absent de CODE_MAP | `api/main.py:1601` | - | 19/02 | 40 endpoints (pas 39) |
 | M-011 | Multiple permissive policies feedbacks | Supabase | Augustin | 19/02 | 2 policies SELECT meme role, perf |
-| M-013 | CODE_MAP desynchronise | `memory/CODE_MAP.md` | Tom | 19/02 | Plusieurs LOC incorrects : exporter_docx ~600→1896, valider_acte absent, orchestrateur absent |
+| M-013 | CODE_MAP desynchronise | `memory/CODE_MAP.md` | Paul | 19/02 | LOC obsoletes: api/main.py 2940→2994, anthropic_agent.py 1030→1101, workflowStore.ts 318→436 |
 | M-014 | Ajouter message "mot de passe robuste" sur page inscription | Frontend (a creer) | Tom | 19/02 | Page inscription n'existe pas encore |
 | M-015 | 53 fichiers morts dans execution/ | `execution/` | Tom | 19/02 | Fichiers Python jamais importes — dead code |
 | M-016 | 7 tests backend en echec (pre-existants) | `tests/` | Tom | 19/02 | test_chat_generation (6) + test_tier1_optimizations (1) |
@@ -76,6 +78,7 @@ Aucun probleme critique ouvert.
 | I-014 | Zero timeout backend | 19/02 | payoss/dev | Paul — timeout=120s Anthropic, 30s Supabase |
 | I-015 | RLS initplan notaire_users | 19/02 | migration MCP | Paul — auth_user_id = (SELECT auth.uid()) |
 | M-012 | Pas de sauvegarde workflow | 19/02 | payoss/dev | Paul — Zustand persist + beforeunload + recovery UI |
+| I-016 | Secret github-credentials manquant Modal | 19/02 | TODO **Tom** | Tom (Paul dit que c'est un ptit coquin) — Creer fine-grained token GitHub (repo AnandaTom/notaire-ai only, Contents read-only) puis ajouter sur modal.com/secrets/notomai secret_name=github-credentials cle=GITHUB_TOKEN. Decommenter deployment_modal/modal_app.py L65 apres |
 
 ---
 
