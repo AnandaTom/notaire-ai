@@ -15,6 +15,14 @@ interface DynamicQuestionProps {
 export default function DynamicQuestion({ question, value, onChange, allValues }: DynamicQuestionProps) {
   const [fieldError, setFieldError] = useState<string | null>(null)
   const validateField = useWorkflowStore((s) => s.validateField)
+  const detection = useWorkflowStore((s) => s.detection)
+
+  // Filtrer par categorie de bien (ex: questions viager uniquement si viager detecte)
+  if (question.condition_categorie && detection?.categorie_bien) {
+    if (!question.condition_categorie.includes(detection.categorie_bien)) {
+      return null
+    }
+  }
 
   // Hooks AVANT tout return conditionnel (regle des hooks React)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)

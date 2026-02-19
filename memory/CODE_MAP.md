@@ -27,7 +27,7 @@
 - **Auth/DB** : @supabase/supabase-js 2.95.3
 - **Markdown** : react-markdown 9.0
 - **TypeScript** : 5.x strict mode
-- **Tests** : AUCUN (ni Vitest, ni Jest, ni Playwright)
+- **Tests** : Vitest 4.0 + Testing Library + jsdom (30 tests)
 
 ### Infrastructure
 - **DB** : Supabase (wcklvjckzktijtgakdrk) — Frankfurt EU, 17 tables
@@ -39,6 +39,7 @@
 - **API calls frontend** : toujours via `frontend/lib/api/`, jamais fetch() direct
 - **Config** : `frontend/lib/config.ts` centralise API_URL, API_KEY, timeouts
 - **SSE** : EventSource ne supporte pas les headers → API key en query param
+- **Zustand persist** : `workflowStore` sauvegarde dans localStorage (cle `notomai-workflow`, version 1), hydratation async via `onFinishHydration`
 - **Imports backend** : conditionnels DANS les endpoints (pas top-level, evite crash Modal)
 - **Templates** : Jinja2 avec guards `{% if var %}`, sections via `{% include %}` (vente only)
 - **DOCX** : formatage hardcode dans `exporter_docx.py` — NE JAMAIS MODIFIER
@@ -160,7 +161,7 @@
 
 | Fichier | LOC | Role |
 |---------|-----|------|
-| `workflowStore.ts` | 283 | Store Zustand — importe `@/lib/api` |
+| `workflowStore.ts` | 318 | Store Zustand — persist middleware (localStorage), importe `@/lib/api` |
 
 ### frontend/types/
 
@@ -173,7 +174,7 @@
 
 | Fichier | LOC | Role |
 |---------|-----|------|
-| `WorkflowPage.tsx` | 226 | Orchestrateur principal (5 ecrans) |
+| `WorkflowPage.tsx` | 323 | Orchestrateur principal (5 ecrans + recovery UI + beforeunload) |
 | `WorkflowHeader.tsx` | ~80 | En-tete avec progression |
 | `WorkflowSidebar.tsx` | ~100 | Navigation sections |
 | `DynamicForm.tsx` | ~200 | Construction formulaire depuis schema |

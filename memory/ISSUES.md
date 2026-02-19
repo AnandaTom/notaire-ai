@@ -17,7 +17,7 @@ Aucun probleme critique ouvert.
 |----|----------|---------|-----|-----------|-------|
 | I-004 | Pas de DPA signe avec Supabase | Legal | Paul | 18/02 | OBLIGATOIRE RGPD |
 | I-008 | self_anneal.py n'existe pas | `modal_app.py` | - | 18/02 | Manquant; daily_learning_job gere l'erreur |
-| I-010 | Endpoints /cadastre/* absents de api/main.py | `api/main.py` | - | 18/02 | Documentes dans CLAUDE.md mais pas integres |
+| I-010 | ~~Endpoints /cadastre/* absents de api/main.py~~ | `api/main.py` | Paul | 18/02 | **FERME 19/02** — routers montes |
 
 ### MOYEN
 
@@ -62,6 +62,11 @@ Aucun probleme critique ouvert.
 | C-003 | Supabase anon key en dur | 19/02 | tom/dev | Tom — Proxy lazy init, env vars only |
 | M-002 | Pas de tests frontend | 19/02 | tom/dev | Tom — 30 tests Vitest + Testing Library (AXE 8) |
 | C-010 | `next build` CASSE — vitest.config.ts | 19/02 | tom/dev + `1eecf9b` | Tom + Paul — exclu dans tsconfig.json |
+| I-010 | Endpoints /cadastre/* absents api/main.py | 19/02 | payoss/dev | Paul — include_router cadastre + validation |
+| I-011 | ChatAnonymizer non branche | 19/02 | payoss/dev | Paul — anonymiser/deanonymiser dans anthropic_agent.py |
+| I-012 | data_enrichment.py non appele | 19/02 | payoss/dev | Paul — insere avant validation dans generate + generate-stream |
+| I-013 | promesse.ts zero imports | 19/02 | payoss/dev | Paul — re-export dans api/index.ts + VALIDATING step |
+| I-014 | Pile securite non branchee | 19/02 | payoss/dev | Paul — AgentClientAccess dans anthropic_tools.py |
 | M-001 | startWorkflow hardcode copropriete | 19/02 | `b0845b9` | Paul — categorie_bien + sous_type dynamiques |
 | I-011 | 18 FK non-indexees Supabase | 19/02 | migration | Paul — CREATE INDEX 18 FK |
 | I-012 | RLS initplan notaire_users | 19/02 | migration | Paul — (select current_setting(...)) |

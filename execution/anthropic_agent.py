@@ -44,6 +44,14 @@ if sys.platform == "win32":
 
 logger = logging.getLogger(__name__)
 
+# PII anonymization for RGPD compliance
+try:
+    from execution.security.chat_anonymizer import ChatAnonymizer
+    ANONYMIZER_AVAILABLE = True
+except ImportError:
+    ANONYMIZER_AVAILABLE = False
+    logger.warning("ChatAnonymizer non disponible — PII envoyés en clair")
+
 
 # =============================================================================
 # Configuration
@@ -784,6 +792,24 @@ class AnthropicAgent:
         if context and context.get("type_acte_en_cours"):
             agent_state.setdefault("type_acte", context["type_acte_en_cours"])
 
+        # 1b. Anonymiser les PII avant envoi (RGPD)
+        anon_mapping = None
+        if ANONYMIZER_AVAILABLE:
+            try:
+                anonymizer = ChatAnonymizer()
+                message, anon_mapping = anonymizer.anonymiser(message)
+                if history:
+                    history_anonyme = []
+                    for msg in history:
+                        if isinstance(msg.get("content"), str):
+                            msg_anon, _ = anonymizer.anonymiser(msg["content"])
+                            history_anonyme.append({**msg, "content": msg_anon})
+                        else:
+                            history_anonyme.append(msg)
+                    history = history_anonyme
+            except Exception as e:
+                logger.warning(f"Anonymisation échouée, envoi en clair: {e}")
+
         # 2. Preparer les messages
         messages = self._prepare_messages(message, history or [])
 
@@ -813,6 +839,13 @@ class AnthropicAgent:
                 # Reponse finale en texte
                 text_blocks = [b.text for b in response.content if b.type == "text"]
                 final_text = "\n".join(text_blocks)
+
+                # De-anonymiser la reponse (RGPD)
+                if ANONYMIZER_AVAILABLE and anon_mapping:
+                    try:
+                        final_text = anonymizer.deanonymiser(final_text, anon_mapping)
+                    except Exception as e:
+                        logger.warning(f"De-anonymisation échouée: {e}")
 
                 # Persister l'etat
                 self._save_agent_state(conversation_id, agent_state)
@@ -898,6 +931,25 @@ class AnthropicAgent:
         if context and context.get("type_acte_en_cours"):
             agent_state.setdefault("type_acte", context["type_acte_en_cours"])
 
+        # 1b. Anonymiser les PII avant envoi (RGPD)
+        anon_mapping = None
+        anonymizer = None
+        if ANONYMIZER_AVAILABLE:
+            try:
+                anonymizer = ChatAnonymizer()
+                message, anon_mapping = anonymizer.anonymiser(message)
+                if history:
+                    history_anonyme = []
+                    for msg in history:
+                        if isinstance(msg.get("content"), str):
+                            msg_anon, _ = anonymizer.anonymiser(msg["content"])
+                            history_anonyme.append({**msg, "content": msg_anon})
+                        else:
+                            history_anonyme.append(msg)
+                    history = history_anonyme
+            except Exception as e:
+                logger.warning(f"Anonymisation stream échouée, envoi en clair: {e}")
+
         # 2. Preparer les messages
         messages = self._prepare_messages(message, history or [])
 
@@ -932,6 +984,14 @@ class AnthropicAgent:
             if response.stop_reason == "end_turn":
                 # Reponse finale
                 final_text = "".join(collected_text)
+
+                # De-anonymiser la reponse (RGPD)
+                if ANONYMIZER_AVAILABLE and anon_mapping and anonymizer:
+                    try:
+                        final_text = anonymizer.deanonymiser(final_text, anon_mapping)
+                    except Exception as e:
+                        logger.warning(f"De-anonymisation stream échouée: {e}")
+
                 self._save_agent_state(conversation_id, agent_state)
 
                 parsed = self._parse_response(final_text, agent_state)
