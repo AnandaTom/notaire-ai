@@ -6,6 +6,42 @@
 
 ---
 
+## 2026-02-19 — Paul (Payoss)
+
+### Contexte
+- Finalisation integration prompt comportemental
+- Premier audit via commande /audit
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| CREE | `memory/PROJECT_STATE.md` | Features done/en cours/a faire + plan 10 axes |
+| ENRICHI | `memory/CODE_MAP.md` | +stack tech, patterns cles, dependances |
+| MIS A JOUR | `memory/ISSUES.md` | Ferme C-003 + M-002, ajoute 7 nouvelles issues |
+| MIS A JOUR | `memory/JOURNAL.md` | Entree 18/02 (suite) + 19/02 |
+| MIS A JOUR | `CLAUDE.md` | PROJECT_STATE.md dans routine pre-reponse + table |
+| AUDIT | `/audit full` | Score 6/10 — 5 dimensions analysees |
+
+### Decouvertes (audit 19/02)
+
+1. **BUILD CASSE** — `vitest.config.ts` de Tom inclut `/// <reference types="vitest" />` que Next.js essaie de type-checker. **C-010 CRITIQUE**.
+2. **C-003 FIXEE par Tom** — `supabase.ts` utilise maintenant Proxy + env vars, plus de key hardcodee.
+3. **40 endpoints** dans api/main.py (pas 39) — `POST /ventes/generer` L1601 manquait dans CODE_MAP.
+4. **api/main.py a grandi** a 2940 lignes (+53 depuis CODE_MAP).
+5. **Supabase** : 18 FK non-indexees, ~55 index inutilises, 1 RLS initplan, 1 multiple policies.
+6. **M-002 FIXEE par Tom** — 30 tests frontend (Vitest + Testing Library), 4 fichiers test.
+7. **Accessibilite faible** — 19 attributs aria/role/tabIndex sur ~25 composants.
+
+### Build / Tests
+- `next build` — **ECHEC** (vitest.config.ts type error)
+- Backend 287 tests (257 + 30 frontend)
+
+### Branches
+- `payoss/dev` et `master` synchronises sur `beb811c`
+
+---
+
 ## 2026-02-18 (soir) — Paul (Payoss)
 
 ### Contexte

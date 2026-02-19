@@ -1,7 +1,7 @@
 # Etat du Projet - Notomai
 
 > Fonctionnalites : done / en cours / a faire.
-> Mis a jour a chaque session. Derniere MAJ : 2026-02-18.
+> Mis a jour a chaque session. Derniere MAJ : 2026-02-19.
 
 ---
 
@@ -9,12 +9,12 @@
 
 | Categorie | Done | En cours | A faire | Score |
 |-----------|------|----------|---------|-------|
-| Backend API | 39/39 endpoints | - | 5 cadastre endpoints | 95% |
-| Frontend | 23 composants | Connexion API (AXE 1 fait) | Tests, onboarding | 70% |
+| Backend API | 40/40 endpoints | - | 5 cadastre endpoints | 95% |
+| Frontend | 25 composants | **BUILD CASSE** (C-010) | Onboarding, accessibilite | 65% |
 | Templates | 7/7 PROD | - | - | 100% |
-| Securite | Axes 4,5 (partiel) | C-003 anon key | DOCX metadata, DPA | 75% |
+| Securite | Axes 4,5 (fait) | DPA Supabase | DOCX metadata, password leak | 80% |
 | RGPD | Registre, procedure, politique | DPA Supabase | Audit CNIL complet | 60% |
-| Tests | 257 backend | - | 0 frontend | 50% |
+| Tests | 257 backend + 30 frontend | - | Coverage, E2E | 65% |
 | CI/CD | Fix deploy.yml + test.yml | - | Monitoring (Sentry) | 60% |
 
 ---
