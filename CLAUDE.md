@@ -170,6 +170,16 @@ python notaire.py dashboard
 | `execution/test_fiabilite.py` | ✅ **Tests automatisés** (219 tests) |
 | `execution/generer_dashboard_data.py` | Génération données dashboard |
 | `notaire.py` | **CLI SIMPLIFIÉ** - Point d'entrée racine (`python notaire.py`) |
+| `generate_commit_msg.py` | **COMMIT MSG** - Génère commit message depuis JOURNAL.md ou git diff (auto) |
+| `read_team_commits.py` | **TEAM COMMITS** - Lit commits autres devs (anti-doublon) |
+
+### Scripts BAT (workflow multi-devs)
+
+| Script | Version | Fonction |
+|--------|---------|----------|
+| `END_DAY.bat` | v3.1 | Fin de journée: stage + journal check + commit intelligent + push + PR |
+| `START_DAY_AUGUSTIN.bat` | v2.0 | Début journée Augustin: fetch + team commits + pull |
+| `START_DAY_PAYOSS.bat` | v2.0 | Début journée Payoss: fetch + team commits + pull |
 
 ### Skills Claude Code (commandes /slash)
 
@@ -488,7 +498,7 @@ Code modifié → /review → corrections → /document → commit
 - **Si aucun changement de code** (juste des questions, de la recherche) → ne pas appeler.
 - **Les deux agents chargent avec zéro contexte** — c'est le but. Yeux frais = meilleure qualité.
 
-**Prompts des agents :** `~/.claude/agents/reviewer.md` et `~/.claude/agents/documenter.md`
+**Prompts des agents :** `.claude/agents/reviewer.md` et `.claude/agents/documenter.md` (dans le repo, partages entre tous les devs)
 
 ### Intégration de nouvelles sections (Vagues 4-5+)
 

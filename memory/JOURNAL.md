@@ -6,6 +6,130 @@
 
 ---
 
+## 2026-02-19 — Tom (session 2)
+
+### Contexte
+- Audit /audit score 6.2/10 (5 dimensions). Tom prend dimensions 1 (architecture) et 2 (optimisation frontend).
+- Objectif: renforcer la couche API frontend, corriger les erreurs silencieuses et les stale closures.
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| MODIFIE | `frontend/lib/api/index.ts` | +4 fonctions exportees : loadConversations(), loadConversation(), sendChatFeedback(), loadDocumentSections() — toutes via apiFetch() |
+| MODIFIE | `frontend/app/app/page.tsx` | +toastError state + showToast() helper (auto-dismiss 5s, useRef pour eviter timer leak) |
+| MODIFIE | `frontend/app/app/page.tsx` | loadConversation et loadConversations → useCallback (fix stale closure) |
+| MODIFIE | `frontend/app/app/page.tsx` | 4 silent catch {} → showToast() avec message contextuel |
+| MODIFIE | `frontend/app/app/page.tsx` | 4 appels fetch() directs → fonctions API du module @/lib/api |
+| MODIFIE | `frontend/app/app/page.tsx` | sendFeedback : revert optimiste si echec backend |
+| MODIFIE | `frontend/app/app/page.tsx` | SSE sendMessage : ajout header X-API-Key |
+
+### Nouvelles interfaces (lib/api/index.ts)
+
+```typescript
+ConversationListResponse    // { conversations: ConversationSummary[] }
+ConversationDetailResponse  // { messages: [...], context?: { progress_pct? } }
+```
+
+### Review (/review — 2 passes)
+
+- 2 CRITICAL trouves et corriges
+- 3 MODERATE trouves et corriges
+- 2 MINOR trouves et corriges
+
+### Build / Tests
+
+- `next build` — 11/11 pages OK
+- `vitest run` — 30/30 tests OK
+- Backend 257 tests inchanges (0 fichiers Python modifies)
+
+### Decouvertes
+
+1. **C-010 FIXEE** — vitest.config.ts exclu dans tsconfig.json. Build passe a nouveau.
+2. **Dimension 3 & 4** : prises par Payoss.
+3. **Dimension 5** : prise par Augustin.
+
+### Branches
+
+- `tom/dev` — changements locaux, pas encore commites
+
+---
+
+## 2026-02-19 — Tom
+
+### Contexte
+- Mise en place du systeme de commits intelligents multi-devs
+- Merge master pour recuperer le systeme memoire de Payoss
+- Partage des agents reviewer/documenter pour toute l'equipe
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| CREE | `generate_commit_msg.py` | Genere commit msg depuis JOURNAL.md + auto-summary git diff |
+| CREE | `read_team_commits.py` | Lecture commits autres devs (anti-doublon, filtre auto-commits) |
+| MODIFIE | `END_DAY.bat` | v3.0→v3.1: journal check, locale-independent date, error handling |
+| MODIFIE | `START_DAY_AUGUSTIN.bat` | v2.0: ajout step team commits |
+| MODIFIE | `START_DAY_PAYOSS.bat` | v2.0: ajout step team commits |
+| CREE | `.claude/agents/reviewer.md` | Copie depuis ~/.claude/ → repo (partage equipe) |
+| CREE | `.claude/agents/documenter.md` | Copie depuis ~/.claude/ → repo (partage equipe) |
+| MODIFIE | `.claude/skills/document/SKILL.md` | Format journal anti-conflit multi-devs |
+| MODIFIE | `.claude/commands/audit.md` | +read_team_commits.py dans Phase 0 |
+| MODIFIE | `memory/CONVENTIONS.md` | Conventions journal + commit end-of-day |
+| MODIFIE | `CLAUDE.md` | Scripts BAT table, agent paths → repo-level |
+| MODIFIE | `memory/CODE_MAP.md` | +scripts racine table |
+
+### Decouvertes
+
+1. **Agents reviewer/documenter etaient locaux** — dans `~/.claude/agents/` (machine Tom uniquement). Payoss et Augustin n'y avaient pas acces. Deplaces dans `.claude/agents/` (repo).
+2. **`%date%` Windows est locale-dependent** — format different selon langue OS. Fix: PowerShell `Get-Date -Format yyyy-MM-dd`.
+3. **`git push --force-with-lease` apres rebase silencieux** pouvait corrompre la branche remote. Fix: check ERRORLEVEL apres chaque etape.
+4. **Dev name substring collision** — `"tom" in "thomas"` est vrai. Fix: word-boundary regex.
+5. **`--branch` arg dans read_team_commits.py** etait parse mais jamais passe a la fonction. Fix: ajoute `current_branch_override` param.
+
+### Review (2 passes)
+- 2 CRITICAL: force-with-lease apres rebase silencieux (CORRIGE), --branch arg ignore (CORRIGE)
+- 6 MODERATE: substring collision (CORRIGE), dev name normalization (CORRIGE), Python errors silenced (CORRIGE), missing commit check (CORRIGE), rename tab handling (CORRIGE), locale-dependent date (CORRIGE)
+- 3 MINOR: double get_current_branch (CORRIGE), work_type threshold (CORRIGE), temp files cleanup (CORRIGE)
+
+### Build / Tests
+- Backend 257 tests inchanges (pas de modif execution/)
+- Scripts utilitaires: pas de tests dedies (CLI tools)
+
+### Branches
+- `tom/dev` — changements locaux, pas encore commite
+
+---
+
+## 2026-02-19 (soir) — Paul (Payoss)
+
+### Contexte
+- Plan securite + fiabilite (6 issues, score audit 6.6→cible 7.5+)
+- Attribution : Paul=securite+fiabilite, Augustin=fluidite, Tom=archi+optim
+
+### Ce qui a ete fait (plan 6 etapes)
+
+| # | Issue | Action | Fichiers modifies |
+|---|-------|--------|-------------------|
+| 1 | I-015 | Migration RLS: `auth_user_id = (SELECT auth.uid())` | Supabase migration MCP |
+| 2 | I-007 | DOCX metadata strippee (author=Notomai, title/subject vides) | `execution/core/exporter_docx.py` L1835-1838 |
+| 3 | C-011 | Legacy files supprimes + web/ externalise via env.js | Supprime: `frontend/assets/`, `frontend/public/assets/`, `frontend/pages/`, `frontend/index.html`, `dashboard/app/index.html`. Modifie: `web/supabase-client.js`, `web/questionnaires/questionnaire-common.js`, 6 HTML. Cree: `web/env.js.example`. Ajoute `web/env.js` a `.gitignore` |
+| 4 | I-013+I-014 | Timeout+retry: Anthropic 120s/2 retries, Supabase 30s | `execution/anthropic_agent.py`, `execution/agent_llm.py`, `execution/database/supabase_client.py` |
+| 5 | M-012 | Zustand persist middleware + beforeunload + recovery UI | `frontend/stores/workflowStore.ts`, `frontend/components/workflow/WorkflowPage.tsx` |
+| 6 | M-007 | A faire manuellement dans Supabase Dashboard | (toggle Auth settings) |
+
+### Verification finale
+- `next build` — **OK** (11/11 pages)
+- `get_advisors(security)` — 1 WARN restant (leaked password, toggle manuel M-007)
+- `get_advisors(performance)` — **initplan WARN disparue**, reste unused indexes (INFO) + feedbacks policies (WARN)
+- `grep eyJhbG` — **0 vrai cle**, reste uniquement docstring exemples dans agent_database.py
+- 6 issues fermees : C-011, I-007, I-013, I-014, I-015, M-012
+
+### Issues fermees : 6
+C-011, I-007, I-013, I-014, I-015, M-012
+
+---
+
 ## 2026-02-19 (matin) — Augustin
 
 ### Contexte
@@ -37,11 +161,11 @@
 
 ---
 
-## 2026-02-19 — Paul (Payoss)
+## 2026-02-19 (matin) — Paul (Payoss)
 
 ### Contexte
 - Finalisation integration prompt comportemental
-- Premier audit via commande /audit
+- Deux audits via commande /audit (matin + soir)
 
 ### Ce qui a ete fait
 
@@ -52,24 +176,29 @@
 | MIS A JOUR | `memory/ISSUES.md` | Ferme C-003 + M-002, ajoute 7 nouvelles issues |
 | MIS A JOUR | `memory/JOURNAL.md` | Entree 18/02 (suite) + 19/02 |
 | MIS A JOUR | `CLAUDE.md` | PROJECT_STATE.md dans routine pre-reponse + table |
-| AUDIT | `/audit full` | Score 6/10 — 5 dimensions analysees |
+| FIX | `frontend/tsconfig.json` | Exclude vitest.config.ts du build Next.js (C-010) |
+| FIX | `frontend/stores/workflowStore.ts` + `frontend/lib/api/index.ts` | Workflow dynamique categorie_bien + sous_type (M-001) |
+| MIGRATION | Supabase | 18 FK indexees + RLS initplan fix partiel (I-011, I-012) |
+| AUDIT #1 | `/audit full` | Score 6/10 — 5 dimensions analysees |
+| AUDIT #2 | `/audit full` | Score 6.6/10 — post-fixes, build green |
 
-### Decouvertes (audit 19/02)
+### Decouvertes (audit 19/02 soir)
 
-1. **BUILD CASSE** — `vitest.config.ts` de Tom inclut `/// <reference types="vitest" />` que Next.js essaie de type-checker. **C-010 CRITIQUE**.
-2. **C-003 FIXEE par Tom** — `supabase.ts` utilise maintenant Proxy + env vars, plus de key hardcodee.
-3. **40 endpoints** dans api/main.py (pas 39) — `POST /ventes/generer` L1601 manquait dans CODE_MAP.
-4. **api/main.py a grandi** a 2940 lignes (+53 depuis CODE_MAP).
-5. **Supabase** : 18 FK non-indexees, ~55 index inutilises, 1 RLS initplan, 1 multiple policies.
-6. **M-002 FIXEE par Tom** — 30 tests frontend (Vitest + Testing Library), 4 fichiers test.
-7. **Accessibilite faible** — 19 attributs aria/role/tabIndex sur ~25 composants.
+1. **BUILD GREEN** — C-010 fixee, `next build` 11/11 pages OK.
+2. **Supabase anon key dans 4 legacy JS** — `frontend/assets/js/app.js`, `frontend/public/assets/js/app.js`, `web/supabase-client.js`, `web/questionnaires/questionnaire-common.js`. supabase.ts est clean (Proxy env vars) mais ces fichiers trainent. **C-011 NOUVEAU**.
+3. **68 index Supabase inutilises** (pas 55) — confirme par advisor performance.
+4. **Zero retry logic** dans tout le projet — grep confirme 0 occurrences. **I-013 NOUVEAU**.
+5. **Zero timeout backend** — seul timeout commente L2931. **I-014 NOUVEAU**.
+6. **RLS initplan incomplet** — `authenticated_update_own_notaire` sur notaire_users encore flagge. **I-015 NOUVEAU**.
+7. **Zero attributs accessibilite** — grep confirme 0 aria-*/role/tabIndex dans components/. M-009 aggrave.
+8. **Tendance** : amelioration vs audit matin (+0.6), 6 issues fermees, 5 nouvelles.
 
 ### Build / Tests
-- `next build` — **ECHEC** (vitest.config.ts type error)
-- Backend 287 tests (257 + 30 frontend)
+- `next build` — **OK** (11/11 pages)
+- Backend 257 tests + 30 frontend = 287
 
 ### Branches
-- `payoss/dev` et `master` synchronises sur `beb811c`
+- `payoss/dev` — commit `b0845b9` (workflow dynamique + index FK + RLS)
 
 ---
 
