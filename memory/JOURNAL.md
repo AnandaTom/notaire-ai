@@ -6,11 +6,40 @@
 
 ---
 
-## 2026-02-19 — Paul (Payoss)
+## 2026-02-19 (soir) — Paul (Payoss)
+
+### Contexte
+- Plan securite + fiabilite (6 issues, score audit 6.6→cible 7.5+)
+- Attribution : Paul=securite+fiabilite, Augustin=fluidite, Tom=archi+optim
+
+### Ce qui a ete fait (plan 6 etapes)
+
+| # | Issue | Action | Fichiers modifies |
+|---|-------|--------|-------------------|
+| 1 | I-015 | Migration RLS: `auth_user_id = (SELECT auth.uid())` | Supabase migration MCP |
+| 2 | I-007 | DOCX metadata strippee (author=Notomai, title/subject vides) | `execution/core/exporter_docx.py` L1835-1838 |
+| 3 | C-011 | Legacy files supprimes + web/ externalise via env.js | Supprime: `frontend/assets/`, `frontend/public/assets/`, `frontend/pages/`, `frontend/index.html`, `dashboard/app/index.html`. Modifie: `web/supabase-client.js`, `web/questionnaires/questionnaire-common.js`, 6 HTML. Cree: `web/env.js.example`. Ajoute `web/env.js` a `.gitignore` |
+| 4 | I-013+I-014 | Timeout+retry: Anthropic 120s/2 retries, Supabase 30s | `execution/anthropic_agent.py`, `execution/agent_llm.py`, `execution/database/supabase_client.py` |
+| 5 | M-012 | Zustand persist middleware + beforeunload + recovery UI | `frontend/stores/workflowStore.ts`, `frontend/components/workflow/WorkflowPage.tsx` |
+| 6 | M-007 | A faire manuellement dans Supabase Dashboard | (toggle Auth settings) |
+
+### Verification finale
+- `next build` — **OK** (11/11 pages)
+- `get_advisors(security)` — 1 WARN restant (leaked password, toggle manuel M-007)
+- `get_advisors(performance)` — **initplan WARN disparue**, reste unused indexes (INFO) + feedbacks policies (WARN)
+- `grep eyJhbG` — **0 vrai cle**, reste uniquement docstring exemples dans agent_database.py
+- 6 issues fermees : C-011, I-007, I-013, I-014, I-015, M-012
+
+### Issues fermees : 6
+C-011, I-007, I-013, I-014, I-015, M-012
+
+---
+
+## 2026-02-19 (matin) — Paul (Payoss)
 
 ### Contexte
 - Finalisation integration prompt comportemental
-- Premier audit via commande /audit
+- Deux audits via commande /audit (matin + soir)
 
 ### Ce qui a ete fait
 
@@ -21,24 +50,29 @@
 | MIS A JOUR | `memory/ISSUES.md` | Ferme C-003 + M-002, ajoute 7 nouvelles issues |
 | MIS A JOUR | `memory/JOURNAL.md` | Entree 18/02 (suite) + 19/02 |
 | MIS A JOUR | `CLAUDE.md` | PROJECT_STATE.md dans routine pre-reponse + table |
-| AUDIT | `/audit full` | Score 6/10 — 5 dimensions analysees |
+| FIX | `frontend/tsconfig.json` | Exclude vitest.config.ts du build Next.js (C-010) |
+| FIX | `frontend/stores/workflowStore.ts` + `frontend/lib/api/index.ts` | Workflow dynamique categorie_bien + sous_type (M-001) |
+| MIGRATION | Supabase | 18 FK indexees + RLS initplan fix partiel (I-011, I-012) |
+| AUDIT #1 | `/audit full` | Score 6/10 — 5 dimensions analysees |
+| AUDIT #2 | `/audit full` | Score 6.6/10 — post-fixes, build green |
 
-### Decouvertes (audit 19/02)
+### Decouvertes (audit 19/02 soir)
 
-1. **BUILD CASSE** — `vitest.config.ts` de Tom inclut `/// <reference types="vitest" />` que Next.js essaie de type-checker. **C-010 CRITIQUE**.
-2. **C-003 FIXEE par Tom** — `supabase.ts` utilise maintenant Proxy + env vars, plus de key hardcodee.
-3. **40 endpoints** dans api/main.py (pas 39) — `POST /ventes/generer` L1601 manquait dans CODE_MAP.
-4. **api/main.py a grandi** a 2940 lignes (+53 depuis CODE_MAP).
-5. **Supabase** : 18 FK non-indexees, ~55 index inutilises, 1 RLS initplan, 1 multiple policies.
-6. **M-002 FIXEE par Tom** — 30 tests frontend (Vitest + Testing Library), 4 fichiers test.
-7. **Accessibilite faible** — 19 attributs aria/role/tabIndex sur ~25 composants.
+1. **BUILD GREEN** — C-010 fixee, `next build` 11/11 pages OK.
+2. **Supabase anon key dans 4 legacy JS** — `frontend/assets/js/app.js`, `frontend/public/assets/js/app.js`, `web/supabase-client.js`, `web/questionnaires/questionnaire-common.js`. supabase.ts est clean (Proxy env vars) mais ces fichiers trainent. **C-011 NOUVEAU**.
+3. **68 index Supabase inutilises** (pas 55) — confirme par advisor performance.
+4. **Zero retry logic** dans tout le projet — grep confirme 0 occurrences. **I-013 NOUVEAU**.
+5. **Zero timeout backend** — seul timeout commente L2931. **I-014 NOUVEAU**.
+6. **RLS initplan incomplet** — `authenticated_update_own_notaire` sur notaire_users encore flagge. **I-015 NOUVEAU**.
+7. **Zero attributs accessibilite** — grep confirme 0 aria-*/role/tabIndex dans components/. M-009 aggrave.
+8. **Tendance** : amelioration vs audit matin (+0.6), 6 issues fermees, 5 nouvelles.
 
 ### Build / Tests
-- `next build` — **ECHEC** (vitest.config.ts type error)
-- Backend 287 tests (257 + 30 frontend)
+- `next build` — **OK** (11/11 pages)
+- Backend 257 tests + 30 frontend = 287
 
 ### Branches
-- `payoss/dev` et `master` synchronises sur `beb811c`
+- `payoss/dev` — commit `b0845b9` (workflow dynamique + index FK + RLS)
 
 ---
 

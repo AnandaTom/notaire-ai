@@ -86,7 +86,11 @@ def get_supabase_client(use_service_key: bool = True) -> Optional[Client]:
         return None
 
     try:
-        return create_client(url, key)
+        from supabase.lib.client_options import ClientOptions
+        options = ClientOptions(
+            postgrest_client_timeout=30,    # 30s timeout on DB queries
+        )
+        return create_client(url, key, options=options)
     except Exception as e:
         print(f"ERREUR connexion Supabase: {e}")
         return None

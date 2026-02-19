@@ -1,6 +1,7 @@
 'use client'
 
-import { FileText, FileCheck, Building, FilePen, Download, Award } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { FileText, FileCheck, Building, FilePen, Download, Award, RotateCcw, Plus } from 'lucide-react'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import type { TypeActe } from '@/types/workflow'
 import WorkflowHeader from './WorkflowHeader'
@@ -55,7 +56,28 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
   const fichierUrl = useWorkflowStore((s) => s.fichierUrl)
   const conformiteScore = useWorkflowStore((s) => s.conformiteScore)
   const workflowId = useWorkflowStore((s) => s.workflowId)
+  const typeActe = useWorkflowStore((s) => s.typeActe)
   const reset = useWorkflowStore((s) => s.reset)
+
+  const [showRecovery, setShowRecovery] = useState(false)
+
+  // Warn before leaving with unsaved data
+  useEffect(() => {
+    if (step !== 'COLLECTING' && step !== 'REVIEW') return
+
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [step])
+
+  // Check for persisted workflow to resume
+  useEffect(() => {
+    if (step === 'COLLECTING' || step === 'REVIEW') {
+      setShowRecovery(true)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectType = async (type: TypeActe) => {
     await startWorkflow(type)
@@ -64,6 +86,68 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
   const handleBack = () => {
     reset()
     onBack?.()
+  }
+
+  const handleDismissRecovery = () => {
+    setShowRecovery(false)
+  }
+
+  const handleDiscardRecovery = () => {
+    reset()
+    setShowRecovery(false)
+  }
+
+  // ========================================
+  // Recovery banner (persisted workflow found)
+  // ========================================
+  if (showRecovery && (step === 'COLLECTING' || step === 'REVIEW')) {
+    const TYPE_LABELS: Record<string, string> = {
+      promesse_vente: 'Promesse de vente',
+      vente: 'Acte de vente',
+      reglement_copropriete: 'Règlement de copropriété',
+      modificatif_edd: 'Modificatif EDD',
+    }
+
+    return (
+      <div className="h-full flex flex-col bg-ivory">
+        <WorkflowHeader onBack={handleBack} />
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="max-w-md w-full text-center">
+            <div className="w-14 h-14 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <RotateCcw className="w-7 h-7 text-amber-600" />
+            </div>
+
+            <h2 className="text-xl font-serif font-semibold text-charcoal mb-2">
+              Workflow en cours
+            </h2>
+            <p className="text-[0.88rem] text-slate mb-8">
+              Un{' '}
+              <span className="font-medium text-charcoal">
+                {TYPE_LABELS[typeActe || ''] || 'acte'}
+              </span>{' '}
+              était en cours de saisie. Souhaitez-vous le reprendre ?
+            </p>
+
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={handleDismissRecovery}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-white rounded-xl text-[0.88rem] font-semibold hover:bg-gold-dark transition-all"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Reprendre
+              </button>
+              <button
+                onClick={handleDiscardRecovery}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-cream border border-champagne text-charcoal rounded-xl text-[0.88rem] font-medium hover:bg-sand transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Nouveau
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // ========================================
