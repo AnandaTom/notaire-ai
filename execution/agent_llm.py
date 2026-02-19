@@ -630,7 +630,11 @@ def run_agent(
             "fichier_url": None,
         }
 
-    client = anthropic.Anthropic(api_key=api_key)
+    client = anthropic.Anthropic(
+        api_key=api_key,
+        timeout=120.0,     # 2 min max per request (default 600s)
+        max_retries=2,     # Built-in retry with backoff on 429/5xx
+    )
     iteration = 0
     tools_used = []
     fichier_url = None

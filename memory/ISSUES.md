@@ -9,20 +9,15 @@
 
 ### CRITIQUE
 
-| ID | Probleme | Fichier | Qui | Ouvert le | Notes |
-|----|----------|---------|-----|-----------|-------|
-| - | *(aucun critique ouvert)* | - | - | - | - |
+(aucun)
 
 ### IMPORTANT
 
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
 | I-004 | Pas de DPA signe avec Supabase | Legal | Paul | 18/02 | OBLIGATOIRE RGPD |
-| I-007 | DOCX metadata non strippee | `core/exporter_docx.py` | Augustin | 18/02 | Risque RGPD (auteur, chemins) |
 | I-008 | self_anneal.py n'existe pas | `modal_app.py` | - | 18/02 | Manquant; daily_learning_job gere l'erreur |
 | I-010 | Endpoints /cadastre/* absents de api/main.py | `api/main.py` | - | 18/02 | Documentes dans CLAUDE.md mais pas integres |
-| I-011 | 18 FK non-indexees Supabase | Supabase | Augustin | 19/02 | actes_generes, clients, dossiers, feedbacks, etc. Perf JOIN/DELETE |
-| I-012 | RLS initplan notaire_users | Supabase | Augustin | 19/02 | `auth.uid()` re-evalue par ligne → `(select auth.uid())` |
 
 ### MOYEN
 
@@ -32,10 +27,11 @@
 | M-004 | Pas d'onboarding / tutoriel | - | Tom (axe 7) | 18/02 | Notaire perdu au 1er lancement |
 | M-005 | CLAUDE.md surdimensionne (500+ lignes) | `CLAUDE.md` | Paul (axe 10) | 18/02 | Melange doc, changelog, instructions |
 | M-006 | Templates promesse sans {% include %} | `templates/` | Paul | 18/02 | Seul vente utilise les includes |
-| M-007 | Protection mots de passe compromis desactivee | Supabase Auth | Paul | 18/02 | Confirme par Supabase advisor 19/02 |
-| M-008 | ~55 index Supabase inutilises | Supabase | Augustin | 19/02 | Dead weight, overhead INSERT/UPDATE |
-| M-009 | Accessibilite frontend minimale | `frontend/components/` | Tom | 19/02 | 19 aria/role/tabIndex sur ~25 composants |
+| M-007 | Protection mots de passe compromis desactivee | Supabase Auth | - | 18/02 | Requiert plan Pro Supabase |
+| M-008 | ~68 index Supabase inutilises | Supabase | Augustin | 19/02 | Confirme par advisor perf 19/02 |
 | M-011 | Multiple permissive policies feedbacks | Supabase | Augustin | 19/02 | 2 policies SELECT meme role, perf |
+| M-013 | 7 tests backend en echec (pre-existants) | `tests/` | Tom | 19/02 | test_chat_generation (6) + test_tier1_optimizations (1) |
+| M-014 | Ajouter message "mot de passe robuste" sur page inscription | Frontend (a creer) | Tom | 19/02 | A faire quand le site sera plus avance |
 
 ---
 
@@ -60,9 +56,18 @@
 | I-006 | Cle dev par defaut signed_urls.py | 18/02 | `9e19166` | Augustin — cle supprimee |
 | C-003 | Supabase anon key en dur | 19/02 | tom/dev | Tom — Proxy lazy init, env vars only |
 | M-002 | Pas de tests frontend | 19/02 | tom/dev | Tom — 30 tests Vitest + Testing Library (AXE 8) |
-| C-010 | `next build` CASSE vitest.config.ts | 19/02 | `1eecf9b` | Paul — tsconfig.json exclut vitest.config.ts |
-| M-001 | startWorkflow hardcode copropriete | 19/02 | `b0845b9` | Paul — categorie_bien dynamique |
+| C-010 | `next build` casse vitest.config.ts | 19/02 | `1eecf9b` | Paul — exclude vitest.config.ts dans tsconfig.json |
+| M-001 | startWorkflow hardcode copropriete | 19/02 | `b0845b9` | Paul — categorie_bien + sous_type dynamiques |
+| I-011 | 18 FK non-indexees Supabase | 19/02 | migration | Paul — CREATE INDEX 18 FK |
+| I-012 | RLS initplan notaire_users | 19/02 | migration | Paul — (select current_setting(...)) |
+| C-011 | Anon key dans legacy files + web/ | 19/02 | payoss/dev | Paul — legacy supprime, web/ externalise via env.js |
+| I-007 | DOCX metadata non strippee | 19/02 | payoss/dev | Paul — core_properties nettoyees avant save |
+| I-013 | Zero retry appels externes | 19/02 | payoss/dev | Paul — max_retries=2 Anthropic, timeout=30s Supabase |
+| I-014 | Zero timeout backend | 19/02 | payoss/dev | Paul — timeout=120s Anthropic, 30s Supabase |
+| I-015 | RLS initplan notaire_users | 19/02 | migration MCP | Paul — auth_user_id = (SELECT auth.uid()) |
+| M-009 | Accessibilite frontend = ZERO | 19/02 | augustin/dev | Augustin — aria-* sur 7 composants workflow |
 | M-010 | POST /ventes/generer absent de CODE_MAP | 19/02 | - | Corrige dans CODE_MAP.md |
+| M-012 | Pas de sauvegarde workflow | 19/02 | payoss/dev + augustin/dev | Paul (zustand persist) + Augustin (restoreDraft) |
 
 ---
 
