@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T06:59:52.178539",
+    "generated_at": "2026-02-19T16:13:36.399050",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 374
+    "commits": 376
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "478c022",
-      "message": "chore: auto-update dashboard data [skip ci]",
-      "date": "2026-02-18"
+      "hash": "1eecf9b",
+      "message": "fix(frontend): exclude vitest config from Next.js build (C-010)",
+      "date": "2026-02-19"
     },
-    "total_commits": 374,
+    "total_commits": 376,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 166
+        "commits": 167
       },
       {
         "name": "github-actions[bot]",
-        "commits": 110
+        "commits": 111
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 44
+        "commits": 45
       },
       {
         "name": "Automai",
@@ -624,6 +624,26 @@
   ],
   "activity": [
     {
+      "hash": "1eecf9b",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "exclude vitest config from Next.js build (C-010)",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "33409e5",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "478c022",
       "author": "github-actions[bot]",
       "date": "2026-02-18",
@@ -798,26 +818,6 @@
       "author": "Payoss",
       "date": "2026-02-18",
       "message": "Merge branch 'payoss/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "17be6ff",
-      "author": "Payoss",
-      "date": "2026-02-18",
-      "message": "systeme memoire persistant + commande /audit",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "b9e0de2",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 06:59"
+    "last_updated": "2026-02-19 16:13"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 06:59"
+    "last_updated": "2026-02-19 16:13"
   },
   "conformity_details": {
     "promesse": {
