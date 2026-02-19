@@ -377,9 +377,38 @@ class ToolExecutor:
         self, tool_input: Dict, agent_state: Dict
     ) -> Dict:
         """Enregistre les reponses du notaire."""
+        import copy
         answers = tool_input.get("answers", {})
         collecteur = self._get_collecteur(agent_state)
-        result = collecteur.submit_answers(answers)
+
+        # Separer les reponses plates (dot-path/question_id) des objets nested
+        flat_answers = {}
+        direct_merge = {}
+        for key, value in answers.items():
+            if isinstance(value, (dict, list)):
+                # Objets complexes → merger directement dans donnees
+                direct_merge[key] = value
+            else:
+                flat_answers[key] = value
+
+        # Merger les objets complexes directement dans donnees
+        if direct_merge:
+            donnees = collecteur.donnees
+            for k, v in direct_merge.items():
+                if isinstance(v, list):
+                    donnees[k] = copy.deepcopy(v)
+                elif isinstance(v, dict) and isinstance(donnees.get(k), dict):
+                    donnees[k] = {**donnees[k], **copy.deepcopy(v)}
+                else:
+                    donnees[k] = copy.deepcopy(v)
+
+        # Appeler submit_answers avec les reponses plates uniquement
+        if flat_answers:
+            result = collecteur.submit_answers(flat_answers)
+        else:
+            result = {'accepted': 0, 'errors': [], 'updated_keys': []}
+        result['accepted'] += len(direct_merge)
+        result['updated_keys'] = result.get('updated_keys', []) + list(direct_merge.keys())
 
         # Sauvegarder les donnees mises a jour
         agent_state["donnees_collectees"] = collecteur.donnees

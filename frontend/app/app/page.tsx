@@ -42,6 +42,7 @@ export default function Home() {
   const [selectedFormat, setSelectedFormat] = useState<'pdf' | 'docx'>('docx')
   const [conversationId, setConversationId] = useState('')
   const [userId, setUserId] = useState('')
+  const [etudeId, setEtudeId] = useState('')
   const [progressPct, setProgressPct] = useState<number | null>(null)
   const [conversations, setConversations] = useState<ConversationSummary[]>([])
   const [statusText, setStatusText] = useState<string | null>(null)
@@ -82,13 +83,17 @@ export default function Home() {
     const loadUserInfo = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        // Utiliser le vrai user_id Supabase (au lieu du UUID localStorage)
+        setUserId(user.id)
+
         const { data } = await supabase
           .from('notaire_users')
-          .select('nom, prenom')
+          .select('nom, prenom, etude_id')
           .eq('auth_user_id', user.id)
           .single()
         if (data) {
           setUserInfo(data)
+          if (data.etude_id) setEtudeId(data.etude_id)
         }
       }
     }
@@ -172,7 +177,7 @@ export default function Home() {
         body: JSON.stringify({
           message: content,
           user_id: userId,
-          etude_id: '',
+          etude_id: etudeId,
           conversation_id: conversationId,
           context: { format: selectedFormat },
         }),

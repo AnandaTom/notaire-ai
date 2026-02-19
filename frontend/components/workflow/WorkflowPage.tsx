@@ -1,6 +1,7 @@
 'use client'
 
-import { FileText, FileCheck, Building, FilePen, Download, Award } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { FileText, FileCheck, Building, FilePen, Download, Award, RotateCcw, Plus } from 'lucide-react'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import type { TypeActe } from '@/types/workflow'
 import WorkflowHeader from './WorkflowHeader'
@@ -62,6 +63,7 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
   const fichierUrl = useWorkflowStore((s) => s.fichierUrl)
   const conformiteScore = useWorkflowStore((s) => s.conformiteScore)
   const workflowId = useWorkflowStore((s) => s.workflowId)
+  const typeActe = useWorkflowStore((s) => s.typeActe)
   const reset = useWorkflowStore((s) => s.reset)
 
   const [showRecovery, setShowRecovery] = useState(false)

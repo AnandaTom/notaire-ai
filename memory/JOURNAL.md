@@ -6,6 +6,41 @@
 
 ---
 
+## 2026-02-19 (nuit, chatbot fix) — Paul (Payoss)
+
+### Contexte
+- Chatbot boucle : re-demande "quel type de bien ?" a chaque message malgre infos fournies.
+- Diagnostic : 5 causes racines identifiees, toutes liees a la perte de memoire entre tours.
+
+### Ce qui a ete fait
+
+| Fix | Action | Fichier |
+|-----|--------|---------|
+| 0 | Migration Supabase : etude_id nullable | `conversations` table |
+| 1 | Guard etude_id supprime sur endpoint streaming | `chat_handler.py:941` |
+| 2 | Frontend envoie vrai user_id + etude_id (Supabase auth) | `page.tsx` |
+| 3 | submit_answers accepte objets nested (dict/list) | `anthropic_tools.py:376` |
+| 4 | Contexte session enrichi — dump JSON complet des donnees | `anthropic_agent.py:461` |
+| 5 | _prepare_messages forward-compatible pour tool blocks | `anthropic_agent.py:531` |
+
+### Merge regressions corrigees (C-011b bis)
+- `workflowStore.ts` : import `persist` + wrapper manquants (merge `c4be78d`)
+- `WorkflowPage.tsx` : imports `useState`, `useEffect`, `RotateCcw`, `Plus`, store `typeActe`
+- `frontend/lib/api.ts` : vieux fichier conflictant avec `api/index.ts` — supprime
+
+### Tests
+- Python : 300 passed, 0 failures (hors 7 pre-existants)
+- Frontend : `next build` — 11/11 pages OK
+
+### Causes racines chatbot (pour reference)
+1. RC1 (CRITIQUE) : Frontend envoyait `etude_id: ''` → guard L941 sautait TOUT Supabase → historique vide
+2. RC2 : Session context n'exposait que 4 champs (noms, adresse, prix) — 90% invisible
+3. RC3 : submit_answers rejetait silencieusement les objets nested en "Question inconnue"
+4. RC4 : _prepare_messages supprimait les blocs tool_use/tool_result entre tours
+5. RC5 : user_id etait un UUID random localStorage, pas Supabase auth.uid()
+
+---
+
 ## 2026-02-19 (nuit, suite) — Paul (Payoss)
 
 ### Contexte
