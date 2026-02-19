@@ -3,7 +3,7 @@ REM Ultimate Simple Workflow - NotaireAI - PAYOSS v2.0
 REM Double-click le matin, oubliez tout le reste
 REM Inclut la lecture des commits des autres devs
 
-cd /d "%~dp0"
+cd /d "C:\Users\paula\IA\VSCode\notaire-ai"
 
 echo.
 echo ========================================
@@ -13,7 +13,7 @@ echo.
 
 REM 1. Merge toutes les PRs automatiquement
 echo [1/4] Merge des PRs...
-powershell -ExecutionPolicy Bypass -File ".\morning_sync.ps1" -AUTO_APPROVE
+powershell -ExecutionPolicy Bypass -File "morning_sync.ps1" -AUTO_APPROVE
 
 REM 2. Lire les commits des autres devs (anti-doublon)
 echo [2/4] Lecture des commits de l'equipe...
@@ -30,7 +30,7 @@ IF EXIST ".tmp\team_commits.md" (
 
 REM 3. Lancer auto-sync en arriere-plan
 echo [3/4] Lancement auto-sync...
-start /min powershell -ExecutionPolicy Bypass -File ".\auto_sync_v2.ps1" -BRANCH "payoss/dev"
+start /min powershell -ExecutionPolicy Bypass -File "auto_sync_v2.ps1" -BRANCH "payoss/dev"
 
 echo [4/4] Termine !
 echo.
