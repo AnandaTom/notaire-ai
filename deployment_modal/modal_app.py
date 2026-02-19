@@ -62,7 +62,7 @@ app = modal.App(
     secrets=[
         modal.Secret.from_name("supabase-credentials"),   # SUPABASE_URL, SUPABASE_KEY, URL_SIGNING_KEY
         modal.Secret.from_name("anthropic-credentials"),   # ANTHROPIC_API_KEY
-        modal.Secret.from_name("github-credentials"),     # GITHUB_TOKEN pour self-anneal
+        # modal.Secret.from_name("github-credentials"),     # GITHUB_TOKEN pour self-anneal (optionnel)
     ]
 )
 
