@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type {
   WorkflowState,
   WorkflowStep,
@@ -81,7 +82,9 @@ function setNestedValue(obj: Record<string, unknown>, path: string, value: unkno
   return copy
 }
 
-export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, get) => ({
+export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
+  persist(
+    (set, get) => ({
   ...initialState,
 
   setStep: (step) => set({ step }),
@@ -264,10 +267,32 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, ge
     })
   },
 
-  reset: () => set(initialState),
+  reset: () => {
+    set(initialState)
+    // Clear persisted state on explicit reset
+    try { localStorage.removeItem('notomai-workflow') } catch {}
+  },
 
   setError: (error) => set({ error }),
-}))
+}),
+    {
+      name: 'notomai-workflow',
+      partialize: (state) => ({
+        step: state.step,
+        workflowId: state.workflowId,
+        dossierId: state.dossierId,
+        typeActe: state.typeActe,
+        detection: state.detection,
+        sections: state.sections,
+        currentSectionIndex: state.currentSectionIndex,
+        donnees: state.donnees,
+        progression: state.progression,
+        fichierUrl: state.fichierUrl,
+        conformiteScore: state.conformiteScore,
+      }),
+    },
+  ),
+)
 
 // Helper: aplatir un objet nested
 function flattenObj(obj: Record<string, unknown>, prefix = ''): Record<string, unknown> {
