@@ -63,10 +63,13 @@ def get_diff_files():
     for line in result.stdout.strip().split("\n"):
         if not line.strip():
             continue
-        parts = line.split("\t", 1)
-        if len(parts) == 2:
+        parts = line.split("\t")
+        if len(parts) == 3 and parts[0].startswith("R"):
+            # Renamed file: R100\told_path\tnew_path
+            files.append(("RENOMME", f"{parts[1]} -> {parts[2]}"))
+        elif len(parts) == 2:
             status, path = parts
-            status_label = {"A": "CREE", "M": "MODIFIE", "D": "SUPPRIME", "R": "RENOMME"}.get(status[0], status)
+            status_label = {"A": "CREE", "M": "MODIFIE", "D": "SUPPRIME"}.get(status[0], status)
             files.append((status_label, path))
     return files
 
@@ -100,7 +103,8 @@ def extract_today_journal(date_str=None, dev_name=None):
             dev_match = re.search(r"[—–-]\s*(.+)$", header)
             if dev_match:
                 found_dev = dev_match.group(1).lower()
-                if dev_name.lower() not in found_dev:
+                # Word-boundary match pour eviter "tom" in "thomas"
+                if not re.search(r'\b' + re.escape(dev_name.lower()) + r'\b', found_dev):
                     continue
 
         matching.append(block)
@@ -229,9 +233,9 @@ def generate_auto_summary(diff_files):
 
     if len(deleted) > len(created) + len(modified):
         work_type = "refactor"
-    elif test_files and len(test_files) > len(diff_files) // 2:
+    elif test_files and len(test_files) * 2 > len(diff_files):
         work_type = "test"
-    elif doc_files and len(doc_files) > len(diff_files) // 2:
+    elif doc_files and len(doc_files) * 2 > len(diff_files):
         work_type = "docs"
 
     # Construire le contexte automatique
@@ -383,7 +387,7 @@ def main():
     if "--dev" in sys.argv:
         idx = sys.argv.index("--dev")
         if idx + 1 < len(sys.argv):
-            dev_name = sys.argv[idx + 1]
+            dev_name = sys.argv[idx + 1].strip().capitalize()
 
     message = generate_commit_message(dev_name)
 
