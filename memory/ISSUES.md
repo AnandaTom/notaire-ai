@@ -18,7 +18,6 @@
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
 | I-004 | Pas de DPA signe avec Supabase | Legal | Paul | 18/02 | OBLIGATOIRE RGPD |
-| I-017 | VALIDATING step sans renderer dans WorkflowPage | `WorkflowPage.tsx` | Tom | 19/02 | setStep('VALIDATING') dans workflowStore:214 mais aucun case dans le switch de WorkflowPage — ecran blanc potentiel |
 
 ### MOYEN
 
@@ -80,6 +79,7 @@
 | M-010 | POST /ventes/generer absent de CODE_MAP | 19/02 | tom/dev | Tom — CODE_MAP mis a jour (40 endpoints) |
 | I-008 | self_anneal.py n'existe pas | 19/02 | payoss/dev | Paul — confirme que modal_app.py L190 importe bien execution.self_anneal |
 | I-016 | Secret github-credentials manquant Modal | 19/02 | TODO **Tom** | Tom (Paul dit que c'est un ptit coquin) — Creer fine-grained token GitHub (repo AnandaTom/notaire-ai only, Contents read-only) puis ajouter sur modal.com/secrets/notomai secret_name=github-credentials cle=GITHUB_TOKEN. Decommenter deployment_modal/modal_app.py L65 apres |
+| I-017 | VALIDATING step sans renderer dans WorkflowPage | 19/02 | `32b116f` (merge) | Tom — Case VALIDATING existe bien dans WorkflowPage.tsx L241 (spinner "Validation des donnees en cours...") — ajoute par Payoss |
 
 ---
 
