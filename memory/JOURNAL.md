@@ -6,6 +6,23 @@
 
 ---
 
+## 2026-02-19 (nuit, suite 4) — Tom
+
+### I-016 — GitHub credentials Modal
+
+| Action | Détail |
+|--------|--------|
+| Token GitHub créé | Fine-grained token `modal-notaire-ai`, scope `repo` |
+| Secret Modal ajouté | `github-credentials` / `GITHUB_TOKEN` sur modal.com |
+| `deployment_modal/modal_app.py` L65 | Décommenté — secret branché |
+| Modal redéployé | `https://notomai--notaire-ai-fastapi-app.modal.run` — 8.9s |
+| Commit | `92c0d58` feat(modal): activer github-credentials secret pour self-anneal |
+
+### Issues
+- I-016 : Fermée ✅
+
+---
+
 ## 2026-02-19 (nuit, suite 3) — Tom
 
 ### Contexte
