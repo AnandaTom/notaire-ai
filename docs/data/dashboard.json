@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T20:35:19.952533",
+    "generated_at": "2026-02-19T21:58:02.761669",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 430
+    "commits": 439
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "7f2312e",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "62c8700",
+      "message": "feat(agents): reviewer+documenter couvrent TypeScript/React + memory obligatoire",
       "date": "2026-02-19"
     },
-    "total_commits": 430,
+    "total_commits": 439,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 186
+        "commits": 194
       },
       {
         "name": "github-actions[bot]",
-        "commits": 125
+        "commits": 127
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 54
+        "commits": 56
       },
       {
         "name": "Automai",
@@ -95,9 +95,9 @@
     "total": 77,
     "total_lines": 45214,
     "categories": {
+      "generation": 6,
       "utils": 62,
       "tests": 3,
-      "generation": 6,
       "export": 3,
       "validation": 3
     },
@@ -163,56 +163,24 @@
         "count": 6
       },
       {
-        "name": "questions_donation_partage.json",
-        "count": 6
+        "name": "variables_vente.json",
+        "count": 23
       },
       {
         "name": "variables_reglement_copropriete.json",
         "count": 17
       },
       {
-        "name": "clauses_promesse_catalogue.json",
-        "count": 9
-      },
-      {
-        "name": "variables_donation_partage.json",
-        "count": 18
-      },
-      {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
         "name": "sections_catalogue.json",
         "count": 7
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "variables_modificatif_edd.json",
-        "count": 12
-      },
-      {
-        "name": "promesse_catalogue_unifie.json",
-        "count": 12
-      },
-      {
-        "name": "variables_promesse.json",
-        "count": 24
-      },
-      {
-        "name": "variables_vente.json",
-        "count": 23
       },
       {
         "name": "questions_modificatif_edd.json",
         "count": 2
       },
       {
-        "name": "questions_reglement_copropriete.json",
-        "count": 2
+        "name": "questions_donation_partage.json",
+        "count": 6
       },
       {
         "name": "questions_promesse_vente.json",
@@ -223,48 +191,80 @@
         "count": 8
       },
       {
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
         "name": "variables_promesse_vente.json",
         "count": 30
+      },
+      {
+        "name": "promesse_catalogue_unifie.json",
+        "count": 12
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "clauses_promesse_catalogue.json",
+        "count": 9
+      },
+      {
+        "name": "variables_modificatif_edd.json",
+        "count": 12
+      },
+      {
+        "name": "variables_donation_partage.json",
+        "count": 18
       }
     ]
   },
   "docs": {
     "legal": [
-      "BASES_LEGALES.md",
       "CGU_TEMPLATE.md",
-      "REGISTRE_TRAITEMENTS.md",
       "POLITIQUE_CONFIDENTIALITE.md",
-      "PROCEDURE_INCIDENT.md",
-      "OBLIGATIONS_CSN.md"
+      "BASES_LEGALES.md",
+      "OBLIGATIONS_CSN.md",
+      "REGISTRE_TRAITEMENTS.md",
+      "PROCEDURE_INCIDENT.md"
     ],
     "directives": [
-      "integration_titre_propriete.md",
-      "generation_promesses_avancee.md",
-      "creer_reglement_copropriete.md",
-      "modifier_acte.md",
-      "README.md",
-      "analyse_trames_promesse.md",
-      "lecons_apprises.md",
-      "agents_opus_46.md",
-      "collecte_informations.md",
-      "workflow_titre_promesse_vente.md",
-      "pipeline_generation.md",
-      "gestion_flexible.md",
-      "flexibilite_systeme.md",
-      "workflow_notaire.md",
-      "mise_a_jour_statuts_donation.md",
-      "etat_des_lieux.md",
-      "creer_acte.md",
-      "apprentissage_continu.md",
-      "ajouter_template.md",
-      "creer_donation_partage.md",
-      "workflow_promesse_intelligent.md",
-      "workflow_agent_optimise.md",
-      "formatage_docx.md",
-      "creer_modificatif_edd.md",
-      "bonnes_pratiques_templates.md",
       "validation_donnees.md",
-      "creer_promesse_vente.md"
+      "modifier_acte.md",
+      "gestion_flexible.md",
+      "collecte_informations.md",
+      "mise_a_jour_statuts_donation.md",
+      "agents_opus_46.md",
+      "generation_promesses_avancee.md",
+      "creer_donation_partage.md",
+      "integration_titre_propriete.md",
+      "README.md",
+      "bonnes_pratiques_templates.md",
+      "apprentissage_continu.md",
+      "workflow_notaire.md",
+      "pipeline_generation.md",
+      "lecons_apprises.md",
+      "formatage_docx.md",
+      "analyse_trames_promesse.md",
+      "workflow_agent_optimise.md",
+      "creer_modificatif_edd.md",
+      "creer_acte.md",
+      "workflow_titre_promesse_vente.md",
+      "ajouter_template.md",
+      "flexibilite_systeme.md",
+      "creer_reglement_copropriete.md",
+      "workflow_promesse_intelligent.md",
+      "creer_promesse_vente.md",
+      "etat_des_lieux.md"
     ],
     "total_legal": 6,
     "total_directives": 27
@@ -624,6 +624,96 @@
   ],
   "activity": [
     {
+      "hash": "62c8700",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "reviewer+documenter couvrent TypeScript/React + memory obligatoire",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "cdf8109",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "fermer I-016, journal suite 4",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "ac8b73d",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "activer github-credentials secret pour self-anneal",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "e8b3fe7",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "accessibilite wave 1 + systeme audit auto-renforcant",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "cd9210e",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (1 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "79f151a",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "audit 19/02 session 3 — score 7.3/10, I-017 + M-018 + closes I-010/M-010/I-008",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "31366fe",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "fix WorkflowPage post-merge — remove persist dependency, add missing imports",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "20dc0cd",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (1 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "1082711",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "7f2312e",
       "author": "Tom",
       "date": "2026-02-19",
@@ -732,96 +822,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "dd5690b",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "84c315d",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "1489980",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "Merge pull request #24 from AnandaTom/augustin/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "715efe0",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "resolve 3 conflicts with origin/master (dashboard, ISSUES, JOURNAL)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "88d3005",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "09ed135",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "357496e",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "update: project files (1 files)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "7aae557",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "1b9d3d5",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 20:35"
+    "last_updated": "2026-02-19 21:58"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 20:35"
+    "last_updated": "2026-02-19 21:58"
   },
   "conformity_details": {
     "promesse": {
