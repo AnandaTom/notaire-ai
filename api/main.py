@@ -507,6 +507,22 @@ try:
 except Exception as e:
     print(f"⚠️ Agents router non disponible: {e}")
 
+# Router cadastre (5 endpoints: geocoder, parcelle, sections, enrichir, surface)
+try:
+    from execution.api.api_cadastre import router as cadastre_router
+    app.include_router(cadastre_router)
+    print("✅ Cadastre router chargé")
+except Exception as e:
+    print(f"⚠️ Cadastre router non disponible: {e}")
+
+# Router validation (3 endpoints: valider_donnees, valider_champ, schema)
+try:
+    from execution.api.api_validation import router as validation_router
+    app.include_router(validation_router)
+    print("✅ Validation router chargé")
+except Exception as e:
+    print(f"⚠️ Validation router non disponible: {e}")
+
 
 # =============================================================================
 # Endpoints Agent
@@ -2129,6 +2145,24 @@ async def workflow_generate(
         wf_state['generation_started'] = datetime.now().isoformat()
         _workflow_states[workflow_id] = wf_state
 
+        # --- Étape 0: Enrichissement données brutes → structure Jinja2 ---
+        try:
+            from execution.data_enrichment import enrichir_donnees_pour_generation
+            type_acte = wf_state.get('type_acte', 'promesse_vente')
+            donnees = enrichir_donnees_pour_generation(
+                donnees, type_acte=type_acte, etude_id=auth.etude_id
+            )
+        except ValueError as e:
+            wf_state['status'] = 'enrichment_failed'
+            _workflow_states[workflow_id] = wf_state
+            return {
+                "workflow_id": workflow_id,
+                "status": "enrichment_failed",
+                "erreur": str(e),
+            }
+        except Exception as e:
+            logger.warning(f"Enrichissement partiel: {e}")
+
         # --- Étape 1: Validation ---
         from execution.gestionnaires.gestionnaire_promesses import GestionnairePromesses
         gestionnaire = GestionnairePromesses()
@@ -2225,6 +2259,26 @@ async def workflow_generate_stream(
         wf_state = _workflow_states.get(workflow_id, {})
 
         try:
+            # Étape 0: Enrichissement données brutes → structure Jinja2
+            yield {"event": "step", "data": json.dumps(
+                {"step": "enrichment", "message": "Enrichissement des données..."}
+            )}
+            await asyncio.sleep(0.1)
+
+            try:
+                from execution.data_enrichment import enrichir_donnees_pour_generation
+                type_acte = wf_state.get('type_acte', 'promesse_vente')
+                donnees = enrichir_donnees_pour_generation(
+                    donnees, type_acte=type_acte, etude_id=auth.etude_id
+                )
+            except ValueError as e:
+                yield {"event": "error", "data": json.dumps(
+                    {"message": f"Données manquantes: {e}"}
+                )}
+                return
+            except Exception as e:
+                logger.warning(f"Enrichissement partiel: {e}")
+
             # Étape 1: Validation
             yield {"event": "step", "data": json.dumps(
                 {"step": "validation", "message": "Validation des données..."}

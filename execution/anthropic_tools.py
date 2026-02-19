@@ -14,6 +14,7 @@ Les tools wrappent:
 """
 
 import json
+import os
 import sys
 import logging
 from pathlib import Path
@@ -242,6 +243,17 @@ class ToolExecutor:
         self._gestionnaire = None
         self._clauses_cache = None
 
+        # Pile securite RGPD (chiffrement PII, audit logs, droit a l'effacement)
+        self.agent_access = None
+        try:
+            from execution.security.agent_client_access import AgentClientAccess
+            self.agent_access = AgentClientAccess(
+                etude_id=etude_id,
+                user_id=os.environ.get("AGENT_USER_ID", "system"),
+            )
+        except Exception as e:
+            logger.warning(f"AgentClientAccess non disponible: {e}")
+
     def _get_collecteur(self, agent_state: Dict) -> Any:
         """Recupere ou cree le CollecteurInteractif depuis l'etat persiste."""
         if self._collecteur is None:
@@ -372,6 +384,21 @@ class ToolExecutor:
         # Sauvegarder les donnees mises a jour
         agent_state["donnees_collectees"] = collecteur.donnees
 
+        # Stocker les PII via la pile securite (chiffrement au repos)
+        if self.agent_access:
+            try:
+                for person_key in ("promettants", "beneficiaires", "vendeurs", "acquereurs"):
+                    persons = answers.get(person_key, [])
+                    if isinstance(persons, list):
+                        for person_data in persons:
+                            if isinstance(person_data, dict) and person_data.get("nom"):
+                                self.agent_access.collect_field("nom", person_data["nom"])
+                                if person_data.get("prenom"):
+                                    self.agent_access.collect_field("prenom", person_data["prenom"])
+                                self.agent_access.save_collected_client()
+            except Exception as e:
+                logger.warning(f"Stockage securise PII échoué: {e}")
+
         # Mettre à jour la progression
         progress = collecteur.get_progress()
         agent_state["progress_pct"] = progress.get("pourcentage", 0)
@@ -447,6 +474,18 @@ class ToolExecutor:
         import os
 
         donnees = agent_state.get("donnees_collectees", {})
+
+        # Enrichir avec les donnees clients securisees (dechiffrement)
+        if self.agent_access:
+            try:
+                acte_vars = self.agent_access.get_variables_for_acte(
+                    dossier_id=agent_state.get("dossier_id", ""),
+                    type_acte=agent_state.get("type_acte", "promesse_vente"),
+                )
+                if acte_vars:
+                    donnees = {**donnees, **acte_vars}
+            except Exception as e:
+                logger.warning(f"Recuperation donnees securisees échouée: {e}")
 
         # SAFEGUARD: Verifier que les donnees ne sont pas vides
         if not donnees or len(donnees) == 0:

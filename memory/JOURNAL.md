@@ -6,6 +6,35 @@
 
 ---
 
+## 2026-02-19 (nuit) — Paul (Payoss)
+
+### Contexte
+- Audit complet : 50 fichiers backend + 19 elements frontend deconnectes identifies
+- Plan d'attaque 5 phases pour brancher les composants critiques
+
+### Ce qui a ete fait (5 phases)
+
+| Phase | Action | Fichiers modifies |
+|-------|--------|-------------------|
+| 1 | Monte api_cadastre + api_validation routers | `api/main.py` L509-520 |
+| 2 | Insere data_enrichment dans pipeline generation (POST + SSE) | `api/main.py` L2148, L2270 |
+| 3a | Re-export promesse.ts dans api/index.ts | `frontend/lib/api/index.ts` L324 |
+| 3b | VALIDATING step + validation semantique backend | `frontend/stores/workflowStore.ts` L168-196 |
+| 3c | Filtrage condition_categorie sur questions | `frontend/components/workflow/DynamicQuestion.tsx` L18-23 |
+| 3d | Auto-start via initialType URL param | `frontend/components/workflow/WorkflowPage.tsx` L100 |
+| 3e | Ecran VALIDATING (spinner) | `frontend/components/workflow/WorkflowPage.tsx` L246 |
+| 4 | ChatAnonymizer branche dans process_message + stream | `execution/anthropic_agent.py` L47, L800, L835, L940, L960, L993 |
+| 5 | AgentClientAccess dans ToolExecutor (submit + generate) | `execution/anthropic_tools.py` L17, L247, L393, L489 |
+
+### Impact
+- PII anonymises avant envoi a Claude (RGPD)
+- Documents enrichis (mapping parties, restructuration adresses, defaults)
+- 8 nouveaux endpoints API actifs (/cadastre/*, /validation/*)
+- Workflow frontend complete : auto-start + VALIDATING + filtrage categories
+- PII chiffres au repos via pile securite
+
+---
+
 ## 2026-02-19 — Tom (session 2)
 
 ### Contexte
@@ -118,8 +147,33 @@ ConversationDetailResponse  // { messages: [...], context?: { progress_pct? } }
 | 5 | M-012 | Zustand persist middleware + beforeunload + recovery UI | `frontend/stores/workflowStore.ts`, `frontend/components/workflow/WorkflowPage.tsx` |
 | 6 | M-007 | A faire manuellement dans Supabase Dashboard | (toggle Auth settings) |
 
+### /document — mise a jour memory/
+- `memory/CODE_MAP.md` — workflowStore LOC 283→318, WorkflowPage LOC 226→323, ajout Zustand persist pattern, tests frontend corrige
+- `memory/JOURNAL.md` — ajout table /review fixes
+
+### /audit (soir) — Score 6.7/10 (↑ depuis 6.6)
+| Dimension | Score | Tendance |
+|-----------|-------|----------|
+| Architecture | 6.5 | → |
+| Optimisation | 6.0 | → |
+| Securite | **8.0** | **↑** |
+| Fiabilite | **7.5** | **↑** |
+| Fluidite | 5.5 | → |
+
+Amelioration securite (+1) et fiabilite (+1) grace aux 6 issues fermees + review fixes.
+Aucun nouveau probleme trouve. 12 issues restent ouvertes (3 important, 9 moyen).
+
+### /review — 1 CRITICAL + 3 MODERATE fixes
+
+| Severite | Fichier | Probleme | Fix |
+|----------|---------|----------|-----|
+| CRITICAL | `WorkflowPage.tsx` | Recovery dialog jamais affiche (Zustand persist hydrate async, step=IDLE au mount) | `onFinishHydration` + flag `hasHydrated` |
+| MODERATE | `workflowStore.ts` | Step GENERATING sur rehydration = ecran casse | `onRehydrateStorage` fallback → REVIEW |
+| MODERATE | `workflowStore.ts` | Pas de version persist = hydration errors futures | Ajoute `version: 1` |
+| MODERATE | `supabase_client.py` | Import `ClientOptions` dans try/except masque la vraie erreur | Import top-level avec fallback gracieux |
+
 ### Verification finale
-- `next build` — **OK** (11/11 pages)
+- `next build` — **OK** (11/11 pages) post-review fixes
 - `get_advisors(security)` — 1 WARN restant (leaked password, toggle manuel M-007)
 - `get_advisors(performance)` — **initplan WARN disparue**, reste unused indexes (INFO) + feedbacks policies (WARN)
 - `grep eyJhbG` — **0 vrai cle**, reste uniquement docstring exemples dans agent_database.py
