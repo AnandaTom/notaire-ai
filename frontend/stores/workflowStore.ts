@@ -392,33 +392,7 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, ge
   },
 
   setError: (error) => set({ error }),
-}),
-    {
-      name: 'notomai-workflow',
-      version: 1,
-      partialize: (state) => ({
-        step: state.step,
-        workflowId: state.workflowId,
-        dossierId: state.dossierId,
-        typeActe: state.typeActe,
-        detection: state.detection,
-        sections: state.sections,
-        currentSectionIndex: state.currentSectionIndex,
-        donnees: state.donnees,
-        progression: state.progression,
-        fichierUrl: state.fichierUrl,
-        conformiteScore: state.conformiteScore,
-      }),
-      onRehydrateStorage: () => (state) => {
-        if (!state) return
-        // If browser closed during GENERATING, fall back to REVIEW
-        if (state.step === 'GENERATING') {
-          useWorkflowStore.setState({ step: 'REVIEW', isLoading: false })
-        }
-      },
-    },
-  ),
-)
+}))
 
 // Helper: aplatir un objet nested
 function flattenObj(obj: Record<string, unknown>, prefix = ''): Record<string, unknown> {
