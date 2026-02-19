@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T18:05:13.601620",
+    "generated_at": "2026-02-19T18:05:56.933769",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 400
+    "commits": 402
   },
   "git": {
-    "branch": "tom/dev",
+    "branch": "master",
     "last_commit": {
-      "hash": "6a535d6",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "hash": "fd9123f",
+      "message": "Merge pull request #22 from AnandaTom/tom/dev",
       "date": "2026-02-19"
     },
-    "total_commits": 400,
+    "total_commits": 402,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 176
+        "commits": 178
       },
       {
         "name": "github-actions[bot]",
-        "commits": 117
+        "commits": 118
       },
       {
         "name": "augustinfrance-aico",
@@ -41,7 +41,7 @@
       },
       {
         "name": "Automai",
-        "commits": 7
+        "commits": 8
       }
     ]
   },
@@ -95,9 +95,9 @@
     "total": 77,
     "total_lines": 45132,
     "categories": {
+      "generation": 6,
       "utils": 62,
       "tests": 3,
-      "generation": 6,
       "export": 3,
       "validation": 3
     },
@@ -163,56 +163,24 @@
         "count": 6
       },
       {
-        "name": "questions_donation_partage.json",
-        "count": 6
+        "name": "variables_vente.json",
+        "count": 23
       },
       {
         "name": "variables_reglement_copropriete.json",
         "count": 17
       },
       {
-        "name": "clauses_promesse_catalogue.json",
-        "count": 9
-      },
-      {
-        "name": "variables_donation_partage.json",
-        "count": 18
-      },
-      {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
         "name": "sections_catalogue.json",
         "count": 7
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "variables_modificatif_edd.json",
-        "count": 12
-      },
-      {
-        "name": "promesse_catalogue_unifie.json",
-        "count": 12
-      },
-      {
-        "name": "variables_promesse.json",
-        "count": 24
-      },
-      {
-        "name": "variables_vente.json",
-        "count": 23
       },
       {
         "name": "questions_modificatif_edd.json",
         "count": 2
       },
       {
-        "name": "questions_reglement_copropriete.json",
-        "count": 2
+        "name": "questions_donation_partage.json",
+        "count": 6
       },
       {
         "name": "questions_promesse_vente.json",
@@ -223,48 +191,80 @@
         "count": 8
       },
       {
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
         "name": "variables_promesse_vente.json",
         "count": 30
+      },
+      {
+        "name": "promesse_catalogue_unifie.json",
+        "count": 12
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "clauses_promesse_catalogue.json",
+        "count": 9
+      },
+      {
+        "name": "variables_modificatif_edd.json",
+        "count": 12
+      },
+      {
+        "name": "variables_donation_partage.json",
+        "count": 18
       }
     ]
   },
   "docs": {
     "legal": [
-      "BASES_LEGALES.md",
       "CGU_TEMPLATE.md",
-      "REGISTRE_TRAITEMENTS.md",
       "POLITIQUE_CONFIDENTIALITE.md",
-      "PROCEDURE_INCIDENT.md",
-      "OBLIGATIONS_CSN.md"
+      "BASES_LEGALES.md",
+      "OBLIGATIONS_CSN.md",
+      "REGISTRE_TRAITEMENTS.md",
+      "PROCEDURE_INCIDENT.md"
     ],
     "directives": [
-      "integration_titre_propriete.md",
-      "generation_promesses_avancee.md",
-      "creer_reglement_copropriete.md",
-      "modifier_acte.md",
-      "README.md",
-      "analyse_trames_promesse.md",
-      "lecons_apprises.md",
-      "agents_opus_46.md",
-      "collecte_informations.md",
-      "workflow_titre_promesse_vente.md",
-      "pipeline_generation.md",
-      "gestion_flexible.md",
-      "flexibilite_systeme.md",
-      "workflow_notaire.md",
-      "mise_a_jour_statuts_donation.md",
-      "etat_des_lieux.md",
-      "creer_acte.md",
-      "apprentissage_continu.md",
-      "ajouter_template.md",
-      "creer_donation_partage.md",
-      "workflow_promesse_intelligent.md",
-      "workflow_agent_optimise.md",
-      "formatage_docx.md",
-      "creer_modificatif_edd.md",
-      "bonnes_pratiques_templates.md",
       "validation_donnees.md",
-      "creer_promesse_vente.md"
+      "modifier_acte.md",
+      "gestion_flexible.md",
+      "collecte_informations.md",
+      "mise_a_jour_statuts_donation.md",
+      "agents_opus_46.md",
+      "generation_promesses_avancee.md",
+      "creer_donation_partage.md",
+      "integration_titre_propriete.md",
+      "README.md",
+      "bonnes_pratiques_templates.md",
+      "apprentissage_continu.md",
+      "workflow_notaire.md",
+      "pipeline_generation.md",
+      "lecons_apprises.md",
+      "formatage_docx.md",
+      "analyse_trames_promesse.md",
+      "workflow_agent_optimise.md",
+      "creer_modificatif_edd.md",
+      "creer_acte.md",
+      "workflow_titre_promesse_vente.md",
+      "ajouter_template.md",
+      "flexibilite_systeme.md",
+      "creer_reglement_copropriete.md",
+      "workflow_promesse_intelligent.md",
+      "creer_promesse_vente.md",
+      "etat_des_lieux.md"
     ],
     "total_legal": 6,
     "total_directives": 27
@@ -624,6 +624,26 @@
   ],
   "activity": [
     {
+      "hash": "fd9123f",
+      "author": "Automai",
+      "date": "2026-02-19",
+      "message": "Merge pull request #22 from AnandaTom/tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "aa315a6",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "6a535d6",
       "author": "Tom",
       "date": "2026-02-19",
@@ -802,26 +822,6 @@
       "type_label": "Fix",
       "type_icon": "🐛",
       "type_color": "red"
-    },
-    {
-      "hash": "7e70e78",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "b66e58d",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "Merge branch 'payoss/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
