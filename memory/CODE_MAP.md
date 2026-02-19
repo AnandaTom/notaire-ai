@@ -4,7 +4,7 @@
 > BUT : ne jamais sous-estimer la taille d'un fichier ou rater des endpoints.
 > REGLE : avant d'affirmer qu'un truc n'existe pas, consulter cette carte.
 
-**Derniere mise a jour : 2026-02-18**
+**Derniere mise a jour : 2026-02-19**
 
 ---
 
@@ -49,9 +49,9 @@
 
 | Categorie | Quantite | LOC approx |
 |-----------|----------|------------|
-| Endpoints API (api/main.py) | 39 | 2887 |
-| Endpoints Agents (api/agents.py) | 4 | ~960 |
-| Chat router (chat_handler.py) | 4+ | 1237 |
+| Endpoints API (api/main.py) | 40 | 2940 |
+| Endpoints Agents (api/agents.py) | 4 | 973 |
+| Chat router (chat_handler.py) | 4+ | 1242 |
 | Composants React | 25 | ~3200 |
 | Scripts Python (execution/) | 60+ | ~20000 |
 | Templates Jinja2 | 9 + 60 sections | - |
@@ -61,7 +61,7 @@
 
 ---
 
-## api/main.py — 2887 lignes, 39 endpoints
+## api/main.py — 2940 lignes, 40 endpoints
 
 **ATTENTION : ce fichier est ENORME. Toujours grep avant d'affirmer quoi que ce soit.**
 
@@ -96,9 +96,11 @@
 | 20 | `/promesses/detecter-type` | POST | 1469 | detecter_type_promesse() |
 | 21 | `/promesses/valider` | POST | 1506 | valider_donnees_promesse() |
 | 22 | `/promesses/profils` | GET | 1538 | lister_profils_promesse() |
-| 23 | `/promesses/types` | GET | 1566 | lister_types_promesse() |
+| 23 | `/promesses/types` | GET | 1567 | lister_types_promesse() |
+| **Ventes** | | | | |
+| 24 | `/ventes/generer` | POST | 1601 | generer_vente() |
 | **Questions Q&R** | | | | |
-| 24 | `/questions/promesse` | GET | 1648 | get_questions() |
+| 25 | `/questions/promesse` | GET | 1702 | get_questions() |
 | 25 | `/questions/promesse/answer` | POST | 1708 | submit_answers() |
 | 26 | `/questions/promesse/progress/{id}` | GET | 1759 | get_progress() |
 | 27 | `/questions/promesse/prefill` | POST | 1795 | prefill_questions() |
