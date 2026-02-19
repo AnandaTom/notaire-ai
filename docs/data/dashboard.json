@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T18:05:56.933769",
+    "generated_at": "2026-02-19T20:05:41.840593",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,28 +12,28 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 402
+    "commits": 411
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "fd9123f",
-      "message": "Merge pull request #22 from AnandaTom/tom/dev",
+      "hash": "1489980",
+      "message": "Merge pull request #24 from AnandaTom/augustin/dev",
       "date": "2026-02-19"
     },
-    "total_commits": 402,
+    "total_commits": 411,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 178
+        "commits": 180
       },
       {
         "name": "github-actions[bot]",
-        "commits": 118
+        "commits": 121
       },
       {
         "name": "augustinfrance-aico",
-        "commits": 52
+        "commits": 57
       },
       {
         "name": "Payoss",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 45132,
+    "total_lines": 45110,
     "categories": {
       "generation": 6,
       "utils": 62,
@@ -109,7 +109,7 @@
       },
       {
         "name": "exporter_docx.py",
-        "lines": 1907,
+        "lines": 1896,
         "path": "execution/core/exporter_docx.py"
       },
       {
@@ -144,7 +144,7 @@
       },
       {
         "name": "anthropic_agent.py",
-        "lines": 1044,
+        "lines": 1041,
         "path": "execution/anthropic_agent.py"
       },
       {
@@ -624,6 +624,66 @@
   ],
   "activity": [
     {
+      "hash": "1489980",
+      "author": "Augustin",
+      "date": "2026-02-19",
+      "message": "Merge pull request #24 from AnandaTom/augustin/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "715efe0",
+      "author": "Augustin",
+      "date": "2026-02-19",
+      "message": "resolve 3 conflicts with origin/master (dashboard, ISSUES, JOURNAL)",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "88d3005",
+      "author": "Augustin",
+      "date": "2026-02-19",
+      "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "1b9d3d5",
+      "author": "Augustin",
+      "date": "2026-02-19",
+      "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "4b734da",
+      "author": "Augustin",
+      "date": "2026-02-19",
+      "message": "resolve 3 conflicts with origin/master (Paul's securite+fiabilite)",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "97adb7f",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "fd9123f",
       "author": "Automai",
       "date": "2026-02-19",
@@ -694,6 +754,16 @@
       "type_color": "blue"
     },
     {
+      "hash": "dd528d0",
+      "author": "Augustin",
+      "date": "2026-02-19",
+      "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
       "hash": "fa7f854",
       "author": "Tom",
       "date": "2026-02-19",
@@ -745,76 +815,6 @@
     },
     {
       "hash": "ccd0305",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "workflow dynamique + index FK + RLS initplan",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "3aae6b7",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "update: project files (1 files)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "9c1f82c",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "update: project files (1 files)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "d918e25",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "076f1b3",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "dc36e0e",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "bbfb691",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "Merge branch 'payoss/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "b0845b9",
       "author": "Payoss",
       "date": "2026-02-19",
       "message": "workflow dynamique + index FK + RLS initplan",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 18:05"
+    "last_updated": "2026-02-19 20:05"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 18:05"
+    "last_updated": "2026-02-19 20:05"
   },
   "conformity_details": {
     "promesse": {
