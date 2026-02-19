@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T20:05:41.840593",
+    "generated_at": "2026-02-19T20:17:30.168954",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 411
+    "commits": 414
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "1489980",
-      "message": "Merge pull request #24 from AnandaTom/augustin/dev",
+      "hash": "c4be78d",
+      "message": "Merge branch 'payoss/dev' — resolve 5 conflicts (keep both sides)",
       "date": "2026-02-19"
     },
-    "total_commits": 411,
+    "total_commits": 414,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 180
+        "commits": 181
       },
       {
         "name": "github-actions[bot]",
-        "commits": 121
+        "commits": 123
       },
       {
         "name": "augustinfrance-aico",
@@ -37,7 +37,7 @@
       },
       {
         "name": "Payoss",
-        "commits": 51
+        "commits": 53
       },
       {
         "name": "Automai",
@@ -93,7 +93,7 @@
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 45110,
+    "total_lines": 45214,
     "categories": {
       "generation": 6,
       "utils": 62,
@@ -133,6 +133,11 @@
         "path": "execution/chat_handler.py"
       },
       {
+        "name": "anthropic_agent.py",
+        "lines": 1101,
+        "path": "execution/anthropic_agent.py"
+      },
+      {
         "name": "generer_dashboard_data.py",
         "lines": 1080,
         "path": "execution/generer_dashboard_data.py"
@@ -141,11 +146,6 @@
         "name": "generer_donnees_test.py",
         "lines": 1049,
         "path": "execution/generation/generer_donnees_test.py"
-      },
-      {
-        "name": "anthropic_agent.py",
-        "lines": 1041,
-        "path": "execution/anthropic_agent.py"
       },
       {
         "name": "secure_client_manager.py",
@@ -624,6 +624,36 @@
   ],
   "activity": [
     {
+      "hash": "c4be78d",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "Merge branch 'payoss/dev' — resolve 5 conflicts (keep both sides)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "744025e",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "enrichissement pipeline + RGPD anonymisation + workflow validation",
+      "type": "feat",
+      "type_label": "Feature",
+      "type_icon": "✨",
+      "type_color": "green"
+    },
+    {
+      "hash": "84c315d",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "1489980",
       "author": "Augustin",
       "date": "2026-02-19",
@@ -788,36 +818,6 @@
       "author": "Tom",
       "date": "2026-02-19",
       "message": "fix 4 silent catches, migrate fetch() to apiFetch(), add X-API-Key to SSE",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "2b0d2bc",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "update: project files (9 files)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "17581cd",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "update: project files (10 files)",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "ccd0305",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "workflow dynamique + index FK + RLS initplan",
       "type": "fix",
       "type_label": "Fix",
       "type_icon": "🐛",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 20:05"
+    "last_updated": "2026-02-19 20:17"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 20:05"
+    "last_updated": "2026-02-19 20:17"
   },
   "conformity_details": {
     "promesse": {
