@@ -6,6 +6,21 @@
 
 ---
 
+## 2026-02-19 (nuit, suite 5) — Tom
+
+### Amélioration sub-agents reviewer & documenter
+
+Problème : reviewer et documenter ne couvraient que Python. Les changements frontend (TypeScript/React) passaient sans review ni documentation automatique.
+
+| Fichier | Changement |
+|---------|-----------|
+| `.claude/skills/review/SKILL.md` (projet) | "Python script" → "any code". Scope `.ts/.tsx` explicite. Contexte langage au sous-agent. |
+| `.claude/skills/document/SKILL.md` (projet) | Step 1 : Python-only → ALL file types. Step 6 NOUVEAU : memory/ obligatoire sans condition. Fix : "suggest /review after /document" supprimé (ordre inversé). |
+| `~/.claude/agents/documenter.md` (global) | +Pass 1b Frontend (interfaces, store, ARIA, TODO). Pass 3 obligatoire : JOURNAL toujours, ISSUES toujours. |
+| `~/.claude/agents/reviewer.md` (global) | +5 checks TypeScript/React : types bool/string, hooks deps, async, accessibility contracts, client/server boundary. |
+
+---
+
 ## 2026-02-19 (nuit, suite 4) — Tom
 
 ### I-016 — GitHub credentials Modal
