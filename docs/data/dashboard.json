@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T17:55:09.129987",
+    "generated_at": "2026-02-19T18:05:13.601620",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 385
+    "commits": 400
   },
   "git": {
-    "branch": "master",
+    "branch": "tom/dev",
     "last_commit": {
-      "hash": "154c16c",
-      "message": "Merge pull request #25 from AnandaTom/payoss/dev",
+      "hash": "6a535d6",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "date": "2026-02-19"
     },
-    "total_commits": 385,
+    "total_commits": 400,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 175
+        "commits": 176
       },
       {
         "name": "github-actions[bot]",
-        "commits": 116
+        "commits": 117
       },
       {
         "name": "augustinfrance-aico",
@@ -95,9 +95,9 @@
     "total": 77,
     "total_lines": 45132,
     "categories": {
-      "generation": 6,
       "utils": 62,
       "tests": 3,
+      "generation": 6,
       "export": 3,
       "validation": 3
     },
@@ -163,24 +163,56 @@
         "count": 6
       },
       {
-        "name": "variables_vente.json",
-        "count": 23
+        "name": "questions_donation_partage.json",
+        "count": 6
       },
       {
         "name": "variables_reglement_copropriete.json",
         "count": 17
       },
       {
+        "name": "clauses_promesse_catalogue.json",
+        "count": 9
+      },
+      {
+        "name": "variables_donation_partage.json",
+        "count": 18
+      },
+      {
+        "name": "variables_titre_propriete.json",
+        "count": 16
+      },
+      {
         "name": "sections_catalogue.json",
         "count": 7
+      },
+      {
+        "name": "clauses_catalogue.json",
+        "count": 8
+      },
+      {
+        "name": "variables_modificatif_edd.json",
+        "count": 12
+      },
+      {
+        "name": "promesse_catalogue_unifie.json",
+        "count": 12
+      },
+      {
+        "name": "variables_promesse.json",
+        "count": 24
+      },
+      {
+        "name": "variables_vente.json",
+        "count": 23
       },
       {
         "name": "questions_modificatif_edd.json",
         "count": 2
       },
       {
-        "name": "questions_donation_partage.json",
-        "count": 6
+        "name": "questions_reglement_copropriete.json",
+        "count": 2
       },
       {
         "name": "questions_promesse_vente.json",
@@ -191,80 +223,48 @@
         "count": 8
       },
       {
-        "name": "questions_reglement_copropriete.json",
-        "count": 2
-      },
-      {
-        "name": "variables_promesse.json",
-        "count": 24
-      },
-      {
-        "name": "variables_titre_propriete.json",
-        "count": 16
-      },
-      {
         "name": "variables_promesse_vente.json",
         "count": 30
-      },
-      {
-        "name": "promesse_catalogue_unifie.json",
-        "count": 12
-      },
-      {
-        "name": "clauses_catalogue.json",
-        "count": 8
-      },
-      {
-        "name": "clauses_promesse_catalogue.json",
-        "count": 9
-      },
-      {
-        "name": "variables_modificatif_edd.json",
-        "count": 12
-      },
-      {
-        "name": "variables_donation_partage.json",
-        "count": 18
       }
     ]
   },
   "docs": {
     "legal": [
-      "CGU_TEMPLATE.md",
-      "POLITIQUE_CONFIDENTIALITE.md",
       "BASES_LEGALES.md",
-      "OBLIGATIONS_CSN.md",
+      "CGU_TEMPLATE.md",
       "REGISTRE_TRAITEMENTS.md",
-      "PROCEDURE_INCIDENT.md"
+      "POLITIQUE_CONFIDENTIALITE.md",
+      "PROCEDURE_INCIDENT.md",
+      "OBLIGATIONS_CSN.md"
     ],
     "directives": [
-      "validation_donnees.md",
-      "modifier_acte.md",
-      "gestion_flexible.md",
-      "collecte_informations.md",
-      "mise_a_jour_statuts_donation.md",
-      "agents_opus_46.md",
-      "generation_promesses_avancee.md",
-      "creer_donation_partage.md",
       "integration_titre_propriete.md",
-      "README.md",
-      "bonnes_pratiques_templates.md",
-      "apprentissage_continu.md",
-      "workflow_notaire.md",
-      "pipeline_generation.md",
-      "lecons_apprises.md",
-      "formatage_docx.md",
-      "analyse_trames_promesse.md",
-      "workflow_agent_optimise.md",
-      "creer_modificatif_edd.md",
-      "creer_acte.md",
-      "workflow_titre_promesse_vente.md",
-      "ajouter_template.md",
-      "flexibilite_systeme.md",
+      "generation_promesses_avancee.md",
       "creer_reglement_copropriete.md",
+      "modifier_acte.md",
+      "README.md",
+      "analyse_trames_promesse.md",
+      "lecons_apprises.md",
+      "agents_opus_46.md",
+      "collecte_informations.md",
+      "workflow_titre_promesse_vente.md",
+      "pipeline_generation.md",
+      "gestion_flexible.md",
+      "flexibilite_systeme.md",
+      "workflow_notaire.md",
+      "mise_a_jour_statuts_donation.md",
+      "etat_des_lieux.md",
+      "creer_acte.md",
+      "apprentissage_continu.md",
+      "ajouter_template.md",
+      "creer_donation_partage.md",
       "workflow_promesse_intelligent.md",
-      "creer_promesse_vente.md",
-      "etat_des_lieux.md"
+      "workflow_agent_optimise.md",
+      "formatage_docx.md",
+      "creer_modificatif_edd.md",
+      "bonnes_pratiques_templates.md",
+      "validation_donnees.md",
+      "creer_promesse_vente.md"
     ],
     "total_legal": 6,
     "total_directives": 27
@@ -624,6 +624,26 @@
   ],
   "activity": [
     {
+      "hash": "6a535d6",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "18c55c6",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "154c16c",
       "author": "Automai",
       "date": "2026-02-19",
@@ -644,6 +664,106 @@
       "type_color": "gray"
     },
     {
+      "hash": "003142d",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "fa7f854",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "[Tom] Audit /audit score 6.2/10 (5 dimensions). Tom prend ...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "1d2134f",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (5 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "8f951e4",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "fix 4 silent catches, migrate fetch() to apiFetch(), add X-API-Key to SSE",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "2b0d2bc",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (9 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "17581cd",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (10 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ccd0305",
+      "author": "Payoss",
+      "date": "2026-02-19",
+      "message": "workflow dynamique + index FK + RLS initplan",
+      "type": "fix",
+      "type_label": "Fix",
+      "type_icon": "🐛",
+      "type_color": "red"
+    },
+    {
+      "hash": "3aae6b7",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (1 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "9c1f82c",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (1 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "d918e25",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "076f1b3",
       "author": "github-actions[bot]",
       "date": "2026-02-19",
@@ -652,6 +772,16 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
+    },
+    {
+      "hash": "dc36e0e",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
     },
     {
       "hash": "bbfb691",
@@ -692,136 +822,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "7759eeb",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "hardcode project path in START_DAY_PAYOSS.bat",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "84c7097",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "1eecf9b",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "exclude vitest config from Next.js build (C-010)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "33409e5",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "478c022",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "06bd49b",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge branch 'tom/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "36c0c76",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge branch 'master' of https://github.com/AnandaTom/notaire-ai",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "8e13733",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "agent intelligence upgrade + outils equipe + skills",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "f179d32",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "page Mes Documents, liens Chat<->Workflow, 30 tests Vitest",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "af1ad93",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "nettoyage frontend — 734 lignes nettes, 6 composants, Tailwind migration",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
-    },
-    {
-      "hash": "ba1f037",
-      "author": "Tom",
-      "date": "2026-02-18",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "d35683c",
-      "author": "github-actions[bot]",
-      "date": "2026-02-18",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "beb811c",
-      "author": "Payoss",
-      "date": "2026-02-18",
-      "message": "ajout PROJECT_STATE.md + enrichissement architecture",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
     }
   ],
   "recommendations": {
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 17:55"
+    "last_updated": "2026-02-19 18:05"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 17:55"
+    "last_updated": "2026-02-19 18:05"
   },
   "conformity_details": {
     "promesse": {

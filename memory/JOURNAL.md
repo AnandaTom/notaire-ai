@@ -6,6 +6,101 @@
 
 ---
 
+## 2026-02-19 — Tom (session 2)
+
+### Contexte
+- Audit /audit score 6.2/10 (5 dimensions). Tom prend dimensions 1 (architecture) et 2 (optimisation frontend).
+- Objectif: renforcer la couche API frontend, corriger les erreurs silencieuses et les stale closures.
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| MODIFIE | `frontend/lib/api/index.ts` | +4 fonctions exportees : loadConversations(), loadConversation(), sendChatFeedback(), loadDocumentSections() — toutes via apiFetch() |
+| MODIFIE | `frontend/app/app/page.tsx` | +toastError state + showToast() helper (auto-dismiss 5s, useRef pour eviter timer leak) |
+| MODIFIE | `frontend/app/app/page.tsx` | loadConversation et loadConversations → useCallback (fix stale closure) |
+| MODIFIE | `frontend/app/app/page.tsx` | 4 silent catch {} → showToast() avec message contextuel |
+| MODIFIE | `frontend/app/app/page.tsx` | 4 appels fetch() directs → fonctions API du module @/lib/api |
+| MODIFIE | `frontend/app/app/page.tsx` | sendFeedback : revert optimiste si echec backend |
+| MODIFIE | `frontend/app/app/page.tsx` | SSE sendMessage : ajout header X-API-Key |
+
+### Nouvelles interfaces (lib/api/index.ts)
+
+```typescript
+ConversationListResponse    // { conversations: ConversationSummary[] }
+ConversationDetailResponse  // { messages: [...], context?: { progress_pct? } }
+```
+
+### Review (/review — 2 passes)
+
+- 2 CRITICAL trouves et corriges
+- 3 MODERATE trouves et corriges
+- 2 MINOR trouves et corriges
+
+### Build / Tests
+
+- `next build` — 11/11 pages OK
+- `vitest run` — 30/30 tests OK
+- Backend 257 tests inchanges (0 fichiers Python modifies)
+
+### Decouvertes
+
+1. **C-010 FIXEE** — vitest.config.ts exclu dans tsconfig.json. Build passe a nouveau.
+2. **Dimension 3 & 4** : prises par Payoss.
+3. **Dimension 5** : prise par Augustin.
+
+### Branches
+
+- `tom/dev` — changements locaux, pas encore commites
+
+---
+
+## 2026-02-19 — Tom
+
+### Contexte
+- Mise en place du systeme de commits intelligents multi-devs
+- Merge master pour recuperer le systeme memoire de Payoss
+- Partage des agents reviewer/documenter pour toute l'equipe
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| CREE | `generate_commit_msg.py` | Genere commit msg depuis JOURNAL.md + auto-summary git diff |
+| CREE | `read_team_commits.py` | Lecture commits autres devs (anti-doublon, filtre auto-commits) |
+| MODIFIE | `END_DAY.bat` | v3.0→v3.1: journal check, locale-independent date, error handling |
+| MODIFIE | `START_DAY_AUGUSTIN.bat` | v2.0: ajout step team commits |
+| MODIFIE | `START_DAY_PAYOSS.bat` | v2.0: ajout step team commits |
+| CREE | `.claude/agents/reviewer.md` | Copie depuis ~/.claude/ → repo (partage equipe) |
+| CREE | `.claude/agents/documenter.md` | Copie depuis ~/.claude/ → repo (partage equipe) |
+| MODIFIE | `.claude/skills/document/SKILL.md` | Format journal anti-conflit multi-devs |
+| MODIFIE | `.claude/commands/audit.md` | +read_team_commits.py dans Phase 0 |
+| MODIFIE | `memory/CONVENTIONS.md` | Conventions journal + commit end-of-day |
+| MODIFIE | `CLAUDE.md` | Scripts BAT table, agent paths → repo-level |
+| MODIFIE | `memory/CODE_MAP.md` | +scripts racine table |
+
+### Decouvertes
+
+1. **Agents reviewer/documenter etaient locaux** — dans `~/.claude/agents/` (machine Tom uniquement). Payoss et Augustin n'y avaient pas acces. Deplaces dans `.claude/agents/` (repo).
+2. **`%date%` Windows est locale-dependent** — format different selon langue OS. Fix: PowerShell `Get-Date -Format yyyy-MM-dd`.
+3. **`git push --force-with-lease` apres rebase silencieux** pouvait corrompre la branche remote. Fix: check ERRORLEVEL apres chaque etape.
+4. **Dev name substring collision** — `"tom" in "thomas"` est vrai. Fix: word-boundary regex.
+5. **`--branch` arg dans read_team_commits.py** etait parse mais jamais passe a la fonction. Fix: ajoute `current_branch_override` param.
+
+### Review (2 passes)
+- 2 CRITICAL: force-with-lease apres rebase silencieux (CORRIGE), --branch arg ignore (CORRIGE)
+- 6 MODERATE: substring collision (CORRIGE), dev name normalization (CORRIGE), Python errors silenced (CORRIGE), missing commit check (CORRIGE), rename tab handling (CORRIGE), locale-dependent date (CORRIGE)
+- 3 MINOR: double get_current_branch (CORRIGE), work_type threshold (CORRIGE), temp files cleanup (CORRIGE)
+
+### Build / Tests
+- Backend 257 tests inchanges (pas de modif execution/)
+- Scripts utilitaires: pas de tests dedies (CLI tools)
+
+### Branches
+- `tom/dev` — changements locaux, pas encore commite
+
+---
+
 ## 2026-02-19 (soir) — Paul (Payoss)
 
 ### Contexte

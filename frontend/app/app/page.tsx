@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Sidebar from '@/components/Sidebar'
 import ChatArea from '@/components/ChatArea'
 import Header from '@/components/Header'
@@ -8,6 +8,12 @@ import ParagraphReview from '@/components/ParagraphReview'
 import type { Message, ConversationSummary, DocumentSection } from '@/types'
 import { supabase } from '@/lib/supabase'
 import { API_URL, API_KEY } from '@/lib/config'
+import {
+  loadConversations as apiLoadConversations,
+  loadConversation as apiLoadConversation,
+  sendChatFeedback,
+  loadDocumentSections,
+} from '@/lib/api'
 
 function getOrCreateUserId(): string {
   if (typeof window === 'undefined') return ''
@@ -39,6 +45,14 @@ export default function Home() {
   const [progressPct, setProgressPct] = useState<number | null>(null)
   const [conversations, setConversations] = useState<ConversationSummary[]>([])
   const [statusText, setStatusText] = useState<string | null>(null)
+  const [toastError, setToastError] = useState<string | null>(null)
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const showToast = useCallback((msg: string) => {
+    setToastError(msg)
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+    toastTimerRef.current = setTimeout(() => setToastError(null), 5000)
+  }, [])
 
   // Review state (Tom)
   const [reviewSections, setReviewSections] = useState<DocumentSection[] | null>(null)
@@ -83,42 +97,36 @@ export default function Home() {
 
   const loadConversations = useCallback(async () => {
     try {
-      const resp = await fetch(`${API_URL}/chat/conversations`)
-      if (resp.ok) {
-        const data = await resp.json()
-        setConversations(data.conversations || [])
-      }
+      const data = await apiLoadConversations()
+      setConversations(data.conversations || [])
     } catch {
-      // silently fail
+      showToast('Impossible de charger les conversations.')
     }
   }, [])
 
-  const loadConversation = async (convId: string) => {
+  const loadConversation = useCallback(async (convId: string) => {
     try {
-      const resp = await fetch(`${API_URL}/chat/conversations/${convId}`)
-      if (resp.ok) {
-        const data = await resp.json()
-        if (data.messages && data.messages.length > 0) {
-          const restored: Message[] = [WELCOME_MESSAGE]
-          data.messages.forEach((m: { role: string; content: string; suggestions?: string[] }, idx: number) => {
-            restored.push({
-              id: `restored-${idx}`,
-              role: m.role as 'user' | 'assistant',
-              content: m.content,
-              timestamp: new Date(),
-              suggestions: m.suggestions,
-            })
+      const data = await apiLoadConversation(convId)
+      if (data.messages && data.messages.length > 0) {
+        const restored: Message[] = [WELCOME_MESSAGE]
+        data.messages.forEach((m, idx) => {
+          restored.push({
+            id: `restored-${idx}`,
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+            timestamp: new Date(),
+            suggestions: m.suggestions,
           })
-          setMessages(restored)
-        }
-        if (data.context?.progress_pct) {
-          setProgressPct(data.context.progress_pct)
-        }
+        })
+        setMessages(restored)
+      }
+      if (data.context?.progress_pct) {
+        setProgressPct(data.context.progress_pct)
       }
     } catch {
-      // Conversation not found - start fresh
+      showToast('Conversation introuvable.')
     }
-  }
+  }, [])
 
   const selectConversation = (convId: string) => {
     setConversationId(convId)
@@ -157,7 +165,10 @@ export default function Home() {
     try {
       const response = await fetch(`${API_URL}/chat/stream`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(API_KEY ? { 'X-API-Key': API_KEY } : {}),
+        },
         body: JSON.stringify({
           message: content,
           user_id: userId,
@@ -307,6 +318,7 @@ export default function Home() {
   // ================================================================
 
   const sendFeedback = async (messageIndex: number, rating: number) => {
+    const previousRating = messages[messageIndex]?.feedbackRating
     // Optimistic update
     setMessages((prev) =>
       prev.map((m, idx) =>
@@ -315,17 +327,19 @@ export default function Home() {
     )
 
     try {
-      await fetch(`${API_URL}/chat/feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversation_id: conversationId,
-          message_index: messageIndex,
-          rating,
-        }),
+      await sendChatFeedback({
+        conversation_id: conversationId,
+        message_index: messageIndex,
+        rating,
       })
     } catch {
-      // silently fail
+      // Revert optimistic update
+      setMessages((prev) =>
+        prev.map((m, idx) =>
+          idx === messageIndex ? { ...m, feedbackRating: previousRating } : m
+        )
+      )
+      showToast('Erreur lors de l\'envoi du feedback.')
     }
   }
 
@@ -335,20 +349,11 @@ export default function Home() {
 
   const handleReviewRequest = async (workflowId: string) => {
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-      if (API_KEY) headers['X-API-Key'] = API_KEY
-
-      const response = await fetch(`${API_URL}/document/${workflowId}/sections`, {
-        headers,
-      })
-
-      if (!response.ok) throw new Error('Document non trouve')
-
-      const data = await response.json()
+      const data = await loadDocumentSections(workflowId)
       setReviewSections(data.sections)
       setReviewWorkflowId(workflowId)
     } catch {
-      // Review fetch failed — silently handled
+      showToast('Impossible de charger le document pour relecture.')
     }
   }
 
@@ -369,6 +374,12 @@ export default function Home() {
           userInfo={userInfo}
         />
         <main className="flex flex-col bg-ivory min-h-0 overflow-hidden">
+          {toastError && (
+            <div className="mx-4 mt-2 px-4 py-2.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center justify-between">
+              <span>{toastError}</span>
+              <button onClick={() => setToastError(null)} className="ml-3 text-red-400 hover:text-red-600 font-bold">✕</button>
+            </div>
+          )}
           <Header progressPct={progressPct} />
           <ChatArea
             messages={messages}

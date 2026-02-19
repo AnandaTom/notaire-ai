@@ -39,6 +39,13 @@ Lire en parallele :
 - `memory/ISSUES.md`
 - `memory/JOURNAL.md`
 - `memory/CHECKLIST.md`
+- `memory/PROJECT_STATE.md`
+
+Puis executer :
+```bash
+python read_team_commits.py --days 3
+```
+Cela affiche les commits recents de TOUTES les branches (hors branche courante), groupes par dev, avec les auto-commits filtres. Permet de savoir ce que chaque dev a fait sans dependre uniquement du journal.
 
 ### Phase 1 : Scan technique
 
