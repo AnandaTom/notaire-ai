@@ -9,9 +9,7 @@
 
 ### CRITIQUE
 
-| ID | Probleme | Fichier | Qui | Ouvert le | Notes |
-|----|----------|---------|-----|-----------|-------|
-| C-010 | `next build` CASSE — vitest.config.ts | `frontend/vitest.config.ts:1` | Tom/Paul | 19/02 | `/// <reference types="vitest" />` inclus dans compil TS Next.js. Fix: exclure dans tsconfig.json |
+Aucun probleme critique ouvert.
 
 ### IMPORTANT
 
@@ -38,6 +36,9 @@
 | M-009 | Accessibilite frontend minimale | `frontend/components/` | Tom | 19/02 | 19 aria/role/tabIndex sur ~25 composants |
 | M-010 | POST /ventes/generer absent de CODE_MAP | `api/main.py:1601` | - | 19/02 | 40 endpoints (pas 39) |
 | M-011 | Multiple permissive policies feedbacks | Supabase | Augustin | 19/02 | 2 policies SELECT meme role, perf |
+| M-012 | Responsive minimal | `frontend/components/` | Tom | 19/02 | 14 classes md: seulement sur ~25 composants — mobile non teste |
+| M-013 | CODE_MAP desynchronise | `memory/CODE_MAP.md` | Tom | 19/02 | Plusieurs LOC incorrects : exporter_docx ~600→1896, valider_acte absent, orchestrateur absent |
+| M-014 | 53 fichiers morts dans execution/ | `execution/` | Tom | 19/02 | Fichiers Python jamais importes — dead code, overhead navigation |
 
 ---
 
@@ -62,6 +63,8 @@
 | I-006 | Cle dev par defaut signed_urls.py | 18/02 | `9e19166` | Augustin — cle supprimee |
 | C-003 | Supabase anon key en dur | 19/02 | tom/dev | Tom — Proxy lazy init, env vars only |
 | M-002 | Pas de tests frontend | 19/02 | tom/dev | Tom — 30 tests Vitest + Testing Library (AXE 8) |
+| C-010 | `next build` CASSE — vitest.config.ts | 19/02 | tom/dev | Tom — vitest.config.ts exclu dans tsconfig.json. Build 11/11 pages OK |
+| I-013 | 4 silent catches dans app/page.tsx | 19/02 | tom/dev | Tom — remplaces par showToast() avec auto-dismiss 5s |
 
 ---
 

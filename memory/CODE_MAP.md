@@ -153,7 +153,7 @@
 | `constants.ts` | 63 | Labels UI | TYPE_ACTE_LABELS, CATEGORIE_LABELS, STEP_LABELS, SECTION_STATUS_COLORS, GENERATION_STEPS |
 | `supabase.ts` | 18 | Client Supabase (Proxy lazy init) | supabase |
 | `api/client.ts` | 188 | Client HTTP | ApiError, apiFetch<T>(), apiSSE<T>() |
-| `api/index.ts` | 314 | Pont frontend↔backend | startWorkflow(), submitAnswers(), validateField(), streamGeneration(), sendFeedback() |
+| `api/index.ts` | ~358 | Pont frontend↔backend | startWorkflow(), submitAnswers(), validateField(), streamGeneration(), sendFeedback(), loadConversations(), loadConversation(), sendChatFeedback(), loadDocumentSections() |
 | `api/promesse.ts` | 111 | API promesse | detecterType(), getQuestions(), validerPromesse() |
 
 ### frontend/stores/
@@ -203,7 +203,7 @@
 |-------|---------|-----|
 | `/` | `page.tsx` | 110 |
 | `/login` | `login/page.tsx` | 191 |
-| `/app` | `app/page.tsx` | 400 |
+| `/app` | `app/page.tsx` | ~410 |
 | `/app/clients` | `app/clients/page.tsx` | ~180 |
 | `/app/clients/[id]` | `app/clients/[id]/page.tsx` | ~40 |
 | `/app/documents` | `app/documents/page.tsx` | 213 |
@@ -252,6 +252,19 @@
 | `services/` | 2 | APIs externes (cadastre) |
 | `api/` | 4 | Endpoints internes |
 | `security/` | 8 | Chiffrement, RGPD |
+
+---
+
+## Scripts racine (workflow multi-devs)
+
+| Fichier | LOC | Role |
+|---------|-----|------|
+| `notaire.py` | ~200 | CLI simplifie — point d'entree racine |
+| `generate_commit_msg.py` | 406 | Commit message depuis JOURNAL.md ou git diff (auto) |
+| `read_team_commits.py` | 279 | Lecture commits autres devs (anti-doublon) |
+| `END_DAY.bat` | 194 | Fin de journee: stage + journal check + commit + push + PR (v3.1) |
+| `START_DAY_AUGUSTIN.bat` | ~30 | Debut journee: fetch + team commits + pull |
+| `START_DAY_PAYOSS.bat` | ~30 | idem pour Payoss |
 
 ---
 

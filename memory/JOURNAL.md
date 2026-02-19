@@ -6,6 +6,55 @@
 
 ---
 
+## 2026-02-19 — Tom (session 2)
+
+### Contexte
+- Audit /audit score 6.2/10 (5 dimensions). Tom prend dimensions 1 (architecture) et 2 (optimisation frontend).
+- Objectif: renforcer la couche API frontend, corriger les erreurs silencieuses et les stale closures.
+
+### Ce qui a ete fait
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| MODIFIE | `frontend/lib/api/index.ts` | +4 fonctions exportees : loadConversations(), loadConversation(), sendChatFeedback(), loadDocumentSections() — toutes via apiFetch() |
+| MODIFIE | `frontend/app/app/page.tsx` | +toastError state + showToast() helper (auto-dismiss 5s, useRef pour eviter timer leak) |
+| MODIFIE | `frontend/app/app/page.tsx` | loadConversation et loadConversations → useCallback (fix stale closure) |
+| MODIFIE | `frontend/app/app/page.tsx` | 4 silent catch {} → showToast() avec message contextuel |
+| MODIFIE | `frontend/app/app/page.tsx` | 4 appels fetch() directs → fonctions API du module @/lib/api |
+| MODIFIE | `frontend/app/app/page.tsx` | sendFeedback : revert optimiste si echec backend |
+| MODIFIE | `frontend/app/app/page.tsx` | SSE sendMessage : ajout header X-API-Key |
+
+### Nouvelles interfaces (lib/api/index.ts)
+
+```typescript
+ConversationListResponse    // { conversations: ConversationSummary[] }
+ConversationDetailResponse  // { messages: [...], context?: { progress_pct? } }
+```
+
+### Review (/review — 2 passes)
+
+- 2 CRITICAL trouves et corriges
+- 3 MODERATE trouves et corriges
+- 2 MINOR trouves et corriges
+
+### Build / Tests
+
+- `next build` — 11/11 pages OK
+- `vitest run` — 30/30 tests OK
+- Backend 257 tests inchanges (0 fichiers Python modifies)
+
+### Decouvertes
+
+1. **C-010 FIXEE** — vitest.config.ts exclu dans tsconfig.json. Build passe a nouveau.
+2. **Dimension 3 & 4** : prises par Payoss.
+3. **Dimension 5** : prise par Augustin.
+
+### Branches
+
+- `tom/dev` — changements locaux, pas encore commites
+
+---
+
 ## 2026-02-19 — Tom
 
 ### Contexte

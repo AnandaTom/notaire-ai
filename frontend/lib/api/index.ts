@@ -15,6 +15,7 @@
  */
 
 import { apiFetch, apiSSE } from './client'
+import type { ConversationSummary, DocumentSection } from '@/types'
 import type {
   TypeActe,
   CategorieBien,
@@ -60,6 +61,42 @@ interface SSEStepEvent {
   fichier?: string
   fichier_url?: string
   conformite?: number
+}
+
+// ---------------------------------------------------------------------------
+// Chat API (conversations, feedback)
+// ---------------------------------------------------------------------------
+
+export interface ConversationListResponse {
+  conversations: ConversationSummary[]
+}
+
+export interface ConversationDetailResponse {
+  messages: { role: string; content: string; suggestions?: string[] }[]
+  context?: { progress_pct?: number }
+}
+
+export async function loadConversations(): Promise<ConversationListResponse> {
+  return apiFetch<ConversationListResponse>('/chat/conversations')
+}
+
+export async function loadConversation(convId: string): Promise<ConversationDetailResponse> {
+  return apiFetch<ConversationDetailResponse>(`/chat/conversations/${encodeURIComponent(convId)}`)
+}
+
+export async function sendChatFeedback(request: {
+  conversation_id: string
+  message_index: number
+  rating: number
+}): Promise<void> {
+  await apiFetch<unknown>('/chat/feedback', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
+}
+
+export async function loadDocumentSections(workflowId: string): Promise<{ sections: DocumentSection[] }> {
+  return apiFetch<{ sections: DocumentSection[] }>(`/document/${encodeURIComponent(workflowId)}/sections`)
 }
 
 // ---------------------------------------------------------------------------
