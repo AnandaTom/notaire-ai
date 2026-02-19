@@ -473,29 +473,14 @@ class AnthropicAgent:
         if agent_state.get("fichier_genere"):
             parts.append(f"- Dernier fichier genere: {agent_state['fichier_genere']}")
 
-        # Resume des donnees collectees (aide l'agent a ne pas re-demander)
+        # Dump complet des donnees collectees pour que le LLM ne re-demande pas
         donnees = agent_state.get("donnees_collectees", {})
         if donnees:
-            collected = []
-            if donnees.get("promettants") or donnees.get("vendeurs"):
-                vendeurs = donnees.get("promettants") or donnees.get("vendeurs") or []
-                noms = [v.get("nom", "?") for v in vendeurs if v.get("nom")]
-                if noms:
-                    collected.append(f"Vendeur(s): {', '.join(noms)}")
-            if donnees.get("beneficiaires") or donnees.get("acquereurs"):
-                acquereurs = donnees.get("beneficiaires") or donnees.get("acquereurs") or []
-                noms = [a.get("nom", "?") for a in acquereurs if a.get("nom")]
-                if noms:
-                    collected.append(f"Acquereur(s): {', '.join(noms)}")
-            bien = donnees.get("bien", {})
-            adresse = bien.get("adresse", {})
-            if adresse.get("voie") or adresse.get("rue"):
-                collected.append(f"Bien: {adresse.get('voie') or adresse.get('rue')}, {adresse.get('ville', '')}")
-            prix = donnees.get("prix", {})
-            if prix.get("montant"):
-                collected.append(f"Prix: {prix['montant']:,} EUR".replace(",", " "))
-            if collected:
-                parts.append("- Donnees deja collectees: " + " | ".join(collected))
+            import json
+            donnees_str = json.dumps(donnees, ensure_ascii=False, indent=2, default=str)
+            if len(donnees_str) > 2000:
+                donnees_str = donnees_str[:2000] + "\n... (tronque)"
+            parts.append(f"\n### Donnees collectees (NE PAS re-demander ces informations)\n```json\n{donnees_str}\n```")
 
         return "\n".join(parts)
 
@@ -558,6 +543,9 @@ class AnthropicAgent:
             content = msg.get("content", "")
             if role in ("user", "assistant") and content:
                 messages.append({"role": role, "content": content})
+            elif role == "assistant" and isinstance(msg.get("content"), list):
+                # Forward-compatible: handle structured content (tool_use blocks)
+                messages.append({"role": role, "content": msg["content"]})
 
         # Message courant
         messages.append({"role": "user", "content": message})

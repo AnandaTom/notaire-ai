@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type {
   WorkflowState,
   WorkflowStep,
@@ -120,7 +121,9 @@ function setNestedValue(obj: Record<string, unknown>, path: string, value: unkno
   return copy
 }
 
-export const useWorkflowStore = create<WorkflowState & WorkflowActions>((set, get) => ({
+export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
+  persist(
+    (set, get) => ({
   ...initialState,
 
   setStep: (step) => set({ step }),

@@ -938,7 +938,7 @@ def create_chat_router():
                 REAL_ETUDE_ID = request.etude_id if request.etude_id else os.getenv("FALLBACK_ETUDE_ID", "")
 
                 supabase = _get_supabase()
-                if supabase and REAL_USER_ID and REAL_ETUDE_ID:
+                if supabase and REAL_USER_ID:
                     try:
                         # Utiliser .limit(1) au lieu de .maybe_single() pour éviter 406
                         conv_resp = supabase.table("conversations").select("*").eq(
@@ -958,7 +958,7 @@ def create_chat_router():
                         else:
                             supabase.table("conversations").insert({
                                 "id": conversation_id,
-                                "etude_id": REAL_ETUDE_ID,
+                                "etude_id": REAL_ETUDE_ID or None,
                                 "user_id": REAL_USER_ID,
                                 "context": contexte,
                                 "messages": [],
