@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T18:05:13.601620",
+    "generated_at": "2026-02-19T18:06:03.197514",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,24 +12,24 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 400
+    "commits": 404
   },
   "git": {
     "branch": "tom/dev",
     "last_commit": {
-      "hash": "6a535d6",
+      "hash": "5bb123a",
       "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
       "date": "2026-02-19"
     },
-    "total_commits": 400,
+    "total_commits": 404,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 176
+        "commits": 178
       },
       {
         "name": "github-actions[bot]",
-        "commits": 117
+        "commits": 119
       },
       {
         "name": "augustinfrance-aico",
@@ -41,7 +41,7 @@
       },
       {
         "name": "Automai",
-        "commits": 7
+        "commits": 8
       }
     ]
   },
@@ -624,6 +624,46 @@
   ],
   "activity": [
     {
+      "hash": "5bb123a",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "fd9123f",
+      "author": "Automai",
+      "date": "2026-02-19",
+      "message": "Merge pull request #22 from AnandaTom/tom/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "c4223ea",
+      "author": "Tom",
+      "date": "2026-02-19",
+      "message": "update: project files (2 files)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "aa315a6",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "6a535d6",
       "author": "Tom",
       "date": "2026-02-19",
@@ -778,46 +818,6 @@
       "author": "Tom",
       "date": "2026-02-19",
       "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "bbfb691",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "Merge branch 'payoss/dev'",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "b0845b9",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "workflow dynamique + index FK + RLS initplan",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "7e70e78",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "b66e58d",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "Merge branch 'payoss/dev'",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 18:05"
+    "last_updated": "2026-02-19 18:06"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 18:05"
+    "last_updated": "2026-02-19 18:06"
   },
   "conformity_details": {
     "promesse": {
