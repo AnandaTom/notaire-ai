@@ -14,12 +14,14 @@ export default function BooleanField({ question, value, onChange, error }: Boole
     <div className="space-y-2">
       <label className="block text-[0.82rem] font-medium text-charcoal">
         {question.question}
-        {question.obligatoire && <span className="text-red-500 ml-0.5">*</span>}
+        {question.obligatoire && <span className="text-red-500 ml-0.5" aria-hidden="true">*</span>}
       </label>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3" role="radiogroup" aria-label={question.question} aria-describedby={error ? `${question.variable}-error` : question.aide ? `${question.variable}-aide` : undefined}>
         <button
           type="button"
+          role="radio"
+          aria-checked={value === true}
           onClick={() => onChange(true)}
           className={`flex-1 px-4 py-3 rounded-xl text-[0.85rem] font-medium border transition-all ${
             value === true
@@ -31,6 +33,8 @@ export default function BooleanField({ question, value, onChange, error }: Boole
         </button>
         <button
           type="button"
+          role="radio"
+          aria-checked={value === false}
           onClick={() => onChange(false)}
           className={`flex-1 px-4 py-3 rounded-xl text-[0.85rem] font-medium border transition-all ${
             value === false
@@ -43,10 +47,10 @@ export default function BooleanField({ question, value, onChange, error }: Boole
       </div>
 
       {question.aide && !error && (
-        <p className="text-[0.75rem] text-slate">{question.aide}</p>
+        <p id={`${question.variable}-aide`} className="text-[0.75rem] text-slate">{question.aide}</p>
       )}
       {error && (
-        <p className="text-[0.75rem] text-red-600">{error}</p>
+        <p id={`${question.variable}-error`} role="alert" className="text-[0.75rem] text-red-600">{error}</p>
       )}
     </div>
   )

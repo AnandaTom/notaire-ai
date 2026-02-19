@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import type { Question, ValidationMessage } from '@/types/workflow'
 import { TextField, NumberField, BooleanField, SelectField, DateField, ArrayField, ContactField } from './fields'
 import { useWorkflowStore } from '@/stores/workflowStore'
@@ -16,18 +16,36 @@ export default function DynamicQuestion({ question, value, onChange, allValues }
   const [fieldError, setFieldError] = useState<string | null>(null)
   const validateField = useWorkflowStore((s) => s.validateField)
 
-  // Evaluation condition d'affichage
-  if (question.condition_affichage && allValues) {
-    const visible = evaluateCondition(question.condition_affichage, allValues)
-    if (!visible) return null
-  }
+  // Hooks AVANT tout return conditionnel (regle des hooks React)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!question.variable || value === undefined || value === '') {
+      setFieldError(null)
+      return
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(async () => {
+      const messages = await validateField(question.variable, value)
+      const erreur = messages.find((m: ValidationMessage) => m.niveau === 'erreur')
+      setFieldError(erreur?.message || null)
+    }, 800)
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [question.variable, value, validateField])
 
   const handleBlur = useCallback(async () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
     if (!question.variable || value === undefined || value === '') return
     const messages = await validateField(question.variable, value)
     const erreur = messages.find((m: ValidationMessage) => m.niveau === 'erreur')
     setFieldError(erreur?.message || null)
   }, [question.variable, value, validateField])
+
+  // Evaluation condition d'affichage — APRES les hooks
+  if (question.condition_affichage && allValues) {
+    const visible = evaluateCondition(question.condition_affichage, allValues)
+    if (!visible) return null
+  }
 
   const renderField = () => {
     switch (question.type) {
@@ -130,7 +148,7 @@ export default function DynamicQuestion({ question, value, onChange, allValues }
             <DynamicQuestion
               key={sq.id}
               question={sq}
-              value={allValues?.[sq.variable]}
+              value={getNestedValue(allValues ?? {}, sq.variable)}
               onChange={(v) => onChange(v)}
               allValues={allValues}
             />
