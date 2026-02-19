@@ -39,6 +39,13 @@ const TYPE_CARDS: { type: TypeActe; label: string; description: string; icon: ty
   },
 ]
 
+const TYPE_LABELS: Record<string, string> = {
+  promesse_vente: 'Promesse de vente',
+  vente: 'Acte de vente',
+  reglement_copropriete: 'Règlement de copropriété',
+  modificatif_edd: 'Modificatif EDD',
+}
+
 interface WorkflowPageProps {
   onBack?: () => void
   initialType?: TypeActe
@@ -60,10 +67,11 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
   const reset = useWorkflowStore((s) => s.reset)
 
   const [showRecovery, setShowRecovery] = useState(false)
+  const [hasHydrated, setHasHydrated] = useState(false)
 
   // Warn before leaving with unsaved data
   useEffect(() => {
-    if (step !== 'COLLECTING' && step !== 'REVIEW') return
+    if (step !== 'COLLECTING' && step !== 'VALIDATING' && step !== 'REVIEW') return
 
     const handler = (e: BeforeUnloadEvent) => {
       e.preventDefault()
@@ -72,12 +80,27 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
     return () => window.removeEventListener('beforeunload', handler)
   }, [step])
 
-  // Check for persisted workflow to resume
+  // Wait for Zustand persist hydration, then check for recoverable state
   useEffect(() => {
+    const unsub = useWorkflowStore.persist.onFinishHydration(() => {
+      setHasHydrated(true)
+    })
+    // If already hydrated (fast path)
+    if (useWorkflowStore.persist.hasHydrated()) {
+      setHasHydrated(true)
+    }
+    return unsub
+  }, [])
+
+  useEffect(() => {
+    if (!hasHydrated) return
     if (step === 'COLLECTING' || step === 'REVIEW') {
       setShowRecovery(true)
+    } else if (initialType && step === 'IDLE') {
+      // Auto-demarrage si type passe via URL (?type=promesse_vente)
+      startWorkflow(initialType)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hasHydrated]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectType = async (type: TypeActe) => {
     await startWorkflow(type)
@@ -101,13 +124,6 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
   // Recovery banner (persisted workflow found)
   // ========================================
   if (showRecovery && (step === 'COLLECTING' || step === 'REVIEW')) {
-    const TYPE_LABELS: Record<string, string> = {
-      promesse_vente: 'Promesse de vente',
-      vente: 'Acte de vente',
-      reglement_copropriete: 'Règlement de copropriété',
-      modificatif_edd: 'Modificatif EDD',
-    }
-
     return (
       <div className="h-full flex flex-col bg-ivory">
         <WorkflowHeader onBack={handleBack} />
@@ -221,6 +237,23 @@ export default function WorkflowPage({ onBack, initialType }: WorkflowPageProps)
                 <p className="text-slate">Chargement des questions...</p>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ========================================
+  // ECRAN 2b : Validation semantique en cours
+  // ========================================
+  if (step === 'VALIDATING') {
+    return (
+      <div className="h-full flex flex-col bg-ivory">
+        <WorkflowHeader onBack={handleBack} />
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold mx-auto mb-4" />
+            <p className="text-slate text-[0.9rem]">Validation des données en cours...</p>
           </div>
         </div>
       </div>

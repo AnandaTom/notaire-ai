@@ -168,21 +168,52 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
       const nextIndex = currentSectionIndex + 1
       const isLastSection = nextIndex >= sections.length
 
-      set({
-        currentSectionIndex: isLastSection ? currentSectionIndex : nextIndex,
-        step: isLastSection ? 'REVIEW' : 'COLLECTING',
-        progression: {
-          ...get().progression,
-          sections_completes: result.progression.sections_completes,
-          pourcentage: result.progression.pourcentage,
-        },
-        validationMessages: (result.validation.messages || []).map((m) => ({
-          niveau: m.niveau as ValidationMessage['niveau'],
-          code: '',
-          message: m.message,
-        })),
-        isLoading: false,
-      })
+      if (isLastSection) {
+        // Derniere section → validation semantique backend avant review
+        set({
+          step: 'VALIDATING',
+          progression: {
+            ...get().progression,
+            sections_completes: result.progression.sections_completes,
+            pourcentage: result.progression.pourcentage,
+          },
+        })
+        try {
+          const { validerPromesse } = await import('@/lib/api/promesse')
+          const valResult = await validerPromesse(get().donnees)
+          set({
+            step: 'REVIEW',
+            validationMessages: [
+              ...(valResult.erreurs || []).map((e: string) => ({
+                niveau: 'erreur' as const, code: '', message: e,
+              })),
+              ...(valResult.avertissements || []).map((a: string) => ({
+                niveau: 'avertissement' as const, code: '', message: a,
+              })),
+            ],
+            isLoading: false,
+          })
+        } catch {
+          // Validation non-bloquante — passer en REVIEW quand meme
+          set({ step: 'REVIEW', isLoading: false })
+        }
+      } else {
+        set({
+          currentSectionIndex: nextIndex,
+          step: 'COLLECTING',
+          progression: {
+            ...get().progression,
+            sections_completes: result.progression.sections_completes,
+            pourcentage: result.progression.pourcentage,
+          },
+          validationMessages: (result.validation.messages || []).map((m) => ({
+            niveau: m.niveau as ValidationMessage['niveau'],
+            code: '',
+            message: m.message,
+          })),
+          isLoading: false,
+        })
+      }
     } catch (err) {
       set({
         error: err instanceof Error ? err.message : 'Erreur de soumission',
@@ -277,6 +308,7 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
 }),
     {
       name: 'notomai-workflow',
+      version: 1,
       partialize: (state) => ({
         step: state.step,
         workflowId: state.workflowId,
@@ -290,6 +322,13 @@ export const useWorkflowStore = create<WorkflowState & WorkflowActions>()(
         fichierUrl: state.fichierUrl,
         conformiteScore: state.conformiteScore,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return
+        // If browser closed during GENERATING, fall back to REVIEW
+        if (state.step === 'GENERATING') {
+          useWorkflowStore.setState({ step: 'REVIEW', isLoading: false })
+        }
+      },
     },
   ),
 )

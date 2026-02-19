@@ -53,10 +53,12 @@ except ImportError:
 # Import Supabase
 try:
     from supabase import create_client, Client
+    from supabase.lib.client_options import ClientOptions
 except ImportError:
     print("ERREUR: supabase n'est pas installé. Exécutez: pip install supabase")
     create_client = None
     Client = None
+    ClientOptions = None
 
 
 @lru_cache(maxsize=1)
@@ -86,11 +88,10 @@ def get_supabase_client(use_service_key: bool = True) -> Optional[Client]:
         return None
 
     try:
-        from supabase.lib.client_options import ClientOptions
         options = ClientOptions(
             postgrest_client_timeout=30,    # 30s timeout on DB queries
-        )
-        return create_client(url, key, options=options)
+        ) if ClientOptions else {}
+        return create_client(url, key, options=options) if ClientOptions else create_client(url, key)
     except Exception as e:
         print(f"ERREUR connexion Supabase: {e}")
         return None

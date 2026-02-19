@@ -318,3 +318,8 @@ export async function sendFeedback(request: {
     }),
   })
 }
+
+// ---------------------------------------------------------------------------
+// Re-export promesse-specific API (detection, questions filtrees, validation)
+// ---------------------------------------------------------------------------
+export { detecterType, getQuestions, validerPromesse } from './promesse'
