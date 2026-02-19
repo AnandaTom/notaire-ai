@@ -6,6 +6,41 @@
 
 ---
 
+## 2026-02-19 (nuit, suite 2) — Tom
+
+### Contexte
+- Merge payoss/dev (#26) + origin/master dans tom/dev
+- Build casse post-merge → 3 fixes TypeScript → audit /audit
+
+### Fixes post-merge
+
+| Action | Fichier | Detail |
+|--------|---------|--------|
+| SUPPRIME | `frontend/lib/api.ts` | Legacy file shadowing lib/api/index.ts |
+| MODIFIE | `frontend/stores/workflowStore.ts` | Suppression config persist orpheline (syntax error) |
+| MODIFIE | `frontend/components/workflow/WorkflowPage.tsx` | +useState/useEffect/RotateCcw/Plus; remplace persist.onFinishHydration par localStorage+restoreDraft(); +typeActe selector |
+
+### Audit /audit — Score 7.3/10 (↑ 7.2)
+
+| Dimension | Score | Tendance |
+|-----------|-------|----------|
+| Architecture | 7.5/10 | ↑ |
+| Optimisation | 6.5/10 | → |
+| Securite | 7.0/10 | ↓ (C-011b) |
+| Fiabilite | 7.5/10 | → |
+| Fluidite | 6.5/10 | ↑ |
+
+### Issues
+- FERMEES: I-010 (cadastre), M-010 (CODE_MAP), I-008 (self_anneal)
+- NOUVELLES: I-017 (VALIDATING sans renderer), M-018 (ENCRYPTION_MASTER_KEY)
+- CONFIRMEE: C-011b (regression cles legacy — Paul doit regler)
+
+### Commits
+- Merges: `6d41f97`, `c73e11f`
+- Fix: `32b116f` (WorkflowPage post-merge)
+
+---
+
 ## 2026-02-19 (nuit, suite) — Paul (Payoss)
 
 ### Contexte

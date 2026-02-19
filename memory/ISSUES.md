@@ -18,8 +18,7 @@
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
 | I-004 | Pas de DPA signe avec Supabase | Legal | Paul | 18/02 | OBLIGATOIRE RGPD |
-| I-008 | self_anneal.py n'existe pas | `modal_app.py` | - | 18/02 | Manquant; daily_learning_job gere l'erreur |
-| I-010 | ~~Endpoints /cadastre/* absents de api/main.py~~ | `api/main.py` | Paul | 18/02 | **FERME 19/02** — routers montes |
+| I-017 | VALIDATING step sans renderer dans WorkflowPage | `WorkflowPage.tsx` | Tom | 19/02 | setStep('VALIDATING') dans workflowStore:214 mais aucun case dans le switch de WorkflowPage — ecran blanc potentiel |
 
 ### MOYEN
 
@@ -32,7 +31,7 @@
 | M-007 | Protection mots de passe compromis desactivee | Supabase Auth | - | 18/02 | Requiert plan Pro Supabase — pas dispo en Free |
 | M-008 | ~65 index Supabase inutilises | Supabase | Paul | 19/02 | Confirme par advisor perf 19/02 nuit (65 index) |
 | M-009 | Accessibilite frontend = ZERO | `frontend/components/` | Tom | 19/02 | 0 attributs aria/role/tabIndex (audit 19/02 soir) |
-| M-010 | POST /ventes/generer absent de CODE_MAP | `api/main.py:1601` | - | 19/02 | 40 endpoints (pas 39) |
+| M-018 | 7 tests backend echoues (ENCRYPTION_MASTER_KEY) | `tests/test_chat_generation.py` | - | 19/02 | AgentClientAccess init echoue sans cle — 6 test_chat_generation + 1 tier1 |
 | M-011 | Multiple permissive policies feedbacks | Supabase | Augustin | 19/02 | 2 policies SELECT meme role, perf |
 | M-013 | CODE_MAP desynchronise | `memory/CODE_MAP.md` | Paul | 19/02 | LOC obsoletes: api/main.py 2940→2994, anthropic_agent.py 1030→1101, workflowStore.ts 318→436 |
 | M-014 | Ajouter message "mot de passe robuste" sur page inscription | Frontend (a creer) | Tom | 19/02 | Page inscription n'existe pas encore |
@@ -78,6 +77,8 @@
 | I-014 | Zero timeout backend | 19/02 | payoss/dev | Paul — timeout=120s Anthropic, 30s Supabase |
 | I-015 | RLS initplan notaire_users | 19/02 | migration MCP | Paul — auth_user_id = (SELECT auth.uid()) |
 | M-012 | Pas de sauvegarde workflow | 19/02 | payoss/dev | Paul — Zustand persist + beforeunload + recovery UI |
+| M-010 | POST /ventes/generer absent de CODE_MAP | 19/02 | tom/dev | Tom — CODE_MAP mis a jour (40 endpoints) |
+| I-008 | self_anneal.py n'existe pas | 19/02 | payoss/dev | Paul — confirme que modal_app.py L190 importe bien execution.self_anneal |
 | I-016 | Secret github-credentials manquant Modal | 19/02 | TODO **Tom** | Tom (Paul dit que c'est un ptit coquin) — Creer fine-grained token GitHub (repo AnandaTom/notaire-ai only, Contents read-only) puis ajouter sur modal.com/secrets/notomai secret_name=github-credentials cle=GITHUB_TOKEN. Decommenter deployment_modal/modal_app.py L65 apres |
 
 ---
