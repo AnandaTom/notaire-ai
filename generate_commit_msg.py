@@ -199,34 +199,110 @@ def count_open_issues():
     return counts
 
 
+def generate_auto_summary(diff_files):
+    """Genere un resume automatique depuis les fichiers changes (fallback sans journal).
+
+    Categorise les fichiers par domaine et detecte le type de travail.
+    """
+    if not diff_files:
+        return {}
+
+    # Grouper par domaine
+    domains = {}
+    for status, path in diff_files:
+        domain = path.split("/")[0] if "/" in path else "root"
+        domains.setdefault(domain, []).append((status, path))
+
+    # Detecter le type de travail dominant
+    created = [f for s, f in diff_files if s == "CREE"]
+    modified = [f for s, f in diff_files if s == "MODIFIE"]
+    deleted = [f for s, f in diff_files if s == "SUPPRIME"]
+
+    # Detecter feat/fix/refactor/docs/test
+    work_type = "feat"
+    test_files = [f for _, f in diff_files if "test" in f.lower() or "__tests__" in f]
+    doc_files = [f for _, f in diff_files if f.endswith((".md", ".txt")) or "docs/" in f or "memory/" in f]
+    template_files = [f for _, f in diff_files if "template" in f.lower() or f.endswith(".j2")]
+    frontend_files = [f for _, f in diff_files if "frontend/" in f or f.endswith((".tsx", ".ts"))]
+    backend_files = [f for _, f in diff_files if f.endswith(".py")]
+    config_files = [f for _, f in diff_files if f.endswith((".bat", ".ps1", ".json", ".yml", ".yaml"))]
+
+    if len(deleted) > len(created) + len(modified):
+        work_type = "refactor"
+    elif test_files and len(test_files) > len(diff_files) // 2:
+        work_type = "test"
+    elif doc_files and len(doc_files) > len(diff_files) // 2:
+        work_type = "docs"
+
+    # Construire le contexte automatique
+    parts = []
+    if frontend_files:
+        parts.append(f"frontend ({len(frontend_files)} fichiers)")
+    if backend_files:
+        parts.append(f"backend ({len(backend_files)} fichiers)")
+    if template_files:
+        parts.append(f"templates ({len(template_files)} fichiers)")
+    if config_files:
+        parts.append(f"config ({len(config_files)} fichiers)")
+    if test_files:
+        parts.append(f"tests ({len(test_files)} fichiers)")
+    if doc_files:
+        parts.append(f"docs ({len(doc_files)} fichiers)")
+
+    contexte = f"{work_type}: {', '.join(parts)}" if parts else f"{work_type}: {len(diff_files)} fichiers"
+
+    # Construire les actions depuis les fichiers
+    actions = []
+    for status, path in diff_files:
+        filename = os.path.basename(path)
+        actions.append({"action": status, "fichier": path, "detail": filename})
+
+    return {
+        "contexte": contexte,
+        "actions": actions,
+        "domains": domains,
+        "stats": {
+            "created": len(created),
+            "modified": len(modified),
+            "deleted": len(deleted),
+        },
+    }
+
+
 def generate_commit_message(dev_name=None):
-    """Genere le commit message complet."""
+    """Genere le commit message complet.
+
+    Source 1: memory/JOURNAL.md (si rempli par l'agent pendant la session)
+    Source 2: git diff --cached (fallback automatique si journal vide)
+    """
     branch = get_branch()
     dev = dev_name or get_dev_from_branch(branch)
     today = datetime.now().strftime("%Y-%m-%d")
     diff_files = get_diff_files()
 
-    # Categoriser les fichiers
-    created = [f for s, f in diff_files if s == "CREE"]
-    modified = [f for s, f in diff_files if s == "MODIFIE"]
-    deleted = [f for s, f in diff_files if s == "SUPPRIME"]
-
     # Lire le journal (filtre par dev pour eviter conflits multi-devs)
     journal_entry = extract_today_journal(today, dev_name=dev)
     summary = extract_summary_from_journal(journal_entry) if journal_entry else {}
+
+    # Fallback: generer un resume depuis git diff si le journal est vide
+    auto_summary = None
+    if not summary.get("actions") and not summary.get("contexte"):
+        auto_summary = generate_auto_summary(diff_files)
+        if auto_summary:
+            summary = auto_summary
 
     # --- Construire le message ---
 
     # Ligne 1: sujet (court, parseable)
     file_count = len(diff_files)
+    source_tag = "" if journal_entry else " (auto)"
     if summary.get("contexte"):
-        # Tronquer le contexte pour le sujet
         ctx = summary["contexte"]
-        if len(ctx) > 60:
-            ctx = ctx[:57] + "..."
-        subject = f"[{dev}] {ctx}"
+        if len(ctx) > 55:
+            ctx = ctx[:52] + "..."
+        subject = f"[{dev}] {ctx}{source_tag}"
     else:
-        subject = f"[{dev}] Travail du {today} ({file_count} fichiers)"
+        subject = f"[{dev}] Travail du {today} ({file_count} fichiers){source_tag}"
 
     lines = [subject, ""]
 
@@ -234,6 +310,10 @@ def generate_commit_message(dev_name=None):
     lines.append(f"Dev: {dev}")
     lines.append(f"Branche: {branch}")
     lines.append(f"Date: {today}")
+    if auto_summary:
+        lines.append("Source: auto (journal vide)")
+    else:
+        lines.append("Source: memory/JOURNAL.md")
     lines.append("")
 
     # Section FICHIERS
@@ -243,12 +323,33 @@ def generate_commit_message(dev_name=None):
             lines.append(f"- [{status}] {path}")
         lines.append("")
 
-    # Section CE QUI A ETE FAIT (depuis le journal)
-    if summary.get("actions"):
+    # Section CE QUI A ETE FAIT
+    if summary.get("actions") and not auto_summary:
+        # Depuis le journal (format riche)
         lines.append("## Ce qui a ete fait")
         for action in summary["actions"]:
             lines.append(f"- {action['action']} {action['fichier']}: {action['detail']}")
         lines.append("")
+    elif auto_summary and auto_summary.get("stats"):
+        # Depuis git diff (resume auto)
+        stats = auto_summary["stats"]
+        lines.append("## Resume automatique")
+        if stats["created"]:
+            lines.append(f"- {stats['created']} fichier(s) cree(s)")
+        if stats["modified"]:
+            lines.append(f"- {stats['modified']} fichier(s) modifie(s)")
+        if stats["deleted"]:
+            lines.append(f"- {stats['deleted']} fichier(s) supprime(s)")
+        lines.append("")
+
+        # Grouper par domaine
+        if auto_summary.get("domains"):
+            lines.append("## Par domaine")
+            for domain, files in sorted(auto_summary["domains"].items()):
+                file_list = ", ".join(os.path.basename(f) for _, f in files[:5])
+                suffix = f" +{len(files)-5}" if len(files) > 5 else ""
+                lines.append(f"- {domain}/: {file_list}{suffix}")
+            lines.append("")
     elif summary.get("contexte"):
         lines.append("## Ce qui a ete fait")
         lines.append(f"- {summary['contexte']}")
@@ -257,7 +358,7 @@ def generate_commit_message(dev_name=None):
     # Section DECOUVERTES
     if summary.get("decouvertes"):
         lines.append("## Decouvertes")
-        for d in summary["decouvertes"][:5]:  # Max 5
+        for d in summary["decouvertes"][:5]:
             lines.append(f"- {d}")
         lines.append("")
 
@@ -271,18 +372,6 @@ def generate_commit_message(dev_name=None):
     if issues:
         issue_parts = [f"{count} {sev.lower()}" for sev, count in issues.items()]
         lines.append(f"## Issues ouvertes: {', '.join(issue_parts)}")
-        lines.append("")
-
-    # Si pas de journal du tout, au moins lister les fichiers modifies par domaine
-    if not journal_entry and diff_files:
-        domains = {}
-        for _, path in diff_files:
-            domain = path.split("/")[0] if "/" in path else "root"
-            domains.setdefault(domain, []).append(path)
-
-        lines.append("## Resume par domaine")
-        for domain, files in sorted(domains.items()):
-            lines.append(f"- {domain}/: {len(files)} fichier(s)")
         lines.append("")
 
     return "\n".join(lines).strip()
