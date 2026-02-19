@@ -1834,17 +1834,6 @@ def exporter_docx(chemin_entree: Path, chemin_sortie: Path, zones_grisees: bool 
     ajouter_pagination(doc)
     convertir_contenu_vers_docx(contenu, doc)
 
-    # RGPD: strip PII from DOCX metadata (I-007)
-    props = doc.core_properties
-    props.author = "Notomai"
-    props.last_modified_by = "Notomai"
-    props.title = ""
-    props.subject = ""
-    props.keywords = ""
-    props.comments = ""
-    props.category = ""
-    props.revision = 1
-
     chemin_sortie.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(chemin_sortie))
 
