@@ -6,6 +6,77 @@
 
 ---
 
+## 2026-02-20 (nuit, AI Side Panel + Cleanup + Tests) — Paul (Payoss)
+
+### Ce qui a ete fait
+1. **AI Side Panel** (style VS Code Copilot) — panneau 380px a droite de chaque page
+   - `AISidePanel.tsx` : messages SSE, context hint, animation bounce, gold dot pulse
+   - Toggle dans AppHeader (bouton navy/white + `Ctrl+Shift+I`)
+   - Auto-close sur `/app/chat` (pas de double chat), reopen au unmount
+   - Responsive: overlay plein ecran sur mobile (<1024px)
+   - `uiStore.ts` : +3 states (aiPanelOpen, aiPanelContext) + 3 actions
+
+2. **Dashboard API** — endpoint `/dashboard/stats` dans api/main.py
+   - Single call remplace 4 queries Supabase directes
+   - Dashboard page modifiee pour utiliser l'API
+
+3. **Cleanup** — Header.tsx + Sidebar.tsx supprimes (remplaces par AppHeader/AppSidebar)
+
+4. **Accessibility** — ChatArea: role=log, aria-live=polite, aria-labels sur tous les boutons
+
+5. **Tests frontend** — 23 nouveaux tests (Toast 6, CommandPalette 10, Dashboard 7) → total 53/53 pass
+
+### Fichiers crees (4)
+- `frontend/components/AISidePanel.tsx` (289 LOC)
+- `frontend/__tests__/Toast.test.tsx`
+- `frontend/__tests__/CommandPalette.test.tsx`
+- `frontend/__tests__/Dashboard.test.tsx`
+
+### Fichiers modifies (7)
+- `frontend/stores/uiStore.ts` — +aiPanelOpen, +aiPanelContext, +toggleAiPanel, +setAiPanelOpen, +setAiPanelContext
+- `frontend/app/app/layout.tsx` — wrapper flex main + AISidePanel
+- `frontend/components/AppHeader.tsx` — bouton toggle AI + supprime boutons disabled
+- `frontend/app/app/chat/page.tsx` — import uiStore, close AI panel au mount
+- `frontend/app/app/page.tsx` — API /dashboard/stats au lieu de Supabase direct
+- `frontend/lib/api/index.ts` — +getDashboardStats(), +DashboardStatsResponse
+- `frontend/components/ChatArea.tsx` — aria-labels, role=log
+- `api/main.py` — +endpoint /dashboard/stats (~55 LOC)
+
+### Fichiers supprimes (2)
+- `frontend/components/Header.tsx`
+- `frontend/components/Sidebar.tsx`
+
+### Commit + Deploy
+- Commit `6470690` sur `payoss/dev`
+- PR #30 creee vers master (Vercel auto-deploy au merge)
+- Modal: pas de deploy necessaire (changes frontend only pour le panel)
+
+### Reste a faire
+- Connecter `setAiPanelContext()` dans les pages workflow et dossiers (contexte section)
+- Tests AISidePanel (pas fait — composant complexe avec SSE)
+
+---
+
+## 2026-02-20 (soir, GENERATION E2E VALIDEE + deploy Vercel) — Paul (Payoss)
+
+### MILESTONE : Generation d'acte end-to-end FONCTIONNE
+- User envoie toutes les infos d'un coup dans le chat → chatbot collecte → genere DOCX complet
+- Test reel : promesse de vente LECLERC → DURAND, 485 000 EUR, 72.30 m², copro 36 lots
+- Document genere avec succes (795 paragraphes, ~30 pages, toutes donnees remplies)
+
+### Deploy Vercel
+- Frontend UX Redesign deploye en prod via `npx vercel --prod`
+- URL : https://notomai.fr
+- Le CI/CD ne deploie que le backend (Modal) — frontend = deploy manuel Vercel
+
+### Fixes qui ont rendu la generation possible (nuit 6)
+1. **C-017** : SilentUndefined + 9 filtres Jinja2 guards → template complet au lieu de squelette
+2. **C-018** : De-anonymisation tool_input → vrais noms preserves dans donnees
+3. **C-015** : Normalisation donnees (dict→list, string→list) avant assemblage
+4. **C-016** : Table promesses_generees → actes_generes
+
+---
+
 ## 2026-02-20 (soir, UX Redesign integration — Phases 0-4) — Paul (Payoss)
 
 ### Ce qui a ete fait
