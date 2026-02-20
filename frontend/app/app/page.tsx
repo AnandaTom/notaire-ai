@@ -13,9 +13,7 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { useAppData } from '@/lib/hooks/useAppData'
-import { supabase } from '@/lib/supabase'
-import { getUserEtudeId } from '@/lib/auth'
-import type { Dossier } from '@/types'
+import { getDashboardStats } from '@/lib/api'
 
 const QUICK_ACTIONS = [
   {
@@ -55,9 +53,19 @@ interface DashboardStats {
   actesGeneres: number
 }
 
+interface RecentDossier {
+  id: string
+  numero: string
+  type_acte: string
+  statut: string
+  parties: { nom: string; prenom?: string }[] | null
+  biens: { adresse?: string; ville?: string }[] | null
+  updated_at: string
+}
+
 export default function DashboardPage() {
   const { userInfo } = useAppData()
-  const [recentDossiers, setRecentDossiers] = useState<Dossier[]>([])
+  const [recentDossiers, setRecentDossiers] = useState<RecentDossier[]>([])
   const [stats, setStats] = useState<DashboardStats>({
     totalDossiers: 0,
     dossiersEnCours: 0,
@@ -70,57 +78,14 @@ export default function DashboardPage() {
     const loadDashboardData = async () => {
       setIsLoading(true)
       try {
-        const etudeId = await getUserEtudeId()
-        if (!etudeId) {
-          setIsLoading(false)
-          return
-        }
-
-        // Load recent dossiers
-        const { data: dossiers } = await supabase
-          .from('dossiers')
-          .select('*')
-          .eq('etude_id', etudeId)
-          .is('deleted_at', null)
-          .order('updated_at', { ascending: false })
-          .limit(5)
-
-        if (dossiers) {
-          setRecentDossiers(dossiers)
-        }
-
-        // Load stats
-        const { count: totalCount } = await supabase
-          .from('dossiers')
-          .select('*', { count: 'exact', head: true })
-          .eq('etude_id', etudeId)
-          .is('deleted_at', null)
-
-        const { count: enCoursCount } = await supabase
-          .from('dossiers')
-          .select('*', { count: 'exact', head: true })
-          .eq('etude_id', etudeId)
-          .eq('statut', 'en_cours')
-          .is('deleted_at', null)
-
-        const { count: terminesCount } = await supabase
-          .from('dossiers')
-          .select('*', { count: 'exact', head: true })
-          .eq('etude_id', etudeId)
-          .eq('statut', 'termine')
-          .is('deleted_at', null)
-
-        const { count: actesCount } = await supabase
-          .from('actes_generes')
-          .select('*', { count: 'exact', head: true })
-          .eq('etude_id', etudeId)
-
+        const data = await getDashboardStats()
         setStats({
-          totalDossiers: totalCount || 0,
-          dossiersEnCours: enCoursCount || 0,
-          dossiersTermines: terminesCount || 0,
-          actesGeneres: actesCount || 0,
+          totalDossiers: data.total_dossiers,
+          dossiersEnCours: data.dossiers_en_cours,
+          dossiersTermines: data.dossiers_termines,
+          actesGeneres: data.actes_generes,
         })
+        setRecentDossiers(data.recent_dossiers)
       } catch {
         // Silently fail — dashboard shows empty state
       } finally {
@@ -270,19 +235,6 @@ export default function DashboardPage() {
                   <p className="text-[0.78rem] text-slate">
                     {dossier.biens[0].adresse}{dossier.biens[0].ville ? `, ${dossier.biens[0].ville}` : ''}
                   </p>
-                )}
-                {dossier.progress_pct != null && dossier.progress_pct > 0 && (
-                  <div className="mt-2.5 flex items-center gap-2">
-                    <div className="flex-1 h-1 bg-sand rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gold rounded-full"
-                        style={{ width: `${Math.min(dossier.progress_pct, 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-[0.65rem] text-gold-dark font-medium">
-                      {Math.round(dossier.progress_pct)}%
-                    </span>
-                  </div>
                 )}
               </Link>
             ))}

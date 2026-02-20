@@ -71,7 +71,7 @@ export default function ChatArea({
   return (
     <>
       {/* Messages Area */}
-      <div ref={chatRef} className="flex-1 overflow-y-auto p-7 flex flex-col gap-5 bg-ivory">
+      <div ref={chatRef} role="log" aria-live="polite" aria-label="Messages de la conversation" className="flex-1 overflow-y-auto p-7 flex flex-col gap-5 bg-ivory">
         {messages.map((message, idx) => {
           // Masquer le placeholder vide pendant le streaming
           if (message.role === 'assistant' && message.content === '' && idx === messages.length - 1) {
@@ -118,17 +118,20 @@ export default function ChatArea({
               onKeyDown={handleKeyDown}
               placeholder="Rédigez votre message..."
               rows={1}
+              aria-label="Redigez votre message au chatbot"
               className="w-full px-5 py-4 pr-24 bg-cream border border-champagne rounded-2xl text-[0.88rem] text-charcoal resize-none min-h-[52px] max-h-[130px] focus:outline-none focus:border-gold focus:bg-ivory focus:ring-2 focus:ring-gold/10 transition-all placeholder:text-slate placeholder:font-light"
             />
             <div className="absolute right-3 bottom-2.5 flex gap-1.5">
               <button
                 type="button"
+                aria-label="Joindre un fichier"
                 className="w-8 h-8 flex items-center justify-center text-slate hover:text-gold-dark hover:bg-sand rounded-lg transition-all"
               >
                 <Paperclip className="w-[18px] h-[18px]" />
               </button>
               <button
                 type="button"
+                aria-label="Dictee vocale"
                 className="w-8 h-8 flex items-center justify-center text-slate hover:text-gold-dark hover:bg-sand rounded-lg transition-all"
               >
                 <Mic className="w-[18px] h-[18px]" />
@@ -138,6 +141,7 @@ export default function ChatArea({
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
+            aria-label="Envoyer le message"
             className="w-[52px] h-[52px] bg-gold text-white rounded-2xl flex items-center justify-center hover:bg-gold-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-gold/25 hover:-translate-y-0.5"
           >
             <Send className="w-5 h-5" />

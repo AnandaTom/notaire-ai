@@ -64,6 +64,30 @@ interface SSEStepEvent {
 }
 
 // ---------------------------------------------------------------------------
+// Dashboard API
+// ---------------------------------------------------------------------------
+
+export interface DashboardStatsResponse {
+  total_dossiers: number
+  dossiers_en_cours: number
+  dossiers_termines: number
+  actes_generes: number
+  recent_dossiers: {
+    id: string
+    numero: string
+    type_acte: string
+    statut: string
+    parties: { nom: string; prenom?: string }[] | null
+    biens: { adresse?: string; ville?: string }[] | null
+    updated_at: string
+  }[]
+}
+
+export async function getDashboardStats(): Promise<DashboardStatsResponse> {
+  return apiFetch<DashboardStatsResponse>('/dashboard/stats')
+}
+
+// ---------------------------------------------------------------------------
 // Chat API (conversations, feedback)
 // ---------------------------------------------------------------------------
 

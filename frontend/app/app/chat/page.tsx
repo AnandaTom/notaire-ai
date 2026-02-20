@@ -6,6 +6,7 @@ import ParagraphReview from '@/components/ParagraphReview'
 import type { Message, DocumentSection } from '@/types'
 import { API_URL, API_KEY } from '@/lib/config'
 import { useAppData } from '@/lib/hooks/useAppData'
+import { useUIStore } from '@/stores/uiStore'
 import {
   sendChatFeedback,
   loadDocumentSections,
@@ -24,6 +25,13 @@ Comment puis-je vous assister aujourd'hui ?`,
 
 export default function ChatPage() {
   const { userId, etudeId, activeConversationId, loadConversations, loadConversation } = useAppData()
+  const setAiPanelOpen = useUIStore((s) => s.setAiPanelOpen)
+
+  // Close AI side panel on chat page (avoid double chat)
+  useEffect(() => {
+    setAiPanelOpen(false)
+    return () => setAiPanelOpen(true)
+  }, [setAiPanelOpen])
 
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE])
   const [isLoading, setIsLoading] = useState(false)
