@@ -23,12 +23,12 @@
 ### Frontend
 - **Framework** : Next.js 14.2.35 (App Router)
 - **UI** : React 18.3 + TailwindCSS 3.4 + Lucide React
-- **State** : Zustand 5.0.11 — `workflowStore` (persist) + `uiStore` (sidebar/toasts/palette)
+- **State** : Zustand 5.0.11 — `workflowStore` (persist) + `uiStore` (sidebar/toasts/palette/aiPanel)
 - **Auth/DB** : @supabase/supabase-js 2.95.3
 - **Markdown** : react-markdown 9.0
 - **TypeScript** : 5.x strict mode
-- **Tests** : Vitest 4.0 + Testing Library + jsdom (30 tests)
-- **Layout** : `app/app/layout.tsx` partage (AppSidebar + AppHeader + Toast + CommandPalette)
+- **Tests** : Vitest 4.0 + Testing Library + jsdom (53 tests)
+- **Layout** : `app/app/layout.tsx` partage (AppSidebar + AppHeader + AISidePanel + Toast + CommandPalette)
 - **Routes** : `/app` (dashboard), `/app/chat` (SSE), `/app/dossiers`, `/app/documents`, `/app/clients`, `/app/workflow`
 
 ### Infrastructure
@@ -55,12 +55,12 @@
 | Endpoints API (api/main.py) | 40 (+8 routers) | 2994 |
 | Endpoints Agents (api/agents.py) | 4 | 973 |
 | Chat router (chat_handler.py) | 4+ | 1242 |
-| Composants React | 30 (+5 UX redesign) | ~4200 |
+| Composants React | 30 (+6 UX redesign, -2 supprimes) | ~4500 |
 | Scripts Python (execution/) | 60+ | ~20000 |
 | Templates Jinja2 | 9 + 60 sections | - |
 | Schemas JSON | 17 | - |
 | Tests backend | 257 | - |
-| Tests frontend | 30 | Vitest + Testing Library |
+| Tests frontend | 53 | Vitest + Testing Library |
 
 ---
 
@@ -88,6 +88,7 @@
 | 11 | `/download/{filename}` | GET | 1023 | download_file_secure() |
 | 12 | `/stats` | GET | 1086 | get_stats() |
 | 13 | `/me` | GET | 1134 | get_current_etude() |
+| 13b | `/dashboard/stats` | GET | ~1148 | get_dashboard_stats() |
 | **Clauses** | | | | |
 | 14 | `/clauses/sections` | GET | 1149 | lister_sections_clauses() |
 | 15 | `/clauses/profils` | GET | 1207 | lister_profils_clauses() |
@@ -166,6 +167,7 @@
 | Fichier | LOC | Role |
 |---------|-----|------|
 | `workflowStore.ts` | 436 | Store Zustand — persist middleware (localStorage), VALIDATING step, importe `@/lib/api` + `@/lib/api/promesse` |
+| `uiStore.ts` | 62 | Store Zustand — sidebar, mobileSidebar, commandPalette, **aiPanelOpen**, **aiPanelContext**, toasts |
 
 ### frontend/types/
 
@@ -195,10 +197,9 @@
 | `MessageBubble.tsx` | 213 | Bulle message chat (extrait de ChatArea) |
 | `TypingIndicator.tsx` | 29 | Indicateur de saisie (extrait de ChatArea) |
 | `DocumentCard.tsx` | 131 | Card document genere (AXE 7) |
-| `ChatArea.tsx` | 148 | Zone de chat + lien Mode guide (AXE 7) |
+| `ChatArea.tsx` | 148 | Zone de chat + lien Mode guide (AXE 7) + aria role=log |
 | `ParagraphReview.tsx` | 252 | Relecture paragraphe par paragraphe |
-| `Header.tsx` | 77 | En-tete (Brouillons/Exporter disabled) |
-| `Sidebar.tsx` | ~200 | Navigation laterale + NavLinks Documents/Workflow (AXE 7) |
+| `AISidePanel.tsx` | 289 | **Panneau IA Copilot 380px** — SSE, context hints, toggle, responsive |
 | `ClientCard.tsx` | ~80 | Card client (import format.ts) |
 | `DossierCard.tsx` | ~90 | Card dossier (import format.ts) |
 
@@ -217,7 +218,7 @@
 | `/app/dossiers/[id]` | `app/dossiers/[id]/page.tsx` | ~40 |
 | API proxy | `api/chat/route.ts` | ~150 |
 
-### frontend/__tests__/ (AXE 8 — cree le 18/02)
+### frontend/__tests__/ (AXE 8 — cree le 18/02, enrichi 20/02)
 
 | Fichier | Tests | Cible |
 |---------|-------|-------|
@@ -225,7 +226,10 @@
 | `auth.test.ts` | 4 | getUserEtudeId() — happy path, no user, no etude, erreur |
 | `MessageBubble.test.tsx` | 11 | Rendu user/assistant, feedback, download, section, quick actions, welcome |
 | `ChatArea.test.tsx` | 9 | Submit, empty submit, typing indicator, mode guide, streaming |
-| **Total** | **30** | Vitest 4.0 + Testing Library + jsdom |
+| `Toast.test.tsx` | 6 | Rendu success/error/multiple, close button, aria attributes |
+| `CommandPalette.test.tsx` | 10 | Rendu open/closed, navigation/actions/conversations, filter, Enter nav, backdrop |
+| `Dashboard.test.tsx` | 7 | Greeting, quick actions, stats API, recent dossiers, empty state, error |
+| **Total** | **53** | Vitest 4.0 + Testing Library + jsdom |
 
 ---
 

@@ -38,7 +38,7 @@
 | M-006 | Templates promesse sans {% include %} | `templates/` | Paul | 18/02 | Seul vente utilise les includes |
 | M-007 | Protection mots de passe compromis desactivee | Supabase Auth | - | 18/02 | Requiert plan Pro Supabase — pas dispo en Free |
 | M-008 | ~65 index Supabase inutilises | Supabase | Paul | 19/02 | Confirme par advisor perf 19/02 nuit (65 index) |
-| M-009 | Accessibilite frontend = ZERO | `frontend/components/` | Tom | 19/02 | 0 attributs aria/role/tabIndex (audit 19/02 soir) |
+| M-009 | ~~Accessibilite frontend~~  | `frontend/components/` | Paul | 19/02 | **FERME 20/02** — ChatArea role=log + aria-live + aria-labels, Toast aria-label/role=alert, Sidebar role=navigation, all interactive buttons have aria-labels |
 | M-010 | POST /ventes/generer absent de CODE_MAP | `api/main.py:1601` | - | 19/02 | 40 endpoints (pas 39) |
 | M-011 | Multiple permissive policies feedbacks | Supabase | Augustin | 19/02 | 2 policies SELECT meme role, perf |
 | M-013 | CODE_MAP desynchronise | `memory/CODE_MAP.md` | Paul | 19/02 | LOC obsoletes: api/main.py 2940→2994, anthropic_agent.py 1030→1101, workflowStore.ts 318→436 |
@@ -90,6 +90,7 @@
 | C-011b-fix | Merge regressions: persist, imports, api.ts | 19/02 | payoss/dev | Paul — workflowStore.ts persist restore, WorkflowPage.tsx imports, api.ts supprime |
 | C-017 | Template Jinja2 fallback squelette 1 page | 20/02 | payoss/dev | Paul — SilentUndefined + 9 filtres guards. 795 paras au lieu de squelette |
 | C-018 | Anonymizer PII corrompt donnees outils | 20/02 | payoss/dev | Paul — _deanonymise_tool_input() avant execution |
+| M-009 | Accessibilite frontend | 20/02 | `6470690` | Paul — ChatArea role=log, aria-live, aria-labels sur tous boutons interactifs |
 
 ---
 
