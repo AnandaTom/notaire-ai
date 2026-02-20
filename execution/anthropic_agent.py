@@ -220,6 +220,22 @@ hors copro ou terrain utilise TOUJOURS le template viager. Detection par 6 marqu
 
 ---
 
+## REGLE ABSOLUE — UTILISATION OBLIGATOIRE DES OUTILS (tool_use)
+Tu es un agent avec des outils. Tu DOIS les utiliser a CHAQUE message. \
+NE JAMAIS repondre en texte seul quand un outil est applicable.
+
+**Quand le notaire dit quelque chose** → tu DOIS appeler au minimum UN outil :
+- Il mentionne un bien/type d'acte → `detect_property_type`
+- Il fournit des infos (noms, adresses, prix) → `submit_answers`
+- Il demande "generer"/"creer"/"telecharger" → `generate_document` (avec force=true si donnees incompletes)
+- Tu ne sais pas ou tu en es → `get_collection_progress`
+- Tu veux savoir quelles questions poser → `get_questions`
+
+**INTERDIT** : Repondre uniquement avec du texte quand le notaire a fourni des informations concretes. \
+Toute information recue DOIT etre enregistree via `submit_answers` AVANT de repondre.
+
+---
+
 ## REGLE CRITIQUE N°1 — Enregistrement des donnees
 AVANT de generer un document, tu DOIS TOUJOURS appeler submit_answers pour enregistrer \
 les informations fournies par le notaire. Sinon, le document sera VIDE.
@@ -239,6 +255,17 @@ Phrases declencheuses: "genere quand meme", "genere le document", "telecharger m
 "force la generation", "je veux generer", "generer avec les infos actuelles".
 MAIS TOUJOURS appeler submit_answers AVANT generate_document avec les donnees deja collectees.
 Affiche un avertissement sur les champs manquants mais genere le fichier DOCX.
+
+---
+
+## OPTIMISATION VITESSE — Minimiser les appels outils
+Pour repondre rapidement au notaire :
+- **submit_answers** : appeler UNE SEULE FOIS par message avec TOUTES les donnees recues
+- **get_questions** : NE PAS appeler sauf si tu ne sais vraiment pas quoi demander. \
+Tu connais le workflow (identite, bien, prix, copro, conditions). Pose les questions de memoire.
+- **get_collection_progress** : seulement tous les 3-4 echanges, pas a chaque message
+- **detect_property_type** : inutile si categorie_bien est deja dans le contexte session
+- **Ideal** : 1 seul appel outil (submit_answers) puis reponse texte directe
 
 ---
 
@@ -468,6 +495,12 @@ class AnthropicAgent:
             parts.append(f"- Type d'acte: {agent_state['type_acte']}")
         if agent_state.get("categorie_bien"):
             parts.append(f"- Categorie de bien: {agent_state['categorie_bien']}")
+            # Hint: ne pas re-appeler detect_property_type
+            if not agent_state.get("donnees_collectees"):
+                parts.append(
+                    "→ detect_property_type DEJA effectue. "
+                    "Utilise submit_answers pour enregistrer les infos du message."
+                )
         if agent_state.get("progress_pct") is not None:
             parts.append(f"- Progression collecte: {agent_state['progress_pct']}%")
         if agent_state.get("fichier_genere"):
@@ -730,6 +763,177 @@ class AnthropicAgent:
 
         return resume
 
+    # =========================================================================
+    # Pre-traitement local (economie de round-trips Claude)
+    # =========================================================================
+
+    def _pre_process_message(
+        self, message: str, agent_state: Dict, executor
+    ) -> Dict:
+        """Pre-traitement local du message avant envoi a Claude.
+
+        Detecte le type d'acte et la categorie de bien par mots-cles,
+        puis appelle detect_property_type et submit_answers localement.
+        Economise 1-2 round-trips Claude API (~5-10s) sur le premier message.
+        """
+        msg_lower = message.lower().strip()
+        result = {"pre_detected": False, "pre_submitted": False}
+
+        # 1. Detecter type_acte par mots-cles
+        if not agent_state.get("type_acte"):
+            # Ordre important: patterns plus specifiques en premier
+            type_patterns = [
+                ("promesse_vente", [
+                    "promesse de vente", "promesse", "compromis",
+                    "compromis de vente",
+                ]),
+                ("vente", [
+                    "acte de vente", "vente définitive", "vente definitive",
+                    "acte définitif", "acte definitif",
+                ]),
+            ]
+            for type_acte, keywords in type_patterns:
+                if any(kw in msg_lower for kw in keywords):
+                    agent_state["type_acte"] = type_acte
+                    result["pre_detected"] = True
+                    logger.info(f"[PRE-PROCESS] Type d'acte detecte: {type_acte}")
+                    break
+
+        # 2. Detecter categorie de bien par mots-cles
+        detected_type_bien = None
+        if not agent_state.get("categorie_bien"):
+            category_keywords = {
+                "appartement": "appartement",
+                "studio": "appartement",
+                "lot de copropriete": "appartement",
+                "lot de copropriété": "appartement",
+                "maison": "maison",
+                "villa": "maison",
+                "pavillon": "maison",
+                "terrain": "terrain",
+                "lotissement": "terrain",
+                "parcelle": "terrain",
+            }
+
+            for keyword, type_bien in category_keywords.items():
+                if keyword in msg_lower:
+                    detected_type_bien = type_bien
+                    try:
+                        tool_result = executor.execute(
+                            "detect_property_type",
+                            {"bien": {"type": type_bien}},
+                            agent_state,
+                        )
+                        result["pre_detected"] = True
+                        result["category"] = tool_result.get("categorie")
+                        logger.info(
+                            f"[PRE-PROCESS] Categorie detectee: "
+                            f"{tool_result.get('categorie')}"
+                        )
+                    except Exception as e:
+                        logger.warning(
+                            f"[PRE-PROCESS] Detection categorie echouee: {e}"
+                        )
+                    break
+
+        # 3. Pre-soumettre les donnees basiques si detectees
+        #    Objectif: Claude peut repondre directement sans appeler submit_answers
+        if result["pre_detected"] and not agent_state.get("donnees_collectees"):
+            pre_data = {}
+
+            # Type de bien
+            if detected_type_bien:
+                pre_data["bien"] = {"type_bien": detected_type_bien}
+
+            # Extraction basique du prix (regex)
+            import re
+            prix_match = re.search(
+                r'(?:prix|montant)\s*(?:de\s+|:?\s*)(\d[\d\s]*\d?)\s*(?:€|euros?|EUR)',
+                message, re.IGNORECASE
+            )
+            if prix_match:
+                prix_str = prix_match.group(1).replace(" ", "")
+                try:
+                    pre_data["prix"] = {"montant": int(prix_str)}
+                except ValueError:
+                    pass
+
+            if pre_data:
+                try:
+                    submit_result = executor.execute(
+                        "submit_answers",
+                        {"answers": pre_data},
+                        agent_state,
+                    )
+                    result["pre_submitted"] = True
+                    logger.info(
+                        f"[PRE-PROCESS] Donnees pre-soumises: "
+                        f"{list(pre_data.keys())} → accepted={submit_result.get('accepted')}"
+                    )
+                except Exception as e:
+                    logger.warning(f"[PRE-PROCESS] Pre-submit echoue: {e}")
+
+        return result
+
+    def _should_force_tool(
+        self, message: str, agent_state: Dict, pre_info: Dict
+    ) -> bool:
+        """Determine si tool_choice:'any' doit etre utilise.
+
+        Retourne False pour:
+        - Salutations simples (pas besoin de tools)
+        - Donnees deja collectees (Claude sait utiliser tools sans forçage)
+        - Pre-processing a deja soumis des donnees
+        """
+        # Si donnees deja collectees (pre-submit ou historique), pas de forçage
+        if agent_state.get("donnees_collectees"):
+            return False
+
+        # Salutations → pas de forçage
+        msg_lower = message.lower().strip()
+        greetings = [
+            "bonjour", "bonsoir", "salut", "hello", "coucou",
+            "hi", "hey", "bonne journée", "bonne soirée",
+        ]
+        if any(msg_lower.startswith(g) for g in greetings) and len(msg_lower) < 40:
+            return False
+
+        # Message substantiel sans donnees pre-existantes → forcer
+        return True
+
+    @staticmethod
+    def _deanonymise_tool_input(tool_input: Dict, anon_mapping) -> Dict:
+        """Dé-anonymise les valeurs dans un tool_input avant exécution.
+
+        L'anonymizer remplace les noms/adresses dans le message utilisateur
+        AVANT envoi à Claude. Claude appelle donc ses outils avec des tokens
+        anonymisés ([PERSONNE_1], [ADRESSE_1]...). On doit restaurer les
+        vraies valeurs avant que les données soient stockées.
+        """
+        if not anon_mapping:
+            return tool_input
+
+        reverse_map = anon_mapping.get_reverse_mapping()
+        if not reverse_map:
+            return tool_input
+
+        import copy
+        result = copy.deepcopy(tool_input)
+
+        def _deano(obj):
+            if isinstance(obj, str):
+                for token, original in reverse_map.items():
+                    if token in obj:
+                        obj = obj.replace(token, original)
+                return obj
+            elif isinstance(obj, dict):
+                return {k: _deano(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [_deano(item) for item in obj]
+            return obj
+
+        return _deano(result)
+
     def _get_tool_status(self, tool_name: str, agent_state: Dict) -> str:
         """
         Génère un message de statut contextuel pour un outil.
@@ -801,27 +1005,43 @@ class AnthropicAgent:
         # 2. Preparer les messages
         messages = self._prepare_messages(message, history or [])
 
-        # 3. System prompt dynamique avec prompt caching
+        # 3. Tool executor (avant pre-processing qui en a besoin)
+        executor = ToolExecutor(etude_id=etude_id, supabase_client=self.supabase)
+
+        # 4. Pre-traitement local — economise 1 round-trip (~3-6s)
+        pre_info = self._pre_process_message(message, agent_state, executor)
+
+        # 5. System prompt dynamique (apres pre-processing qui peut modifier agent_state)
         cached_system = self._build_cached_system(agent_state)
         cached_tools = self._get_cached_tools()
 
-        # 4. Tool executor
-        executor = ToolExecutor(etude_id=etude_id, supabase_client=self.supabase)
+        # Retirer detect_property_type des tools si categorie deja connue
+        if agent_state.get("categorie_bien"):
+            cached_tools = [
+                t for t in cached_tools
+                if t.get("name") != "detect_property_type"
+            ]
 
-        # 5. Boucle agentic
+        # 6. Boucle agentic
         client = self._get_client()
         iteration = 0
+        force_tool = self._should_force_tool(message, agent_state, pre_info)
 
         while iteration < MAX_TOOL_ITERATIONS:
             iteration += 1
 
-            response = await client.messages.create(
+            # tool_choice: "any" force le LLM a utiliser au moins un outil
+            api_kwargs = dict(
                 model=MODEL,
                 max_tokens=MAX_OUTPUT_TOKENS,
                 system=cached_system,
                 tools=cached_tools,
                 messages=messages,
             )
+            if force_tool and iteration == 1:
+                api_kwargs["tool_choice"] = {"type": "any"}
+
+            response = await client.messages.create(**api_kwargs)
 
             if response.stop_reason == "end_turn":
                 # Reponse finale en texte
@@ -856,9 +1076,14 @@ class AnthropicAgent:
                             f"{block.name}({json.dumps(block.input, ensure_ascii=False)[:200]})"
                         )
 
+                        # Dé-anonymiser les inputs (noms, adresses)
+                        real_input = self._deanonymise_tool_input(
+                            block.input, anon_mapping
+                        )
+
                         result = executor.execute(
                             tool_name=block.name,
-                            tool_input=block.input,
+                            tool_input=real_input,
                             agent_state=agent_state,
                         )
 
@@ -941,16 +1166,35 @@ class AnthropicAgent:
         # 2. Preparer les messages
         messages = self._prepare_messages(message, history or [])
 
-        # 3. System + tools avec cache
+        # 3. Tool executor (avant pre-processing qui en a besoin)
+        executor = ToolExecutor(etude_id=etude_id, supabase_client=self.supabase)
+
+        # 4. Pre-traitement local — economise 1 round-trip (~3-6s)
+        pre_info = self._pre_process_message(message, agent_state, executor)
+        if pre_info.get("pre_detected"):
+            yield {
+                "event": "status",
+                "data": json.dumps({"message": "Détection du type de bien..."}),
+            }
+
+        # 5. System + tools avec cache (apres pre-processing)
         cached_system = self._build_cached_system(agent_state)
         cached_tools = self._get_cached_tools()
 
-        # 4. Tool executor
-        executor = ToolExecutor(etude_id=etude_id, supabase_client=self.supabase)
+        # Retirer detect_property_type des tools si categorie deja connue
+        if agent_state.get("categorie_bien"):
+            cached_tools = [
+                t for t in cached_tools
+                if t.get("name") != "detect_property_type"
+            ]
 
-        # 5. Boucle agentic avec streaming
+        # 6. Boucle agentic avec streaming
         client = self._get_client()
         iteration = 0
+        force_tool = self._should_force_tool(message, agent_state, pre_info)
+
+        # Accumuler TOUT le texte streame a travers les iterations
+        all_streamed_text = []
 
         while iteration < MAX_TOOL_ITERATIONS:
             iteration += 1
@@ -958,20 +1202,30 @@ class AnthropicAgent:
             # Streaming API call
             collected_text = []
 
-            async with client.messages.stream(
+            stream_kwargs = dict(
                 model=MODEL,
                 max_tokens=MAX_OUTPUT_TOKENS,
                 system=cached_system,
                 tools=cached_tools,
                 messages=messages,
-            ) as stream:
+            )
+            if force_tool and iteration == 1:
+                stream_kwargs["tool_choice"] = {"type": "any"}
+
+            async with client.messages.stream(**stream_kwargs) as stream:
                 async for text in stream.text_stream:
                     collected_text.append(text)
+                    all_streamed_text.append(text)
+                    # Stream tokens immediatement pour latence percue
+                    yield {
+                        "event": "token",
+                        "data": json.dumps({"text": text}),
+                    }
                 response = await stream.get_final_message()
 
             if response.stop_reason == "end_turn":
-                # Reponse finale
-                final_text = "".join(collected_text)
+                # Reponse finale — texte deja streame token par token
+                final_text = "".join(all_streamed_text)
 
                 # De-anonymiser la reponse (RGPD)
                 if ANONYMIZER_AVAILABLE and anon_mapping and anonymizer:
@@ -984,15 +1238,7 @@ class AnthropicAgent:
 
                 parsed = self._parse_response(final_text, agent_state)
 
-                # Envoyer le texte en chunks
-                chunk_size = 20
-                for i in range(0, len(parsed.content), chunk_size):
-                    yield {
-                        "event": "token",
-                        "data": json.dumps({"text": parsed.content[i:i + chunk_size]}),
-                    }
-
-                # Metadata finale
+                # Metadata finale (content de-anonymise pour le frontend)
                 yield {
                     "event": "done",
                     "data": json.dumps({
@@ -1028,12 +1274,17 @@ class AnthropicAgent:
                             f"{block.name}({json.dumps(block.input, ensure_ascii=False)[:200]})"
                         )
 
+                        # Dé-anonymiser les inputs (noms, adresses)
+                        real_input = self._deanonymise_tool_input(
+                            block.input, anon_mapping
+                        )
+
                         # asyncio.to_thread libere l'event loop pendant
                         # l'execution (permet a sse-starlette d'envoyer des pings)
                         result = await asyncio.to_thread(
                             executor.execute,
                             tool_name=block.name,
-                            tool_input=block.input,
+                            tool_input=real_input,
                             agent_state=agent_state,
                         )
 

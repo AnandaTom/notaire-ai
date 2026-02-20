@@ -1232,6 +1232,91 @@ class GestionnairePromesses:
             donnees_enrichies["_type_promesse"] = type_promesse.value
             donnees_enrichies["_categorie_bien"] = categorie.value
 
+            # --- Normalisation des types de données avant assemblage ---
+            # origine_propriete: dict → list (le template itère avec {% for %})
+            op = donnees_enrichies.get("origine_propriete")
+            if isinstance(op, dict) and op:
+                donnees_enrichies["origine_propriete"] = [op]
+            elif not isinstance(op, list):
+                donnees_enrichies["origine_propriete"] = []
+
+            # bien.servitudes: string → list ou suppression
+            bien = donnees_enrichies.get("bien", {})
+            if isinstance(bien.get("servitudes"), str):
+                val = bien["servitudes"].lower().strip()
+                if val in ("aucune", "néant", "neant", "non", ""):
+                    bien["servitudes"] = []
+                else:
+                    bien["servitudes"] = [{"type": "passive", "nature": val, "description": val}]
+
+            # promettants/beneficiaires: garantir que ce sont des listes de dicts
+            for key in ("promettants", "beneficiaires", "vendeurs", "acquereurs"):
+                val = donnees_enrichies.get(key)
+                if isinstance(val, dict):
+                    donnees_enrichies[key] = [val]
+                elif isinstance(val, list):
+                    donnees_enrichies[key] = [
+                        item for item in val if isinstance(item, dict)
+                    ]
+
+            # lots (racine): fusionner dans bien.lots si absent
+            if "lots" in donnees_enrichies and isinstance(donnees_enrichies["lots"], list):
+                if "bien" in donnees_enrichies and not donnees_enrichies["bien"].get("lots"):
+                    donnees_enrichies["bien"]["lots"] = donnees_enrichies["lots"]
+
+            # quotites: normaliser en quotites_vendues/quotites_acquises
+            quotites = donnees_enrichies.get("quotites", {})
+            if isinstance(quotites, dict):
+                if "vendues" in quotites and "quotites_vendues" not in donnees_enrichies:
+                    donnees_enrichies["quotites_vendues"] = quotites["vendues"]
+                if "acquises" in quotites and "quotites_acquises" not in donnees_enrichies:
+                    donnees_enrichies["quotites_acquises"] = quotites["acquises"]
+                if "beneficiaire" in quotites and "quotites_acquises" not in donnees_enrichies:
+                    donnees_enrichies["quotites_acquises"] = quotites["beneficiaire"]
+
+            # acte: normaliser la structure (date string → dict, defaults notaire)
+            acte = donnees_enrichies.get("acte", {})
+            if not isinstance(acte, dict):
+                acte = {}
+            # Date: convertir string "YYYY-MM-DD" → dict {jour, mois, annee}
+            date_val = acte.get("date", "")
+            if isinstance(date_val, str) and date_val:
+                try:
+                    parts = date_val.split("-")
+                    if len(parts) == 3:
+                        acte["date"] = {
+                            "jour": int(parts[2]),
+                            "mois": int(parts[1]),
+                            "annee": int(parts[0]),
+                        }
+                    elif "/" in date_val:
+                        parts = date_val.split("/")
+                        if len(parts) == 3:
+                            acte["date"] = {
+                                "jour": int(parts[0]),
+                                "mois": int(parts[1]),
+                                "annee": int(parts[2]),
+                            }
+                except (ValueError, IndexError):
+                    pass
+            if not isinstance(acte.get("date"), dict):
+                from datetime import datetime as dt
+                now = dt.now()
+                acte["date"] = {"jour": now.day, "mois": now.month, "annee": now.year}
+            # Notaire: defaults minimaux si absent
+            if "notaire" not in acte or not isinstance(acte.get("notaire"), dict):
+                acte["notaire"] = {
+                    "nom": "[NOM NOTAIRE]",
+                    "prenom": "[PRENOM]",
+                    "civilite": "Maître",
+                    "ville": acte.get("lieu", "[VILLE]"),
+                    "departement": "[DEPARTEMENT]",
+                    "adresse": "[ADRESSE ETUDE]",
+                    "societe": "[SOCIETE]",
+                    "crpcen": "[CRPCEN]",
+                }
+            donnees_enrichies["acte"] = acte
+
             result_paths = assembler_acte(
                 template=template_path.name,
                 donnees=donnees_enrichies,
@@ -1348,18 +1433,9 @@ class GestionnairePromesses:
                 self._sauvegarder_promesse_supabase(
                     donnees, type_promesse, fichier_md, fichier_docx
                 )
-            except AttributeError as e:
-                # Client Supabase mal configuré
-                logger.warning(f"Client Supabase invalide: {e}")
-                warnings.append(f"Sauvegarde Supabase échouée (client invalide): {e}")
-            except (KeyError, TypeError) as e:
-                # Données invalides pour Supabase
-                logger.warning(f"Données invalides pour Supabase: {e}")
-                warnings.append(f"Données invalides pour sauvegarde: {e}")
-            except ConnectionError as e:
-                # Problème réseau
-                logger.warning(f"Connexion Supabase échouée: {e}")
-                warnings.append(f"Connexion Supabase échouée: {e}")
+            except Exception as e:
+                logger.warning(f"Sauvegarde Supabase échouée: {e}")
+                warnings.append(f"Sauvegarde Supabase: {e}")
 
         duree = time.time() - start
 
@@ -1488,6 +1564,8 @@ Prix de vente: {donnees.get("prix", {}).get("montant", "À définir")} EUR
 
         lignes = []
         for p in parties:
+            if not isinstance(p, dict):
+                continue
             nom = f"{p.get('nom', '')} {p.get('prenoms', '')}".strip()
             if p.get("adresse"):
                 nom += f"\n  Demeurant: {p.get('adresse')}"
@@ -1518,20 +1596,28 @@ Prix de vente: {donnees.get("prix", {}).get("montant", "À définir")} EUR
         fichier_md: Path,
         fichier_docx: Optional[Path]
     ):
-        """Sauvegarde la promesse générée dans Supabase."""
+        """Sauvegarde la promesse générée dans Supabase (table actes_generes)."""
         if not self.supabase:
             return
 
-        self.supabase.table("promesses_generees").insert({
-            "type_promesse": type_promesse.value,
-            "promettants": donnees.get("promettants"),
-            "beneficiaires": donnees.get("beneficiaires"),
-            "bien": donnees.get("bien"),
-            "prix": donnees.get("prix"),
-            "fichier_md": str(fichier_md) if fichier_md else None,
-            "fichier_docx": str(fichier_docx) if fichier_docx else None,
-            "created_at": datetime.now().isoformat()
-        }).execute()
+        try:
+            self.supabase.table("actes_generes").insert({
+                "etude_id": donnees.get("_etude_id") or donnees.get("etude_id"),
+                "type_acte": "promesse_vente",
+                "nom": f"Promesse {type_promesse.value}",
+                "donnees_utilisees": {
+                    "type_promesse": type_promesse.value,
+                    "promettants": donnees.get("promettants"),
+                    "beneficiaires": donnees.get("beneficiaires"),
+                    "bien": donnees.get("bien"),
+                    "prix": donnees.get("prix"),
+                },
+                "fichier_md": str(fichier_md) if fichier_md else None,
+                "fichier_docx": str(fichier_docx) if fichier_docx else None,
+                "status": "genere",
+            }).execute()
+        except Exception as e:
+            logger.warning(f"Sauvegarde actes_generes échouée: {e}")
 
     # =========================================================================
     # PROFILS PRÉDÉFINIS

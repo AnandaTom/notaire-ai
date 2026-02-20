@@ -12,7 +12,13 @@
 | ID | Probleme | Fichier | Qui | Ouvert le | Notes |
 |----|----------|---------|-----|-----------|-------|
 | C-011b | ~~Cles anon Supabase REGRESSEES par merge~~ | 6 fichiers legacy | Paul | 19/02 | **PARTIELLEMENT FERME 19/02** — persist import + api.ts + WorkflowPage imports corriges. Legacy files a re-supprimer separement |
-| C-012 | Chatbot boucle — zero memoire entre tours | `chat_handler.py`, `page.tsx`, `anthropic_agent.py`, `anthropic_tools.py` | Paul | 19/02 | **FERME 19/02** — 6 fixes: guard etude_id, auth frontend, nested submit, contexte enrichi, migration Supabase |
+| C-012 | Chatbot boucle — zero memoire entre tours | `chat_handler.py`, `page.tsx`, `anthropic_agent.py`, `anthropic_tools.py` | Paul | 19/02 | **FERME 19/02** — 6 fixes + fix Supabase client Modal (ClientOptions compat) |
+| C-013 | Supabase client crash sur Modal (ClientOptions) | `supabase_client.py` | Paul | 19/02 | **FERME 19/02** — fallback sans ClientOptions + cache fix |
+| C-014 | LLM n'utilise pas ses outils (tool_calls_made=0) | `anthropic_agent.py` | Paul | 19/02 | **FERME 19/02** — tool_choice:any + SYSTEM_PROMPT renforce |
+| C-015 | Generation DOCX crash 'list' has no attribute 'get' | `gestionnaire_promesses.py`, `assembler_acte.py` | Paul | 19/02 | **FERME 19/02** — normalisation donnees + guards defensifs |
+| C-016 | Table promesses_generees n'existe pas (404) | `gestionnaire_promesses.py` | Paul | 19/02 | **FERME 19/02** — redirige vers actes_generes |
+| C-017 | ~~Template Jinja2 crashe → fallback squelette 1 page~~ | `assembler_acte.py` | Paul | 20/02 | **FERME 20/02** — SilentUndefined + 9 filtres guards (isinstance Undefined). 795 paragraphes au lieu de 1 page |
+| C-018 | ~~Anonymizer PII corrompt les donnees outils~~ | `anthropic_agent.py`, `chat_anonymizer.py` | Paul | 20/02 | **FERME 20/02** — _deanonymise_tool_input() avant executor.execute() dans streaming + non-streaming |
 
 ### IMPORTANT
 
@@ -82,6 +88,8 @@
 | I-016 | Secret github-credentials manquant Modal | 19/02 | TODO **Tom** | Tom (Paul dit que c'est un ptit coquin) — Creer fine-grained token GitHub (repo AnandaTom/notaire-ai only, Contents read-only) puis ajouter sur modal.com/secrets/notomai secret_name=github-credentials cle=GITHUB_TOKEN. Decommenter deployment_modal/modal_app.py L65 apres |
 | C-012 | Chatbot boucle (5 causes racines) | 19/02 | payoss/dev | Paul — Fix 0-5: migration, guard, auth, nested, contexte, history |
 | C-011b-fix | Merge regressions: persist, imports, api.ts | 19/02 | payoss/dev | Paul — workflowStore.ts persist restore, WorkflowPage.tsx imports, api.ts supprime |
+| C-017 | Template Jinja2 fallback squelette 1 page | 20/02 | payoss/dev | Paul — SilentUndefined + 9 filtres guards. 795 paras au lieu de squelette |
+| C-018 | Anonymizer PII corrompt donnees outils | 20/02 | payoss/dev | Paul — _deanonymise_tool_input() avant execution |
 
 ---
 

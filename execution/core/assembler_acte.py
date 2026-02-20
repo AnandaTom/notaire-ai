@@ -34,8 +34,51 @@ from pathlib import Path
 from datetime import datetime
 from copy import deepcopy
 from typing import Dict, Any, Optional
-from jinja2 import Environment, FileSystemLoader, TemplateNotFound, UndefinedError
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound, UndefinedError, Undefined
 from functools import lru_cache
+
+
+class SilentUndefined(Undefined):
+    """Undefined tolérant : rend '' au lieu de crasher.
+
+    Permet au template Jinja2 de se rendre entièrement même si des variables
+    manquent. Les variables absentes deviennent simplement vides dans le document.
+    """
+
+    def _fail_with_undefined_error(self, *args, **kwargs):
+        return ""
+
+    def __str__(self):
+        return ""
+
+    def __iter__(self):
+        return iter([])
+
+    def __bool__(self):
+        return False
+
+    def __getattr__(self, name):
+        if name.startswith('_'):
+            raise AttributeError(name)
+        return self
+
+    def __call__(self, *args, **kwargs):
+        return self
+
+    def __int__(self):
+        return 0
+
+    def __float__(self):
+        return 0.0
+
+    def __eq__(self, other):
+        return isinstance(other, Undefined) or other == "" or other is None
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return id(type(self))
 
 
 # ==============================================================================
@@ -72,6 +115,7 @@ def _creer_environnement(dossier_templates: str, zones_grisees: bool) -> Environ
             str(dossier / 'sections'),
             str(dossier.parent / 'clauses')
         ]),
+        undefined=SilentUndefined,
         trim_blocks=True,
         lstrip_blocks=True,
         keep_trailing_newline=True,
@@ -94,7 +138,7 @@ def _creer_environnement(dossier_templates: str, zones_grisees: bool) -> Environ
 
 def _finalize_avec_marqueurs(valeur):
     """Encadre les valeurs avec marqueurs pour fond gris DOCX."""
-    if valeur is None:
+    if valeur is None or isinstance(valeur, Undefined):
         return ''
     str_valeur = str(valeur)
     if not str_valeur.strip():
@@ -106,7 +150,7 @@ def _finalize_avec_marqueurs(valeur):
 
 def _finalize_standard(valeur):
     """Finalize standard (sans marqueurs)."""
-    if valeur is None:
+    if valeur is None or isinstance(valeur, Undefined):
         return ''
     return str(valeur)
 
@@ -153,6 +197,12 @@ def nombre_en_lettres(n: int) -> str:
     Returns:
         Nombre en toutes lettres
     """
+    if isinstance(n, Undefined) or n is None:
+        return ''
+    try:
+        n = int(n)
+    except (ValueError, TypeError):
+        return str(n)
     if n < 0:
         return 'moins ' + nombre_en_lettres(-n)
     if n == 0:
@@ -220,6 +270,12 @@ def montant_en_lettres(montant: float, devise: str = 'EUR') -> str:
     Returns:
         Montant en toutes lettres
     """
+    if isinstance(montant, Undefined) or montant is None:
+        return ''
+    try:
+        montant = float(montant)
+    except (ValueError, TypeError):
+        return str(montant)
     partie_entiere = int(montant)
     partie_decimale = round((montant - partie_entiere) * 100)
 
@@ -253,7 +309,7 @@ def format_nombre(n: float) -> str:
     Returns:
         Nombre formaté (ex: 245 000,00)
     """
-    if n is None:
+    if isinstance(n, Undefined) or n is None:
         return ''
     if isinstance(n, int):
         return f"{n:,}".replace(',', ' ')
@@ -270,8 +326,10 @@ def date_en_lettres(date_str: str) -> str:
     Returns:
         Date en toutes lettres
     """
+    if isinstance(date_str, Undefined) or date_str is None:
+        return ''
     try:
-        if '-' in date_str:
+        if '-' in str(date_str):
             annee, mois, jour = date_str.split('-')
         else:
             jour, mois, annee = date_str.split('/')
@@ -297,6 +355,8 @@ def annee_en_lettres(annee: int) -> str:
     Returns:
         Année en lettres majuscules (ex: DEUX MILLE VINGT-CINQ)
     """
+    if isinstance(annee, Undefined) or annee is None:
+        return ''
     return nombre_en_lettres(annee).upper()
 
 
@@ -310,6 +370,8 @@ def numero_lot_en_lettres(numero: int) -> str:
     Returns:
         Numéro en lettres (ex: quatorze)
     """
+    if isinstance(numero, Undefined) or numero is None:
+        return ''
     return nombre_en_lettres(numero)
 
 
@@ -323,6 +385,12 @@ def mois_en_lettres(mois: int) -> str:
     Returns:
         Nom du mois (ex: janvier)
     """
+    if isinstance(mois, Undefined) or mois is None:
+        return ''
+    try:
+        mois = int(mois)
+    except (ValueError, TypeError):
+        return str(mois)
     if 1 <= mois <= 12:
         return MOIS_NOMS[mois]
     return str(mois)
@@ -338,6 +406,12 @@ def jour_en_lettres(jour: int) -> str:
     Returns:
         Jour en lettres (ex: quinze, premier pour 1)
     """
+    if isinstance(jour, Undefined) or jour is None:
+        return ''
+    try:
+        jour = int(jour)
+    except (ValueError, TypeError):
+        return str(jour)
     if jour == 1:
         return 'premier'
     return nombre_en_lettres(jour)
@@ -354,7 +428,7 @@ def format_date(date_str: str, format: str = "long") -> str:
     Returns:
         Date formatee
     """
-    if not date_str:
+    if isinstance(date_str, Undefined) or not date_str:
         return ''
 
     try:
@@ -477,22 +551,30 @@ class AssembleurActe:
 
         # Générer les numéros de lots en lettres
         if 'bien' in donnees_enrichies and 'lots' in donnees_enrichies['bien']:
-            for lot in donnees_enrichies['bien']['lots']:
-                if 'numero' in lot:
-                    lot['numero_lettres'] = numero_lot_en_lettres(lot['numero'])
-                if 'tantiemes' in lot and 'valeur' in lot['tantiemes']:
-                    lot['tantiemes']['valeur_lettres'] = nombre_en_lettres(lot['tantiemes']['valeur'])
+            lots = donnees_enrichies['bien']['lots']
+            if isinstance(lots, list):
+                for lot in lots:
+                    if not isinstance(lot, dict):
+                        continue
+                    if 'numero' in lot:
+                        lot['numero_lettres'] = numero_lot_en_lettres(lot['numero'])
+                    if 'tantiemes' in lot and isinstance(lot['tantiemes'], dict) and 'valeur' in lot['tantiemes']:
+                        lot['tantiemes']['valeur_lettres'] = nombre_en_lettres(lot['tantiemes']['valeur'])
 
         # Générer les montants de prêts en lettres
         if 'paiement' in donnees_enrichies and 'prets' in donnees_enrichies['paiement']:
-            for pret in donnees_enrichies['paiement']['prets']:
-                if 'montant' in pret:
-                    pret['montant_lettres'] = montant_en_lettres(pret['montant'])
+            prets = donnees_enrichies['paiement']['prets']
+            if isinstance(prets, list):
+                for pret in prets:
+                    if not isinstance(pret, dict):
+                        continue
+                    if 'montant' in pret:
+                        pret['montant_lettres'] = montant_en_lettres(pret['montant'])
 
-            # Total emprunté
-            total_emprunte = sum(p.get('montant', 0) for p in donnees_enrichies['paiement']['prets'])
-            donnees_enrichies['paiement']['fonds_empruntes'] = total_emprunte
-            donnees_enrichies['paiement']['fonds_empruntes_lettres'] = montant_en_lettres(total_emprunte)
+                # Total emprunté
+                total_emprunte = sum(p.get('montant', 0) for p in prets if isinstance(p, dict))
+                donnees_enrichies['paiement']['fonds_empruntes'] = total_emprunte
+                donnees_enrichies['paiement']['fonds_empruntes_lettres'] = montant_en_lettres(total_emprunte)
 
         # Libellés des types de propriété
         types_libelles = {
@@ -502,8 +584,10 @@ class AssembleurActe:
         }
 
         for cle in ['quotites_vendues', 'quotites_acquises']:
-            if cle in donnees_enrichies:
+            if cle in donnees_enrichies and isinstance(donnees_enrichies[cle], list):
                 for quotite in donnees_enrichies[cle]:
+                    if not isinstance(quotite, dict):
+                        continue
                     if 'type_propriete' in quotite:
                         quotite['type_propriete_libelle'] = types_libelles.get(
                             quotite['type_propriete'], quotite['type_propriete']
@@ -540,12 +624,20 @@ class AssembleurActe:
         }
 
         if 'origine_propriete' in donnees_enrichies:
-            for origine in donnees_enrichies['origine_propriete']:
-                if 'origine_immediate' in origine and 'type' in origine['origine_immediate']:
-                    origine['origine_immediate']['type_libelle'] = origines_libelles.get(
-                        origine['origine_immediate']['type'],
-                        origine['origine_immediate']['type']
-                    )
+            op = donnees_enrichies['origine_propriete']
+            # Normaliser: dict → list
+            if isinstance(op, dict):
+                op = [op]
+                donnees_enrichies['origine_propriete'] = op
+            if isinstance(op, list):
+                for origine in op:
+                    if not isinstance(origine, dict):
+                        continue
+                    if 'origine_immediate' in origine and isinstance(origine['origine_immediate'], dict) and 'type' in origine['origine_immediate']:
+                        origine['origine_immediate']['type_libelle'] = origines_libelles.get(
+                            origine['origine_immediate']['type'],
+                            origine['origine_immediate']['type']
+                        )
 
         return donnees_enrichies
 

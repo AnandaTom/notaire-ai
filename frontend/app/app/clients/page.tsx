@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Plus, Search, Users, ArrowLeft, RefreshCw, Building2, User } from 'lucide-react'
+import { Plus, Search, Users, RefreshCw, Building2, User } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import ClientCard from '@/components/ClientCard'
 import type { Client } from '@/types'
@@ -127,36 +127,7 @@ export default function ClientsPage() {
   const moralesCount = useMemo(() => clients.filter((c) => c.type_personne === 'morale').length, [clients])
 
   return (
-    <div className="min-h-screen bg-ivory">
-      {/* Header */}
-      <header className="bg-white border-b border-champagne px-8 py-5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/app" className="p-2 hover:bg-sand rounded-xl transition-colors">
-              <ArrowLeft className="w-5 h-5 text-slate" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-sand rounded-xl flex items-center justify-center">
-                <Users className="w-5 h-5 text-gold-dark" />
-              </div>
-              <div>
-                <h1 className="font-serif text-2xl text-charcoal font-semibold">Mes Clients</h1>
-                <p className="text-[0.8rem] text-slate">
-                  {physiquesCount} personne{physiquesCount > 1 ? 's' : ''} physique{physiquesCount > 1 ? 's' : ''}, {moralesCount} personne{moralesCount > 1 ? 's' : ''} morale{moralesCount > 1 ? 's' : ''}
-                </p>
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium text-[0.85rem]"
-          >
-            <Plus className="w-4 h-4" />
-            Ajouter un client
-          </button>
-        </div>
-      </header>
-
+    <>
       {/* Stats */}
       <div className="bg-white border-b border-champagne px-8 py-4">
         <div className="max-w-6xl mx-auto flex items-center gap-6">
@@ -213,11 +184,19 @@ export default function ClientsPage() {
           >
             <RefreshCw className={`w-4 h-4 text-slate ${isLoading ? 'animate-spin' : ''}`} />
           </button>
+
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium text-[0.85rem]"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter un client
+          </button>
         </div>
       </div>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-8 py-8">
+      <div className="max-w-6xl mx-auto px-8 py-8">
         {error && (
           <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[0.85rem]">
             {error}
@@ -264,7 +243,7 @@ export default function ClientsPage() {
             ))}
           </div>
         )}
-      </main>
+      </div>
 
       {/* Add Client Modal (simple version) */}
       {showAddModal && (
@@ -283,7 +262,7 @@ export default function ClientsPage() {
                 Fermer
               </button>
               <Link
-                href="/app"
+                href="/app/chat"
                 className="flex-1 px-4 py-2.5 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors text-center font-medium"
               >
                 Aller au chatbot
@@ -292,6 +271,6 @@ export default function ClientsPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

@@ -22,6 +22,23 @@ module.exports = {
         navy: {
           DEFAULT: '#1e3a5f',
           light: '#2d4a6f',
+          active: '#243D5C',
+        },
+        success: {
+          DEFAULT: '#16a34a',
+          light: '#dcfce7',
+        },
+        warning: {
+          DEFAULT: '#d97706',
+          light: '#fef3c7',
+        },
+        error: {
+          DEFAULT: '#dc2626',
+          light: '#fee2e2',
+        },
+        info: {
+          DEFAULT: '#2563eb',
+          light: '#dbeafe',
         },
       },
       fontFamily: {
