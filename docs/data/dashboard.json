@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-20T03:21:50.914338",
+    "generated_at": "2026-02-20T06:56:04.557450",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 431
+    "commits": 432
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "8c4e3d6",
-      "message": "Merge pull request #31 from AnandaTom/payoss/dev",
+      "hash": "b4a6256",
+      "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-02-20"
     },
-    "total_commits": 431,
+    "total_commits": 432,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 130
+        "commits": 131
       },
       {
         "name": "Payoss",
@@ -624,6 +624,16 @@
   ],
   "activity": [
     {
+      "hash": "b4a6256",
+      "author": "github-actions[bot]",
+      "date": "2026-02-20",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "8c4e3d6",
       "author": "Payoss",
       "date": "2026-02-20",
@@ -812,16 +822,6 @@
       "type_label": "Feature",
       "type_icon": "✨",
       "type_color": "green"
-    },
-    {
-      "hash": "84c315d",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
     }
   ],
   "recommendations": {
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-20 03:21"
+    "last_updated": "2026-02-20 06:56"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-20 03:21"
+    "last_updated": "2026-02-20 06:56"
   },
   "conformity_details": {
     "promesse": {
