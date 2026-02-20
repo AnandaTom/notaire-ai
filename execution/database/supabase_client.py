@@ -37,7 +37,6 @@ import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from functools import lru_cache
 
 # Configuration
 SCRIPT_DIR = Path(__file__).parent
@@ -53,7 +52,10 @@ except ImportError:
 # Import Supabase
 try:
     from supabase import create_client, Client
-    from supabase.lib.client_options import ClientOptions
+    try:
+        from supabase.lib.client_options import ClientOptions
+    except ImportError:
+        ClientOptions = None
 except ImportError:
     print("ERREUR: supabase n'est pas installé. Exécutez: pip install supabase")
     create_client = None
@@ -61,7 +63,8 @@ except ImportError:
     ClientOptions = None
 
 
-@lru_cache(maxsize=1)
+_client_cache: Dict[bool, Optional[Client]] = {}
+
 def get_supabase_client(use_service_key: bool = True) -> Optional[Client]:
     """
     Retourne un client Supabase singleton.
@@ -73,6 +76,10 @@ def get_supabase_client(use_service_key: bool = True) -> Optional[Client]:
     Returns:
         Client Supabase ou None si non configuré
     """
+    # Retourner le client cache si deja connecte
+    if use_service_key in _client_cache:
+        return _client_cache[use_service_key]
+
     if create_client is None:
         return None
 
@@ -88,10 +95,19 @@ def get_supabase_client(use_service_key: bool = True) -> Optional[Client]:
         return None
 
     try:
-        options = ClientOptions(
-            postgrest_client_timeout=30,    # 30s timeout on DB queries
-        ) if ClientOptions else {}
-        return create_client(url, key, options=options) if ClientOptions else create_client(url, key)
+        # Essayer avec ClientOptions (supabase-py >= 2.3)
+        if ClientOptions:
+            try:
+                options = ClientOptions(postgrest_client_timeout=30)
+                client = create_client(url, key, options=options)
+                _client_cache[use_service_key] = client
+                return client
+            except (TypeError, AttributeError):
+                # Version plus ancienne de supabase-py — fallback sans options
+                pass
+        client = create_client(url, key)
+        _client_cache[use_service_key] = client
+        return client
     except Exception as e:
         print(f"ERREUR connexion Supabase: {e}")
         return None

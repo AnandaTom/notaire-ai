@@ -550,8 +550,9 @@ class ToolExecutor:
             f"output_dir={output_dir}"
         )
 
-        # Paramètre force pour génération partielle (brouillon)
-        force = tool_input.get("force", False)
+        # Toujours forcer en mode chat (brouillon) — le notaire peut demander
+        # une version finale ensuite. Cela évite les échecs sur données partielles.
+        force = tool_input.get("force", True)
 
         # ===== ROUTING : Vente vs Promesse =====
         if type_acte == "vente":
