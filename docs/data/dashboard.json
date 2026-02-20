@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-19T21:21:24.505623",
+    "generated_at": "2026-02-20T00:15:38.765387",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,32 +12,32 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 420
+    "commits": 424
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "8d8fb39",
-      "message": "Merge pull request #27 from AnandaTom/payoss/dev",
-      "date": "2026-02-19"
+      "hash": "a664050",
+      "message": "Merge pull request #29 from AnandaTom/payoss/dev",
+      "date": "2026-02-20"
     },
-    "total_commits": 420,
+    "total_commits": 424,
     "team": [
       {
         "name": "AnandaTom",
-        "commits": 186
+        "commits": 194
       },
       {
         "name": "github-actions[bot]",
-        "commits": 126
+        "commits": 128
+      },
+      {
+        "name": "Payoss",
+        "commits": 59
       },
       {
         "name": "augustinfrance-aico",
         "commits": 57
-      },
-      {
-        "name": "Payoss",
-        "commits": 56
       },
       {
         "name": "Automai",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-19"
+      "last_modified": "2026-02-20"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1602,
-      "last_modified": "2026-02-19"
+      "last_modified": "2026-02-20"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-19"
+      "last_modified": "2026-02-20"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,12 +88,12 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-19"
+      "last_modified": "2026-02-20"
     }
   ],
   "scripts": {
     "total": 77,
-    "total_lines": 45231,
+    "total_lines": 45677,
     "categories": {
       "generation": 6,
       "utils": 62,
@@ -113,14 +113,14 @@
         "path": "execution/core/exporter_docx.py"
       },
       {
+        "name": "gestionnaire_promesses.py",
+        "lines": 1781,
+        "path": "execution/gestionnaires/gestionnaire_promesses.py"
+      },
+      {
         "name": "orchestrateur.py",
         "lines": 1707,
         "path": "execution/gestionnaires/orchestrateur.py"
-      },
-      {
-        "name": "gestionnaire_promesses.py",
-        "lines": 1695,
-        "path": "execution/gestionnaires/gestionnaire_promesses.py"
       },
       {
         "name": "valider_acte.py",
@@ -128,14 +128,14 @@
         "path": "execution/core/valider_acte.py"
       },
       {
+        "name": "anthropic_agent.py",
+        "lines": 1340,
+        "path": "execution/anthropic_agent.py"
+      },
+      {
         "name": "chat_handler.py",
         "lines": 1242,
         "path": "execution/chat_handler.py"
-      },
-      {
-        "name": "anthropic_agent.py",
-        "lines": 1089,
-        "path": "execution/anthropic_agent.py"
       },
       {
         "name": "generer_dashboard_data.py",
@@ -624,6 +624,46 @@
   ],
   "activity": [
     {
+      "hash": "a664050",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "Merge pull request #29 from AnandaTom/payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "1e31541",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "[Payoss] UX Redesign: shared layout, dashboard, command palette, toasts, respons...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "e01bac4",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "[Payoss] Fix template squelette: SilentUndefined + 9 filtres Jinja2 tolerants + ...",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "48b3d64",
+      "author": "github-actions[bot]",
+      "date": "2026-02-19",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "8d8fb39",
       "author": "Payoss",
       "date": "2026-02-19",
@@ -778,46 +818,6 @@
       "author": "Automai",
       "date": "2026-02-19",
       "message": "Merge pull request #22 from AnandaTom/tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "aa315a6",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "6a535d6",
-      "author": "Tom",
-      "date": "2026-02-19",
-      "message": "Merge remote-tracking branch 'origin/master' into tom/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "18c55c6",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "154c16c",
-      "author": "Automai",
-      "date": "2026-02-19",
-      "message": "Merge pull request #25 from AnandaTom/payoss/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1025,7 +1025,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-19"
+    "last_updated": "2026-02-20"
   },
   "overview": {
     "overall_score": 67,
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-19 21:21"
+    "last_updated": "2026-02-20 00:15"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-19 21:21"
+    "last_updated": "2026-02-20 00:15"
   },
   "conformity_details": {
     "promesse": {
