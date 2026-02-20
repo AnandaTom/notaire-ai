@@ -1148,6 +1148,61 @@ async def get_stats(auth: AuthContext = Depends(verify_api_key)):
     return stats
 
 
+@app.get("/dashboard/stats", tags=["Système"])
+async def get_dashboard_stats(auth: AuthContext = Depends(verify_api_key)):
+    """
+    Statistiques dashboard pour le frontend.
+    Retourne compteurs + dossiers recents en un seul appel.
+    """
+    supabase = get_supabase_client()
+
+    result = {
+        "total_dossiers": 0,
+        "dossiers_en_cours": 0,
+        "dossiers_termines": 0,
+        "actes_generes": 0,
+        "recent_dossiers": [],
+    }
+
+    if not supabase:
+        return result
+
+    try:
+        # Compteurs dossiers (un seul select avec statut pour tout calculer)
+        all_dossiers = supabase.table("dossiers").select(
+            "statut", count="exact"
+        ).eq("etude_id", auth.etude_id).is_("deleted_at", "null").execute()
+
+        total = all_dossiers.count or 0
+        result["total_dossiers"] = total
+
+        # Compter par statut depuis les donnees retournees
+        if all_dossiers.data:
+            statuts = [d["statut"] for d in all_dossiers.data]
+            result["dossiers_en_cours"] = statuts.count("en_cours")
+            result["dossiers_termines"] = statuts.count("termine")
+
+        # Actes generes
+        actes = supabase.table("actes_generes").select(
+            "id", count="exact"
+        ).eq("etude_id", auth.etude_id).execute()
+        result["actes_generes"] = actes.count or 0
+
+        # 5 dossiers recents
+        recent = supabase.table("dossiers").select(
+            "id, numero, type_acte, statut, parties, biens, updated_at"
+        ).eq("etude_id", auth.etude_id).is_(
+            "deleted_at", "null"
+        ).order("updated_at", desc=True).limit(5).execute()
+
+        result["recent_dossiers"] = recent.data or []
+
+    except Exception as e:
+        logger.warning(f"Erreur dashboard stats: {e}")
+
+    return result
+
+
 @app.get("/me", tags=["Système"])
 async def get_current_etude(auth: AuthContext = Depends(verify_api_key)):
     """Retourne les informations de l'étude authentifiée."""

@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { FileText, Download, Search, Menu } from 'lucide-react'
+import { FileText, Download, Search, Menu, MessageSquare } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
 
 const ROUTE_TITLES: Record<string, { title: string; subtitle?: string }> = {
@@ -15,7 +15,7 @@ const ROUTE_TITLES: Record<string, { title: string; subtitle?: string }> = {
 
 export default function AppHeader() {
   const pathname = usePathname()
-  const { toggleMobileSidebar, setCommandPaletteOpen } = useUIStore()
+  const { toggleMobileSidebar, setCommandPaletteOpen, aiPanelOpen, toggleAiPanel } = useUIStore()
 
   const routeInfo = (pathname && ROUTE_TITLES[pathname]) || { title: 'NotaireAI' }
 
@@ -58,20 +58,22 @@ export default function AppHeader() {
         </button>
 
         <button
-          disabled
-          title="Bientot disponible"
-          className="flex items-center gap-2 px-4 py-2.5 bg-cream border border-champagne rounded-xl text-[0.8rem] text-graphite opacity-50 cursor-not-allowed"
+          onClick={toggleAiPanel}
+          className={`flex items-center gap-2 px-3.5 py-2.5 border rounded-xl text-[0.8rem] transition-colors ${
+            aiPanelOpen
+              ? 'bg-navy text-white border-navy'
+              : 'bg-cream text-graphite border-champagne hover:border-gold/50'
+          }`}
+          aria-label="Assistant IA"
+          title="Assistant IA (Ctrl+Shift+I)"
         >
-          <FileText className="w-4 h-4" />
-          <span className="hidden sm:inline">Brouillons</span>
-        </button>
-        <button
-          disabled
-          title="Bientot disponible"
-          className="flex items-center gap-2 px-4 py-2.5 bg-gold border border-gold rounded-xl text-[0.8rem] text-white opacity-50 cursor-not-allowed"
-        >
-          <Download className="w-4 h-4" />
-          <span className="hidden sm:inline">Exporter</span>
+          <span className="relative">
+            <MessageSquare className="w-4 h-4" />
+            {aiPanelOpen && (
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-gold rounded-full animate-pulse" />
+            )}
+          </span>
+          <span className="hidden sm:inline">Assistant IA</span>
         </button>
       </div>
     </header>
