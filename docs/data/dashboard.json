@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-20T02:04:19.173166",
+    "generated_at": "2026-02-20T03:21:50.914338",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 428
+    "commits": 431
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "ee91dce",
-      "message": "Merge branch 'payoss/dev'",
+      "hash": "8c4e3d6",
+      "message": "Merge pull request #31 from AnandaTom/payoss/dev",
       "date": "2026-02-20"
     },
-    "total_commits": 428,
+    "total_commits": 431,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 129
+        "commits": 130
       },
       {
         "name": "Payoss",
-        "commits": 62
+        "commits": 64
       },
       {
         "name": "augustinfrance-aico",
@@ -624,6 +624,36 @@
   ],
   "activity": [
     {
+      "hash": "8c4e3d6",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "Merge pull request #31 from AnandaTom/payoss/dev",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "5a3377a",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "[Payoss] docs: docs (4 fichiers)",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "7be610a",
+      "author": "github-actions[bot]",
+      "date": "2026-02-20",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "ee91dce",
       "author": "Payoss",
       "date": "2026-02-20",
@@ -792,36 +822,6 @@
       "type_label": "Maintenance",
       "type_icon": "🔧",
       "type_color": "blue"
-    },
-    {
-      "hash": "1489980",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "Merge pull request #24 from AnandaTom/augustin/dev",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "715efe0",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "resolve 3 conflicts with origin/master (dashboard, ISSUES, JOURNAL)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "88d3005",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
     }
   ],
   "recommendations": {
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-20 02:04"
+    "last_updated": "2026-02-20 03:21"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-20 02:04"
+    "last_updated": "2026-02-20 03:21"
   },
   "conformity_details": {
     "promesse": {
