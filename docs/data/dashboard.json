@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-20T00:15:38.765387",
+    "generated_at": "2026-02-20T02:04:19.173166",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 424
+    "commits": 428
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "a664050",
-      "message": "Merge pull request #29 from AnandaTom/payoss/dev",
+      "hash": "ee91dce",
+      "message": "Merge branch 'payoss/dev'",
       "date": "2026-02-20"
     },
-    "total_commits": 424,
+    "total_commits": 428,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,11 +29,11 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 128
+        "commits": 129
       },
       {
         "name": "Payoss",
-        "commits": 59
+        "commits": 62
       },
       {
         "name": "augustinfrance-aico",
@@ -624,6 +624,46 @@
   ],
   "activity": [
     {
+      "hash": "ee91dce",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "Merge branch 'payoss/dev'",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "ac8050b",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "update frontend package-lock.json",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
+      "hash": "6470690",
+      "author": "Payoss",
+      "date": "2026-02-20",
+      "message": "[Payoss] AI Side Panel + cleanup + dashboard API + tests",
+      "type": "other",
+      "type_label": "Autre",
+      "type_icon": "📌",
+      "type_color": "gray"
+    },
+    {
+      "hash": "3e46433",
+      "author": "github-actions[bot]",
+      "date": "2026-02-20",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "a664050",
       "author": "Payoss",
       "date": "2026-02-20",
@@ -778,46 +818,6 @@
       "author": "Augustin",
       "date": "2026-02-19",
       "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "1b9d3d5",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "[augustin] START_DAY.bat avait un conflit de merge avec master Rebas...",
-      "type": "other",
-      "type_label": "Autre",
-      "type_icon": "📌",
-      "type_color": "gray"
-    },
-    {
-      "hash": "4b734da",
-      "author": "Augustin",
-      "date": "2026-02-19",
-      "message": "resolve 3 conflicts with origin/master (Paul's securite+fiabilite)",
-      "type": "fix",
-      "type_label": "Fix",
-      "type_icon": "🐛",
-      "type_color": "red"
-    },
-    {
-      "hash": "97adb7f",
-      "author": "github-actions[bot]",
-      "date": "2026-02-19",
-      "message": "auto-update dashboard data [skip ci]",
-      "type": "chore",
-      "type_label": "Maintenance",
-      "type_icon": "🔧",
-      "type_color": "blue"
-    },
-    {
-      "hash": "fd9123f",
-      "author": "Automai",
-      "date": "2026-02-19",
-      "message": "Merge pull request #22 from AnandaTom/tom/dev",
       "type": "other",
       "type_label": "Autre",
       "type_icon": "📌",
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-20 00:15"
+    "last_updated": "2026-02-20 02:04"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-20 00:15"
+    "last_updated": "2026-02-20 02:04"
   },
   "conformity_details": {
     "promesse": {
