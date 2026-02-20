@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Search, Filter, FolderOpen, ArrowLeft, RefreshCw } from 'lucide-react'
+import { Plus, Search, Filter, FolderOpen, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import DossierCard from '@/components/DossierCard'
 import type { Dossier } from '@/types'
@@ -143,40 +143,17 @@ export default function DossiersPage() {
   }), [dossiers, searchQuery])
 
   return (
-    <div className="min-h-screen bg-ivory">
-      {/* Header */}
-      <header className="bg-white border-b border-champagne px-8 py-5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/app" className="p-2 hover:bg-sand rounded-xl transition-colors">
-              <ArrowLeft className="w-5 h-5 text-slate" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-sand rounded-xl flex items-center justify-center">
-                <FolderOpen className="w-5 h-5 text-gold-dark" />
-              </div>
-              <div>
-                <h1 className="font-serif text-2xl text-charcoal font-semibold">Mes Dossiers</h1>
-                <p className="text-[0.8rem] text-slate">
-                  {filteredDossiers.length} dossier{filteredDossiers.length > 1 ? 's' : ''}
-                  {searchQuery && filteredDossiers.length !== dossiers.length && ` sur ${dossiers.length}`}
-                </p>
-              </div>
-            </div>
-          </div>
-          <Link
-            href="/app"
-            className="flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium text-[0.85rem]"
-          >
-            <Plus className="w-4 h-4" />
-            Nouveau dossier
-          </Link>
-        </div>
-      </header>
-
+    <>
       {/* Filters */}
       <div className="bg-white border-b border-champagne px-8 py-4">
         <div className="max-w-6xl mx-auto flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <p className="text-[0.8rem] text-slate">
+              {filteredDossiers.length} dossier{filteredDossiers.length > 1 ? 's' : ''}
+              {searchQuery && filteredDossiers.length !== dossiers.length && ` sur ${dossiers.length}`}
+            </p>
+          </div>
+
           {/* Search */}
           <div className="relative flex-1 min-w-[250px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate" />
@@ -226,11 +203,19 @@ export default function DossiersPage() {
           >
             <RefreshCw className={`w-4 h-4 text-slate ${isLoading ? 'animate-spin' : ''}`} />
           </button>
+
+          <Link
+            href="/app/chat"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium text-[0.85rem]"
+          >
+            <Plus className="w-4 h-4" />
+            Nouveau dossier
+          </Link>
         </div>
       </div>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-8 py-8">
+      <div className="max-w-6xl mx-auto px-8 py-8">
         {error && (
           <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[0.85rem]">
             {error}
@@ -263,7 +248,7 @@ export default function DossiersPage() {
                 : 'Commencez par creer votre premier dossier.'}
             </p>
             <Link
-              href="/app"
+              href="/app/chat"
               className="inline-flex items-center gap-2 px-5 py-3 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium"
             >
               <Plus className="w-4 h-4" />
@@ -277,7 +262,7 @@ export default function DossiersPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </>
   )
 }

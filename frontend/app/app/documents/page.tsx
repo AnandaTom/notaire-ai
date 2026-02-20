@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Search, Filter, FileText, ArrowLeft, RefreshCw } from 'lucide-react'
+import { Search, Filter, FileText, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import DocumentCard from '@/components/DocumentCard'
 import type { ActeGenere } from '@/types'
@@ -82,39 +82,15 @@ export default function DocumentsPage() {
   }), [documents, searchQuery])
 
   return (
-    <div className="min-h-screen bg-ivory">
-      {/* Header */}
-      <header className="bg-white border-b border-champagne px-8 py-5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/app" className="p-2 hover:bg-sand rounded-xl transition-colors">
-              <ArrowLeft className="w-5 h-5 text-slate" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-sand rounded-xl flex items-center justify-center">
-                <FileText className="w-5 h-5 text-gold-dark" />
-              </div>
-              <div>
-                <h1 className="font-serif text-2xl text-charcoal font-semibold">Mes Documents</h1>
-                <p className="text-[0.8rem] text-slate">
-                  {filteredDocuments.length} document{filteredDocuments.length > 1 ? 's' : ''}
-                  {searchQuery && filteredDocuments.length !== documents.length && ` sur ${documents.length}`}
-                </p>
-              </div>
-            </div>
-          </div>
-          <Link
-            href="/app"
-            className="flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium text-[0.85rem]"
-          >
-            Generer un acte
-          </Link>
-        </div>
-      </header>
-
+    <>
       {/* Filters */}
       <div className="bg-white border-b border-champagne px-8 py-4">
         <div className="max-w-6xl mx-auto flex items-center gap-4 flex-wrap">
+          <p className="text-[0.8rem] text-slate">
+            {filteredDocuments.length} document{filteredDocuments.length > 1 ? 's' : ''}
+            {searchQuery && filteredDocuments.length !== documents.length && ` sur ${documents.length}`}
+          </p>
+
           <div className="relative flex-1 min-w-[250px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate" />
             <input
@@ -156,11 +132,18 @@ export default function DocumentsPage() {
           >
             <RefreshCw className={`w-4 h-4 text-slate ${isLoading ? 'animate-spin' : ''}`} />
           </button>
+
+          <Link
+            href="/app/chat"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium text-[0.85rem]"
+          >
+            Generer un acte
+          </Link>
         </div>
       </div>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-8 py-8">
+      <div className="max-w-6xl mx-auto px-8 py-8">
         {error && (
           <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[0.85rem]">
             {error}
@@ -193,7 +176,7 @@ export default function DocumentsPage() {
                 : 'Les actes que vous generez apparaitront ici.'}
             </p>
             <Link
-              href="/app"
+              href="/app/chat"
               className="inline-flex items-center gap-2 px-5 py-3 bg-gold text-white rounded-xl hover:bg-gold-dark transition-colors font-medium"
             >
               Generer un acte
@@ -206,7 +189,7 @@ export default function DocumentsPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </>
   )
 }

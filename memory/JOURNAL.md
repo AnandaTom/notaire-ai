@@ -6,6 +6,224 @@
 
 ---
 
+## 2026-02-20 (soir, UX Redesign integration — Phases 0-4) — Paul (Payoss)
+
+### Ce qui a ete fait
+Integration complete du redesign UX dans le frontend Next.js, en 5 phases :
+
+**Phase 0 — Fondations** : `uiStore.ts` (Zustand store UI), `useAppData.ts` (hook partage), couleurs statut dans tailwind, focus-visible + animations dans globals.css
+
+**Phase 1 — Layout partage** : `app/app/layout.tsx` (AppSidebar + AppHeader + ToastContainer + CommandPalette), `AppSidebar.tsx` (self-contained, responsive mobile/desktop, role=navigation), `AppHeader.tsx` (titre dynamique par route, hamburger mobile, bouton Ctrl+K). Strip des wrappers standalone de 5 pages (dossiers, documents, clients, workflow, chat).
+
+**Phase 2 — Dashboard** : Chat deplace de `/app` vers `/app/chat/page.tsx`. Dashboard cree a `/app/page.tsx` avec stats Supabase (total dossiers, en cours, termines, actes generes), dossiers recents, et 4 actions rapides.
+
+**Phase 3 — Toast** : `Toast.tsx` (4 niveaux, auto-dismiss, aria-live, portal bottom-right)
+
+**Phase 4 — Command Palette** : `CommandPalette.tsx` (Ctrl+K/Cmd+K, sections Navigation/Actions/Dossiers recents, keyboard nav fleches+Enter+Escape)
+
+### Fichiers crees (9)
+- `frontend/stores/uiStore.ts`
+- `frontend/lib/hooks/useAppData.ts`
+- `frontend/app/app/layout.tsx`
+- `frontend/components/AppSidebar.tsx`
+- `frontend/components/AppHeader.tsx`
+- `frontend/app/app/chat/page.tsx`
+- `frontend/components/Toast.tsx`
+- `frontend/components/CommandPalette.tsx`
+- `demo_ux_redesign.html` (demo HTML validee avant integration)
+
+### Fichiers modifies (6)
+- `frontend/tailwind.config.js` — +success/warning/error/info/navy-active
+- `frontend/app/globals.css` — +focus-visible, +prefers-reduced-motion, +scaleIn/slideInRight/shimmer
+- `frontend/app/app/page.tsx` — remplace par Dashboard (etait: chat)
+- `frontend/app/app/dossiers/page.tsx` — strip header/wrapper
+- `frontend/app/app/documents/page.tsx` — strip header/wrapper
+- `frontend/app/app/clients/page.tsx` — strip header/wrapper
+- `frontend/app/app/workflow/page.tsx` — strip h-screen + "Retour au chat"
+
+### Erreurs corrigees
+- `usePathname()` retourne `string | null` → null-check obligatoire
+- Build worker crash Windows (code 3221226505) = transient, retry OK
+
+### Connexion backend
+- SSE streaming `/chat/stream` : INTACT (meme code, juste deplace dans /app/chat)
+- Supabase auth + user info : INTACT
+- Dashboard connecte direct a Supabase (dossiers, actes_generes)
+- Tous les liens "chatbot" mis a jour vers `/app/chat`
+
+### Build
+- `npm run build` passe : 12 routes, 0 erreur type, 0 regression
+
+---
+
+## 2026-02-20 (nuit 6, fix template squelette + filtres Jinja2 + anonymizer) — Paul (Payoss)
+
+### Probleme
+- Document genere = 1 page squelette au lieu de ~30 pages (795 paragraphes attendus)
+- Cause racine: Jinja2 custom filters (`nombre_en_lettres`, `montant_en_lettres`, etc.) crashent
+  quand ils recoivent `SilentUndefined` en entree. Ex: `nombre_en_lettres(SilentUndefined())`
+  fait `if n < 0:` → UndefinedError → ValueError → fallback `_generer_markdown_simple()`
+- 2e probleme: Anonymizer PII remplace les vrais noms par `[PERSONNE_1]` AVANT que Claude traite
+  → Claude appelle submit_answers avec tokens anonymises → donnees stockees corrompues
+
+### Fixes appliques
+1. **SilentUndefined** dans `assembler_acte.py` — classe custom qui rend '' au lieu de crasher
+   - `__str__` → '', `__bool__` → False, `__int__` → 0, `__getattr__` → self
+2. **9 filtres Jinja2 tolerants** — chaque filtre custom commence par:
+   ```python
+   if isinstance(n, Undefined) or n is None:
+       return ''
+   ```
+   Filtres corriges: nombre_en_lettres, montant_en_lettres, format_nombre, date_en_lettres,
+   annee_en_lettres, numero_lot_en_lettres, mois_en_lettres, jour_en_lettres, format_date
+3. **De-anonymisation tool_input** dans `anthropic_agent.py` — `_deanonymise_tool_input()`
+   applique le reverse mapping avant chaque `executor.execute()` (streaming + non-streaming)
+
+### Resultats
+- DOCX: 77 KB, 795 paragraphes, 4 tables (vs 1 page squelette avant)
+- Toutes les donnees remplies (MOREAU, FONTAINE, 350000, ImmoGest, etc.)
+- 339 tests passent, 0 nouvelle regression
+- Deploye sur Modal
+
+### Fichiers modifies
+- `execution/core/assembler_acte.py` — SilentUndefined + 9 filtres guards
+- `execution/anthropic_agent.py` — _deanonymise_tool_input() static method
+
+### Lecons
+- SilentUndefined ne suffit PAS seul — les filtres custom recoivent SilentUndefined comme arg
+  et font des operations (comparaison, int(), split) qui crashent. Chaque filtre doit guard.
+- L'anonymizer tourne AVANT le LLM, donc tout ce que le LLM recoit est deja anonymise.
+  De-anonymiser les tool_inputs (pas les messages) est la bonne approche.
+
+---
+
+## 2026-02-19 (nuit 5, fix generation DOCX + normalisation donnees) — Paul (Payoss)
+
+### Probleme
+- Generation DOCX echoue avec `'list' object has no attribute 'get'` dans assembler_acte
+- Table `promesses_generees` n'existe pas dans Supabase → 404 sur sauvegarde
+- Donnees collectees par le chat ont des formats incompatibles avec les templates :
+  - `origine_propriete` = dict plat au lieu de list
+  - `bien.servitudes` = string "aucune" au lieu de list
+  - `acte.date` = string "2024-03-15" au lieu de dict {jour, mois, annee}
+  - Pas de `acte.notaire` (template l'attend)
+
+### Fixes appliques
+1. **Normalisation donnees** dans `gestionnaire_promesses.py generer()` avant assemblage :
+   - `origine_propriete` dict → [dict]
+   - `bien.servitudes` string → list vide ou list avec 1 element
+   - Parties (promettants, beneficiaires) : garantir list of dicts
+   - `lots` racine → fusionner dans `bien.lots`
+   - `quotites` dict → `quotites_vendues`/`quotites_acquises`
+   - `acte.date` string → dict {jour, mois, annee}
+   - `acte.notaire` defaults si absent
+2. **Guards defensifs** dans `assembler_acte.py enrichir_donnees()` :
+   - `isinstance(lot, dict)` avant `.get()` sur lots, prets, quotites, origines
+3. **Table `promesses_generees` → `actes_generes`** : la table n'existait pas, utilise
+   la table existante avec le bon schema
+4. **`force=True` par defaut** dans anthropic_tools.py pour le chat (mode brouillon)
+
+### Resultats
+- Generation DOCX fonctionne end-to-end via chat API (38 KB, HTTP 200, telechargementsOK)
+- 300 tests passent, 0 regression
+- Deploye sur Modal
+
+### Fichiers modifies
+- `execution/gestionnaires/gestionnaire_promesses.py` — normalisation, table fix, formater_parties guard
+- `execution/core/assembler_acte.py` — guards defensifs enrichir_donnees()
+- `execution/anthropic_tools.py` — force=True par defaut
+
+### Lecons
+- Les donnees collectees par le LLM via chat n'ont PAS le meme format que les donnees JSON manuelles
+- Toujours normaliser les types avant de passer au template Jinja2
+- `promesses_generees` n'a jamais ete creee en migration — verifier l'existence des tables avant de coder
+
+---
+
+## 2026-02-19 (nuit 4, optimisation temps de reponse) — Paul (Payoss)
+
+### Probleme
+- User : "le temps de reponse est trop long"
+- Message 1 : 18.5s (3 API round-trips Claude : detect_property_type + submit_answers + response)
+- Message 2 : 9.2s (2 round-trips : submit_answers + response)
+
+### Optimisations implementees
+1. **Pre-processing local** (`_pre_process_message`) : detecte type_acte + categorie_bien par regex,
+   appelle detect_property_type localement → economise 1 round-trip Claude (~5s)
+2. **Pre-submit** : soumet aussi les donnees basiques (type_bien, prix) via submit_answers local
+3. **Filtrage tools** : retire detect_property_type de la liste des tools si deja detecte
+   → Claude ne peut plus l'appeler inutilement
+4. **Smart tool_choice** (`_should_force_tool`) : ne force pas tool_choice:"any" sur les salutations
+   ou quand les donnees sont deja collectees
+5. **System prompt** : ajout "OPTIMISATION VITESSE" demandant 1 seul tool call par message,
+   pas de get_questions sauf si necessaire
+6. **Streaming tokens pendant tool iterations** : yield les tokens immediatement,
+   pas seulement a la fin → 1er token visible a ~4s au lieu de ~10s
+
+### Resultats
+| Metrique | Avant | Apres | Gain |
+|----------|-------|-------|------|
+| Message 1 total | 18.5s | ~10-14s | ~30% |
+| 1er token visible | ~10s+ | ~4s | ~60% |
+| Tool calls msg 1 | 3 | 1-2 | -50% |
+
+### Fichiers modifies
+- `execution/anthropic_agent.py` — pre-processing, smart tool_choice, streaming, system prompt
+
+---
+
+## 2026-02-19 (nuit 3, tool_choice fix) — Paul (Payoss)
+
+### Probleme
+- Meme apres fix Supabase client, le chatbot boucle toujours
+- Test API direct : `tool_calls_made: 0` — le LLM ne fait AUCUN appel d'outil
+- Reponses identiques : `_build_smart_summary` → "J'ai note... Continuons" (fallback MAX_TOOL_ITERATIONS)
+
+### Diagnostic
+- `tool_choice` par defaut = `auto` → Claude choisit de NE PAS utiliser les outils
+- SYSTEM_PROMPT pas assez directif sur l'utilisation obligatoire des outils
+
+### Fix
+1. **SYSTEM_PROMPT** : Ajout "REGLE ABSOLUE" obligeant l'utilisation des outils a chaque message
+2. **`tool_choice: {"type": "any"}`** : Force 1+ tool call sur la 1ere iteration si pas de donnees
+3. Applique dans `process_message` et `process_message_stream`
+
+### Verification via API directe
+- Msg 1 : 2 tools (detect + submit), progress 0→9
+- Msg 2 : 2 tools (submit + progress), progress 9→16
+- Msg 3 ("generer") : 4 tools (submit + generate + progress + validate)
+- agent_state Supabase : bien, prix, copropriete, vendeur, acquereur OK
+- PAS de re-demande d'infos deja fournies
+
+### Fichier modifie
+- `execution/anthropic_agent.py` — SYSTEM_PROMPT + tool_choice
+
+---
+
+## 2026-02-19 (nuit 2, Supabase client fix Modal) — Paul (Payoss)
+
+### Probleme
+- Chatbot TOUJOURS en boucle apres deploy des 6 fixes
+- Cause : `ERREUR connexion Supabase: 'ClientOptions' object has no attribute 'storage'` sur Modal
+- `supabase=False` pour CHAQUE message → zero persistence, zero historique
+- Nos 6 fixes etaient inutiles car le client Supabase ne s'initialisait pas
+
+### Fix
+- `supabase_client.py` : `ClientOptions(postgrest_client_timeout=30)` incompatible avec supabase-py version installee sur Modal
+- Fix : try avec ClientOptions, fallback `create_client(url, key)` sans options
+- Aussi : import `ClientOptions` dans un try/except separe (peut ne pas exister)
+- Aussi : remplace `lru_cache` par cache dict manuel (evite cacher les echecs)
+
+### Verification
+- `GET /health` → `"supabase": "ok"` (avant : crash silencieux)
+- Logs Supabase : queries depuis `python-httpx/0.28.1` (Modal) retournent 200
+- Tests locaux : 348 passed (0 regression)
+
+### Fichiers modifies
+- `execution/database/supabase_client.py` — ClientOptions defensive + cache fix
+
+---
+
 ## 2026-02-19 (nuit, chatbot fix) — Paul (Payoss)
 
 ### Contexte

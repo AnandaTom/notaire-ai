@@ -4,7 +4,7 @@
 > BUT : ne jamais sous-estimer la taille d'un fichier ou rater des endpoints.
 > REGLE : avant d'affirmer qu'un truc n'existe pas, consulter cette carte.
 
-**Derniere mise a jour : 2026-02-19**
+**Derniere mise a jour : 2026-02-20**
 
 ---
 
@@ -23,11 +23,13 @@
 ### Frontend
 - **Framework** : Next.js 14.2.35 (App Router)
 - **UI** : React 18.3 + TailwindCSS 3.4 + Lucide React
-- **State** : Zustand 5.0.11 (selectors individuels)
+- **State** : Zustand 5.0.11 — `workflowStore` (persist) + `uiStore` (sidebar/toasts/palette)
 - **Auth/DB** : @supabase/supabase-js 2.95.3
 - **Markdown** : react-markdown 9.0
 - **TypeScript** : 5.x strict mode
 - **Tests** : Vitest 4.0 + Testing Library + jsdom (30 tests)
+- **Layout** : `app/app/layout.tsx` partage (AppSidebar + AppHeader + Toast + CommandPalette)
+- **Routes** : `/app` (dashboard), `/app/chat` (SSE), `/app/dossiers`, `/app/documents`, `/app/clients`, `/app/workflow`
 
 ### Infrastructure
 - **DB** : Supabase (wcklvjckzktijtgakdrk) — Frankfurt EU, 17 tables
@@ -53,7 +55,7 @@
 | Endpoints API (api/main.py) | 40 (+8 routers) | 2994 |
 | Endpoints Agents (api/agents.py) | 4 | 973 |
 | Chat router (chat_handler.py) | 4+ | 1242 |
-| Composants React | 25 | ~3200 |
+| Composants React | 30 (+5 UX redesign) | ~4200 |
 | Scripts Python (execution/) | 60+ | ~20000 |
 | Templates Jinja2 | 9 + 60 sections | - |
 | Schemas JSON | 17 | - |
