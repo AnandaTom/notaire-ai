@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-02-20T06:56:04.557450",
+    "generated_at": "2026-02-21T06:40:50.146249",
     "version": "1.5.0",
     "dashboard_version": "3.0",
     "config_source": "docs/data/project_config.json"
@@ -12,16 +12,16 @@
     "scripts_count": 77,
     "schemas_count": 17,
     "generation_time": "5.7s",
-    "commits": 432
+    "commits": 433
   },
   "git": {
     "branch": "master",
     "last_commit": {
-      "hash": "b4a6256",
+      "hash": "f5bdc9f",
       "message": "chore: auto-update dashboard data [skip ci]",
       "date": "2026-02-20"
     },
-    "total_commits": 432,
+    "total_commits": 433,
     "team": [
       {
         "name": "AnandaTom",
@@ -29,7 +29,7 @@
       },
       {
         "name": "github-actions[bot]",
-        "commits": 131
+        "commits": 132
       },
       {
         "name": "Payoss",
@@ -55,7 +55,7 @@
       "sections": 37,
       "trames_source": 1,
       "lines": 446,
-      "last_modified": "2026-02-20"
+      "last_modified": "2026-02-21"
     },
     {
       "file": "promesse_vente_lots_copropriete.md",
@@ -66,7 +66,7 @@
       "sections": 165,
       "trames_source": 7,
       "lines": 1602,
-      "last_modified": "2026-02-20"
+      "last_modified": "2026-02-21"
     },
     {
       "file": "reglement_copropriete_edd.md",
@@ -77,7 +77,7 @@
       "sections": 111,
       "trames_source": 1,
       "lines": 1683,
-      "last_modified": "2026-02-20"
+      "last_modified": "2026-02-21"
     },
     {
       "file": "modificatif_edd.md",
@@ -88,7 +88,7 @@
       "sections": 13,
       "trames_source": 1,
       "lines": 295,
-      "last_modified": "2026-02-20"
+      "last_modified": "2026-02-21"
     }
   ],
   "scripts": {
@@ -624,6 +624,16 @@
   ],
   "activity": [
     {
+      "hash": "f5bdc9f",
+      "author": "github-actions[bot]",
+      "date": "2026-02-20",
+      "message": "auto-update dashboard data [skip ci]",
+      "type": "chore",
+      "type_label": "Maintenance",
+      "type_icon": "🔧",
+      "type_color": "blue"
+    },
+    {
       "hash": "b4a6256",
       "author": "github-actions[bot]",
       "date": "2026-02-20",
@@ -812,16 +822,6 @@
       "type_label": "Autre",
       "type_icon": "📌",
       "type_color": "gray"
-    },
-    {
-      "hash": "744025e",
-      "author": "Payoss",
-      "date": "2026-02-19",
-      "message": "enrichissement pipeline + RGPD anonymisation + workflow validation",
-      "type": "feat",
-      "type_label": "Feature",
-      "type_icon": "✨",
-      "type_color": "green"
     }
   ],
   "recommendations": {
@@ -1025,7 +1025,7 @@
       }
     ],
     "source_file": "docs/data/project_config.json",
-    "last_updated": "2026-02-20"
+    "last_updated": "2026-02-21"
   },
   "overview": {
     "overall_score": 67,
@@ -1249,7 +1249,7 @@
         "action": "Contacter 3 notaires pour demo cette semaine"
       }
     ],
-    "last_updated": "2026-02-20 06:56"
+    "last_updated": "2026-02-21 06:40"
   },
   "chef_projet": {
     "dev_priorities": {
@@ -1401,7 +1401,7 @@
       "icon": "🎉"
     },
     "sprint": "Sprint 2",
-    "last_updated": "2026-02-20 06:56"
+    "last_updated": "2026-02-21 06:40"
   },
   "conformity_details": {
     "promesse": {
